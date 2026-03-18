@@ -25,3 +25,38 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: QMMM
+      description: GH酶和GT酶是两种不同的酶，分别寻找这两种酶的QMMM计算研究的文章
+      enabled: true
+      keywords:
+        - keyword: glycosyl transferases
+          keyword_cn: 糖基转移酶
+          query: QM/MM simulations of glycosyl transferases
+        - keyword: QM/MM
+          keyword_cn: 量子力学/分子力学
+          query: QM/MM multiscale modeling of enzyme catalysis
+        - keyword: catalysis
+          keyword_cn: ''
+          query: c
+        - keyword: glycoside hydrolases
+          keyword_cn: 糖苷水解酶
+          query: QM/MM studies on glycoside hydrolases mechanism
+        - keyword: GH enzyme
+          keyword_cn: GH酶
+          query: quantum mechanical molecular mechanical study of GH enzymes
+        - keyword: GT enzyme
+          keyword_cn: GT酶
+          query: quantum mechanical molecular mechanical study of GT enzymes
+      intent_queries:
+        - query: QM/MM computational studies of glycoside hydrolase mechanisms
+          query_cn: 糖苷水解酶机制的QM/MM计算研究
+          enabled: true
+          source: manual
+          note: ''
+        - query: QM/MM simulations of glycosyltransferase reaction pathways
+          query_cn: 糖基转移酶反应路径的QM/MM模拟
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-18T16:30:14.148Z'
