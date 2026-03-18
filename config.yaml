@@ -37,7 +37,7 @@ subscriptions:
           keyword_cn: 量子力学/分子力学
           query: QM/MM multiscale modeling of enzyme catalysis
         - keyword: catalysis
-          keyword_cn: ''
+          keyword_cn: 催化
           query: c
         - keyword: glycoside hydrolases
           keyword_cn: 糖苷水解酶
@@ -59,4 +59,4 @@ subscriptions:
           enabled: true
           source: manual
           note: ''
-      updated_at: '2026-03-18T16:30:14.148Z'
+      updated_at: '2026-03-18T16:39:08.649Z'
