@@ -1,0 +1,386 @@
+Title: Scaling Machine Learning Interatomic Potentials with Mixtures of Experts
+
+URL Source: https://arxiv.org/pdf/2603.07977v2
+
+Published Time: Fri, 13 Mar 2026 00:59:28 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Scaling Machine Learning Interatomic Potentials with Mixtures of Experts 
+
+# Yuzhi Liu 1, Duo Zhang 1,2,3 , Anyang Peng 1, Weinan E 1,3,4 , Linfeng Zhang 1,2* ,Han Wang 5,6* 1AI for Science Institute, Beijing 100080, P. R. China. 
+
+2DP Technology, Beijing 100080, P. R. China. 
+
+3Academy for Advanced Interdisciplinary Studies, Peking University, Beijing 100871, P. R. China. 
+
+4 School of Mathematical Sciences, Peking University, Beijing 100871, P. R. China . 
+
+5National Key Laboratory of Computational Physics, Institute of Applied Physics and Computational Mathematics, Fenghao East Road 2, Beijing 100094, P.R. China. 
+
+6HEDPS, CAPT, College of Engineering, Peking University, Beijing 100871, P.R. China. *Corresponding author(s). E-mail(s): zhanglf@aisi.ac.cn; wang han@iapcm.ac.cn; 
+
+Abstract 
+
+Machine Learning Interatomic Potentials (MLIPs) enable accurate large-scale atomistic simulations, yet improving their expressive capacity efficiently remains challenging. Here we systematically develop Mixture-of-Experts (MoE) and Mixture-of-Linear-Experts (MoLE) architectures for MLIPs and ana-lyze the effects of routing strategies and expert designs. We show that sparse activation combined with shared experts yields substantial performance gains, and that nonlinear MoE formulations out-perform MoLE when shared experts are present, underscoring the importance of nonlinear expert specialization. Furthermore, element-wise routing consistently surpasses configuration-level routing, while global MoE routing often leads to numerical instability. The resulting element-wise MoE model achieves state-of-the-art accuracy across the OMol25, OMat24, and OC20M benchmarks. Analysis of routing patterns reveals chemically interpretable expert specialization aligned with periodic-table trends, indicating that the model effectively captures element-specific chemical characteristics for precise interatomic modeling. 
+
+# 1 Introduction 
+
+Over the past few years, MLIPs have rapidly advanced as a powerful strategy to bridge the divide between the high accuracy of Quantum Mechanical (QM) methods and the computational efficiency of classical force fields[1–13]. The fundamental principle of MLIPs lies in approximating the high-dimensional Poten-tial Energy Surface(PES) by learning from exten-sive datasets generated via first-principles calcula-tions, such as Density Functional Theory(DFT) [13– 18]. Once trained, these potentials can be employed in large-scale molecular dynamics(MD) simulations, enabling the study of complex atomistic processes at a fraction of the computational cost of direct QM approaches [4, 8–10]. As a result, MLIPs have found 
+
+1
+
+> arXiv:2603.07977v2 [physics.chem-ph] 12 Mar 2026
+
+successful applications across diverse fields, includ-ing drug discovery [19–22], materials science [23–27], and catalysis design [28–30], providing a scalable and accurate framework for exploring chemical space and predicting material properties. To more accurately model interatomic interac-tions, a variety of pioneering neural network architec-tures, such as MACE [31], SevenNet [32], DPA [33, 34], eSEN [35], and AlphaNet [36], have been developed. In pursuit of broader applicability, researchers have progressively scaled up model parameters and trained these architectures on increasingly large datasets, often employing multi-task learning strategies [34, 37, 38]. A notable observation emerging from these efforts is the presence of scaling laws: similar to trends observed in Large Language Models (LLMs) [39, 40], the performance of these interatomic potentials improves predictably with increases in both model size and training data volume [37, 41]. This scaling behavior provides a clear and encouraging roadmap for advancing the accuracy and capability of future machine-learned potentials. Despite the clear benefits of scaling, simply expanding model capacity through deeper or wider dense architectures remains computationally pro-hibitive in practice. Two primary bottlenecks hin-der this approach: first, the all-to-all computational dependency in dense models limits parallel effi-ciency [42, 43]; Second, as depth and width increase, the optimization landscape grows increasingly com-plex, resulting in diminishing returns and heightened training instability [39, 40]. To circumvent these limitations, MoE architec-tures have emerged as a cornerstone of large-scale modeling[44–49]. An MoE layer replaces the stan-dard dense feed-forward network with a collection of independent experts, governed by a learnable rout-ing mechanism that activates only a sparse subset of parameters for any given input. This design effectively decouples the total model capacity from the compu-tational cost per token [44, 46]. Architecturally, MoE is inherently more conducive to parallelism; by dis-tributing experts across different devices, it reduces the communication bottlenecks typical of standard model parallelism. Consequently, for a fixed compu-tational budget, an MoE model can leverage a signif-icantly larger total parameter count to achieve lower validation loss and superior representational power compared to its dense counterparts [45, 47, 48, 50]. Although this scaling paradigm is highly attractive for MLIPs, its direct adoption faces two fundamen-tal challenges. First, standard MoE designs are often incompatible with the equivariant representations employed by MLIP architectures based on equivari-ant graph neural networks (GNN), such as MACE[31], SevenNet[32], eSEN[35], and AlphaNet[36]. Second, unlike the discrete token representations in language models, where sparse expert activation is natural, MLIPs model continuous potential energy surfaces. Abrupt expert switching in this setting can intro-duce numerical instabilities or non-physical disconti-nuities, potentially violating the law of energy con-servation. To address these challenges, the MoLE framework, exemplified by the UMA models, was introduced [37]. MoLE resolves the first issue by employing a linear combination of experts, ensur-ing compatibility with equivariant representations. However, the absence of nonlinear activation on the expert outputs may limit the expressive capacity of the resulting representations. To address the second issue, MoLE designs expert routing weights to depend only on configuration-level features derived from the chemical species present in the system, with these weights shared across all atoms in a configuration. Consequently, the expert gating remains invariant with respect to atomic positions, preventing abrupt expert switching and ensuring that the predicted PES remains smooth and differentiable. Nevertheless, this global gating assumption precludes the use of dis-tinct expert knowledge for different atomic species within the same configuration, thereby limiting the model’s capacity to model potential energy contribu-tions through element-wise expert routing. In this work, we propose an MoE-integrated DPA3 MLIP architecture. DPA3 is a graph neu-ral network built on a line-graph series and has demonstrated state-of-the-art accuracy across diverse benchmarks [41], making it a robust baseline for evalu-ating MoE-based extensions. Crucially, DPA3 employs exclusively invariant node and edge features, which permits valid nonlinear operations on expert outputs and thus enables the seamless incorporation of stan-dard MoE mechanisms within its framework. Since invariant GNNs can be viewed as a special case of equivariant GNNs, the MoLE architecture can also be implemented within DPA3, providing a unified and controlled setting for direct comparisons between MoE and MoLE designs in terms of their effectiveness for scaling MLIP performance. Building on this founda-tion, we introduce element-wise expert gating, yielding an element-dependent MoE that models potential-energy contributions through species-specific expert routing. In addition, we incorporate a shared-expert mechanism [51], ensuring that a subset of experts is always activated to capture knowledge common across all element types. The effectiveness and robustness of the proposed MoE design are rigorously validated on the OMol25, OMat24, and OC20M benchmarks, where it achieves substantial improvements over the baseline. Notably, 
+
+2Principal Component Analysis (PCA) of the expert latent representations reveals that the learned expert distributions spontaneously recover trends consistent with the periodic table, suggesting that the model implicitly encodes fundamental chemical identities to achieve enhanced predictive accuracy. 
+
+# 2 Methodology 
+
+In this work, we use the DPA3 model architecture to illustrate the incorporation of a MoE design into a MLIP. The same approach can be readily extended to other graph neural networks that employ invariant features, without substantial modification. The model takes as input the atomic coordinates and chemi-cal species, and outputs the total potential energy E
+
+of the system. DPA3 assumes an atom-wise energy decomposition, 
+
+E = X
+
+> i
+
+Ei, Ei = Ei
+
+
+
+v1,L i
+
+
+
+, (1) where Ei denotes the energy contribution of atom 
+
+i, which is derived from the final-layer vertex fea-ture v1,L i . This feature represents the state of atom 
+
+i within the primary graph of the line-graph series after L update layers. The majority of DPA3 model parameters reside in the dense layers used to construct messages during message passing along graph edges, which connect atom pairs whose interatomic distance falls within a predefined cutoff radius. A detailed description of the DPA3 architecture is provided in Ref. [41]. For each input feature xi associated with atom i,a dense layer computes 
+
+yi = σ(W x i + b) , (2) where W and b denote the weight matrix and bias vector, respectively, σ is a nonlinear activation func-tion, and yi is the resulting output (see also Fig. 1(a)). The representational capacity of the model can be increased by enlarging these dense layers, i.e., by increasing the dimensionality of the weight and bias parameters. Instead of a single dense transformation, the MoE introduces multiple parallel expert subnetworks, each composed of a relatively smaller dense layer. The con-tribution of each expert to the output is modulated by gating weights, which are produced by a router that selects appropriate weights for atom i based on its chemical identity, encoded by the atomic num-ber Zi. The experts can be sparsely activated, such that only a subset of experts receives nonzero gat-ing weights for a given atom. In addition, a subset of experts may always be activated with fixed weights independent of chemical species; these are referred to as shared experts, as they capture knowledge common to all atoms regardless of chemical type. A schematic illustration of the MoE architecture is provided in Fig. 1(b). Assume that the MoE contains a total of N
+
+experts, consisting of I routed experts and N − I
+
+shared experts. The MoE transformation is defined as 
+
+yi =
+
+> I
+
+X
+
+> j=1
+
+αij σ Wj xi + bj
+
+ +
+
+> N
+
+X
+
+> j=I+1
+
+σ Wj xi + bj
+
+ ,
+
+(3) 
+
+αij =
+
+(
+
+sij , if sij ∈ TopK  {sim }, K ′ ,
+
+0, otherwise , (4) 
+
+sij = softmax( Weui) , (5) where σ(·) denotes a nonlinear activation function, 
+
+Wj and bj are the trainable expert-specific weights and bias, and αij is the gating weight applied to the j-th routed expert for atom i. The operator TopK  {sim }, K ′ selects the largest K′ ≤ I elements from the set of gating scores {sim | 1 ≤ m ≤ I},thereby enforcing sparse expert activation. Including the ( N − I) shared experts that are always active, the total number of activated experts is denoted by K,satisfying 
+
+K = K′ + ( N − I). (6) The gating scores sij are computed according to equation 5, where We ∈ RI×M is a trainable rout-ing matrix and ui ∈ RM is a latent representation of dimension M , encoding the chemical identity of atom 
+
+i.The hidden representation ui is defined as 
+
+ui = MLP(one hot( Zi)) , (7) where the atomic number Zi is first mapped to a one-hot vector and subsequently projected into a con-tinuous embedding space via a multilayer perceptron (MLP). This element-wise routing mechanism enables atom-type–dependent expert selection while preserv-ing smoothness and differentiability, which are essen-tial for stable and physically consistent interatomic potential modeling. In contrast, the UMA model [37] adopts an atom-averaged routing representation that incorporates dataset identifiers along with charge and spin infor-mation. In our implementation, we utilize this atom-averaged routing scheme to ensure a fair and consis-tent comparison with element-wise routing. Specifi-cally, we define a global routing vector through mean pooling: ¯u = 1
+
+Natom 
+
+X
+
+> i
+
+ui, (8) where the unified representation ¯ u is applied across all atoms in the system to determine gating scores. Under this formulation, atomic representations are averaged 
+
+3xi 
+
+> yi
+> W,b
+
+σ
+
+σ    
+
+> Zixi
+> yi
+> router router
+> Zixi
+> ¯W,¯b
+
+σ      
+
+> yi
+> ∑
+> ∑
+> W,bxi/Zi
+> yi∑
+> αi1αi2αi3
+
+σ σ σ σ αi1 αi2 αi3 
+
+> αweights & biases
+> shared expert
+
+W & b 
+
+> activated routed expert
+
+W & b 
+
+> inactivated routed expert
+
+W & b
+
+> gating weights
+> activation
+> input
+> output
+> multiplication
+> summation
+
+Fig. 1 : Schematic illustration of the model architectures. (a) The standard MLP framework. (b) The MoE-E framework, featuring a router that dynamically selects 3 active experts from the pool, complemented by 1 fixed shared expert to capture universal features. (c) The MoLE-E framework, where 4 expert weights are linearly combined via the router to modulate the main network weights, including 1 shared expert component. 
+
+across the entire configuration, and all atoms share an identical set of gating scores and weights. To dis-tinguish these two routing strategies, we refer to the atom-wise and global (configuration-wise) representa-tions as MoE-E and MoE-G, respectively. In the MoE formulation, input features are first processed by expert subnetworks and then linearly combined using gating weights. In contrast, in the MoLE formulation the features are first linearly transformed by expert-specific weights, after which the expert contributions are aggregated via gating weights, and a nonlinear activation function is applied at the end, as illustrated in Fig. 1(c). This yields 
+
+yi = σ
+
+
+
+> I
+
+X
+
+> j=1
+
+αij 
+
+ Wj xi + bj
+
+ +
+
+> N
+
+X
+
+> j=I+1
+
+ Wj xi + bj
+
+ ,
+
+(9) 
+
+αij = softmax 
+
+
+
+Weui
+
+
+
+(10) where σ(·) denotes the activation function. Equation equation 9 is mathematically equivalent to a single dense layer with effective parameters, 
+
+yi = σ  ¯W x i + ¯b , (11) ¯W =
+
+> I
+
+X
+
+> j=1
+
+αij Wj +
+
+> N
+
+X
+
+> j=I+1
+
+Wj , (12) ¯b =
+
+> I
+
+X
+
+> j=1
+
+αij bj +
+
+> N
+
+X
+
+> j=I+1
+
+bj . (13) Thus, MoLE can be interpreted as a data-dependent linear transformation whose weights and biases are modulated by the gating mechanism prior to the nonlinearity. Analogous to MoE, MoLE admits two variants depending on how chemical identity information is encoded in the router. We denote these as MoLE-E and MoLE-G, corresponding to element-wise and global (configuration-wise) routing representations, respectively. 
+
+# 3 results 
+
+In this section, we benchmark the proposed MoE-based architectures. To ensure a controlled and con-sistent comparison, we adopt a standard 6-layer DPA3 model as our baseline, with all hyperparameters detailed in the Supplementary Table 1. Performance is 
+
+4primarily illustrated using normalized Mean Absolute Error (MAE), while absolute MAE values are pro-vided in the Supplementary Note 2 for comprehensive reference. We evaluate 6-layer variants of MoE and MoLE with both element-wise and global routing, and systematically compare their performance against the baseline to quantify the relative gains enabled by dif-ferent expert designs. The detailed hyperparameters for the different models are outlined in Supplementary Note 1. 
+
+# 3.1 Sparse activation and shared experts 
+
+Two important design choices in MoE are sparse expert activation and the use of shared experts .Figure 2(a) systematically investigates the impact of these design choices using the OMol25 dataset as a benchmark [52]. Covering 83 chemical ele-ments, OMol25 displays remarkable chemical diver-sity, including complex intermolecular interactions, explicit solvation, variable charge and spin states, as well as reactive configurations. In this experiment, the total number of experts is fixed at N = 64, while the number of activated experts K varies from 2 to 8. For each value of K, multiple configurations with different numbers of shared experts are evaluated. Overall, model performance improves with increas-ing K. In the absence of shared experts, the normal-ized energy (force) MAEs for K = 2 , 4, 6, and 8 are 1.082 (0.965), 0.965 (0.919), 0.923 (0.902), and 0.926 (0.900), respectively. This trend is primarily driven by the effective linear expansion of model capacity, since a configuration with K activated experts cor-responds to an approximately K-fold increase in the number of active parameters. However, several non-trivial behaviors are observed. Notably, the K = 2 model without shared experts, despite having roughly twice the parameter count of the baseline, exhibits a degraded energy MAE. In addition, performance saturates between K = 6 and K = 8, indicating dimin-ishing returns where the additional computational budget no longer translates into measurable accuracy gains. These results suggest that naive scaling of the number of activated experts alone is insufficient. Across nearly all choices of activated experts 
+
+K, introducing shared experts consistently improves model performance. This effect is particularly pro-nounced for K = 8, where increasing the number of shared experts from zero to six reduces the normal-ized MAEs for energy and force by 0.269 and 0.200, respectively. Notably, performance is optimized when the number of shared experts approaches approx-imately half of the activated experts, as observed for the K = 4, 6, and 8 configurations. Beyond this regime, further increasing the fraction of shared experts yields diminishing returns or even slight per-formance degradation, for example, the force MAE increases when the number of shared experts rises from 2 to 3 in the K = 4 configuration. Overall, these results indicate that allocating roughly half of the acti-vated experts as shared experts provides an effective trade-off between capturing global chemical knowl-edge common across elements and preserving sufficient capacity for element-specific specialization. When adopting a configuration in which half of the activated experts are shared, the normalized energy (force) MAEs for K = 2, 4, 6, and 8 are reduced to 0.939 (0.913), 0.771 (0.779), 0.740 (0.747), and 0.673 (0.715), respectively. In stark contrast to the no–shared-expert setting, the accuracy improvement in this regime does not plateau at K = 8, but instead continues to scale favorably with increasing model capacity. These results highlight that shared experts are indispensable for effectively exploiting larger expert pools and for achieving stable, mono-tonic performance scaling. Importantly, for a fixed number of activated experts K, increasing the number of shared experts does not alter the total parame-ter count or computational cost. Consequently, the observed accuracy gains from shared experts are achieved at essentially no additional computational overhead. 
+
+# 3.2 MoE-E vs MoLE-E 
+
+Figure 2(b) presents a comparison between the MoE-E and MoLE-E architectures, both of which maintain an identical parameter count. The fundamental distinc-tion between these two designs lies in the sequencing of the nonlinear transformation relative to expert aggregation: MoE-E applies the activation function locally within each expert before mixing their out-puts, whereas MoLE-E performs a linear aggregation of expert contributions followed by a global activa-tion function, Furthermore, while MoE-E utilizes a sparse activation of K experts, MoLE-E employs a dense approach where all experts are activated. For a controlled comparison, all MoE-E configurations are evaluated with the same number of activated experts (K = 4). The normalized energy and force accuracies of the MoE-E and MoLE-E architectures are reported as functions of the total number of experts N .Despite the architectural difference between the sparsely activated MoE-E and the fully activated MoLE-E, both models show comparable performance without shared experts. Across various expert scales, the discrepancies in normalized energy and force MAE are negligible, staying within 0 .02 and 0 .03 respec-tively. In both architectures, substantial performance gains are observed when increasing the number of 
+
+5（b）
+
+（a）Fig. 2 : Performance benchmarks on the OMol25 dataset. (a) Impact of shared expert allocation. Nor-malized energy and force MAE for MoE-E are shown as a function of the shared expert ratio, using a total pool of 64 experts. The x-axis denotes the proportion of shared experts (e.g., (2 /6) indicates 2 shared experts among 6 total activated experts). Background shading demarcates different K activation settings for MoE-E. The horizontal dashed line provides a performance baseline corresponding to a stan-dard 6-layer DPA3 model. See Supplementary Table 2 for detailed values. (b) Scaling with total expert count: Comparative analysis of normalized energy (left) and force (right) MAE as a function of the total number of experts. Two baselines are provided: the standard 6-layer DPA3 model and a “4 × Params” variant achieved by doubling the hidden dimension of the 6-layer DPA3 model. See Supplementary Table 3 for detailed values.         
+
+> experts from N= 4 to N= 16; however, the improve-ment saturates beyond N= 16, with no significant additional accuracy gains when further increasing the expert count to N= 64. The integration of shared experts yields markedly different gains for the two architectures. When two shared experts are introduced, the MoLE-E variant exhibits a reduction in normalized energy MAE of approximately 0 .11, accompanied by a decrease in
+
+6normalized force MAE ranging from 0.06 to 0.09. Although the force accuracy shows a slight improve-ment when increasing the total number of experts from N = 16 to N = 64, the corresponding energy accuracy displays a reversed trend increasing from 0.846 to 0.865, partially offsetting the overall per-formance gain. In contrast, MoE-E demonstrates a substantially stronger response to the introduction of shared experts. For the same transition from zero to two shared experts, MoE-E achieves a larger reduc-tion in normalized energy MAE, ranging from 0 .18 to 0 .23, and a decrease in normalized force MAE of approximately 0 .13 to 0 .14. Moreover, the accuracy of MoE-E continues to improve as the number of experts increases from N = 16 to N = 64, indicating that the MoE-E architecture can effectively leverage a larger expert pool to achieve further performance gains. 
+
+# 3.3 Parameter Efficiency of MoE-E 
+
+Since the MoE-E model with four activated experts (K = 4) utilizes four times the activated parameters of the baseline, we established a widened dense base-line for a fair comparison. This “4 × Params Baseline” was constructed by doubling the dimensionality of all hidden features to match the parameter scale. This 4× Params baseline, yields improvements of 0 .181 and 0.169 in normalized energy and force accuracy, respec-tively, relative to the standard model (Fig. 2(b)). As the total number of experts increases, the MoE-E model with two shared experts consistently outper-forms the widened baseline. In particular, with N =64 experts, MoE-E achieves additional gains of 0 .052 and 0 .048 in energy and force precision, respectively. These results demonstrate that the sparse-activation strategy in MoE-E provides greater expressive capac-ity than conventional width-based scaling, enabling higher predictive accuracy than dense architectural scaling under comparable computational budgets. 
+
+# 3.4 Element-wise vs Global routing 
+
+We perform a comparative analysis of element-wise routing (MoE-E and MoLE-E) and their global coun-terparts (MoE-G and MoLE-G) on the OMol25 dataset [52]. This breadth provides a stringent bench-mark for evaluating the stability and accuracy of different expert-routing strategies across a highly het-erogeneous chemical space. Table 1 summarizes the comparative performance of global and element-wise routing architectures across all architectural variants. In these experiments, we vary the total number of experts N while fixing the number of activated experts to K = 4, among which two are shared experts. As shown in Table 1, the MoE-G architecture suffers from catastrophic train-ing failure: its energy and force MAEs exhibit severe numerical instability and fail to converge. As a result, its accuracy is not reported. For the remaining vari-ants (MoE-E, MoLE-E, and MoLE-G), the energy and force MAEs are reported after normalization by the corresponding MAEs of the baseline standard DPA3 model. Overall, increasing the number of experts from 
+
+N = 4 to N = 16 consistently improves both energy and force accuracy across all stable variants. How-ever, further increasing the number of experts from 
+
+N = 16 to N = 64 yields diminishing returns: per-formance gains saturate for MoE-E, while accuracy degrades for MoLE-G and for the energy prediction of MoLE-E. Comparing different mixture designs, MoE-E consistently outperforms both MoLE variants across all expert scales. Moreover, MoLE-G systematically underperforms its element-wise counterpart MoLE-E, with MoLE-E achieving approximately 5%–10% lower MAEs in both energy and force predictions across all values of N . Taken together, these results demonstrate that element-wise routing is structurally superior to global routing and is essential for the stable and effective integration of MoE architectures into MLIPs. 
+
+# 3.5 Performance on Multiple Datasets 
+
+To comprehensively evaluate the robustness and gen-eralization capability of the proposed MoE-based interatomic potentials, we benchmark the models on several widely recognized datasets, including OMol25 [52], OMat24 [53], and OC20M [30]. These datasets collectively span a broad range of chemical environments and material systems, including organic molecules, extended solid-state materials, and cat-alytic surface reactions, thereby enabling a representa-tive assessment across multiple domains of computa-tional chemistry and materials science. The inclusion of these diverse benchmarks allows for a rigorous evaluation of model performance under heterogeneous conditions and highlights the transferability, stability, and cross-domain generalization capability of the MoE architecture in realistic applications. Fig. 3 summarizes model performance across mul-tiple benchmark datasets. For MoE-E, we employ K =6 activated experts, among which three are shared, with the total number of experts fixed at N = 64. Our evaluation strategy is designed to explicitly high-light the advantages of MoE-E by comparing it against two distinct configurations. First, to control for the total parameter count, we evaluate it against MoLE-E, which maintains an identical architecture to MoE-E model, specifically configured with 3 shared experts 
+
+7Model Routing Normalized Energy MAE Normalized Force MAE 
+
+4 Experts 16 Experts 64 Experts 4 Experts 16 Experts 64 Experts MoE Element-wise (E) 0.814 0.780 0.771 0.809 0.793 0.779 Global (G) N/A N/A N/A N/A N/A N/A MoLE Element-wise (E) 0.913 0.847 0.866 0.914 0.857 0.847 Global (G) 0.981 0.946 0.952 0.965 0.936 0.950 
+
+Table 1 : Normalized Energy and Force MAE values. The results compare the performance of Global (G) vs. Element-wise (E) routing across different expert counts. All MAEs are normalized against a 6-layer DPA3 baseline; thus, values represent relative error ratios where a lower score signifies superior performance relative to the baseline. See Supplementary Table 4 for detailed values. 
+
+Fig. 3 : Performance benchmarks for normalized energy (left) and force (right) predictions across three datasets: OMol25, OMat24, and OC20M. The baseline corresponds to the standard DPA3 model, while the ”6 × Params” is scaled to six times the total parameters of the baseline via wider hidden layers. The MoLE-E model employs 64 experts with 3 shared experts, and the MoE-E model uses 64 experts with 3 shared experts out of K = 6 activated experts. See Supplementary Table 5 for detailed values.             
+
+> out of a total of 64 experts. Second, we introduce a “6 ×Params” model to match the activated parame-ter count of MoE-E. This model is scaled to six times the total size of the baseline via wider hidden layers, allowing us to compare performance under equivalent computational budgets. As shown in Fig. 3, all enhanced models—MoE-E, MoLE-E, and the 6 ×Params model—achieve substan-tial improvements over the baseline model (indicated by the horizontal line at 1.0) across all three datasets. Notably, MoE-E consistently outperforms MoLE-Eacross all evaluated benchmarks, demonstrating its robust generalization capabilities. Specifically, we observed a reduction in normalized Energy MAE by 0.10, 0.02, and 0.03, complemented by a decrease in normalized Force MAE of 0.10, 0.03, and 0.04 on the OMol25, OMat24, and OC20M datasets, respec-tively. These improvements underscore the superiority
+
+8of nonlinear expert aggregation over linear alternatives in capturing complex interatomic potentials. Further-more, MoE-E even surpasses a dense baseline with 6 ×
+
+the parameter count, yielding additional error reduc-tions of up to 0.07 in Energy and 0.05 in Force. This highlights the exceptional parameter efficiency inherent to the MoE-E architecture. Furthermore, we observe that the performance gains yielded by the enhanced models exhibit signif-icant heterogeneity across different datasets. Specif-ically, the MoE-E model manifests substantial pre-dictive advantages on the OMol25 (molecular) and OC20M (catalytic) benchmarks. However, its efficacy becomes more marginal on the OMat24 (solid-state) dataset, where only a moderate reduction in MAE is recorded. This divergence in performance is primarily ascribed to the inductive biases inherent in the DPA3 backbone. 
+
+# 3.6 Experts weighting Distribution Patterns 
+
+To gain deeper insights into the interpretability of the MoE-E model, we investigate the distribution patterns of experts weight as defined by the projection Weui.This analysis aims to elucidate how the routing mecha-nism allocates learning responsibilities among experts according to elemental characteristics. We conduct this analysis on the OMat24 dataset, which provides an ideal testbed due to its extensive coverage of 86 elements with a relatively uniform distribution across the periodic table. Principal component analysis (PCA) of the expert-weighting distributions reveals highly efficient dimen-sionality reduction, with the first two principal com-ponents accounting for 93 .57% of the total explained variance. Figure 4 presents the projected expert distri-butions across chemical species, revealing systematic organization in the PCA space [44, 54]. As shown in Fig. 4(a), which illustrates the global distribution of all elements, clear chemical groupings emerge: lan-thanides and actinides cluster on the left side of the PCA manifold, while transition metals predominantly occupy the central region. Figure 4(b) highlights the alkali metals (Group I), alkaline-earth metals (Group II), and noble gases (Group VIII), while Fig. 4(c) focuses on elements from Groups III to VII together with hydrogen. A consistent pattern emerges across chemical groups: elements within the same group arrange themselves diagonally from the top-left to the bottom-right of the PCA space. This spatial ordering correlates strongly with increasing atomic number, with lighter elements located in the top-left region and heavier elements positioned toward the bottom-right. Along the period direction, as shown in Fig. 4(c), elements with pronounced non-metallic character exhibit a systematic shift from the top-right toward the bottom-left of the PCA space with increasing atomic number. In contrast, strongly metallic elements follow the opposite orientation, extending from the bottom-left (Group I) to the top-right (Group II), as visualized in Fig. 4(b). Elements with intermedi-ate chemical behavior—particularly those in Groups III (Al, Ga, In, Tl) and IV (Si, Ge, Sn, Pb)—display overlapping distributions in the PCA embedding (Fig. 4(c)). Noble gases, although electronically dis-tinct, constitute an exception: their embeddings par-tially overlap with those of intermediate elements, which may reflect their relatively limited representa-tion in the OMat24 dataset. As illustrated in Fig. 4(d), transition metals are predominantly concentrated near the center of the PCA space. Within this cluster, elements belonging to the same period exhibit a clear diagonal alignment: as the group number increases, their distributions shift from the top-right toward the bottom-left. This trend is further reflected by the color gradient from dark to light green, capturing the systematic evolution of their electronic characteristics. These structured distributions demonstrate that the MoE-E router effectively encodes elemental characteristics in a manner consistent with fun-damental physicochemical principles. The observed organization—group-wise diagonals, periodic progres-sions, and the distinct clustering of transition met-als and f -block elements—indicates that the model internalizes a chemically meaningful representation of the periodic table. This interpretable, element-wise task specialization provides a clear mechanistic explanation for the superior accuracy and general-ization of MoE-E. By explicitly leveraging elemental identity to guide expert routing, the model captures sharper distinctions among chemically diverse species while allocating expert capacity more efficiently across compositional space. Such a design bridges learned representations with established chemical intuition, offering a principled and scalable pathway toward more accurate, transferable, and interpretable MLIPs. 
+
+# 4 Conclusion 
+
+In this work, we present a systematic investigation of MoE architectures for MLIPs and demonstrate that sparsely activated expert scaling provides an effective pathway for improving predictive accuracy beyond conventional dense model enlargement. By integrating 
+
+9(a) 
+
+(b)  (c)  (d) Fig. 4 : Expert weighting distribution analysis via PCA for various elemental groups. (a) Overview of the general distribution for all elements. (b) Distribution patterns for alkali metals, alkaline earth metals, and noble gases. (c) Regional distribution of p-block groups except noble gas, specifically Boron (Group 13) through Halogen (Group 17) elements.(d) Spatial clustering of transition metal elements. 
+
+MoE designs into the DPA3 framework, we demon-strate that sparse activation, shared-expert mecha-nisms, nonlinear expert specialization, and element-wise expert routing collectively constitute the key ingredients enabling stable and scalable performance gains. Across diverse benchmarks—including OMol25, OMat24, and OC20M—the proposed element-wise MoE architecture consistently achieves substantial improvements in both energy and force prediction accuracy, while also exhibiting interpretable expert specialization patterns that align with periodic chem-ical trends. Our analysis provides several conceptual insights into MoE design choices for scaling atomistic founda-tion models. First, the introduction of sparse activa-tion together with shared experts enables the learning of transferable representations of common interatomic interactions, allowing efficient utilization of large expert pools. Second, nonlinear expert aggregation delivers greater representational capacity than linear mixture formulations, underscoring the importance of nonlinear specialization for accurately modeling com-plex potential-energy surfaces. Third, element-wise routing is essential for stable training and effective specialization in chemically heterogeneous systems, consistently outperforming global routing strategies that may introduce optimization instability. Collec-tively, these findings establish MoE-based conditional computation as a principled alternative to dense parameter scaling for next-generation large atomistic models. Despite these advances, an important limitation of the present study is that the current implementa-tion does not yet exploit a fully distributed training 
+
+10 and inference framework specifically optimized for sparse expert parallelism. While MoE architectures are intrinsically well-suited for distributed environ-ments and offer substantial theoretical scalability advantages over dense scaling, realizing these benefits in practice requires dedicated expert-parallel system design, communication scheduling, and load-balancing strategies. Future work will therefore focus on develop-ing large-scale distributed MoE training and inference pipelines to unlock the full computational efficiency and scaling potential of expert-based atomistic foun-dation models. Overall, this work demonstrates that MoE archi-tectures provide a scalable and physically grounded paradigm for expanding the expressive capacity of MLIP, offering a promising foundation for increas-ingly accurate and transferable simulations across the chemical and materials sciences. 
+
+Data Availability. All data supporting the find-ings of this study are available within the Supplemen-tary Information 
+
+Acknowledgments. Computational resources utilized in this work were provided by the AI for Science. The work is supported by the National Key R&D Program of China (Grant No. 2022YFA1004300) and the National Natural Science Foundation of China (Grant Nos. 12525113 and 12561160120). 
+
+Competing Interests. The authors declare no competing interests. 
+
+Author Contribution. Y.L., D.Z., A.P., H.W. conceived the idea of this work, designed the model structure, and implemented the model. The experi-ments were mainly designed and performed by Y.L. Other authors performed data collection and model tests on different systems. All authors contributed to the discussions and edited the manuscript. 
+
+# References 
+
+[1] Behler, J., Parrinello, M.: Generalized neural-network representation of high-dimensional potential-energy surfaces. Physical review let-ters 98 (14), 146401 (2007) [2] Bart´ ok, A.P., Payne, M.C., Kondor, R., Cs´ anyi, G.: Gaussian approximation poten-tials: The accuracy of quantum mechanics, without the electrons. Physical review letters 
+
+104 (13), 136403 (2010) [3] Rupp, M., Tkatchenko, A., M¨ uller, K.-R., Von Lilienfeld, O.A.: Fast and accurate mod-eling of molecular atomization energies with machine learning. Physical review letters 
+
+108 (5), 058301 (2012) [4] Zhang, L., Han, J., Wang, H., Car, R., E, W.: Deep potential molecular dynamics: a scal-able model with the accuracy of quantum mechanics. Physical review letters 120 (14), 143001 (2018) [5] Sch¨ utt, K.T., Sauceda, H.E., Kindermans, P.-J., Tkatchenko, A., M¨ uller, K.-R.: Schnet–a deep learning architecture for molecules and materials. The Journal of chemical physics 
+
+148 (24) (2018) [6] Gasteiger, J., Groß, J., G¨ unnemann, S.: Directional message passing for molecu-lar graphs. arXiv preprint arXiv:2003.03123 (2020) [7] Batzner, S., Musaelian, A., Sun, L., Geiger, M., Mailoa, J.P., Kornbluth, M., Molinari, N., Smidt, T.E., Kozinsky, B.: E (3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials. Nature com-munications 13 (1), 2453 (2022) [8] Deringer, V.L., Caro, M.A., Cs´ anyi, G.: Machine learning interatomic potentials as emerging tools for materials science. Advanced Materials 31 (46), 1902765 (2019) [9] Unke, O.T., Chmiela, S., Sauceda, H.E., Gastegger, M., Poltavsky, I., Schutt, K.T., Tkatchenko, A., Muller, K.-R.: Machine learning force fields. Chemical Reviews 
+
+121 (16), 10142–10186 (2021) [10] Mishin, Y.: Machine-learning interatomic potentials for materials science. Acta Materi-alia 214 , 116980 (2021) [11] ˇC´ ıˇ zek, J.: On the correlation problem in atomic and molecular systems. calculation of wavefunction components in ursell-type expansion using quantum-field theoretical methods. The Journal of Chemical Physics 
+
+45 (11), 4256–4266 (1966) 11 [12] White, S.R.: Density matrix formulation for quantum renormalization groups. Physical review letters 69 (19), 2863 (1992) [13] Ceperley, D.M., Alder, B.J.: Ground state of the electron gas by a stochastic method. Physical review letters 45 (7), 566 (1980) [14] Hohenberg, P., Kohn, W.: Inhomogeneous electron gas. Physical review 136 (3B), 864 (1964) [15] Kohn, W., Sham, L.J.: Self-consistent equations including exchange and correla-tion effects. Physical review 140 (4A), 1133 (1965) [16] Andolina, C.M., Saidi, W.A.: Highly trans-ferable atomistic machine-learning potentials from curated and compact datasets across the periodic table. Digital Discovery 2(4), 1070–1077 (2023) [17] Perdew, J.P., Burke, K., Ernzerhof, M.: Gen-eralized gradient approximation made simple. Physical review letters 77 (18), 3865 (1996) [18] Becke, A.D.: Density-functional thermochem-istry. iii. the role of exact exchange. The Journal of chemical physics 98 (7), 5648–5652 (1993) [19] Badaoui, M., Buigues, P.J., Berta, D., Man-dana, G.M., Gu, H., Foldes, T., Dickson, C.J., Hornak, V., Kato, M., Molteni, C., 
+
+et al. : Combined free-energy calculation and machine learning methods for understanding ligand unbinding kinetics. Journal of chemi-cal theory and computation 18 (4), 2543–2555 (2022) [20] Zeng, J., Tao, Y., Giese, T.J., York, D.M.: Qd π: A quantum deep potential interaction model for drug discovery. Journal of chemi-cal theory and computation 19 (4), 1261–1275 (2023) [21] Smith, J.S., Isayev, O., Roitberg, A.E.: Ani-1: an extensible neural network potential with dft accuracy at force field computational cost. Chemical science 8(4), 3192–3203 (2017) [22] Rufa, D.A., Bruce Macdonald, H.E., Fass, J., Wieder, M., Grinaway, P.B., Roit-berg, A.E., Isayev, O., Chodera, J.D.: Towards chemical accuracy for alchemical free energy calculations with hybrid physics-based machine learning/molecular mechanics potentials. BioRxiv, 2020–07 (2020) [23] Bart´ ok, A.P., Kermode, J., Bernstein, N., Cs´ anyi, G.: Machine learning a general-purpose interatomic potential for silicon. Physical Review X 8(4), 041048 (2018) [24] Deringer, V.L., Caro, M.A., Cs´ anyi, G.: A general-purpose machine-learning force field for bulk and nanostructured phosphorus. Nature communications 11 (1), 5461 (2020) [25] Wen, T., Zhang, L., Wang, H., Srolovitz, D.J., 
+
+et al. : Deep potentials for materials science. Materials Futures 1(2), 022601 (2022) [26] Jia, W., Wang, H., Chen, M., Lu, D., Lin, L., Car, R., Weinan, E., Zhang, L.: Pushing the limit of molecular dynamics with ab initio accuracy to 100 million atoms with machine learning. In: SC20: International Conference for High Performance Computing, Network-ing, Storage and Analysis, pp. 1–14 (2020). IEEE [27] Machaka, R.: Machine learning-based predic-tion of phases in high-entropy alloys. Com-putational Materials Science 188 , 110244 (2021) [28] Yang, M., Raucci, U., Parrinello, M.: Ammo-nia decomposition on lithium imide surfaces: a new paradigm in heterogeneous catalysis (2022) [29] Car, R., Parrinello, M.: Unified approach for molecular dynamics and density-functional theory. Physical review letters 55 (22), 2471 (1985) [30] Chanussot, L., Das, A., Goyal, S., Lavril, T., Shuaibi, M., Riviere, M., Tran, K., Heras-Domingo, J., Ho, C., Hu, W., et al. : Open catalyst 2020 (oc20) dataset and community challenges. Acs Catalysis 11 (10), 6059–6072 (2021) 12 [31] Batatia, I., Kovacs, D.P., Simm, G., Ortner, C., Cs´ anyi, G.: Mace: Higher order equiv-ariant message passing neural networks for fast and accurate force fields. Advances in neural information processing systems 35 ,11423–11436 (2022) [32] Park, Y., Kim, J., Hwang, S., Han, S.: Scalable parallel algorithm for graph neural network interatomic potentials in molecular dynamics simulations. Journal of chemical theory and computation 20 (11), 4857–4868 (2024) [33] Zhang, D., Bi, H., Dai, F.-Z., Jiang, W., Liu, X., Zhang, L., Wang, H.: Pretraining of attention-based deep learning potential model for molecular simulation. npj Compu-tational Materials 10 (1), 94 (2024) [34] Zhang, D., Liu, X., Zhang, X., Zhang, C., Cai, C., Bi, H., Du, Y., Qin, X., Peng, A., Huang, J., et al. : Dpa-2: a large atomic model as a multi-task learner. npj Computational Materials 10 (1), 293 (2024) [35] Fu, X., Wood, B.M., Barroso-Luque, L., Levine, D.S., Gao, M., Dzamba, M., Zit-nick, C.L.: Learning smooth and expressive interatomic potentials for physical property prediction. arXiv preprint arXiv:2502.12147 (2025) [36] Yin, B., Wang, J., Du, W., Wang, P., Ying, P., Jia, H., Zhang, Z., Du, Y., Gomes, C., Duan, C., et al. : Alphanet: scaling up local-frame-based neural network inter-atomic potentials. npj Computational Mate-rials 11 (1), 332 (2025) [37] Wood, B.M., Dzamba, M., Fu, X., Gao, M., Shuaibi, M., Barroso-Luque, L., Abdel-maqsoud, K., Gharakhanyan, V., Kitchin, J.R., Levine, D.S., et al.: Uma: A family of universal models for atoms. arXiv preprint arXiv:2506.23971 (2025) [38] Shoghi, N., Kolluru, A., Kitchin, J.R., Ulissi, Z.W., Zitnick, C.L., Wood, B.M.: From molecules to materials: Pre-training large generalizable models for atomic property prediction. arXiv preprint arXiv:2310.16802 (2023) [39] Kaplan, J., McCandlish, S., Henighan, T., Brown, T.B., Chess, B., Child, R., Gray, S., Radford, A., Wu, J., Amodei, D.: Scaling laws for neural language models. arXiv preprint arXiv:2001.08361 (2020) [40] Hoffmann, J., Borgeaud, S., Mensch, A., Buchatskaya, E., Cai, T., Rutherford, E., Casas, D.d.L., Hendricks, L.A., Welbl, J., Clark, A., et al.: Training compute-optimal large language models. arXiv preprint arXiv:2203.15556 (2022) [41] Zhang, D., Peng, A., Cai, C., Li, W., Zhou, Y., Zeng, J., Guo, M., Zhang, C., Li, B., Jiang, H., et al.: Graph neural network model for the era of large atomistic models. arXiv preprint arXiv:2506.01686 (2025) [42] Narayanan, D., Shoeybi, M., Casper, J., LeGresley, P., Patwary, M., Korthikanti, V., Vainbrand, D., Kashinkunti, P., Bernauer, J., Catanzaro, B., et al. : Efficient large-scale lan-guage model training on gpu clusters using megatron-lm. In: Proceedings of the Interna-tional Conference for High Performance Com-puting, Networking, Storage and Analysis, pp. 1–15 (2021) [43] Shoeybi, M., Patwary, M., Puri, R., LeGres-ley, P., Casper, J., Catanzaro, B.: Megatron-lm: Training multi-billion parameter lan-guage models using model parallelism. arXiv preprint arXiv:1909.08053 (2019) [44] Shazeer, N., Mirhoseini, A., Maziarz, K., Davis, A., Le, Q., Hinton, G., Dean, J.: Outrageously large neural networks: The sparsely-gated mixture-of-experts layer. arXiv preprint arXiv:1701.06538 (2017) [45] Fedus, W., Zoph, B., Shazeer, N.: Switch transformers: Scaling to trillion parame-ter models with simple and efficient spar-sity. Journal of Machine Learning Research 
+
+23 (120), 1–39 (2022) [46] Lepikhin, D., Lee, H., Xu, Y., Chen, D., Firat, O., Huang, Y., Krikun, M., Shazeer, N., Chen, Z.: Gshard: Scaling giant models 13 with conditional computation and automatic sharding. arXiv preprint arXiv:2006.16668 (2020) [47] Zoph, B., Bello, I., Kumar, S., Du, N., Huang, Y., Dean, J., Shazeer, N., Fedus, W.: St-moe: Designing stable and transfer-able sparse expert models. arXiv preprint arXiv:2202.08906 (2022) [48] Du, N., Huang, Y., Dai, A.M., Tong, S., Lep-ikhin, D., Xu, Y., Krikun, M., Zhou, Y., Yu, A.W., Firat, O., et al. : Glam: Efficient scaling of language models with mixture-of-experts. In: International Conference on Machine Learning, pp. 5547–5569 (2022). PMLR [49] Cai, W., Jiang, J., Wang, F., Tang, J., Kim, S., Huang, J.: A survey on mixture of experts in large language models. IEEE Transactions on Knowledge and Data Engineering (2025) [50] Artetxe, M., Bhosale, S., Goyal, N., Mihaylov, T., Ott, M., Shleifer, S., Lin, X.V., Du, J., Iyer, S., Pasunuru, R., et al.: Efficient large scale language modeling with mixtures of experts. arXiv preprint arXiv:2112.10684 (2021) [51] Dai, D., Deng, C., Zhao, C., Xu, R., Gao, H., Chen, D., Li, J., Zeng, W., Yu, X., Wu, Y., et al.: Deepseekmoe: Towards ulti-mate expert specialization in mixture-of-experts language models. arXiv preprint arXiv:2401.06066 (2024) [52] Levine, D.S., Shuaibi, M., Spotte-Smith, E.W.C., Taylor, M.G., Hasyim, M.R., Michel, K., Batatia, I., Cs´ anyi, G., Dzamba, M., East-man, P., et al.: The open molecules 2025 (omol25) dataset, evaluations, and models. arXiv preprint arXiv:2505.08762 (2025) [53] Barroso-Luque, L., Shuaibi, M., Fu, X., Wood, B.M., Dzamba, M., Gao, M., Rizvi, A., Zitnick, C.L., Ulissi, Z.W.: Open materi-als 2024 (omat24) inorganic materials dataset and models. arXiv preprint arXiv:2410.12771 (2024) [54] Clark, K., Khandelwal, U., Levy, O., Man-ning, C.D.: What does bert look at? an analysis of bert’s attention. arXiv preprint arXiv:1906.04341 (2019) 14 Contents 1 Hyperparameters and System Configurations 12 Energy and Force MAE value 1Supplementary Note 1. Hyperparameters and System Configurations 
+
+The baseline 6-layer DPA3 model utilizes hyperparameters summarized in Table 1, following the standard configuration established in the DPA3 paper [1]. However, batch sizes were adjusted according to the dataset: a batch size of 256 was used for OMol25, while 128 was used for both OMat24 and OC20M.   
+
+> Supplementary Table 1 |Hyper parameters for 6-layer DPA3 model.
+
+Hyper-parameters baseline 
+
+Number of update layers 𝐿 6Maximum graph order 𝑘 2Dimension of vertex features in 𝐺 (0) 128 Dimension of vertex features in 𝐺 (1) 64 Dimension of vertex features in 𝐺 (2) 32 Cutoff radius in 𝐺 (1) Å 6.0 Cutoff radius in 𝐺 (2) Å 4.0 Batch size 128/256 Optimizer AdamW Learning rate scheduling Exp Maximum learning rate 1e-3 Minimum learning rate 1e-5 Number of training steps 1M Activation Function Threshold 10.0 Loss function MSE The model dimensions are scaled to create larger baselines: for the “ 4× params baseline”, the dimensions of 𝐺 (0) , 𝐺 (1) , and 𝐺 (2) 
+
+are doubled from 128, 64, and 32 to 256, 128, and 64, respectively. Similarly, the “ 6× params baseline” is constructed by expanding these dimensions to 314, 156, and 78. The hyperparameters for the MoE and MoLE models are identical to the baseline model. Further implementation details specific to the MoE and MoLE architectures are provided in the main text. 
+
+Supplementary Note 2. Energy and Force MAE value 
+
+While the majority of results in the main text are reported as normalized MAEs, this section provides the absolute MAE values for direct comparison. Specifically, Table 2 details the energy and force MAEs for the MoE-E model across different numbers of activated experts 𝐾 , corresponding to the trends visualized in Fig. 2(a). Similarly, Table 3 summarizes the performance metrics for both MoLE-E and MoE-E. This table provides the numerical data supporting the trends visualized in Fig. 2(b) of the main text. Table 4 compares Global and Element-wise routing, offering the specific values corresponding to the summary in Table 1. Finally, Table 5 presents the energy and force MAEs for different datasets, corresponding to the results visualized in Fig.3. 1Supplementary Table 2 | Performance comparison of different configurations with varying numbers of shared experts. 
+
+MoE-E Shared Experts Energy MAE (eV ) Force MAE (eV Å−1 )Baseline – 8.43e-3 5.89e-2 
+
+𝐾 = 2 0 9.12e-3 5.68e-2 1 7.92e-3 5.37e-2 
+
+𝐾 = 4 
+
+0 8.14e-3 5.41e-2 2 6.50e-3 4.59e-2 3 6.47e-3 4.65e-2 
+
+𝐾 = 6 
+
+0 7.78e-3 5.31e-2 2 5.99e-3 4.51e-2 3 6.24e-3 4.40e-2 4 6.16e-3 4.41e-2 
+
+𝐾 = 8 
+
+0 7.81e-3 5.30e-2 2 6.15e-3 4.47e-2 4 5.68e-3 4.21e-2 6 5.54e-3 4.13e-2   
+
+> Supplementary Table 3 |Performance comparison of different configurations with varying numbers of shared experts.
+
+Structure Share Experts Experts Energy MAE (eV ) Force MAE (eV Å−1 )Baseline – – 8.43e-3 5.89e-2 4× params Baseline – – 6.90e-3 4.89e-2 MoLE-E 04 8.65e-3 5.74e-2 16 8.10e-3 5.52e-2 64 8.29e-3 5.50e-2 24 7.70e-3 5.38e-2 16 7.14e-3 5.04e-2 64 7.30e-3 4.99e-2 
+
+𝐾 = 4 MoE-E 04 8.80e-3 5.59e-2 16 8.12e-3 5.43e-2 64 8.14e-3 5.41e-2 24 6.86e-3 4.76e-2 16 6.58e-3 4.67e-2 64 6.50e-3 4.59e-2   
+
+> Supplementary Table 4 |Energy and Force MAE values. The results compare the performance of Global (G) vs. Element-wise (E) routing across different expert counts.
+
+Model Routing Energy MAE (eV) Force MAE (eV Å −1 )4 Experts 16 Experts 64 Experts 4 Experts 16 Experts 64 Experts MoLE Global (G) 8.27e-3 7.98e-3 8.03e-3 5.68e-2 5.51e-2 5.59e-2 Element-wise (E) 7.70e-3 7.14e-3 7.30e-3 5.38e-2 5.04e-2 4.99e-2 MoE Global (G) N/A N/A N/A N/A N/A N/A Element-wise (E) 6.86e-3 6.58e-3 6.50e-3 4.76e-2 4.67e-2 4.59e-2 2Supplementary Table 5 | Performance comparison: Model across different datasets 
+
+OMol25 OMat24 OC20M Model Energy MAE Force MAE Energy MAE Force MAE Energy MAE Force MAE Baseline 0.0084 0.0589 0.0219 0.1078 0.0066 0.0775 6× Params 0.0065 0.0461 0.0200 0.1006 0.0053 0.0667 MoLE-E 0.0071 0.0501 0.0195 0.1019 0.0050 0.0661 MoE-E 0.0062 0.0440 0.0191 0.0983 0.0048 0.0630 
+
+> * Energy MAE in eV, Force MAE in eV/Å.
+
+Supplementary References 
+
+[1] Duo Zhang, Anyang Peng, Chun Cai, Wentao Li, Yuanchang Zhou, Jinzhe Zeng, Mingyu Guo, Chengqian Zhang, Bowen Li, Hong Jiang, et al. Graph neural network model for the era of large atomistic models. arXiv preprint arXiv:2506.01686 , 2025. 3

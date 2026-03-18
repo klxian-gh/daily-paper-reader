@@ -1,0 +1,434 @@
+Title: Nuclear-Electronic Quantum Dynamics in a Plasmonic Nanocavity
+
+URL Source: https://arxiv.org/pdf/2603.12373v1
+
+Published Time: Mon, 16 Mar 2026 00:05:35 GMT
+
+Number of Pages: 37
+
+Markdown Content:
+# Nuclear–Electronic Quantum Dynamics in a Plasmonic Nanocavity 
+
+# Jonathan H. Fetherolf ,† Tao E. Li ,‡ and Sharon Hammes-Schiffer ∗,†
+
+†Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+‡Department of Physics and Astronomy, University of Delaware, Newark, DE 19716, USA 
+
+E-mail: shs566@princeton.edu 
+
+Abstract 
+
+Plasmonic nanocavities are a promising platform for strong light–matter coupling and enhanced spectroscopies at the single-molecule level. These nanoscale environ-ments are challenging to model due to their strongly multimodal character and short cavity lifetimes. Herein, we study the effects of these environments using real-time nuclear–electronic orbital time-dependent density functional theory (RT-NEO-TDDFT) coupled to multiple classical cavity modes in a manner that includes cavity loss. In RT-NEO-TDDFT, the quantum mechanical densities of all electrons and specified nuclei, typically protons, are propagated in real time. We show that a cavity with many modes at different frequencies can be used to probe and modify the nuclear–electronic quantum dynamics of chemical systems. Ultrafast excited-state proton transfer reactions can be probed through the time- and energy-resolved cavity emission of a multimode cavity. Under strong coupling conditions, the cavity can modify the dynamics, in some cases suppressing proton transfer and exhibiting Rabi-like oscillations of the cavity emis-sion due to polariton formation. Utilizing the spectral density for an experimentally relevant nanoparticle-on-mirror single-molecule cavity, we show that an excited-state proton transfer system can evolve into resonance with the cavity even when initially 
+
+1
+
+> arXiv:2603.12373v1 [physics.chem-ph] 12 Mar 2026
+
+out of resonance with the dominant cavity peak. In this case, tuning the dominant cavity peak to be resonant with the electronic transition leads to polariton formation for a small collection of molecules. The RT-NEO framework with multimode cavities enables the efficient simulation of chemical reactions in physically realistic electromag-netic environments, providing fundamental insights into the dynamics and associated spectroscopic signatures. 
+
+# 1 Introduction 
+
+Plasmonic nanocavities are nanoscale optical antennae configured to achieve extreme elec-tric field enhancement in a confined region of space. 1,2 Because they rely on localized surface plasmon resonances, rather than standing electromagnetic waves as in micron-scale Fabry-Perot optical cavities, 3 plasmonic nanocavities are able to concentrate fields into dimensions much smaller than the resonant wavelength. This nanoscale localization has allowed the experimental realization of polaritons, hybrid light–matter states achieved through strong coupling, on the few- or even single-molecule scale. 4–6 In addition to the strong-coupling regime, nanocavities have been widely used for a variety of enhanced spectroscopy techniques, including single-molecule detection and other nanoscale sensing applications. 7–11 These ad-vances underscore the need for theoretical treatments that faithfully capture the underlying microscopic processes taking place in both the intermediate- and strong-coupling regimes. Molecular polaritons have garnered widespread theoretical and experimental interest in recent years due to their potential for controlling molecular properties via hybridization with light. 12–17 For example, experimental evidence suggests modified thermal 18–20 and pho-tochemical 21–24 reaction rates, as well as enhanced charge carrier 25–27 and exciton 28–30 trans-port under strong coupling. The vast majority of observed effects take place in the collective regime, in which the light–matter coupling is strengthened via interaction with a relatively large ensemble of molecules. Specifically, when N two-level emitters are coupled to an elec-tromagnetic cavity mode as in the Tavis-Cummings model, 31,32 the light–matter coupling 2scales as pN/V , where V is the effective cavity volume. Based on this general scaling and the relative ease of procurement and manipulation of micron-scale optical cavity se-tups, it is therefore unsurprising that realizations of molecular polaritons have been largely in this regime. This pN/V scaling also demonstrates that, given a small enough cavity volume V , such as those in the sub-wavelength regime of plasmonic nanocavities, strong coupling can be achieved with only a few or even single molecules. However, experimental and theoretical studies of nanocavity setups are complicated by significantly shorter cavity lifetimes (i.e., they are much more lossy) than micron-scale optical cavities, and the cavity field (i.e., the spectral density) is strongly multimodal in character. 33–35 Although this more complex, lossy electromagnetic environment is generally viewed as a detriment to practical applications, several studies have demonstrated that cavity loss can be exploited to channel energy away from unwanted reaction pathways such as photo-oxidation. 23,36–39 Additionally, the associated cavity emission could potentially serve as an ultrafast probe of excited-state molecular dynamics, 40 a concept we will explore further in this work. Theoretical modeling of molecules coupled to electromagnetic environments is challenging due to the potentially vast number of electronic, nuclear, and cavity mode degrees of free-dom. Because of this complexity, approximations must be made in some part of the problem to reduce its dimensionality. Quantum electrodynamical (QED) electronic structure theory treats the molecule, electromagnetic field, and their interaction fully quantum mechanically within the nuclear Born–Oppenheimer approximation. 41–60 While QED methods capture the electron–photon interaction with a high degree of accuracy, they are generally limited to small system sizes and simple, lossless electromagnetic spectral structures, in addition to neglecting nuclear–electronic nonadiabatic effects. QED electronic structure methods have been implemented with multimode cavity setups, but such treatments are challenging due to the fully quantum mechanical nature of the light–matter interaction. 61–63 Other approaches have utilized nonadiabatic dynamical methods for the electron–photon or nuclear–electronic interactions, for example via Ehrenfest, 64–67 surface hopping, 68 or ab initio multiple spawn-3ing 69 approaches. Several approaches have also been developed for accurately describing the multimode nanocavity environment via a spectral density based on solving the clas-sical electrodynamics equations. 70–73 However, few methods exist that accurately capture the nuclear–electronic quantum dynamics of molecules interacting strongly with complex electromagnetic environments. The nuclear–electronic orbital (NEO) approach is a powerful quantum chemistry frame-work in which select nuclei, typically protons, are treated at the same level of theory as elec-trons. 74–76 Real-time NEO time-dependent density functional theory (RT-NEO-TDDFT) 77 
+
+has been used to model polaritons in both the vibrational and electronic strong coupling regimes. 78 In most implementations, the cavity modes are treated as classical harmonic os-cillators, an approach adapted from the fully classical CavMD method for vibrational strong coupling. 79,80 Recently, RT-NEO-TDDFT was implemented with a fully quantum mechani-cal treatment of the cavity degrees of freedom, demonstrating that the classical and quantum treatments give very similar results for many observables of interest. 81 Another recent study used NEO time-dependent configuration interaction 82 and classical cavity modes to study polaritons generated from mixed nuclear–electronic vibronic excitations as well as hydro-gen tunneling splittings. 83 Real-time NEO methods provide the quantum mechanical time evolution of key nuclei, such as transferring protons, as well as the electrons, without in-voking the Born–Oppenheimer approximation between them. Within the classical cavity mode approximation, the cost does not substantially increase with additional electromag-netic degrees of freedom. For this reason, RT-NEO methods with classical cavity modes are an excellent platform for studying the effects of multimode electromagnetic environments on nuclear–electronic quantum dynamics. Herein, we explore the use of a multimode, lossy cavity as a time-resolved spectroscopic probe of nuclear–electronic quantum dynamics. Our approach is inspired by the work of Silva and coworkers, 40 who used the emission from a single cavity mode to track wave packet evolution on an electronic excited-state surface upon off-resonant pumping. We propose that 4a multimode cavity environment can be used to energetically resolve the nuclear–electronic dynamics due to differential emission from modes across the intrinsically broadened spectral region. In the intermediate-coupling regime, where the molecular properties are not modified by the cavity, this treatment could provide a powerful time-resolved single-molecule sensing technique. In the strong-coupling regime, this treatment can be used to study the dynamical process of light–matter hybridization in polariton formation and the impact of chemical reactions such as proton transfer. Within this theoretical framework, we also study how the geometric and material parameters of the nanocavity can be tuned to achieve single- or few-molecule strong coupling. 
+
+# 2 Theory 
+
+We begin with the full QED Hamiltonian, ˆHQED = ˆHM + ˆHF, (1) where ˆHM is the molecular Hamiltonian and ˆHF describes the electromagnetic field. The molecular Hamiltonian is ˆHM = X
+
+> i
+
+ ˆp2
+
+> i
+
+2mi
+
++ ˆV ({ˆri}, Rc)
+
+
+
+, (2) where ˆ pi, mi and ˆ ri are the momenta, masses, and positions of the quantum particles (in this case, electrons and protons), and ˆV is the Coulomb potential between all particles, including the classical nuclear coordinates Rc, which are assumed to be fixed in this work. The field Hamiltonian can be written as 62 
+
+ˆHF = 12
+
+X
+
+> α
+
+
+
+ˆp2 
+
+> α
+
++ ω2
+
+> α
+
+
+
+ˆqα + λα
+
+ωα
+
+ˆμM · ˆξs
+
+2
+
+. (3) Here α is the compound mode index α = ( k, s ), where k = |k| is the mode-specific wave vector magnitude and s is the polarization direction. Each mode has a momentum ˆ pα,5displacement ˆ qα, and frequency ωα. Moreover, ˆ μM is the molecular dipole operator, and ˆξs
+
+is the unit vector in the s direction. The cavity field strength λα is given as 
+
+λα = e
+
+r 2
+
+ℏωα
+
+Eα (4) where e is the elementary unit of charge and Eα is the electric field amplitude at the center of charge density. The cavity field strength is related to the light–matter coupling via the spectral density as 
+
+μ2 
+
+> s
+
+λ2 
+
+> α
+
+=
+
+Z ∞
+
+> 0
+
+dωJ α(ω) (5) where Jα(ω) is the Lorentzian spectral density describing the lineshape of mode α due to finite cavity lifetime, 
+
+Jα(ω) = g2
+
+> α
+
+πγα/2(ω − ωα)2 + ( γα/2) 2 . (6) Here, gα is the light–matter coupling for mode α, and γα is the linewidth of the peak centered at ωα.Neglecting the self-dipole term and adopting the semiclassical approximation, ˆHQED be-comes ˆHQED = ˆHsc + 12
+
+X
+
+> α
+
+
+
+p2 
+
+> α
+
++ ω2
+
+> α
+
+q2
+
+> α
+
+
+
+, (7) where the semiclassical light–matter Hamiltonian is ˆHsc = ˆHM + X
+
+> α
+
+εαqα ˆμs. (8) The dipole component in the s direction is ˆ μs ≡ ˆμM · ˆξs and εα ≡ ωαλα is the semiclassical cavity field strength for each mode α. The field strength εα can either be a free param-eter that is tuned to set the total coupling strength or be derived by solving the classical electrodynamics equation for a nanocavity setup. 63,70,71 
+
+6Each cavity mode is propagated via the classical equations of motion: ˙qα = pα, (9a) and ˙pα = −ω2
+
+> α
+
+qα − εαμs − γαpα, (9b) where pα and qα are the classical momentum and position displacement of mode α. The loss term with mode-specific inverse lifetime (loss rate) γα corresponds to the Lorentzian linewidth in the spectral density. The magnitude of the total molecular dipole in the s
+
+direction, μs, is computed as the expectation value at time t minus the permanent value at time t = 0, μs = ⟨μs(t)⟩ − ⟨ μs(t = 0) ⟩, to avoid spurious mode excitations at t = 0 as a result of the static dipole. For each mode, the far-field cavity emission rate Iα is proportional to the mode-specific loss rate γα, as well as the occupation number expectation value for that mode: 
+
+Iα = γα⟨ˆa†
+
+> α
+
+ˆaα⟩. (10) Here, ˆ aα and ˆ a† 
+
+> α
+
+are the harmonic oscillator ladder operators associated with mode α, and ˆa†
+
+> α
+
+ˆaα is the number operator. The number operator is related to the momentum and position via the harmonic oscillator energy expression, ℏωαˆa†
+
+> α
+
+ˆaα = 12 (ˆ p2 
+
+> α
+
++ ω2 
+
+> α
+
+ˆq2
+
+> α
+
+). Making the semi-classical approximation, this expression allows us to determine the instantaneous emission rate at time t in terms of the classical momentum and displacement of each mode, pα(t) and 
+
+qα(t): 
+
+Iα(t) = γα
+
+2ℏωα
+
+
+
+p2
+
+> α
+
+(t) + ω2
+
+> α
+
+q2
+
+> α
+
+(t)
+
+
+
+. (11) We will henceforth refer to emission rate simply as emission. The subsystem containing the molecule under the influence of the classical cavity modes 7is propagated via the time-dependent Schr¨ odinger equation, 
+
+iℏ ∂∂t Ψ( xe, xn; t) = ˆHsc (xe, xn; t)Ψ( xe, xn; t), (12) where Ψ is the nuclear–electronic wavefunction, and xe and xn are the spatial and spin coor-dinates for the electronic and quantum nuclear (protonic) degrees of freedom. The electronic and quantum nuclear density matrices are propagated via the von Neumann equations: 
+
+iℏ ∂∂t Pe(t) = 
+
+
+
+Fe(t) + X
+
+> α
+
+εαqα(t)ˆ μe
+
+> s
+
+, Pe(t)
+
+
+
+, (13a) and 
+
+iℏ ∂∂t Pn(t) = 
+
+
+
+Fn(t) + X
+
+> α
+
+εαqα(t)ˆ μn 
+
+> s
+
+, Pn(t)
+
+
+
+, (13b) where Pe and Pn are the electronic and protonic density matrices, which are initially con-structed from their coefficient matrices Ce and Cn, respectively, in the orthonormal atomic orbital basis. Furthermore, ˆ μe 
+
+> s
+
+and ˆ μn 
+
+> s
+
+are the electronic and quantum nuclear dipole mo-ments, respectively, in the s direction, where s indicates the x, y or z direction. In these equations, Fe and Fn are the electronic and protonic Kohn-Sham matrices: 
+
+Fe(t) = Hecore + Jee (Pe(t)) + Vexc (Pe(t)) 
+
+− Jen (Pn(t)) + Ven c (Pe(t), Pn(t)) (14a) and 
+
+Fn(t) = Hncore + Jnn (Pn(t)) + Vnxc (Pn(t)) 
+
+− Jne (Pe(t)) + Vne c (Pn(t), Pe(t)) .
+
+(14b) Here He(n) core is the core Hamiltonian that includes the kinetic energy of the electrons (quan-tum nuclei) and the Coulomb interaction between the electrons (quantum nuclei) and the classical nuclei. Jee(nn) is the Coulomb repulsion between electrons (quantum nuclei), while 8Ve(n) xc is the exchange-correlation potential for electrons (quantum nuclei). Jen(ne) is the at-tractive electronic-quantum nuclear Coulomb interaction, and Ven(ne)  
+
+> c
+
+is the electron-proton correlation potential. 
+
+# 3 Simulation details 
+
+All computations were performed in a development branch of the Q-Chem software pack-age. 84 Molecular structures were optimized using conventional DFT for the ground state and TDDFT for the excited states. For all NEO calculations, three basis function centers were used for the transferring proton: one was optimized near the donor in the ground state (i.e., the optimized ground-state position), one was optimized near the acceptor in the S 1 state, and one was placed at the midpoint between these two positions. All calcu-lations were performed using the cc-pVDZ electronic basis set 85 and the B3LYP electronic exchange-correlation functional. 86,87 NEO calculations were performed with the PB4D pro-tonic basis set 88 and the epc17-2 electron-proton correlation functional. 89,90 For all cavity calculations, the polarization direction was aligned with the S 0 to S 1 transition dipole vec-tor. The classical cavity modes were propagated using the velocity Verlet algorithm. The quantum molecular equations of motion were propagated via a modified midpoint unitary transform time-propagation scheme 91,92 with an additional predictor–corrector step to con-trol numerical error. 93 A timestep of 0.1 a.u. was used for all real-time calculations. 
+
+# 4 Results and discussion 
+
+# 4.1 Excited-state proton transfer in a Gaussian multimode envi-ronment 
+
+We apply our approach for modeling the nuclear–electronic quantum dynamics in a mul-timode cavity to the excited-state intramolecular proton transfer (ESIPT) reaction of o-9hydroxybenzaldehyde ( oHBA). This reaction has been widely studied both experimentally 94,95 
+
+and theoretically. 77,78,96–100 The structure of oHBA is shown on the top of Fig. 1, with the transferring proton represented in cyan. Proton transfer occurs upon excitation from the S0 ground state to the S 1 excited state via a π to π∗ transition. Previous studies with the RT-NEO-TDDFT method demonstrated that quantization of the transferring proton leads to an accelerated rate, which occurs on the ultrafast timescale ( ≈10-100 fs). 77,98 The oc-currence and timescale of the proton transfer depends strongly on geometric fluctuations of the molecular backbone, and in particular the distance between the proton donor oxygen OD and acceptor oxygen O A.
+
+Figure 1: Upper portion: Structure of oHBA at (A) the conventional DFT optimized ground-state (S 0) geometry and (B) the conventional TDDFT S 1 excited-state geometry with the transferring proton constrained to have the same distance from the donor oxygen O D as in the ground state. The isosurface of the transferring proton density computed with NEO-DFT is shown in cyan. The cyan arrow depicts the proton transfer coordinate used for computing the potential energy profiles. Lower plots: Proton potential energy profiles for the S 0 and S 1 states in the (C) S 0 geometry and (D) constrained S 1 geometry, as computed with conventional TDDFT by scanning the proton coordinate along the axis connecting its optimized ground state position to O A.10 In this work, we use two fixed heavy-atom geometries, one that prevents proton trans-fer and one that allows proton transfer. These geometries and the corresponding proton potential energy profiles are shown in Fig. 1. These proton potentials were obtained with conventional TDDFT by moving the proton along the axis connecting its optimized ground state position to O A. The structure in Fig. 1A and potential in Fig. 1C correspond to the ground-state geometry, where the O D−OA distance is 2.64 ˚ A. Fig. 1B and 1D show the structure and potential corresponding to the geometry optimized on the S 1 surface, where the optimization was performed with a constraint on the O D−H distance to maintain the ground-state bond length. This geometry has a smaller O D−OA distance of 2.52 ˚ A, and the corresponding S 1 proton potential energy profile is both lower in energy overall and has a much lower barrier between the proton donor and acceptor minima. We first establish the bare, out-of-cavity proton transfer dynamics of oHBA using RT-NEO-TDDFT. All ESIPT calculations are initialized with the NEO-DFT closed-shell re-stricted ground-state density. To model photoexcitation for all ESIPT calculations, one electron is promoted from the highest occupied molecular orbital (HOMO) to the lowest unoccupied molecular orbital (LUMO), and the unrestricted open-shell singlet density is propagated. The HOMO–LUMO transition accounts for over 98% of the S 0 to S 1 character when analyzed with NEO-TDDFT. The progress of the ESIPT reaction can then be tracked by computing the proton position expectation value as a function of time. The H–O D and H–O A distances are plotted for the two different geometries of oHBA in Fig. 2C and 2D. In the bare dynamics outside a cavity, the proton of the S 0-optimized structure simply re-laxes near the donor, with no proton transfer occurring. For the constrained S 1-optimized structure, the proton undergoes ultrafast ESIPT, with the crossing point at which the pro-ton is equidistant from O D and O A occurring around 7 fs and the H–O A distance minimum occurring around 12 fs. We now devise a model for a multimode nanocavity that can be coupled to the excited-state proton transfer dynamics of oHBA. To model a lossy, multimode cavity environment, 11 Figure 2: Upper plots: Mode-specific cavity emission, Ik, indicated by color intensity, as a function of mode frequency ωk and time, for oHBA in the (A) S 0 geometry and (B) constrained S 1 geometry. The cavity environment is represented by a Gaussian spectral density peaked at the initial NEO-TDDFT vertical S 0 to S 1 excitation energy, ∆ ES1 , with 
+
+g0/μ 0 = 0 .03 eV ·nm −1e−1 and σ = 0 .25 eV. The frequency of the cavity mode with the largest emission as a function of time is ωmax  
+
+> k
+
+. Emission is normalized by the single largest intensity observed across the entire time series. Lower plots: H–O D and H–O A distances in ˚Angstroms as a function of time for oHBA in the (C) S 0 geometry and (D) constrained S 1
+
+geometry. The distances are computed using the proton position expectation value. The results are shown with the cavity off (blue) and on (red). Note that in this case the cavity has no effect on the proton transfer dynamics, and therefore the results with the cavity on and off are indistinguishable. 12 we define the total spectral density J(ω) with Lorentzian broadening, as in Eq. 6, to be 
+
+J(ω) = X
+
+> k
+
+Jk(ω) = X
+
+> k
+
+g2
+
+> k
+
+πγk/2(ω − ωk)2 + ( γk/2) 2 , (15) where each mode has frequency ωk, light–matter coupling gk, and inverse lifetime γk. Because we only couple to one polarization direction, namely the direction of the S 0 to S 1 transition dipole vector, we will henceforth simply index modes by k rather than α. The multimode structure in this case is modeled as a discretized Gaussian distribution, 
+
+gk = g0e−(ωk −ω0)2/σ 2
+
+, (16) where ω0 and g0 are the frequency and light–matter coupling strength, respectively, at the center of the distribution, and σ2 is the variance of the mode distribution. For all oHBA cal-culations, σ is 0.25 eV and γ−1 
+
+> k
+
+is 50 fs, representing similar parameters to those obtained for plasmonic nanostructures. 70,72,73 
+
+The Gaussian spectral density is discretized into 100 classical modes that are evenly spaced in energy and extend out to ±3σ. All photon modes are initialized with zero mo-mentum and zero displacement. For each oHBA calculation, ω0 was set to be the S 0 to S1 transition frequency obtained from NEO-TDDFT at that geometry. The corresponding excitation energy, ∆ ES1 , is 3.91 eV for the S 0 geometry and 3.29 eV for the constrained S1 geometry. The energy-resolved cavity emission Ik is directly proportional to the mode population, ⟨ˆa† 
+
+> k
+
+ˆak⟩ = 12ℏωk (p2
+
+> k
+
+(t) + ω2
+
+> k
+
+q2
+
+> k
+
+(t)), via Eq. 11. Therefore, the cavity dynamics can be observed by plotting the mode-specific emission as a function of cavity mode frequency 
+
+ωk and time. For the cavity emission to effectively probe the ultrafast excited-state dy-namics, we must assume that cavity loss constitutes the dominant radiative loss channel, as opposed to intrinsic molecular fluorescence. This assumption is supported by the fluo-rescence lifetime of oHBA, which has been experimentally determined to be on the order of tens of picoseconds, about three orders of magnitude longer than the decay time of lossy 13 nanocavities. 95 
+
+To explore how a multimode cavity can be used to probe the bare nuclear-electronic dynamics following photoexcitation, we chose a value of g0 that does not disturb these dynamics. For this purpose, we used a spectral density with a light–matter coupling per unit dipole, g0/μ 0, equal to 0.03 eV ·nm −1e−1, where μ0 = 1 nm −1e−1. This value gives a total semiclassical field strength of εtot = ( P 
+
+> k
+
+ε2
+
+> k
+
+)12 = 1 × 10 −3 a.u. Figures 2C and 2D show the proton position expectation value to be identical both inside and outside the cavity, indicating that we are not observing cavity-modified dynamics. The mode-specific cavity emission dynamics are depicted in Figs. 2A and 2B. In both cases, we observe maxima in the emission that are regularly spaced in time with a period of roughly 1.0 fs for the S 0
+
+geometry and 1.3 fs for the constrained S 1 geometry. These periods correspond roughly to the characteristic timescales of the bare S 0 to S 1 excitation energies for the two different structures, ℏ/∆ES1 , which are 1.06 fs and 1.26 fs, respectively. At early times, the emission is greatest at the vertical S 0 to S 1 excitation energy, ∆ ES1 . This behavior is expected because these cavity modes are most resonant with the instantaneous transition and have the strongest light–matter coupling gk due to the spectral density being peaked at this energy. The initial vertical transition energy ∆ ES1 is marked with a horizontal dashed line on all mode population plots. Shifting of the cavity emission away from this frequency indicates that the nuclear–electronic subsystem has evolved away from the electronic and protonic densities associated with the initial vertical excitation energy. The evolution of the cavity emission maximum away from the initial excitation frequency reflects the changing resonance condition (i.e., excitation energy) for the nuclear–electronic subsystem. This behavior can be observed by tracking the center of the approximately periodic pulses in the two-dimensional map, as well as the oscillations of ωmax  
+
+> k
+
+, which indicates the frequency of the single mode with the largest cavity emission at each time step. Using these observables, we can distinguish trajectories where proton transfer does and does not occur. In Fig. 2A, the maximum cavity emission is predominantly centered around ∆ ES1 .14 The resonance finally shifts to a slightly lower energy at around 9 – 10 fs, indicating relaxation of the proton near the donor on the S 1 surface. For the ultrafast proton transfer in Fig. 2B, the shift to a lower resonant energy occurs much more dramatically and rapidly. This shift in the resonance is due to the proton evolution on the S 1 surface toward the acceptor, corresponding to a much lower instantaneous S 0 to S 1 transition energy (Fig. 1B). It is important to note that the new maximum in the cavity emission no longer coincides with the maximum light–matter coupling, which is peaked at ∆ ES1 . Nevertheless, the intensity of the cavity emission, and therefore the magnitudes of the associated mode populations, increases dramatically after proton transfer occurs. This behavior indicates that the proton density has become more localized near the acceptor, corresponding to a narrower distribution of excitation energies that are now strongly resonant with the lower-energy cavity modes. After demonstrating that emission from a multimode nanocavity can passively report on ultrafast nuclear–electronic dynamics, we now explore the regime where the cavity actively modifies the dynamics. For this purpose, we use the same Gaussian spectral density but increase the total light–matter coupling per unit dipole by a factor of ten to g0/μ 0 = 0 .3eV ·nm −1e−1, corresponding to a total semiclassical field strength of εtot = 1 × 10 −2 a.u. Previous studies used a similar field strength to observe cavity-modified proton transfer dynamics. 78 Fig. 3C and 3D track the proton transfer dynamics via the H–O D and H– OA distances. In both cases, the dynamics are modified by the presence of the cavity. The most notable effect of the cavity is observed for the constrained S 1 geometry in Fig. 3D, where the proton is inhibited from fully transferring before recrossing back to the donor side. In this regime, the cavity mode populations and corresponding cavity emission show the time-resolved onset of strong coupling. For the first several fs, the cavity emission behaves very similarly to the intermediate coupling case. During this time, the oscillations in emission intensity are dictated solely by the bare nuclear–electronic dynamics. At around 7 fs, the dynamics become more complex with multiple timescales appearing. These dynamics are characterized by rapid modulations of the overall emission intensity and longer timescale, 15 Figure 3: Upper plots: Mode-specific cavity emission, Ik, indicated by color intensity, as a function of mode frequency ωk and time, for oHBA in the (A) S 0 geometry and (B) constrained S 1 geometry. The cavity environment is represented by a Gaussian spectral density peaked at the initial NEO-TDDFT vertical S 0 to S 1 excitation energy, ∆ ES1 , with 
+
+g0/μ 0 = 0 .3 eV ·nm −1e−1 and σ = 0 .25 eV. The frequency of the cavity mode with the largest emission as a function of time is ωmax  
+
+> k
+
+. Emission is normalized by the single largest intensity observed across the entire time series. Lower plots: H–O D and H–O A distances in ˚ Angstroms as a function of time for oHBA in the (C) S 0 geometry and (D) S 1 geometry. The distances are computed using the proton position expectation value. The results are shown with the cavity off (blue) and on (red). 16 Rabi-like oscillations of the mode frequency at which maximum emission occurs. 
+
+# 4.2 Excited-state proton transfer in a gold nanoparticle-on-mirror cavity 
+
+Heretofore, our results have relied on a tunable Gaussian spectral density to represent the nanocavity. The smooth distribution and dense, evenly-spaced discretization enable high resolution with respect to cavity mode frequency. To support our conclusion that a mul-timode nanocavity emission could be an experimentally viable probe of nuclear–electronic quantum dynamics, we now focus on modeling an experimentally relevant example. The nanoparticle-on-mirror (NPoM) experimental configuration has been used to achieve strong coupling at the molecular level 5 as well as for enhanced spectroscopy applications. 101,102 Fur-thermore, the spectral density of a dipole emitter in a NPoM cavity is analytically solvable via the transformation optics approach. 70,71,103 The solution for the spectral density gives the same multimodal Lorentzian form as Eq. 15, with mode-specific frequencies ωk, effective light–matter couplings gk, and inverse lifetimes γk. Details for computing J(ω) for a given NPoM geometry and dielectric function are provided in Ref. 70. We compute the spectral density of a gold NPoM setup using the material parameters previously devised 70 to closely represent the experimental conditions in Ref. 5. The nanopar-ticle radius is 30 nm, and the separation from the mirror, δ, is 0.9 nm. We orient the emitter dipole parallel to the mirror plane at δ/ 2, which produces a smooth mode distribution with coupling strengths in the intermediate-coupling regime. The nanocavity setup and spectral density are shown in Fig. 4A and 4C, respectively. Typical NPoM setups produce modes in the 2 – 3 eV range and thus would require modification of the material parameters to be in resonance with the S 0 to S 1 transition of oHBA. In order to maintain a faithful representa-tion of our nanocavity setup, we instead found a different small molecule that will undergo ESIPT with lower excitation energies. Specifically, we will use the Schiff base 4-amino-2-[1-(methylimino)ethyl]phenol (AMIEP). Using conventional TDDFT, we computed the S 0 to 17 Figure 4: (A) Schematic depiction of gold nanoparticle-on-mirror setup (not to scale). ϵAu (ω)is the dielectric function for gold, ϵenv is the dielectric constant of the solvent environment, 
+
+δ is the distance between the nanoparticle and the mirror, and μ is the emitter dipole. (B) Mode-specific cavity emission Ik, indicated by color intensity, as a function of mode frequency 
+
+ωk and time, for AMIEP in the constrained S 1 geometry. The frequency of the cavity mode with the largest emission as a function of time is ωmax  
+
+> k
+
+. Emission is normalized by the single largest intensity observed across the entire time series. ∆ES1 is the initial NEO-TDDFT vertical S 0 to S 1 excitation energy of AMIEP. (C) Spectral density J(ω) for the NPoM setup depicted in (A). The emitter dipole is oriented parallel to the mirror at δ/ 2, and the spectral density is plotted with a dipole value of 1 e·nm and ϵenv = 4. Each individual Lorentzian mode is shown in gray, while the total summation from Eq. 15 is shown in red. (D) H– OD and H–N a distances in ˚ Angstroms as a function of time for AMIEP in the constrained S1 geometry. The distances are computed using the proton position expectation value. The results are shown with the cavity off (blue), but the curves are indistinguishable with the cavity on. 18 S1 excitation energy to be 2.61 eV for the constrained S 1 geometry, which was optimized using the same protocol as discussed above for oHBA. The structure of AMIEP is shown in Fig. 5A with the protonic density computed via NEO-DFT. The proton potential energy profile (Fig. 5B) exhibits both an overall lower S 0 to S 1 excitation energy and a lower proton transfer barrier than oHBA. 
+
+Figure 5: (A) The structure of the Schiff base, 4-amino-2-[(1-(methylimino)ethyl)]phenol (AMIEP), in the constrained S 1 geometry. The isosurface of the transferring proton density computed with NEO-DFT is shown in cyan. The cyan arrow depicts the proton transfer coordinate used for computing the potential energy profiles. (B) S 0 and S 1 proton potential energy profiles for AMIEP at the constrained S 1 geometry, as computed with conventional TDDFT by scanning the proton coordinate along the axis connecting its optimized ground state position to N A.We now examine the proton transfer dynamics of AMIEP coupled to a realistic NPoM cavity. Fig. 4C shows the S 0 to S 1 vertical excitation energy relative to the NPoM spectral density. Although this excitation energy overlaps with some high-lying cavity modes, the 19 strongest overall light–matter coupling and greatest density of cavity modes occurs at 2.41 eV. Fig. 4D shows the H–O D and H–N A distances as a function of time, indicating that proton transfer indeed occurs for AMIEP on the ultrafast timescale. We plot only the out-of-cavity H–O D and H–N A distances because the in-cavity dynamics are virtually identical. Turning our attention to the mode-specific cavity emission, we find that the intensity is very low at early times. In contrast to the model Gaussian spectral densities, which were peaked at the oHBA S 0 to S 1 vertical transition, the NPoM has very few cavity modes near the vertical transition for AMIEP. Furthermore, although the modes were evenly distributed in the Gaussian discretization, for the NPoM spectral density they are very sparse at higher frequencies and are heavily concentrated near 2.4 eV. Because of this energetic mismatch, the modes remain largely unpopulated, and consequently there is very little cavity emission for the first 7 fs. When the nuclear–electronic dynamics finally evolve toward a state cor-responding to a lower excitation energy at around 10 fs, the modes in the middle of the distribution, near 2.5 eV, begin to become populated, gaining noticeable emission intensity. Finally, at around 15 fs, the main peak accounts for the dominant cavity emission because it has the strongest light–matter coupling, and the molecular subsystem has evolved to a state with a low enough excitation energy to be in resonance. Thus, we have shown that the evolution of the nuclear–electronic subsystem is reflected by a changing resonance condition, and consequently it can be observed in the changing cavity emission. In this realistic cavity setup, there are no signs of strong coupling, such as modified proton dynamics or Rabi-like features. Reaching the strong-coupling limit requires fine tuning of the cavity to be in precise resonance with the molecule. For the NPoM/AMIEP system, we tune the physically accessible parameters to deduce if polariton formation is feasible. To monitor this possibility, we analyze the electronic power spectrum, 
+
+Pe(ω) = X
+
+> s=x,y,z
+
+F[⟨μe
+
+> s
+
+(t)⟩], (17) 20 where F indicates the Fourier transform and μe
+
+> s
+
+(t) is the electronic dipole moment in the s di-rection. The dipole signal was simulated for 100 fs, and the Fourier transform was performed with the Pad´ e approximation 92,104 to improve the spectral resolution for the relatively short simulation time. In contrast to the photoexcitation process used to simulate ESIPT, the molecule was started in the NEO-DFT ground state at the constrained S 1 geometry, and a delta pulse at t = 0 with an electric field amplitude of 0.001 a.u. in the direction along the S0 to S 1 transition dipole vector was applied to the cavity modes. 
+
+Figure 6: (A) Spectral density J(ω) for the NPoM setup with the emitter dipole oriented perpendicular to the mirror at 7 δ/ 8, plotted with a dipole value of 1 e·nm and ϵenv = 1 .9. The cavity and dipole orientation are depicted in the inset. Each individual Lorentzian mode is shown in gray, while the total summation from Eq. 15 is shown in blue. ∆ ES1 is the initial NEO-TDDFT vertical S 0 to S 1 excitation energy of AMIEP. (B) Electronic power spectrum, 
+
+Pe(ω), of AMIEP coupled to the NPoM spectral density. To model the effect of multiple molecules in the cavity, the total light–matter coupling is scaled by √Nmol with Nmol = 1, 4, and 9. To show the details more clearly, the energy range is narrower in panel (B) than in panel (A). 21 To move toward the strong-coupling regime, we must increase the overall coupling and move the main spectral peak into resonance with the electronic S 0 to S 1 vertical transition. To increase the coupling, we align the emitter dipole perpendicular to the mirror and move it closer to the nanoparticle surface at 7 δ/ 8. This displacement is meant to model the molecule on the nanoparticle surface but could lead to steric crowding. Although geometric parameters can affect the overall coupling, the main peak location is determined by the dielectric properties ϵenv and ϵAu (ω). Because the environmental dielectric constant is the easiest to modify experimentally by changing the solvent, we tune the frequency with ϵenv 
+
+and leave ϵAu (ω) unchanged. A value of ϵenv = 1 .9, which is similar to that of a nonpolar solvent such as n-hexane, brings the main peak of the spectral density to 2.62 eV, nearly resonant with the AMIEP S 0 to S 1 transition of 2.61 eV. The resulting spectral density compared to the electronic transition frequency, as well as a depiction of the cavity setup, is shown in Fig. 6A. We now examine the resulting electronic power spectrum for polariton formation in the form of a Rabi splitting. Even at resonance, the NPoM cavity coupled to a single molecule does not produce well-defined upper and lower polariton peaks. The electronic power spectrum for the AMIEP single molecule is given as the purple trace in Fig. 6B. The main peak is shifted up in energy compared to the bare excitation, while a shoulder appears below, which could indicate Rabi splitting that is poorly resolved due to the linewidth of the NPoM spectral density. We note that the experimental single-molecule strong coupling setup used organic dye molecules as the emitters. Such dye molecules have much larger transition dipole moments than the molecules studied here and thus will show stronger coupling. 5 Additionally, in the experiments, several emitters could aggregate in each cavity site, and single-molecule spectra had to be extracted from data within a statistical ensemble of number of molecules, Nmol , per cavity. Assuming that the emitters independently couple to the field and not to one another, the overall light– matter coupling will be scaled by √Nmol in each cavity. With this in mind, we scaled the light matter coupling by √Nmol = 2 and 3, corresponding to Nmol = 4 and 9, respectively. 22 For both Nmol = 4 and Nmol = 9, clear upper and lower polariton peaks can be observed with a Rabi splitting around 30 meV and 50 meV, respectively. These results demonstrate that strong coupling can be theoretically observed with RT-NEO-TDDFT using an experimentally relevant nanocavity setup and number of molecules per cavity. 
+
+# 5 Conclusions 
+
+In this work, we used RT-NEO-TDDFT with classical cavity modes to study the effects of a lossy, multimode cavity environment on excited-state proton transfer. This type of electromagnetic environment is typical of sub-wavelength plasmonic nanocavities that are used for single- or few-molecule strong coupling and enhanced spectroscopy applications. Focusing on ESIPT in oHBA, we show that the energy- and time-resolved cavity emission can be used to track bare nuclear–electronic quantum dynamics in the intermediate-coupling regime. In this case, proton transfer is reflected in the cavity emission evolving toward lower-energy modes. In the strong-coupling regime, after an initial relaxation similar to the bare dynamics, an onset of Rabi-like oscillations along with a suppression of proton transfer due to polariton formation is observed. We also applied this technique with an experimentally relevant spectral density corresponding to a nanoparticle-on-mirror cavity for a different ESIPT molecule. In this case, we found that even when the dominant cavity mode is not resonant with the initial excitation, a molecule undergoing ESIPT will become resonant as relaxation occurs. When the dominant cavity peak is tuned to be resonant with the electronic transition, polariton formation cannot be clearly observed for a single molecule but is observed for a small collection of molecules. The RT-NEO framework with classical cavity modes is a powerful platform for study-ing nuclear–electronic quantum dynamics in complex electromagnetic environments. In the future, such multimode setups could be formulated to couple with multiple transitions si-multaneously, 105 which could include both vibrational and electronic transitions in the NEO 23 framework. In general, this framework allows us to move toward the simulation of physically realistic and experimentally attainable cavity environments. 
+
+# Acknowledgement 
+
+The authors thank Millan Welman, Scott Garner, and Arghadip Koner for helpful discus-sions. This material is based upon work supported by the Air Force Office of Scientific Research under AFOSR Award No. FA9550-24-1-0347. 
+
+# References 
+
+(1) Novotny, L.; van Hulst, N. Antennas for light. Nat. Photonics 2011 , 5, 83–90. (2) Giannini, V.; Fern´ andez-Dom´ ınguez, A. I.; Heck, S. C.; Maier, S. A. Plasmonic Nanoantennas: Fundamentals and Their Use in Controlling the Radiative Properties of Nanoemitters. Chem. Rev. 2011 , 111 , 3888–3912. (3) Yokoyama, H. Physics and Device Applications of Optical Microcavities. Science 1992 ,
+
+256 , 66–70. (4) Zengin, G.; Wers¨ all, M.; Nilsson, S.; Antosiewicz, T. J.; K¨ all, M.; Shegai, T. Re-alizing Strong Light-Matter Interactions between Single-Nanoparticle Plasmons and Molecular Excitons at Ambient Conditions. Phys. Rev. Lett. 2015 , 114 , 157401. (5) Chikkaraddy, R.; de Nijs, B.; Benz, F.; Barrow, S. J.; Scherman, O. A.; Rosta, E.; Demetriadou, A.; Fox, P.; Hess, O.; Baumberg, J. J. Single-molecule strong coupling at room temperature in plasmonic nanocavities. Nature 2016 , 535 , 127–130. (6) Santhosh, K.; Bitton, O.; Chuntonov, L.; Haran, G. Vacuum Rabi splitting in a plas-monic cavity at the single quantum emitter limit. Nat. Commun. 2016 , 7, 11823. 24 (7) Nie, S.; Emory, S. R. Probing Single Molecules and Single Nanoparticles by Surface-Enhanced Raman Scattering. Science 1997 , 275 , 1102–1106. (8) Kneipp, K.; Wang, Y.; Kneipp, H.; Perelman, L. T.; Itzkan, I.; Dasari, R. R.; Feld, M. S. Single Molecule Detection Using Surface-Enhanced Raman Scattering (SERS). Phys. Rev. Lett. 1997 , 78 , 1667–1670. (9) Kinkhabwala, A.; Yu, Z.; Fan, S.; Avlasevich, Y.; M¨ ullen, K.; Moerner, W. E. Large single-molecule fluorescence enhancements produced by a bowtie nanoantenna. Nat. Photonics 2009 , 3, 654–657. (10) Benz, F.; Schmidt, M. K.; Dreismann, A.; Chikkaraddy, R.; Zhang, Y.; Demetri-adou, A.; Carnegie, C.; Ohadi, H.; de Nijs, B.; Esteban, R.; Aizpurua, J.; Baum-berg, J. J. Single-molecule optomechanics in “picocavities”. Science 2016 , 354 , 726– 729. (11) Maccaferri, N.; Barbillon, G.; Nana Koya, A.; Lu, G.; P. Acuna, G.; Garoli, D. Recent advances in plasmonic nanocavities for single-molecule spectroscopy. Nanoscale Adv. 
+
+2021 , 3, 633–642. (12) Basov, D. N.; Asenjo-Garcia, A.; Schuck, P. J.; Zhu, X.; Rubio, A. Polariton panorama. 
+
+Nanophotonics 2020 , 10 , 549–577. (13) Garcia-Vidal, F. J.; Ciuti, C.; Ebbesen, T. W. Manipulating matter by strong coupling to vacuum fields. Science 2021 , 373 , eabd0336. (14) Xiang, B.; Xiong, W. Molecular Polaritons for Chemistry, Photonics and Quantum Technologies. Chem. Rev. 2024 , 124 , 2512–2552. (15) Li, T. E.; Cui, B.; Subotnik, J. E.; Nitzan, A. Molecular Polaritonics: Chemical Dynamics Under Strong Light–Matter Coupling. Annu. Rev. Phys. Chem. 2022 , 73 ,43–71. 25 (16) Mandal, A.; Taylor, M. A.; Weight, B. M.; Koessler, E. R.; Li, X.; Huo, P. Theoretical Advances in Polariton Chemistry and Molecular Cavity Quantum Electrodynamics. 
+
+Chem. Rev. 2023 , 123 , 9786–9879. (17) Ebbesen, T. W.; Rubio, A.; Scholes, G. D. Introduction: Polaritonic Chemistry. Chem. Rev. 2023 , 123 , 12037–12038. (18) Thomas, A.; George, J.; Shalabney, A.; Dryzhakov, M.; Varma, S. J.; Moran, J.; Chervy, T.; Zhong, X.; Devaux, E.; Genet, C.; Hutchison, J. A.; Ebbesen, T. W. Ground-State Chemical Reactivity under Vibrational Coupling to the Vacuum Elec-tromagnetic Field. Angew. Chem. Int. Ed. 2016 , 55 , 11462–11466. (19) Thomas, A.; Lethuillier-Karl, L.; Nagarajan, K.; Vergauwe, R. M. A.; George, J.; Chervy, T.; Shalabney, A.; Devaux, E.; Genet, C.; Moran, J.; Ebbesen, T. W. Tilting a ground-state reactivity landscape by vibrational strong coupling. Science 2019 , 363 ,615–619. (20) Ahn, W.; Triana, J. F.; Recabal, F.; Herrera, F.; Simpkins, B. S. Modification of ground-state chemical reactivity via light–matter coherence in infrared cavities. Sci-ence 2023 , 380 , 1165–1168. (21) Hutchison, J. A.; Schwartz, T.; Genet, C.; Devaux, E.; Ebbesen, T. W. Modifying Chemical Landscapes by Coupling to Vacuum Fields. Angew. Chem. Int. Ed. 2012 ,
+
+51 , 1592–1596. (22) Ng, C.; Dligatch, S.; Amekura, H.; Davis, T. J.; G´ omez, D. E. Waveguide-Plasmon Polariton Enhanced Photochemistry. Adv. Opt. Mater. 2015 , 3, 1582–1590. (23) Munkhbat, B.; Wers¨ all, M.; Baranov, D. G.; Antosiewicz, T. J.; Shegai, T. Suppression of photo-oxidation of organic chromophores by strong coupling to plasmonic nanoan-tennas. Sci. Adv. 2018 , 4, eaas9552. 26 (24) Satapathy, S.; Khatoniar, M.; Parappuram, D. K.; Liu, B.; John, G.; Feist, J.; Garcia-Vidal, F. J.; Menon, V. M. Selective isomer emission via funneling of exciton polari-tons. Sci. Adv. 2021 , 7, eabj0997. (25) Orgiu, E.; George, J.; Hutchison, J. A.; Devaux, E.; Dayen, J. F.; Doudin, B.; Stel-lacci, F.; Genet, C.; Schachenmayer, J.; Genes, C.; Pupillo, G.; Samor` ı, P.; Ebbe-sen, T. W. Conductivity in organic semiconductors hybridized with the vacuum field. 
+
+Nat. Mater. 2015 , 14 , 1123–1129. (26) Bhatt, P.; Kaur, K.; George, J. Enhanced Charge Transport in Two-Dimensional Materials through Light–Matter Strong Coupling. ACS Nano 2021 , 15 , 13616–13622. (27) Nagarajan, K.; George, J.; Thomas, A.; Devaux, E.; Chervy, T.; Azzini, S.; Joseph, K.; Jouaiti, A.; Hosseini, M. W.; Kumar, A.; Genet, C.; Bartolo, N.; Ciuti, C.; Ebbe-sen, T. W. Conductivity and Photoconductivity of a p-Type Organic Semiconductor under Ultrastrong Coupling. ACS Nano 2020 , 14 , 10219–10225. (28) Liu, B.; Huang, X.; Hou, S.; Fan, D.; Forrest, S. R. Photocurrent generation following long-range propagation of organic exciton–polaritons. Optica 2022 , 9, 1029–1036. (29) Liu, B.; Lynch, J.; Zhao, H.; Conran, B. R.; McAleese, C.; Jariwala, D.; For-rest, S. R. Long-Range Propagation of Exciton-Polaritons in Large-Area 2D Semi-conductor Monolayers. ACS Nano 2023 , 17 , 14442–14448. (30) Xu, D.; Mandal, A.; Baxter, J. M.; Cheng, S.-W.; Lee, I.; Su, H.; Liu, S.; Reich-man, D. R.; Delor, M. Ultrafast imaging of polariton propagation and interactions. 
+
+Nat. Commun. 2023 , 14 , 3881. (31) Tavis, M.; Cummings, F. W. Exact Solution for an $N$-Molecule—Radiation-Field Hamiltonian. Phys. Rev. 1968 , 170 , 379–384. 27 (32) Tavis, M.; Cummings, F. W. Approximate Solutions for an N -Molecule-Radiation-Field Hamiltonian. Phys. Rev. 1969 , 188 , 692–695. (33) Khurgin, J. B. How to deal with the loss in plasmonics and metamaterials. Nat. Nan-otechnol. 2015 , 10 , 2–6. (34) Matsuzaki, K.; Liu, H.-W.; G¨ otzinger, S.; Sandoghdar, V. On Quantum Efficiency Measurements and Plasmonic Antennas. ACS Photonics 2021 , 8, 1508–1521. (35) Fregoni, J.; Garcia-Vidal, F. J.; Feist, J. Theoretical Challenges in Polaritonic Chem-istry. ACS Photonics 2022 , 9, 1096–1107. (36) Galego, J.; Garcia-Vidal, F. J.; Feist, J. Suppressing photochemical reactions with quantized light fields. Nat. Commun. 2016 , 7, 13841. (37) Felicetti, S.; Fregoni, J.; Schnappinger, T.; Reiter, S.; de Vivie-Riedle, R.; Feist, J. Photoprotecting Uracil by Coupling with Lossy Nanocavities. J. Phys. Chem. Lett. 
+
+2020 , 11 , 8810–8818. (38) Torres-S´ anchez, J.; Feist, J. Molecular photodissociation enabled by ultrafast plasmon decay. J. Chem. Phys. 2021 , 154 , 014303. (39) Antoniou, P.; Suchanek, F.; Varner, J. F.; Foley, J. J. I. Role of Cavity Losses on Nonadiabatic Couplings and Dynamics in Polaritonic Chemistry. J. Phys. Chem. Lett. 
+
+2020 , 11 , 9063–9069. (40) Silva, R. E. F.; Pino, J. d.; Garc´ ıa-Vidal, F. J.; Feist, J. Polaritonic molecular clock for all-optical ultrafast imaging of wavepacket dynamics without probe pulses. Nat. Commun. 2020 , 11 , 1423. (41) Ruggenthaler, M.; Sidler, D.; Rubio, A. Understanding Polaritonic Chemistry from Ab Initio Quantum Electrodynamics. Chem. Rev. 2023 , 123 , 11191–11229. 28 (42) Foley, J. J., IV; McTague, J. F.; DePrince, A. E., III Ab initio methods for polariton chemistry. Chem. Phys. Rev. 2023 , 4, 041301. (43) Ruggenthaler, M.; Mackenroth, F.; Bauer, D. Time-dependent Kohn-Sham approach to quantum electrodynamics. Phys. Rev. A 2011 , 84 , 042107. (44) Ruggenthaler, M.; Flick, J.; Pellegrini, C.; Appel, H.; Tokatly, I. V.; Rubio, A. Quantum-electrodynamical density-functional theory: Bridging quantum optics and electronic-structure theory. Phys. Rev. A 2014 , 90 , 012508. (45) Haugland, T. S.; Sch¨ afer, C.; Ronca, E.; Rubio, A.; Koch, H. Intermolecular interac-tions in optical cavities: An ab initio QED study. J. Chem. Phys. 2021 , 154 , 094113. (46) Yang, J.; Ou, Q.; Pei, Z.; Wang, H.; Weng, B.; Shuai, Z.; Mullen, K.; Shao, Y. Quantum-electrodynamical time-dependent density functional theory within Gaussian atomic basis. J. Chem. Phys. 2021 , 155 , 064107. (47) Pavoˇ sevi´ c, F.; Rubio, A. Wavefunction embedding for molecular polaritons. J. Chem. Phys. 2022 , 157 , 094101. (48) Vu, N.; Mejia-Rodriguez, D.; Bauman, N. P.; Panyala, A.; Mutlu, E.; Govind, N.; Foley, J. J. Cavity Quantum Electrodynamics Complete Active Space Configuration Interaction Theory. J. Chem. Theory Comput. 2024 , 20 , 1214–1227. (49) Weight, B. M.; Tretiak, S.; Zhang, Y. Diffusion quantum Monte Carlo approach to the polaritonic ground state. Phys. Rev. A 2024 , 109 , 032804. (50) Weber, L.; dos Anjos Cunha, L.; Morales, M. A.; Rubio, A.; Zhang, S. Phaseless Auxiliary-Field Quantum Monte Carlo Method for Cavity-QED Matter Systems. J. Chem. Theory Comput. 2025 , 21 , 2909–2917. 29 (51) Tasci, C.; Cunha, L. A.; Flick, J. Photon Many-Body Dispersion: Exchange-Correlation Functional for Strongly Coupled Light-Matter Systems. Phys. Rev. Lett. 
+
+2025 , 134 , 073002. (52) Castagnola, M.; Riso, R. R.; El Moutaoukal, Y.; Ronca, E.; Koch, H. Strong Coupling Quantum Electrodynamics Hartree–Fock Response Theory. J. Phys. Chem. A 2025 ,
+
+129 , 4447–4457. (53) DePrince, A. E., III Cavity-modulated ionization potentials and electron affinities from quantum electrodynamics coupled-cluster theory. J. Chem. Phys. 2021 , 154 , 094112. (54) Mallory, J. D.; DePrince, A. E. Reduced-density-matrix-based ab initio cavity quan-tum electrodynamics. Phys. Rev. A 2022 , 106 , 053710. (55) El Moutaoukal, Y.; Riso, R. R.; Castagnola, M.; Ronca, E.; Koch, H. Strong Coupling Møller–Plesset Perturbation Theory. J. Chem. Theory Comput. 2025 , 21 , 3981–3992. (56) Bauer, M.; Dreuw, A. Perturbation theoretical approaches to strong light–matter cou-pling in ground and excited electronic states for the description of molecular polaritons. 
+
+J. Chem. Phys. 2023 , 158 , 124128. (57) Cui, Z.-H.; Mandal, A.; Reichman, D. R. Variational Lang–Firsov Approach Plus Møller–Plesset Perturbation Theory with Applications to Ab Initio Polariton Chem-istry. J. Chem. Theory Comput. 2024 , 20 , 1143–1156. (58) Flick, J.; Welakuh, D. M.; Ruggenthaler, M.; Appel, H.; Rubio, A. Light–Matter Re-sponse in Nonrelativistic Quantum Electrodynamics. ACS Photonics 2019 , 6, 2757– 2778. (59) Flick, J.; Ruggenthaler, M.; Appel, H.; Rubio, A. Kohn–Sham approach to quantum electrodynamical density-functional theory: Exact time-dependent effective potentials in real space. Proc. Natl. Acad. Sci. U.S.A. 2015 , 112 , 15285–15290. 30 (60) Flick, J.; Narang, P. Ab initio polaritonic potential-energy surfaces for excited-state nanophotonics and polaritonic chemistry. J. Chem. Phys. 2020 , 153 , 094116. (61) Tichauer, R. H.; Feist, J.; Groenhof, G. Multi-scale dynamics simulations of molecular polaritons: The effect of multiple cavity modes on polariton relaxation. J. Chem. Phys. 
+
+2021 , 154 , 104112. (62) Wang, D. S.; Neuman, T.; Flick, J.; Narang, P. Light–matter interaction of a molecule in a dissipative cavity from first principles. J. Chem. Phys. 2021 , 154 , 104109. (63) Svendsen, M. K.; Thygesen, K. S.; Rubio, A.; Flick, J. Ab Initio Calculations of Quan-tum Light–Matter Interactions in General Electromagnetic Environments. J. Chem. Theory Comput. 2024 , 20 , 926–936. (64) Hoffmann, N. M.; Sch¨ afer, C.; Rubio, A.; Kelly, A.; Appel, H. Capturing vacuum fluctuations and photon correlations in cavity quantum electrodynamics with multi-trajectory Ehrenfest dynamics. Phys. Rev. A 2019 , 99 , 063819. (65) Hoffmann, N. M.; Lacombe, L.; Rubio, A.; Maitra, N. T. Effect of many modes on self-polarization and photochemical suppression in cavities. J. Chem. Phys. 2020 , 153 ,104103. (66) Rosenzweig, B.; Hoffmann, N. M.; Lacombe, L.; Maitra, N. T. Analysis of the classical trajectory treatment of photon dynamics for polaritonic phenomena. J. Chem. Phys. 
+
+2022 , 156 , 054101. (67) Zhou, W.; Hu, D.; Mandal, A.; Huo, P. Nuclear gradient expressions for molecular cavity quantum electrodynamics simulations using mixed quantum-classical methods. 
+
+J. Chem. Phys. 2022 , 157 , 104118. (68) Martinez, P.; Rosenzweig, B.; Hoffmann, N. M.; Lacombe, L.; Maitra, N. T. Case 31 studies of the time-dependent potential energy surface for dynamics in cavities. J. Chem. Phys. 2021 , 154 , 014102. (69) Curchod, B. F. E.; Mart´ ınez, T. J. Ab Initio Nonadiabatic Quantum Molecular Dy-namics. Chem. Rev. 2018 , 118 , 3305–3336. (70) Cuartero-Gonz´ alez, A.; Fern´ andez-Dom´ ınguez, A. I. Light-Forbidden Transitions in Plasmon-Emitter Interactions beyond the Weak Coupling Regime. ACS Photonics 
+
+2018 , 5, 3415–3420. (71) Cuartero-Gonz´ alez, A. Dipolar and quadrupolar excitons coupled to a nanoparticle-on-mirror cavity. Phys. Rev. B 2020 , 101 .(72) Medina, I.; Garc´ ıa-Vidal, F. J.; Fern´ andez-Dom´ ınguez, A. I.; Feist, J. Few-Mode Field Quantization of Arbitrary Electromagnetic Spectral Densities. Phys. Rev. Lett. 2021 ,
+
+126 , 093601. (73) S´ anchez-Barquilla, M.; Garc´ ıa-Vidal, F. J.; Fern´ andez-Dom´ ınguez, A. I.; Feist, J. Few-mode field quantization for multiple emitters. Nanophotonics 2022 , 11 , 4363–4374. (74) Webb, S. P.; Iordanov, T.; Hammes-Schiffer, S. Multiconfigurational nuclear-electronic orbital approach: Incorporation of nuclear quantum effects in electronic structure calculations. J. Chem. Phys. 2002 , 117 , 4106–4118. (75) Pavoˇ sevi´ c, F.; Culpitt, T.; Hammes-Schiffer, S. Multicomponent Quantum Chemistry: Integrating Electronic and Nuclear Quantum Effects via the Nuclear-Electronic Or-bital Method. Chem. Rev. 2020 , 120 , 4222–4253. (76) Hammes-Schiffer, S. Nuclear-electronic orbital methods: Foundations and prospects. 
+
+J. Chem. Phys. 2021 , 155 .32 (77) Zhao, L.; Tao, Z.; Pavoˇ sevi´ c, F.; Wildman, A.; Hammes-Schiffer, S.; Li, X. Real-Time Time-Dependent Nuclear-Electronic Orbital Approach: Dynamics beyond the Born–Oppenheimer Approximation. J. Phys. Chem. Lett. 2020 , 11 , 4052–4058. (78) Li, T. E.; Tao, Z.; Hammes-Schiffer, S. Semiclassical Real-Time Nuclear-Electronic Orbital Dynamics for Molecular Polaritons: Unified Theory of Electronic and Vibra-tional Strong Couplings. J. Chem. Theory Comput. 2022 , 18 , 2774–2784. (79) Li, T. E.; Subotnik, J. E.; Nitzan, A. Cavity molecular dynamics simulations of liquid water under vibrational ultrastrong coupling. Proc. Natl. Acad. Sci. U.S.A. 2020 , 117 ,18324–18331. (80) Li, T. E.; Nitzan, A.; Subotnik, J. E. Cavity molecular dynamics simulations of vibra-tional polariton-enhanced molecular nonlinear absorption. J. Chem. Phys. 2021 , 154 ,094124. (81) Welman, M. F.; Li, T. E.; Hammes-Schiffer, S. Light-Matter Entanglement in Real-Time Nuclear–Electronic Orbital Polariton Dynamics. J. Chem. Theory Comput. 
+
+2025 , 21 , 8291–8307. (82) Garner, S. M.; Upadhyay, S.; Li, X.; Hammes-Schiffer, S. Nuclear–Electronic Orbital Time-Dependent Configuration Interaction Method. J. Phys. Chem. Lett. 2024 , 15 ,6017–6023. (83) Garner, S. M.; Li, X.; Hammes-Schiffer, S. Simulation of vibronic strong coupling and cavity-modified hydrogen tunneling dynamics. J. Chem. Phys. 2025 , 163 , 134113. (84) Epifanovsky, E. et al. Software for the frontiers of quantum chemistry: An overview of developments in the Q-Chem 5 package. J. Chem. Phys. 2021 , 155 , 084801. (85) Dunning, T. H. Gaussian basis sets for use in correlated molecular calculations. I. The atoms boron through neon and hydrogen. J. Chem. Phys. 1989 , 90 , 1007–1023. 33 (86) Lee, C.; Yang, W.; Parr, R. G. Development of the Colle-Salvetti correlation-energy formula into a functional of the electron density. Phys. Rev. B 1988 , 37 , 785–789. (87) Becke, A. D. Density-functional thermochemistry. III. The role of exact exchange. J. Chem. Phys. 1993 , 98 , 5648–5652. (88) Yu, Q.; Pavoˇ sevi´ c, F.; Hammes-Schiffer, S. Development of nuclear basis sets for mul-ticomponent quantum chemistry methods. J. Chem. Phys. 2020 , 152 , 244123. (89) Yang, Y.; Brorsen, K. R.; Culpitt, T.; Pak, M. V.; Hammes-Schiffer, S. Development of a practical multicomponent density functional for electron-proton correlation to produce accurate proton densities. J. Chem. Phys. 2017 , 147 .(90) Brorsen, K. R.; Yang, Y.; Hammes-Schiffer, S. Multicomponent Density Functional Theory: Impact of Nuclear Quantum Effects on Proton Affinities and Geometries. J. Phys. Chem. Lett. 2017 , 8, 3488–3493. (91) Li, X.; Smith, S. M.; Markevitch, A. N.; Romanov, D. A.; Levis, R. J.; Schlegel, H. B. A time-dependent Hartree–Fock approach for studying the electronic optical response of molecules in intense fields. Phys. Chem. Chem. Phys. 2005 , 7, 233–239. (92) Goings, J. J.; Lestrange, P. J.; Li, X. Real-time time-dependent electronic structure theory. Wiley Interdiscip. Rev.: Comput. Mol. Sci. 2018 , 8, e1341. (93) De Santis, M.; Storchi, L.; Belpassi, L.; Quiney, H. M.; Tarantelli, F. PyBERTHART: A Relativistic Real-Time Four-Component TDDFT Implementation Using Prototyp-ing Techniques Based on Python. J. Chem. Theory Comput. 2020 , 16 , 2410–2429. (94) Lochbrunner, S.; Schultz, T.; Schmitt, M.; Shaffer, J. P.; Zgierski, M. Z.; Stolow, A. Dynamics of excited-state proton transfer systems via time-resolved photoelectron spectroscopy. J. Chem. Phys. 2001 , 114 , 2519–2522. 34 (95) Stock, K.; Bizjak, T.; Lochbrunner, S. Proton transfer and internal conversion of o-hydroxybenzaldehyde: coherent versus statistical excited-state dynamics. Chem. Phys. Lett. 2002 , 354 , 409–416. (96) Aquino, A. J. A.; Lischka, H.; H¨ attig, C. Excited-State Intramolecular Proton Trans-fer: A Survey of TDDFT and RI-CC2 Excited-State Potential Energy Surfaces. J. Phys. Chem. A 2005 , 109 , 3201–3208. (97) Scheiner, S. Theoretical Studies of Excited State Proton Transfer in Small Model Systems. J. Phys. Chem. A 2000 , 104 , 5898–5909. (98) Zhao, L.; Wildman, A.; Pavoˇ sevi´ c, F.; Tully, J. C.; Hammes-Schiffer, S.; Li, X. Ex-cited State Intramolecular Proton Transfer with Nuclear-Electronic Orbital Ehrenfest Dynamics. J. Phys. Chem. Lett. 2021 , 12 , 3497–3502. (99) Chow, M.; Li, T. E.; Hammes-Schiffer, S. Nuclear–Electronic Orbital Quantum Me-chanical/Molecular Mechanical Real-Time Dynamics. J. Phys. Chem. Lett. 2023 , 14 ,9556–9562. (100) Xu, J.; Zhou, R.; Blum, V.; Li, T. E.; Hammes-Schiffer, S.; Kanai, Y. First-Principles Approach for Coupled Quantum Dynamics of Electrons and Protons in Heterogeneous Systems. Phys. Rev. Lett. 2023 , 131 , 238002. (101) Peng, W.; Zhou, J.-W.; Li, M.-L.; Sun, L.; Zhang, Y.-J.; Li, J.-F. Construction of nanoparticle-on-mirror nanocavities and their applications in plasmon-enhanced spec-troscopy. Chem. Sci. 2024 , 15 , 2697–2711. (102) Benz, F.; Chikkaraddy, R.; Salmon, A.; Ohadi, H.; De Nijs, B.; Mertens, J.; Carnegie, C.; Bowman, R. W.; Baumberg, J. J. SERS of Individual Nanoparticles on a Mirror: Size Does Matter, but so Does Shape. J. Phys. Chem. Lett. 2016 , 7,2264–2269. 35 (103) Pendry, J. B.; Aubry, A.; Smith, D. R.; Maier, S. A. Transformation Optics and Subwavelength Control of Light. Science 2012 , 337 , 549–552. (104) Bruner, A.; LaMaster, D.; Lopata, K. Accelerated Broadband Spectra Using Transi-tion Dipole Decomposition and Pad´ e Approximants. J. Chem. Theory Comput. 2016 ,
+
+12 , 3741–3750. (105) Ke, Y.; Assan, J. Harnessing multi-mode optical structure for chemical reactivity. J. Chem. Phys. 2025 , 163 , 164703. 36 TOC Graphic

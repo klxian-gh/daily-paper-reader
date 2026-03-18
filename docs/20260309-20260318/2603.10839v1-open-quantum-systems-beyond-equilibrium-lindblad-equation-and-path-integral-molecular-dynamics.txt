@@ -1,0 +1,1509 @@
+Title: Open quantum systems beyond equilibrium: Lindblad equation and path integral molecular dynamics
+
+URL Source: https://arxiv.org/pdf/2603.10839v1
+
+Published Time: Thu, 12 Mar 2026 01:24:04 GMT
+
+Number of Pages: 29
+
+Markdown Content:
+# Open quantum systems beyond equilibrium: Lindblad equation and path integral molecular dynamics 
+
+Benedikt M. Reible, ∗ Somayeh Ahmadkhani, † and Luigi Delle Site ‡
+
+Freie Universität Berlin, Institute of Mathematics, Arnimallee 6, 14195 Berlin, Germany 
+
+The Lindblad equation determines the time evolution of the density operator of open quantum systems. While valid for any system size, its use is, in practice, restricted to prototype/surrogate models with the aim of tackling specific aspects of the overall quantum complexity of a multi-atomic system. Path integral molecular dynamics (PIMD) instead provides static and dynamical quantum statistical averages of physical observables for systems in equilibrium composed of up to thousands of atoms over timescales up to nanoseconds, under the condition that short-time quantum coherence is not relevant for the properties of interest. PIMD relies on the well-established technique of molecular dynamics (MD) with its associated classical trajectories. However, it cannot describe a direct time evolution of a system and its convergence to a stationary state in situations out of equilibrium. In this work, we analyze the link between the Lindblad equation and PIMD; specifically, we will discuss how PIMD can actually be used to calculate the time evolution of ensemble-averaged physical observables and their convergence to a stationary state for situations out of equilibrium, bypassing the need of explicitly solving the Lindblad equation. Yet, at the same time, the Lindblad equation and PIMD are linked to one another through a formal relation of equivalence, which provides an argument for the consistency of PIMD results, namely the positivity of the density operator at any time. A numerical study of a prototype system, which is of interest in chemical physics, will be used to showcase the method. 
+
+I. INTRODUCTION 
+
+Open quantum systems [ 1– 3] provide, at the very foundational level, a theoretical back-ground for the study of the physics related to the rapidly developing quantum materials. The pursuit of energy-efficient systems [ 4], advances in quantum information [ 5], and even the long-term vision of practical quantum technologies and computers [6] all rely on the design of such modern materials. The research pursuing these goals provides fertile ground, where abstract concepts lay the theoretical foundation [ 7, 8] and prepare the ground for generic    
+
+> ∗benedikt.reible@fu-berlin.de
+> †s.ahmadkhani@fu-berlin.de
+> ‡luigi.dellesite@fu-berlin.de
+> arXiv:2603.10839v1 [quant-ph] 11 Mar 2026
+
+2physical models that test these foundations and yield fundamental predictions [ 9–12 ] which, in turn, must be made concrete by considering specific materials with chemical accuracy at the level of single atoms and molecules [ 13 –15 ]. Such a synergetic process allows for the design of quantum materials with properties on demand that can fulfill any of the aforementioned requirements. The cross-fertilization of fields and disciplines promoted by this kind of research is also a characteristic of the present work: on one hand, we discuss the celebrated Lindblad equation [ 16 , 17 ] (see also Refs. [ 1–3, 18 ]), which allows to examine fundamental properties of a quantum system at the level of single elementary quantum components (e.g., spin, photon, phonon, qubit) in and out of equilibrium, treated at time scales that still capture their quantum coherence and decoherence. The Lindblad equation becomes impractical, however, for many-atom systems, where the quantum properties of interest involve a specific chemical design. In this perspective, we discuss, on the other hand, molecular dynamics (MD) in its quantum version using Feynman’s path integral [ 19 ], termed path integral molecular dynamics (PIMD); see, for example, Ref. [ 20 ]. The PIMD method can handle thousands of atoms with their specific chemistry at the cost of losing the capability to describe the elementary physical degrees of freedom mentioned above and being restricted to treating time scales that are certainly large enough for mesoscopic properties, but not small enough to capture quantum coherence. Nevertheless, many condensed matter systems and corresponding processes of interest are characterized by rapid decoherence, and the corresponding level of “quantumness” captured by PIMD is sufficient for designing atomistic systems with specific mesoscopic characteristics needed in modern quantum technology. A representative example is the heat transport in carbon nanotubes [ 21 ] that may be optimized by specifically designing its atomistic structure [ 22 –24 ]. In this case, the phononic transport described in terms of the Lindblad equation would be possible only for a highly simplified surrogate system with results that are not directly applicable to realistic systems with chemical accuracy. Instead, the MD approach can directly deliver a suggestion for the specific chemistry that leads to the optimal characteristics required for the desired properties (see, e.g., Ref. [22]). The impression one might get from the above discussion is that the two approaches are quite separated and actually share little from the conceptual and practical point of view; however, this is actually not the case. Observe that the PIMD method has been restricted to systems in equilibrium so far, where the form of the density matrix is known a priori so that sampling of the latter is well-posed and can be checked a posteriori . The technique has not been proposed for situations out of equilibrium precisely because in such a case, the density matrix is not known and PIMD can only implicitly sample it; hence, one needs criteria that assure positivity of the density matrix at any given time. It is well-known that the Lindblad equation assures positivity of the density matrix during the entire time evolution for systems in and out of equilibrium. Based on these observations, we formalize a 3framework to extend the PIMD idea to situations out of equilibrium and discuss arguments that assure its internal quantum-mechanical and statistical-mechanical consistency. At the same time, we conclude that the Lindblad equation provides a mandatory criterion for the positivity of the corresponding density matrix in the extended PIMD framework. As an example for an application of the method, we will treat the case of a one-dimensional chain of water molecules in a thermal gradient. The steady state of a uniform chain under the effect of a temperature gradient is well-known; thus, if we apply our method, and if the method is correct, we should reproduce the known behavior. Moreover, the quantum effect of the path integral representation must be consistent with the expected physical behavior of atoms delocalized in space under the effect of a heat flow. We will show that our approach indeed gives physically consistent and numerically satisfactory results. The reason for choosing a one-dimensional water chain as a showcase is threefold: (i) we need a system that is simple enough, from the physical point of view, so that the results may have a clear interpretation. Yet, (ii) the system should be technically challenging for testing the numerical solidity of the approach. Of course, (iii) the system should also be complex enough regarding its chemical composition so that one can see the practical utility of our approach for systems of interest that cannot be treated via the standard Lindblad approach. Regarding the last point, it must be noted that one-dimensional water chains are a prototype of water wires, that is, a typology of system that has gained attention in a large field of chemical physics [ 25 – 27 ]. Once again, we underline that for a system as simple as the one treated by us here, it would not be feasible to solve the Lindblad equation with standard computational resources. Certainly, if one could use the latter, the problem would be solved at the full electronic and nuclear scale; however, if one wants to study, for example, the quantum effect on heat transport, then our method can deliver physically sound results without the need of large computational resources. The paper is structured as follows: In the subsequent Sec. II, we will discuss the Lindblad equation in connection with the PIMD method and elaborate on how we intend to connect the two. Sec. III contains a brief review of the derivation of the path integral representation of the canonical density matrix, which is used in Sec. IV to introduce the PIMD method for computing quantum-mechanical ensemble averages. Our main proposal is contained in Sec. V, where we will discuss an extension of the classical D-NEMD method to quantum systems and how this method, together with the PIMD formalism, can be used to compute averages of non-equilibrium observables. Finally, in Sec. VI we will report the results of the method applied to a system of chemical physics. 4 
+
+> II. FROM THE LINDBLAD EQUATION TO PIMD
+
+The Lindblad equation is a quantum master equation governing the time evolution of the density matrix of an open quantum system. It is derived from the von Neumann equation by dividing the total system into a subsystem of interest (the “open system”) and a much larger environment (the “reservoir”) whose degrees of freedom are traced out, see, e.g., Refs. [ 1–3, 18 ] and Appendix A for a short overview of the derivation. The final equation takes the following form: 
+
+dˆ ρ(t)dt = − i
+
+ℏ [ ˆH, ˆρ] + X
+
+> j
+
+λj
+
+
+
+ˆLj ˆρ(t) ˆL† 
+
+> j
+
+− 12 ˆL† 
+
+> j
+
+ˆLj ˆρ(t) − 12 ˆρ(t) ˆL† 
+
+> j
+
+ˆLj
+
+
+
+. (1) Here, ˆρ is the density operator and ˆH the Hamiltonian of the open system, the operators 
+
+ˆLj describe the dissipative interaction with the reservoir, and the constants λj ≥ 0 are the damping rates. Calculating the time dependence t 7 → ˆρ(t) using the Lindblad equation is an essential task because it facilitates the computation of time-dependent statistical averages of any physical observable ˆA of the open system: 
+
+⟨ ˆA⟩(t) := tr  ˆρ(t) ˆA . (2) Moreover, knowing the function t 7 → ˆρ(t) allows drawing explicit conclusions about the convergence of the system to a stationary state of equilibrium ˆρeq or non-equilibrium ˆρneq in the limit t → +∞; typical cases include the evolution of the system to a stationary state of equilibrium through thermal equilibration (i.e., the system is in contact with a thermostat), systems characterized by the presence of a heat flux as examples of non-equilibrium situations (i.e., the system is in contact with two distinct heat baths), or generally a response of the system to any external perturbation. A crucial point for our work is that whenever the coupling of the open system with the environment can be written in the form of Eq. (1), one can be assured that for all times t, the density matrix ˆρ(t) is a positive operator (see Lindblad’s original paper [16] as well as [2, Theorem 4.2.1], [3, Theorem 5.1]). For systems composed of hundred of atoms, solving the Lindblad equation is prohibitive, hence the question arises whether there are techniques with the help of which one can determine the density matrix at an acceptable computational price and if so, how they are related to the Lindblad equation. One interesting example of a technique that numerically samples the density matrix for systems in equilibrium is the path integral molecular dynamics (PIMD) method [ 20 , 28 , 29 ]. By mapping the quantum system onto a classical system, this technique allows for the implicit sampling of the equilibrium density matrix through classical trajectories; that is, quantum statistical averages of physical observables (in equilibrium) are 5calculated by averaging the observable of interest over the trajectories of the surrogate classical system. However, in comparison to the Lindblad approach which automatically handles situations beyond equilibrium, applying the PIMD method to systems out of equilibrium is not straightforward. One major result of the present work is that we analyze the problem of going beyond equilibrium and, using the theoretical structure of out-of-equilibrium techniques known from classical MD, put forward a model which describes, consistently with the quantum formalism, situations out of equilibrium in the PIMD formulation. Specifically, we focus on how to calculate expectation values of the form (2) for general physical observables ˆA via PIMD, subject to the condition that 
+
+lim 
+
+> t→+∞
+
+⟨ ˆA⟩(t) = tr  ˆρneq ˆA =: ⟨ ˆA⟩neq .
+
+Through our analysis, we find a very important connection between the Lindblad equation and PIMD applied to situations out of equilibrium, viz., the former dictates a necessary condition that the latter must satisfy in order to assure physical consistency of the time-dependent expectation values (2) . Such a condition imposes that in the PIMD simulation setup, the coupling of the system with any external source must be compatible with (or mappable onto) the dissipative term in the Lindblad equation (1): 
+
+D ˆρ(t) = X
+
+> j
+
+λj
+
+
+
+ˆLj ˆρ(t) ˆL† 
+
+> j
+
+− 12 ˆL† 
+
+> j
+
+ˆLj ˆρ(t) − 12 ˆρ(t) ˆL† 
+
+> j
+
+ˆLj
+
+
+
+. (3) This condition assures that the corresponding ˆρ(t), implicitly sampled by the PIMD method in situations out of equilibrium, is positive for any time t. 
+
+> III. PATH INTEGRAL REPRESENTATION OF THE DENSITY MATRIX
+
+In this section, we briefly outline the derivation of the well-known path integral represen-tation of the canonical density matrix for a system of particles in equilibrium, which can be found, for example, in Refs. [ 20 , Chapter 12] and [ 30 , Chapter 10] (we follow the former closely; for mathematical aspects of the path integral see, e.g., Ref. [31]). Consider first a single quantum particle moving in one-dimensional space; once the formula is derived for this case, the extension to a many-particle system in three-dimensional space is straightforward. Let the Hamiltonian of the particle be given by 
+
+ˆH = ˆp2
+
+2m + ˆU (ˆ x) ≡ ˆK + ˆU , 
+
+where ˆp = −iℏ∂x is the momentum operator, ˆx the position operator, ˆK = ˆp2/2m the kinetic energy operator, and ˆU the potential energy operator. For all x, x ′ ∈ R define 6
+
+ρ(x, x ′; β) := x′ e−β ˆH x ,
+
+which may be interpreted as the position-space matrix elements of the unnormalized trace-class operator ˆρ = e −β ˆH . Since ˆK and ˆU do not commute in general, one has to resort to an approximation theorem to factorize the exponential e−β ˆH , namely the Trotter product formula [32–34] (see also Ref. [35, Section VIII.8]): 
+
+ρ(x, x ′; β) = lim  
+
+> P→+∞
+
+D
+
+x′  e−β ˆU / (2 P ) e−β ˆK/P e−β ˆU / (2 P )
+
+| {z }
+
+> =: ˆ W
+
+P x
+
+E
+
+= lim  
+
+> P→+∞
+
+
+
+x′
+
+> P
+
+Y
+
+> j=1
+
+ˆW x
+
+
+
+.
+
+Inserting (P − 1) -times the position-space spectral representation of the identity operator, 
+
+Id = R 
+
+> R
+
+dxj |xj ⟩⟨ xj |, j ∈ { 2, . . . , P }, in between the factors of ˆW and simplifying the resulting expectation values using some standard arguments, it follows that [20, pp. 492 ff.] 
+
+ρ(x, x ′; β) = lim  
+
+> P→+∞
+
+ mP 
+
+2πβ ℏ2
+
+P/ 2 Z
+
+> R
+
+· · · 
+
+Z
+
+> R
+
+dx2 · · · dxP
+
+× exp 
+
+(
+
+− 1
+
+ℏ
+
+> P
+
+X
+
+> j=1
+
+ mP 
+
+2βℏ (xj+1 − xj )2 + βℏ
+
+2P
+
+ U (xj+1 ) + U (xj )) xP +1 =x′
+
+> x1=x
+
+,
+
+where U (xj ) denotes the eigenvalue of the operator ˆU ( ˆx) corresponding to the generalized position eigenvector |xj ⟩, j ∈ { 1, . . . , P + 1 }.Suppose now that the particle is confined to the spatial region [0 , L ] for some L > 0. Then one may compute the canonical partition function Z = tr (e −β ˆH ) by evaluating the trace in the basis of generalized eigenvectors |x⟩:
+
+Z = tr(e −β ˆH ) = 
+
+Z L
+
+> 0
+
+⟨x | e−β ˆH | x⟩ dx =
+
+Z L
+
+> 0
+
+ρ(x, x ; β) d x . 
+
+Setting x1 = xP +1 = x in the expression for ρ(x, x ′; β) from above and using that in this case, PPj=1 
+
+ U (xj+1 ) + U (xj ) = 2 PPj=1 U (xj ), it follows that 
+
+Z = lim  
+
+> P→+∞
+
+ mP 
+
+2πβ ℏ2
+
+P/ 2 Z L
+
+> 0
+
+· · · 
+
+Z L
+
+> 0
+
+dx1 · · · dxP
+
+× exp 
+
+(
+
+− 1
+
+ℏ
+
+> P
+
+X
+
+> j=1
+
+ mP 
+
+2βℏ (xj+1 − xj )2 + βℏ
+
+P U (xj )
+
+) 
+
+> xP+1 =x1
+
+,
+
+(4) where the integration variable x has been renamed to x1; this formula is the discretized path integral representation of the partition function of a single particle. Observe the following crucial fact: defining the “effective” classical Hamiltonian function 7
+
+HP (x1, . . . , x P ) := 
+
+> P
+
+X
+
+> j=1
+
+12 mω 2 
+
+> P
+
+(xj − xj+1 )2 + 1
+
+P U (xj )
+
+
+
+with ωP = √P / (βℏ) and xP +1 = x1, it follows that the partition function can be written more compactly as 
+
+Z = lim  
+
+> P→+∞
+
+ mP 
+
+2πβ ℏ2
+
+P/ 2 Z L
+
+> 0
+
+· · · 
+
+Z L
+
+> 0
+
+e−βH P (x1,...,x P ) dx1 · · · dxP .
+
+This expression can be seen as the partition function of a polymer ring, that is, a classical object with P beads harmonically linked to each other via nearest-neighbor connections, with ωP being the coupling strength (see Fig. 1 below). This observation is the starting point for the PIMD method discussed in the next section. Before we come to this, we mention how the above formulas can be extended to N -particle systems in three-dimensional space. This extension is, in principle, complicated because the bosonic/fermionic symmetry of the particles must be respected [ 20 , Sec. 12.6]. However, in first approximation, basic quantum effects of particle delocalization do not require the introduction of exchange symmetry. Therefore, it follows that for an N -particle Hamiltonian of the form H = PNi=1 ˆp2 
+
+> i
+
+/(2 mi) + ˆU (ˆ r1, . . . , ˆrN ), one has [20, Eq. (12.6.11)]: 
+
+Z = lim  
+
+> P→+∞
+
+" NY
+
+> i=1
+
+ miP
+
+2πβ ℏ2
+
+3P/ 2# Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P )
+
+> i
+
+× exp 
+
+(
+
+−
+
+> P
+
+X
+
+> j=1
+
+" NX
+
+> i=1
+
+miP
+
+2βℏ2
+
+ r(j+1)  
+
+> i
+
+− r(j)
+
+> i
+
+2 + βP U  r(j)1 , . . . , r(j)
+
+> N
+
+#)   
+
+> r(P+1)
+> i=r(1)
+> i
+
+.
+
+(5) Here, the integration region D(L) is a 3N P -dimensional hypercube of side length L > 0, and 
+
+U  r(j)1 , . . . , r(j)
+
+> N
+
+ denotes the eigenvalue of ˆU (ˆr1, . . . , ˆrN ) corresponding to |r(j)1 , . . . , r(j) 
+
+> N
+
+⟩. It is important to note that, according to this formula, the path integral formalism imposes that in the polymer-ring representation, the inter-particle interaction ˆU is realized only in terms of an interaction between beads with the same index j for each individual particle. By virtue of Eq. (5), an N -particle quantum problem has been mapped to a classical problem of interacting polymer rings, ideal for classical MD. In fact, using an effective fictitious dynamics of polymer rings, classical MD allows for the calculation of quantum statistical averages of physical observables, as reported below. 8
+
+IV. PATH INTEGRAL MOLECULAR DYNAMICS 
+
+It is well-known that classical MD samples the probability distribution of classical systems in phase space, thus allowing for the computation of ensemble averages of physical observables by averaging their value over MD trajectories [ 20 ]. In the present context, the probability distribution in phase space of polymer rings effectively represents the quantum density matrix, as shown above, and hence one may try to compute quantum ensemble averages of physical observables by averaging their classical counterpart, written in the polymer-ring formalism, over the classical trajectories of the polymer-ring system. To realize this method, an additional step is needed since MD simulations require momenta associated to each particle, which are not present in the effective polymer-ring Hamiltonian, cf. Eq. (5). The problem can be solved by artificially adding P Gaussian integrals over fictitious momentum variables p1, . . . , p P with mass parameter m′ = mP/ (2 πℏ)2 [ 20 , p. 525]. Indeed, for a single particle we may rewrite the prefactor in Eq. (4) as 
+
+ mP 
+
+2πβ ℏ2
+
+P/ 2
+
+=
+
+Z
+
+> R
+
+· · · 
+
+Z
+
+> R
+
+exp −β
+
+> P
+
+X
+
+> j=1
+
+p2
+
+> j
+
+2m′
+
+!
+
+dp1 · · · dpP .
+
+For the N -particle system, we assume, for simplicity, that the particles have identical mass: 
+
+mi ≡ m for all i ∈ { 1, . . . , N }. The partition function (5) then takes the following form: 
+
+Z = lim  
+
+> P→+∞
+
+Z
+
+> R
+> N
+
+Y
+
+> i=1
+
+d3p(1)  
+
+> i
+
+· · · d3p(P )
+
+> i
+
+Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P )
+
+> i
+
+× exp 
+
+(
+
+−
+
+> P
+
+X
+
+> j=1
+
+" NX
+
+> i=1
+
+β
+
+2m′
+
+ p(j)
+
+> i
+
+2 + mP 
+
+2βℏ2
+
+ r(j+1)  
+
+> i
+
+− r(j)
+
+> i
+
+2 + βP U  r(j)1 , . . . , r(j)
+
+> N
+
+#)   
+
+> r(P+1)
+> i=r(1)
+> i
+
+.
+
+Thus, the effective classical polymer-ring Hamiltonian is 
+
+HP
+
+  r(j) 
+
+> i
+
+, p(j)
+
+> i
+
+ := 
+
+> P
+
+X
+
+> j=1
+
+( NX
+
+> i=1
+
+ 12m′
+
+ p(j)
+
+> i
+
+2 + 12 mω 2
+
+> P
+
+ r(j+1)  
+
+> i
+
+− r(j)
+
+> i
+
+2
+
+
+
++ 1
+
+P U  r(j)1 , . . . , r(j)
+
+> N
+
+) (6) with ωP = √P / (βℏ) and r(P +1)  
+
+> i
+
+= r(1)  
+
+> i
+
+as before, and the curly braces in the argument of 
+
+HP indicate that this function depends on all r(j) 
+
+> i
+
+, p(j) 
+
+> i
+
+, i ∈ { 1, . . . , N }, j ∈ { 1, . . . , P }. The partition function now reduces to 9
+
+Z = lim  
+
+> P→+∞
+
+Z
+
+> R
+> N
+
+Y
+
+> i=1
+
+d3p(1)  
+
+> i
+
+· · · d3p(P )
+
+> i
+
+Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P ) 
+
+> i
+
+exp 
+
+
+
+−βH P
+
+  r(j) 
+
+> i
+
+, p(j)
+
+> i
+
+
+
+.
+
+Let ZP denote the 6N P -dimensional integral over e−βH P , i.e., the terms after the limit 
+
+P → +∞ in the above expression. We then have Z = lim P →+∞ ZP , implying that the quantity ZP may be viewed as a classical approximation of accuracy P for the exact quantum-mechanical partition function Z. The number of beads P controls the accuracy since the larger this number, the closer the classical expression ZP will be to the quantum-mechanical 
+
+Z (see also Sec. V D below). Consider a physical observable ˆA which is a function of the position operators ˆr1, . . . , ˆrN
+
+only, and let A(r1, . . . , rN ) denote its eigenvalue corresponding to |r1, . . . , rN ⟩. In order to treat the P different beads r(j) 
+
+> i
+
+, j ∈ { 1, . . . , P }, for each particle i in the polymer-ring formalism equally, one can introduce the following estimator [20, pp. 498 f.]: 
+
+AP
+
+  r(j)
+
+> i
+
+ := 1
+
+P
+
+> P
+
+X
+
+> j=1
+
+A r(j)1 , . . . , r(j)
+
+> N
+
+ . (7) Within the polymer-ring formalism, the equilibrium average ⟨ ˆA⟩eq = tr ( ˆρeq ˆA) of ˆA is therefore given by the expression 
+
+⟨ ˆA⟩eq = 1
+
+Z lim  
+
+> P→+∞
+
+Z
+
+> R
+> N
+
+Y
+
+> i=1
+
+d3p(1)  
+
+> i
+
+· · · d3p(P )
+
+> i
+
+Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P )
+
+> i
+
+h
+
+AP
+
+  r(j)
+
+> i
+
+ e−βH P
+
+i
+
+. (8) Using the approximate partition function ZP introduced above, we can define an approxima-tion for ⟨ ˆA⟩eq of accuracy P by setting 
+
+⟨ ˆA⟩P := 1
+
+ZP
+
+Z
+
+> R
+> N
+
+Y
+
+> i=1
+
+d3p(1)  
+
+> i
+
+· · · d3p(P )
+
+> i
+
+Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P )
+
+> i
+
+h
+
+AP
+
+  r(j)
+
+> i
+
+ e−βH P
+
+i
+
+,
+
+and this approximation satisfies ⟨ ˆA⟩eq = lim P →+∞⟨ ˆA⟩P . In terms of an MD trajectory, the quantity ⟨ ˆA⟩P can be estimated by sampling the function AP from Eq. (7) over a trajectory generated by the classical polymer-ring Hamiltonian HP :
+
+⟨ ˆA⟩P ≈ 1
+
+M
+
+> M
+
+X
+
+> k=1
+
+"
+
+1
+
+P
+
+> P
+
+X
+
+> j=1
+
+A r(j)1 (k∆t), . . . , r(j) 
+
+> N
+
+(k∆t)#
+
+, (9) where ∆t is the time step of the simulation and M ∆t the total temporal length of the trajectory. (That is, the observable A is calculated at each point r(j) 
+
+> i
+
+(k∆t) of the discretized trajectory.) Choosing P large enough, Eq. (9) gives an approximation for ⟨ ˆA⟩eq as well. 10 
+
+x1x2
+
+x3
+
+x4 x5
+
+x6
+
+Classical 
+
+> (a)
+
+x1 x′
+
+> 1
+
+x2
+
+x′
+
+> 2
+
+x3
+
+x′
+
+> 3
+
+x4 x′
+
+> 4
+
+x5
+
+x′
+
+> 5
+
+x6
+
+x′
+
+> 6
+
+Classical         
+
+> (b)
+> Figure 1. Panel (a) illustrates the mapping from the classical representation of an atom as a spherical object to the quantum representation as a polymer ring whose beads are connected by harmonic oscillators, here for P= 6 .Panel (b) shows how interactions are modeled in the polymer ring representation, here for N= 2 particles and P= 6 : only beads with the same index on different polymer rings interact with each other.
+
+With the above method, the problem of computing equilibrium expectation values of quantum-mechanical observables is mapped to an effective sampling via molecular dynamics in the space of interacting polymer rings (see Fig. 1). While the dynamics is fictitious, the spatial sampling of the conformations is statistically equivalent to the quantum statistics of interacting particles; in particular, quantum effects arise because, contrary to standard classical MD, the particles we have considered are not rigid spheres but space-delocalized entities due to the fluctuating shape of each ring. It should be noted that instead of employing polymer rings and their dynamics, one may equivalently use the formalism of centroid molecular dynamics [ 28 ] which uses quasi-classical objects, each defined as an average over all the beads of one polymer ring as described before. While the PIMD method allows us to calculate, via classical MD, quantum ensemble averages of physical observables in equilibrium, it does not tell us, however, how to treat these averages in situations out of equilibrium. For this one requires a non-equilibrium MD technique and its quantum equivalent. In the next section, we will discuss such a classical MD method known in the literature, and we will argue how it can be consistently translated to the quantum formalism. It must be reported that, although the time evolution is fictitious, there are variations of PIMD that allow for the calculation of time-dependent properties in the form of a linear response [ 28 , 29 ]; we will come back to the connection of our work with such methodologies later on. 11  
+
+> V. GOING BEYOND EQUILIBRIUM
+
+A specific feature of non-equilibrium statistical mechanics is that the probability density in phase space for classical systems, or the density matrix for quantum system, is not known 
+
+a priori and cannot be related to any of the expressions for the equilibrium ensembles (microcanonical, canonical, grand canonical, and their variations) [ 20 , 36 ]. Consequently, the problem is that one does not know how to calculate statistical averages of physical observables in out-of-equilibrium situations. Since the equilibrium distribution is usually known, one can often treat the non-equilibrium situation as a first-order perturbation or response [ 37 ]. In MD specifically, many refined methods are known to overcome this problem and treat systems out of equilibrium [ 38 ]; here we will describe a particular one, called dynamical non-equilibrium molecular dynamics (D-NEMD), which was originally developed by Ciccotti and Jacucci [ 39 ], and successfully applied to various out-of-equilibrium situations [ 40 –43 ]. This method requires only the equilibrium distribution (or even a stationary distribution) to determine non-equilibrium statistical averages of physical observable. Moreover, it even allows going beyond linear response theory (see, e.g., Ref. [42]). Importantly for us, it turns out that the classical D-NEMD formalism can be extended to quantum systems by utilizing the equivalence of the Schrödinger and the Heisenberg representation. This extension, together with the relation between classical MD and the calculation of quantum statistical averages through the PIMD method discussed in Sec. IV, allows connecting the time-dependent density matrix ρ(t), which is a solution of the Lindblad equation (1) , with the path integral treatment of particles, leading to an indirect solution of the former. This connection is the main novelty proposed in this work.  
+
+> A. Classical D-NEMD method
+
+In classical physics, the time-dependent statistical average of an observable A = A(r, p)
+
+in a state ϱ(t) = ϱ(r, p, t ), which is the solution of the Liouville equation ˙ϱ = −{ H, ϱ } for some time-dependent Hamiltonian H = H(r, p, t ), is given by 
+
+⟨A⟩(t) = 
+
+Z
+
+> Γ
+
+A(r, p) ϱ(r, p, t ) d μ = A, ϱ (t) L2 , (10) where Γ = R6N denotes the phase space spanned by positions r = ( x1, . . . , x 3N ) and momenta 
+
+p = ( p1, . . . , p 3N ), dμ = Q3Ni=1 dqi dpi is the Liouville measure on Γ, and ⟨· , ·⟩ L2 denotes the usual inner product on the space L2(Γ , μ ). The starting point for the D-NEMD method of Ciccotti and Jacucci [ 39 ] is the observation that ⟨A⟩(t) can also be written as an average of the time-dependent observable A(t) := A r(t), p(t), where t 7 → r(t) and t 7 → p(t) solve Hamilton’s equations of motion, with respect to the equilibrium distribution ϱeq := ϱ(r, p, 0) .12 Indeed, noting that the non-equilibrium density can be expressed as ϱ(r, p, t ) = U †(t, 0) ϱeq ,where U (t, 0) := exp  −i R t 
+
+> 0
+
+L(t′) d t′ and iL := −{ H, · } are the classical time evolution operator and Liouvillian, respectively, and that the time-dependent observable is given by 
+
+A r(t), p(t) = U (t, 0) A(r, p) [42, 44], it follows that 
+
+⟨A⟩(t) = A, U †(t, 0) ϱeq L2 = U (t, 0) A, ϱ eq L2 = A(t), ϱ eq L2 =: A(t) eq . (11) The concrete D-NEMD protocol that uses Eq. (11) to calculate ⟨A⟩(t) can be summarized as follows (see Fig. 2 for an illustration): first, one has to generate long equilibrium trajectories in order to sample the distribution ϱeq , represented by the solid line at the top of Fig. 2. One then takes uncorrelated points, labeled t0, . . . , t n in Fig. 2, along such trajectories and initiates, for each of these points separately, the MD algorithm with the full non-equilibrium Hamiltonian H. This leads to several non-equilibrium branch trajectories, represented by the solid vertical lines in Fig. 2, each starting at a point of equilibrium. The expectation value of the observable A after m time steps is then calculated by averaging over all the values that 
+
+A takes at the points tbk 
+
+> m
+
+, 0 ≤ k ≤ n, in each of the non-equilibrium branch trajectories: 
+
+⟨A⟩(tm) = 1
+
+n + 1 
+
+> n
+
+X
+
+> k=0
+
+A tbk
+
+> m
+
+ . 
+
+> B. Extension to quantum systems
+
+In the quantum-mechanical equivalent of Eq. (10), the expectation value of the operator 
+
+ˆA is evaluated in the Schrödinger picture, where the density operator ˆρ is time-dependent and the observable is time-independent, see also Eq. (2): 
+
+⟨ ˆA⟩(t) = tr  ˆρ(t) ˆA .
+
+To obtain an expression analogous to (11) , one may use the well-known fact (see, e.g., [ 45 , p. 132]) that the Schrödinger representation can be transformed into the Heisenberg representation with the help of the time evolution operator ˆU (t, 0) = T exp  − i
+
+> ℏ
+
+R t 
+
+> 0
+
+ˆH(t′) d t′:it holds that ˆρ(t) = ˆU (t, 0) ˆρ(0) ˆU †(t, 0) and ˆA(t) = ˆU †(t, 0) ˆA ˆU (t, 0) , hence cyclicity of the trace gives [46] 
+
+⟨ ˆA⟩(t) = tr   ˆU (t, 0) ˆ ρ(0) ˆU †(t, 0) ˆA = tr  ˆρ(0) ˆU †(t, 0) ˆA ˆU (t, 0)  = tr  ˆρ(0) ˆA(t) . (12) The term on the right-hand side is the quantum equivalent of the classical expression of Eq. (11) which can be calculated through the D-NEMD procedure, as discussed before. It follows 13 
+
+## t0
+
+## t1
+
+## t2 t3 tn
+
+## tb0
+
+> 1
+
+## tb0
+
+> 2
+
+## tb0
+
+> 3
+
+## tb1
+
+> 1
+
+## tb1
+
+> 2
+
+## tb1
+
+> 3
+
+## tb2
+
+> 1
+
+## tb2
+
+> 2
+
+## tb2
+
+> 3
+
+## tb3
+
+> 1
+
+## tb3
+
+> 2
+
+## tb3
+
+> 3
+
+## tbn
+
+> 1
+
+## tbn
+
+> 2
+
+## tbn
+
+> 3
+
+## . . . 
+
+## . . . 
+
+## . . . 
+
+## . . . 
+
+## ... ... ... ... ...
+
+ti − ti+1 = ∆ t and ti − tbi 
+
+> 1
+
+, tbj 
+
+> i
+
+− tbj 
+
+> i+1
+
+= ∆ t′ for all 0 ≤ i, j ≤ n.
+
+Figure 2. Illustration of the D-NEMD protocol. The horizontal curve at the top represents the equilibrium trajectory. The vertical curves, originating from temporally equidistant points along the former, represent trajectories where the external perturbation acts on the particles. The non-equilibrium statistical average of a physical observable is calculated using the values of the observable on points of the branched trajectory on the horizontal dotted lines. 
+
+that if we can map the right-hand side of Eq. (12) onto classical quantities, then we would actually obtain ⟨ ˆA⟩(t) using classical tools, namely, molecular dynamics. To this end, notice that in the PIMD formalism (i.e., with an effective classical treatment of a quantum system), the equilibrium density operator ˆρ(0) is replaced by its position-space matrix elements 
+
+ρ(x, x ) = ⟨x | ˆρ(0) | x⟩, which are calculated by sampling polymer-ring configurations using classical MD (cf. Sec. IV). Thus, combining the D-NEMD with the PIMD method, one could efficiently calculate time-dependent statistical averages of observables by sampling the equilibrium distribution with PIMD and the time-dependent observable via the D-NEMD approach. To give consistency to the approach proposed above, first and foremost we need to write the time-dependent observable ˆA(t), acting as an operator in the underlying Hilbert space, as an effective classical object that can be calculated through D-NEMD, that is, as a real-valued function A r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t), j ∈ { 1, . . . , P }, as in Eq. (7) in the PIMD formalism. Formula (7) is certainly valid under the assumption of stationary equilibrium, hence it is necessary at this point to argue that A r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t) is well-defined also along trajectories out of equilibrium. This means that we need to justify that A r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t) is dynamically equivalent, in classical effective terms, to the time-dependent observable ˆA(t), acting as an 14 operator in Hilbert space. The argument that we propose is the following: the exact time evolution of ˆA(t) is governed by Heisenberg’s equation of motion, 
+
+d ˆA(t)dt = i
+
+ℏ
+
+ ˆH(t), ˆA(t) . (13) The application of the path integral formalism implies that A r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t) is the projections of ˆA(t) onto position space at any time t:
+
+A r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t) = r(j)1 , . . . , r(j) 
+
+> N
+
+ˆA(t) r(j)1 , . . . , r(j) 
+
+> N
+
+. (14) Since ˆA(t) satisfies Eq. (13), one can conclude that the expression (14) entering the path integral can be used in the D-NEMD scheme because it represents the effective dynamical analog of ˆA(t) in classical terms, thus it is dynamically defined also along trajectories out of equilibrium; in PIMD, the polymer-ring trajectories out of equilibrium represent the departure of ( r(j)1 (t), . . . , r(j) 
+
+> N
+
+(t)) from the equilibrium trajectory (generated by the Hamiltonian HP from Eq. (6)) due to the action of the dissipative term in the Hamiltonian. Thus, the application of the D-NEMD PIMD procedure to the problem of calculating tr  ˆρ(0) ˆA(t) is physically justified. We will refer to this combined D-NEMD PIMD method for computing expectation values ⟨ ˆA⟩(t) out of equilibrium as NPI method for brevity (non-equilibrium path integral). In conclusion, any ensemble average ⟨A⟩(t) = tr  ρ(t)A) obtained via the time-dependent density operator ρ(t) from the Lindblad equation is consistently close (for large but finite P ), or even equivalent (for P → +∞), to the expectation value tr  ρ(0) A(t) obtained via the NPI method. The limitations of the PIMD method compared to the Lindblad equation must always be remembered. While the latter captures the exact reduced dynamics of an open system (given all the necessary approximations needed to derive the equation), the former can only calculate ensemble averages which inevitably neglects short-time quantum coherence; indeed, since in this framework one computes the statistical average of the time-dependent observable, one effectively performs different independent measurements of the observable and averages over them. However, as underlined in Ref. [ 29 ], rapid quantum decoherence is a characteristic of many process in condensed matter systems, so the technique is justified for a very large class of systems. A proof of the conceptual consistency of the theoretical framework that we have proposed here is the following observation: in the limit of equilibrium, the computation of time correlation functions within the NPI method automatically reduces to the same procedure routinely used in PIMD studies of equilibrium [ 29 , Eq. (11)]; we provide the explicit argument in Appendix B. 15   
+
+> C. Positivity of ρ(t)
+
+From the discussion above, one might get the impression that NPI simulations are independent of the Lindblad equation, in that they provide an alternative computational method to the latter for large systems and long time scales, where the Lindblad equation is of no practical interest. However, as indicated before, this is not the case since the Lindblad equation is crucial for assuring positivity of the density operator ˆρ(t) at all times t.More precisely, if one deals with an open quantum system whose coupling to the external environment (e.g., thermostats) can be written in the Lindblad form (1) (or its classical analog), then the time-dependent expectation values ⟨ ˆA⟩(t) calculated using the equivalence 
+
+tr  ˆρ(t) ˆA = tr  ˆρ(0) ˆA(t) ,
+
+and the NPI method are physically consistent because, as mentioned above, the Lindblad equation assures positivity of the density operator ˆρ(t) throughout the entire time evolution. Conversely, if the coupling to the external reservoir is not of the form (1) , one cannot be assured that computing tr  ˆρ(0) ˆA(t) via NPI is well-posed since ˆρ(t) is not necessarily positive for every t and hence might have negative eigenvalues in which case the expression tr  ˆρ(t) ˆA
+
+cannot be interpreted as a physically meaningful expectation value since ˆρ(t) does not give rise to a quantum probability measure as it will generally lead to negative probabilities. In essence, therefore, the interesting formal result is that the possibility of mapping the external source in the NPI method onto a Lindbladian is a necessary condition for using this method to calculate statistical averages of physical observables in situations out of equilibrium. In PIMD calculations previously presented in the literature, the positivity of the density operator ˆρ(t) has not been a concern because, until now, only systems in equilibrium or at worst near equilibrium have been treated. Thus, the novelty put forward in this work is the use of NPI for situations out of equilibrium, with a necessary condition to settle the question about the positivity of ˆρ(t), as this condition enforces the internal physical consistency of NPI simulations. To make this argument more precise, suppose that the coupling of the open system S to the external environment R entering the NPI method satisfies the Born-Markov approximation and is thus described by the general Redfield master equation 
+
+dˆ ρS (t)dt = −
+
+α
+
+ℏ
+
+2 Z +∞
+
+> 0
+
+tr R
+
+h ˆHint (t), [ ˆHint (t − t′), ˆρS (t) ⊗ ˆρR]i
+
+dt′ . (15) Here, the parameter α ∈ R determines the strength of the interaction (see Appendix A for details). Suppose, furthermore, that the secular approximation cannot be applied to this system, meaning that the Redfield equation cannot be written in Lindblad form (see again 16 Appendix A for further explanations). It is well-known that in this case, there can exist times t for which the solution ρS (t) of Eq. (15) is not a positive operator [ 47 –54 ], hence does not describe a proper physical state. Nevertheless, the Redfield equation can be written in the form [51, Eqs. (96) and (102)], [53, Eq. (8)] 
+
+dˆ ρS (t)dt = − i
+
+ℏ [ ˆH, ˆρS ] + eD ˆρS (t) ,
+
+which shows formal similarity to the Lindblad equation, cf. Eq. (1), where the dissipative term eD ρS (t), however, is not as simple as in Eq. (3). Thus, the application of the NPI procedure, with an external source as described above, would proceed in the same way as if the external coupling were of Lindblad form, and would deliver numerical results. However, since the Redfield equation does not guarantee positivity of ˆρS (t), the NPI method may deliver physically inconsistent results. Such a possible inconsistency could be discovered only by explicitly solving the Redfield equation for the system under investigation to check whether the density operator is positive or not; hence, the method does not yield a com-putational simplification as the complicated master equation has to be solved anyway. In contradistinction to this, if the system is known to satisfy the secular approximation, Eq. (15) can be simplified to the Lindblad equation (1) which assures positivity of the density operator, and thus, in this case, one can be certain that NPI simulations are physically consistent. In other words, it is sufficient to know that the coupling of the system to the reservoir is described by a term of the form (3) in order to conclude that the NPI method yields reliable results. Summarizing, we have justified the following 
+
+Conclusion. Consider an open quantum system coupled to an external reservoir such that the secular approximation (or rotating wave approximation) is valid. Then the time-dependent, non-equilibrium expectation values calculated via NPI are physically consistent. 
+
+It is very interesting to note that, paradoxically, even though one can bypass the task of obtaining an explicit solution to the Lindblad equation, the latter plays a key role per se for establishing physical consistency of the numerical NPI method, while the Redfield equation, for example, does not offer the possibility to draw such conclusions and instead requires an explicit case-by-case verification of the density operator. 
+
+Remark. It is important to note that in recent years, the violation of positivity in the Redfield equation as well as the necessity of the secular approximation for the transition from the Redfield to the Lindblad form has been investigated thoroughly; see, for example, Refs. [ 52 , 55 –64 ]. This has led to certain alternatives to the secular approximation, which also give rise to a master equation that preserves positivity of its solutions. Therefore, in more generality (but also less concrete terms), we can state that a sufficient condition for the physical consistency of the NPI method is that the coupling to the external reservoir yields, 17 through an appropriate approximation procedure, a completely positive time-evolution of the reduced density operator. Explicit examples of external sources that are classical analogs of those for which the coupling term can be expressed in Lindblad form are Drude and Ohmic baths, written via harmonic oscillators, which can be rewritten in the form of a Langevin bath (see, e.g., Refs. [ 65 –67 ] and references therein). As suggested above, sources of this type can be used to create typical situations out of equilibrium which are of physical and technological interest, namely generating a heat flux through a thermal gradient by coupling different regions of the system to different baths. One should note that the concepts developed here can also be used in situations where the number of particles in the systems is not fixed (see, e.g., Ref. [ 68 ]); in fact, the PIMD method has already been tested for a system with variable particle number, as explicitly discussed in Ref. [69].  
+
+> D. Accuracy
+
+Regarding the results above, it is clear that they only approximate the true quantum-mechanical non-equilibrium expectation value and that the quality of the approximation is controlled by the number P of beads in the polymer ring; in fact, as noted in Sec. IV, 
+
+lim  
+
+> P→+∞
+
+⟨ ˆA⟩P (t) = ⟨ ˆA⟩(t) .
+
+That is, only in the limit of infinitely many beads is the full quantum-mechanical equivalence justified. This means that in the NPI method, for a sufficiently large value of P we have 
+
+⟨ ˆA⟩(t) ≈ ⟨ ˆA⟩P (t). From the practical point of view, the NPI method suggests that 
+
+⟨ ˆA⟩P (tm) = 1
+
+n + 1 
+
+> n
+
+X
+
+> k=0
+
+1
+
+P
+
+> P
+
+X
+
+> j=1
+
+A r(j)1 (tbk 
+
+> m
+
+), . . . , r(j) 
+
+> N
+
+(tbk 
+
+> m
+
+) , (16) where n is the number of branched trajectories, thus each term of this sum is calculated at a time tbk 
+
+> m
+
+of each of the branched trajectories (cf. Fig. 2). Moreover, for physical consistency, one should carry out a study increasing P systematically until results numerically converge so that one can be sure to be in an acceptable range of validity of the relation 
+
+lim P →+∞⟨ ˆA⟩P (t) = ⟨ ˆA⟩(t), and thus to capture the quantum properties of the system. By calculating the quantity in Eq. (16) at different values of tm along the equilibrium trajectory, one builds a time series that reflects the time evolution of the observable ˆA out of equilibrium. 18  
+
+> VI. APPLICATION OF THE METHOD
+
+As motivated in the introduction, we have chosen a one-dimensional chain of water molecules in a thermal gradient as an illustrative application of the proposed methodology. Technical details of the simulation can be found in Appendix C, while a pictorial illustration of the system can be found above the x-axis in Fig. 3. As previously discussed, a system as simple as the one we are treating here would not be accessible by the Lindblad approach, unless one has very large computational facilities available, or one maps the problem onto a highly coarse-grained model where the chemical details are neglected, e.g., a chain of harmonic oscillators. Instead, the essential quantum nature of the molecular atoms (especially the hydrogen), namely spatial delocalization, can be represented well by the PI theory and its numerical implementation in terms of interacting polymer rings. The question that arises concerns the applicability of the proposed method, that is, whether there is convergence of the calculated physical quantities of interest for finite 
+
+P . If the answer is positive, then one may ask which valuable physical knowledge one gains that is not accessible through the Lindblad approach, because of the computational resources or excess of model simplification, and/or by standard classical models because they are not optimally designed for such properties. A one-dimensional chain of uniform elements in a thermal gradient will reach a steady state in which the temperature is uniform along the chain at the average value between the two temperatures of the hot and cold reservoir [ 70 ]. Thus, a first test of validity of the method consists in simulating the system at different values of P , from P = 1 (classical limit) to systematically larger values, in order to show that all the simulations lead to the expected steady state. Such a test will show consistency of the method because it gives the physically expected result for a reference situation out of equilibrium, above all for large values of P ; as reported in Fig. 3, such a study indeed shows the expected behavior. Next, we need to address the question whether a physical observable of interest in this context, calculated in the non-equilibrium steady state, converges for a certain (finite and numerically acceptable) value of P . If the convergence could not be found, then this would imply that out of equilibrium, the method would only work in the ideal situation of P being very large, and thus the method would not be numerically convenient. We have chosen the average heat flux along the chain as a physical observable, and Fig. 4 shows that for P = 64 this quantity has essentially converged; note that for liquid water in equilibrium, usually P = 32 
+
+is sufficient (see, e.g., Ref. [71]). The final question concerns the overall utility of the approach, that is, whether one can detect a quantum signature in the physical observable; this would be the added value of the proposed approach compared to the standard full quantum and full classical techniques. In a chain of water molecules, one expects the heat flux to increase when the quantum character 19 
+
+0 L/2 L
+
+Length of the region (Å) 
+
+280 
+
+290 
+
+300 
+
+310 
+
+320 
+
+330 
+
+> Temperature (K)
+> Hot
+> Cold
+
+P = 1 P = 16 P = 32 P = 64             
+
+> Figure 3. Temperature profile of a one-dimensional chain of 87 water molecules, each one modeled as a polymer ring (pictorially visualized above the x-axis), in a thermal gradient for different values of the number of beads P. On the left-hand side of the chain is a “hot” temperature reservoir at
+> 330 K, and on its right-hand side is a “cold” reservoir at 280 K. As expected, the chain reaches a steady state with a uniform temperature at around 305 K, and the higher the value of P, the smaller the deviation of the temperature along the chain from this steady-state value.
+
+of the atoms moves from the classical case ( P = 1 ) to higher and higher values of P . In fact, due to the delocalization of atoms in space, one expects a higher probability for the atom of one molecule to bond with atoms of neighboring molecules (e.g., O–H bond in water), thereby transporting the heat towards the colder atoms. Such an outcome would also be consistent with the results obtained in near-equilibrium studies of water, where an enhanced flexibility of the O–H bond, compared to the classical case, was detected by the PIMD method [ 72 ]. Figure 4 shows that this is indeed the case, and thus we gain the interesting information about the enhanced heat flux in the chain of water molecules, due to the quantum character of the atoms as described by the PI model. We can conclude that our basic test gives satisfactory and encouraging results, and thus stimulates us to apply the method to more complex systems tracing its range of applicability and finding paths on technical and conceptual improvement.  
+
+> VII. CONCLUSIONS
+
+The comparison of the Lindblad approach with the PIMD approach to open quantum systems has suggested the extension of the latter to situations out of equilibrium. We have formulated a physically sound and, as much as possible within necessary assumptions, 20         
+
+> 1816 32 64
+> Number of beads
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.10
+> Heat Flux (kcal/(mol ·Å²· fs))
+> Figure 4. Heat flux along the one-dimensional chain of water molecules for different values of the bead number P. The data illustrates that for P= 64 , the heat flux has essentially converged.
+
+consistent theoretical framework for such an extension. In addition to the general formulation, we have found a necessary condition that assures the positivity of the density matrix also in the PIMD formulation by leveraging structural properties of the Lindblad equation. In PIMD such a condition applies to the choice of the system–environment coupling (i.e., to external sources), which must be formally consistent with the expression of the Lindbladian. A typical example of consistency is the use of Langevin thermostats, such as, for example, in the creation of a gradient of temperature and thus in the study of heat transport in chemo-physical systems. The extension of PIMD to non-equilibrium situations paves the way for studying a large class of systems at atomic and molecular scale. The proposed method goes beyond current PIMD-like approaches in the sense that the latter can describe situations out of equilibrium, such as adiabatic reactions, only in terms of linear response through the Kubo transform correlation functions [ 29 , 73 , 74 ], while our approach can treat cases beyond the linear response, see e.g., Ref. [ 42 ]. Finally, the possibility of performing such simulations can yield data to describe coarser models for the direct treatment in the Lindblad equation and, more generally, future ideas based on specific chemical compositions for quantum materials and the corresponding technology. 
+
+> ACKNOWLEDGMENTS
+
+This work was supported by the DFG Collaborative Research Center 1114 “Scaling Cascades in Complex Systems”, Project No. 235221301, Project C01 “Adaptive coupling of scales in molecular dynamics and beyond to fluid dynamics” (L.D.S. and B.M.R). Further 21 support by the DFG, Project No. DE 1140/15-1, “Mathematical Modeling and computational implementation of open quantum systems for molecular simulations”, is acknowledged (L.D.S. and S.A.). 
+
+> Appendix A: Derivation of the Redfield and Lindblad equation
+
+In the following, we provide a short outline of the derivation of the Redfield and Lindblad equation; see Refs. [ 1– 3, 18 , 75 ] for more details. Consider an open quantum system S with Hilbert space HS which is in contact with a thermodynamic reservoir R with Hilbert space 
+
+HR. The Hilbert space of the combined system is H = HS ⊗ H R, and the total Hamiltonian may be decomposed as ˆH = ˆHS ⊗ Id R + Id S ⊗ ˆHR + α ˆHint , where ˆHint mediates the interaction between S and R, and α ∈ R determines the strength of the interaction. Let ˆρ denote the density operator of the total system. In the interaction picture, the von Neumann equation for ˆρ takes the following form [1, Eq. (3.111)]: 
+
+dˆ ρ(t)dt = −iα
+
+ℏ
+
+ ˆHint (t), ˆρ(t) .
+
+Assuming a weak coupling regime ( α ≪ 1), one can solve this equation in terms of a perturbative expansion, for example using the Nakajima-Zwanzig projection operator technique [ 76 , 77 ], to obtain a master equation for the reduced state ˆρS (t) := tr R
+
+ ˆρ(t) of the open system, cf. [1, Sections 3.3 and 9.1], [ 2, Section 5.1], [ 3, Sections 5.5 and 6.2]. To this end, two additional approximations are implemented: (i) the Born approximation ,according to which the initial state of the total system factorizes as ˆρ(0) = ˆρS (0) ⊗ ˆρR with 
+
+ˆρR a canonical Gibbs state, and (ii) the Markov approximation , which assumes that the typical timescale of the reservoir τR is small compared to the timescale τS over which ˆρS
+
+varies. Under these assumptions, one obtains [1, Eq. (3.118)] 
+
+dˆ ρS (t)dt = −
+
+α
+
+ℏ
+
+2 Z +∞
+
+> 0
+
+tr R
+
+ ˆHint (t), [ ˆHint (t − t′), ˆρS (t) ⊗ ˆρR]
+
+dt′ + O(α3) . (A1) This equation is called Redfield equation [78 ] or quantum master equation in the Born-Markov approximation. It has been well-known for a long time that solutions of (A1) need not be positive, i.e., they may possess negative eigenvalues; see Refs. [ 47 –54 ] and references therein. In order to obtain a master equation that preserves positivity, one has to perform an additional approximation, the so-called secular or rotating-wave approximation , in which one averages over terms that oscillate over a timescale τ0 that is much larger than τR but much smaller than τS . The resulting master equation takes the form [1, Eq. (3.66)] 22 
+
+dˆ ρS (t)dt = − i
+
+ℏ [ ˆH, ˆρS (t)] + α2 X
+
+> j
+
+λj
+
+
+
+ˆLj ˆρS (t) ˆL† 
+
+> j
+
+− 12
+
+ ˆL† 
+
+> j
+
+ˆLj ˆρS (t)
+
+
+
+. (A2) This is the Lindblad equation which was independently obtained for bounded Hamiltonians on infinite-dimensional spaces by Lindblad [ 16 ], and for finite-dimensional spaces by Gorini, Kossakowski, and Sudarshan [ 17 ]. It turns out that a necessary and sufficient condition for 
+
+ˆρS (t) to be a positive operator for all t > 0 is that the master equation can be written in the form (A2); this can be formalized [2, Theorem 4.2.1], [3, Theorem 5.1] by the following 
+
+Theorem. Suppose that dim HS < +∞. Then the time-evolution ˆρS (t) = Φ( t) ˆρS (0) is completely positive, meaning that ˆρS (t) is a positive operator for all t > 0, if and only if the generator L of (Φ( t)) t≥0, defined via ddt ˆρS (t) = LˆρS (t), is given by 
+
+LˆρS = − i
+
+ℏ [ ˆH, ˆρS ] + α2 X
+
+> j
+
+λj
+
+
+
+ˆLj ˆρS ˆL† 
+
+> j
+
+− 12
+
+ ˆL† 
+
+> j
+
+ˆLj ˆρS
+
+
+
+with λj ≥ 0, ˆLj bounded operators on HS , and ˆH a self-adjoint operator on HS .
+
+> Appendix B: Limit to equilibrium in the NPI method
+
+In PIMD the calculation of equilibrium time correlation functions CAB (t) for two physical observables ˆA and ˆB has been a subject of high interest. These functions can be defined in different ways; while fully equivalent in a quantum-mechanical treatment, they are no longer equivalent if classical approximations are used; see, e.g., Refs. [ 28 , 29 , 79 ] and references therein. We shall use the definition of CAB (t) from Ref. [ 29 , Eq. (1)] and show that in the limit of equilibrium (i.e., when the dissipative part of the Lindblad equation can be neglected), the NPI method consistently leads to the same formula which is obtained through the PIMD method only [29, Eq. (11)]. The time correlation function CAB (t) for two observables ˆA and ˆB in the Heisenberg representation is given by [29, Eq. (1)] 
+
+CAB (t) := tr  ˆρ(0) ˆA(0) ˆB(t) . (B1) Defining ˆF (t) := ˆA(0) ˆB(t), it follows that CAB (t) = tr  ˆρ(0) ˆF (t) = ⟨ ˆF ⟩(t) is the time-dependent expectation value of ˆF (t) from Eq. (12). If we take the limit λj → 0 in the Lindblad equation (1) , that is, if we are in the limit of equilibrium, the results from Sec. IV can be applied straightforwardly; in particular, the expectation value ⟨ ˆF ⟩(t) can be computed using Eq. (8) which yields 23 
+
+CAB (t) = lim  
+
+> P→+∞
+
+1
+
+ZP
+
+Z
+
+> R
+> N
+
+Y
+
+> i=1
+
+d3p(1)  
+
+> i
+
+· · · d3p(P )
+
+> i
+
+Z
+
+> D(L)
+> N
+
+Y
+
+> i=1
+
+d3r(1)  
+
+> i
+
+· · · d3r(P )
+
+> i
+
+×
+
+h
+
+AP
+
+ r(0) BP
+
+ r(t) e−βH P (r0,p0)
+
+i
+
+,
+
+(B2) where AP (r) = 1
+
+> P
+
+PPk=1 A(rk), with r corresponding to a point on the trajectory at time 
+
+t = t0, and equivalently for BP (r), with r corresponding to a point at time t = t0 + m∆t,and finally HP is defined in Eq. (6). The above expression is the equivalent of [ 29 , Eq. (11)] for an N -particle system, thus showing consistency. While the formal correspondence between Eqs. (B1) and (12) is trivial, the important point to note is that the corresponding numerical algorithms, one based on the full equilibrium approach following Eq. (B2) from Ref. [ 29 ], and the other employing the numerical procedure of D-NEMD in the limit of equilibrium, are equivalent. From the algorithmic point of view, the key difference is that in D-NEMD, ˆB(t) is calculated along branched trajectories while in the other method, one simply produces a single equilibrium trajectory along which Eq. (B2) is calculated. Realizing that in the limit of equilibrium, each branched trajectory is equivalent to the equilibrium trajectory from a certain time on (see Fig. 5 for an illustration), the calculation of CAB (t) following Eq. (16) with ˆF (t) = ˆA(0) ˆB(t) reduces to an average over time intervals of equal length along the equilibrium trajectory. One then proceeds by building a time series with progressively larger time interval span, exactly as done in Refs. [ 71 , 80 , 81 ]following Eq. (B2) and using a full equilibrium PIMD approach. 
+
+> Appendix C: Technical details of the simulation
+
+All simulations were performed using the LAMMPS molecular dynamics package [ 82 , 83 ]. Water molecules were modeled using the flexible q-TIP4P/F force field [ 84 ], which combines Lennard–Jones interactions between oxygen atoms with long-range electrostatics and flexible intramolecular degrees of freedom. The intramolecular O–H bonds were described by a Morse potential and the intramolecular H–O–H angle by a harmonic potential. Long-range Coulomb interactions were treated using the PPPM method adapted for TIP4P-type models with a real-space cutoff of 9 Å. Quantum effects were included via path-integral molecular dynamics, in which each atom is represented by a polymer ring of P beads. Simulations were carried out with P = 1 , 16 , 32 , 64 , corresponding to a classical ( P = 1 ) and different levels of a quantum description of the atoms ( P = 16 , 32 , 64 ). Time integration for the equilibrium state was performed using the BAOAB integrator combined with a PILE-L Langevin thermostat at 300 K with a relaxation time of 1 ps, employing the normal-mode PIMD technique [ 85 ]. The system in equilibrium was simulated under periodic boundary conditions in all directions using a timestep of 0.5 fs for a total of 0.2 ns. 24 
+
+t0
+
+t1
+
+t2 tn−1 tn
+
+t′ 
+
+> 1
+
+≡ t1
+
+t′ 
+
+> 2
+
+≡ t2
+
+t′ 
+
+> 3
+
+≡ t3
+
+t′ 
+
+> n
+
+≡ tn
+
+t′ 
+
+> 2
+
+≡ t2
+
+t′ 
+
+> 3
+
+≡ t3
+
+t′ 
+
+> n
+
+≡ tn
+
+t′ 
+
+> 3
+
+≡ t3
+
+t′ 
+
+> n
+
+≡ tn
+
+t′ 
+
+> n
+
+≡ tn
+
+. . . 
+
+. . . 
+
+. . . 
+
+...
+
+...
+
+...
+
+|ti − ti+1 | = ∆ t = |ti − t′
+
+> i+1
+
+| (i ∈ { 0, 1, . . . , n − 1})
+
+> Figure 5. Illustration of the limit to equilibrium of the D-NEMD method. The same explanations as given in Fig. 2 apply, but now the vertical lines correspond to trajectories that are equivalent to the equilibrium trajectory starting from the point taken from the horizontal curve, which is the main equilibrium trajectory.
+
+After equilibration, non-equilibrium molecular dynamics simulations were performed according to our proposed model along 27 different branches, each starting at a point of the equilibrium trajectory and lasting 5 ns, by imposing a thermal gradient along the z-direction following established protocols [ 86 ]. To maintain periodic boundary conditions along the 
+
+z-direction, the simulation domain was divided into a symmetric hot-middle-cold-middle-hot arrangement, with the hot regions chosen to be half the spatial extent of the remaining regions [ 86 ]. The hot regions were maintained at 330 K, while the cold region was maintained at 280 K, with the middle regions reaching a steady state of uniform temperature of about 305 K as expected, departing from the initial non-uniform z-dependent temperature along the chain. The hot and cold regions where each coupled to a (region-specific) Langevin thermostat, assuring the corresponding desired temperature [20]. The overall system contains a total of 350 molecules, 87 for each middle region which corresponds to the system under observation, and the rest equally distributed among the reservoirs which were strongly thermostated at different temperatures when the non equilib-rium process was initiated. The temperature gradients and heat fluxes were computed as time averages over production runs of (the last) 2.5 ns for each of the 27 non-equilibrium branched trajectories. For PIMD simulations, all observables were further averaged over the P beads to obtain physically meaningful estimates. In particular, the heat flux through 25 atoms in the middle region was calculated using the microscopic Irving–Kirkwood expression, which combines per-atom kinetic energy, potential energy, and virial stress contributions [ 87 ], and was averaged over both time and beads. Local temperature profiles were obtained by spatially binning atoms along the z-direction and time-averaging over the production runs. 
+
+[1] H.-P. Breuer and F. Petruccione, The Theory of Open Quantum Systems (Oxford University Press, Oxford, 2002). [2] A. Rivas and S. F. Huelga, Open Quantum Systems (Springer, Berlin, Heidelberg, 2012). [3] B. Vacchini, Open Quantum Systems (Springer, Cham, 2024). [4] R. M. Goyal, S. Maharaj, P. Kumar, et al. , Exploring quantum materials and applications: a review, J. Mater. Sci.: Mater. Eng. 20 , 4 (2025). [5] G. Xavier, J. A. Larsson, P. Villoresi, et al. , Energy-time and time-bin entanglement: past, present and future, npj Quantum Inf. 11 , 129 (2025). [6] A. Acín, I. Bloch, H. Buhrman, et al. , The quantum technologies roadmap: a European community view, New J. Phys. 20 , 080201 (2018). [7] J. Prior, A. W. Chin, S. F. Huelga, et al. , Efficient simulation of strong system-environment interactions, Phys. Rev. Lett. 105 , 050404 (2010). [8] G. McCauley, B. Cruikshank, D. I. Bondar, et al. , Accurate Lindblad-form master equation for weakly damped quantum systems across all regimes, npj Quantum Inf. 6, 74 (2020). [9] E. Braaten, H.-W. Hammer, and G. P. Lepage, Lindblad equation for the inelastic loss of ultracold atoms, Phys. Rev. A 95 , 012708 (2017). [10] P. H. Guimarães, G. T. Landi, and M. J. de Oliveira, Nonequilibrium quantum chains under multisite Lindblad baths, Phys. Rev. E 94 , 032139 (2016). [11] A. Bose, Incorporation of empirical gain and loss mechanism in open quantum systems through path integral Lindblad dynamics, J. Phys. Chem. Lett. 15 , 3363 (2024). [12] B. M. Reible, A. Djurdjevac, and L. Delle Site, Chemical potential and variable number of particles control the quantum state: Quantum oscillators as a showcase, APL Quantum 2,016124 (2025). [13] S. Morais, Advances and applications of carbon nanotubes, Nanomaterials 13 , 2674 (2023). [14] A. Singh, L. Maisenbacher, Z. Lin, et al. , Dynamics of a buffer-gas-loaded, deep optical trap for molecules, Phys. Rev. Res. 5, 033008 (2023). [15] S. Chattaraj and G. Galli, Energy transfer between localized emitters in photonic cavities from first principles, Phys. Rev. Res. 7, 033229 (2025). [16] G. Lindblad, On the generators of quantum dynamical semigroups, Commun. Math. Phys. 48 ,119–130 (1976). 26 
+
+[17] V. Gorini, A. Kossakowski, and E. C. G. Sudarshan, Completely positive dynamical semigroups of N -level systems, J. Math. Phys. 17 , 821 (1976). [18] D. Manzano, A short introduction to the Lindblad master equation, AIP Advances 10 , 025106 (2020). [19] R. P. Feynman, Space-time approach to non-relativistic quantum mechanics, Rev. Mod. Phys. 
+
+20 , 367 (1948). [20] M. E. Tuckerman, Statistical Mechanics: Theory and Molecular Simulation , 2nd ed. (Oxford University Press, Oxford, 2023). [21] N. Liang, A. Fiorentino, and B. Song, Thermal transport in amorphous carbon nanotubes, Phys. Rev. B 112 , 094205 (2025). [22] D. Donadio and G. Galli, Thermal conductivity of isolated and interacting carbon nanotubes: Comparing results from molecular dynamics and the Boltzmann transport equation, Phys. Rev. Lett. 99 , 255502 (2007). [23] G. Barbalinardo, Z. Chen, H. Dong, et al. , Ultrahigh convergent thermal conductivity of carbon nanotubes from comprehensive atomistic modeling, Phys. Rev. Lett. 127 , 025902 (2021). [24] G. Benenti, D. Donadio, S. Lepri, et al. , Non-Fourier heat transport in nanosystems, Riv. Nuovo Cim. 46 , 105 (2023). [25] R. Scipioni, D. Donadio, L. M. Ghiringhelli, and L. Delle Site, Proton wires via one-dimensional water chains adsorbed on metallic steps, J. Chem. Theory Comput. 7, 2681 (2011). [26] D. Donadio and G. Galli, Shedding light on water wires, Physics 18 , 54 (2025). [27] J. Paulino, M. Yi, I. Hung, and T. A. Cross, Functional stability of water wire–carbonyl interactions in an ion channel, Proc. Natl. Acad. Sci. 117 , 11908 (2020). [28] S. Jang and G. A. Voth, Path integral centroid variables and the formulation of their exact real time dynamics, J. Chem. Phys. 111 , 2357 (1999). [29] S. Habershon, D. Manolopoulos, T. E. Markland, et al. , Ring-polymer molecular dynamics: Quantum effects in chemical dynamics from classical trajectories in an extended phase space, Annu. Rev. Phys. Chem. 64 , 387 (2013). [30] R. P. Feynman, A. R. Hibbs, and D. F. Styer, Quantum Mechanics and Path Integrals , Emended ed. (Dover Publications, Mineola, NY, 2010). [31] S. Mazzucchi, Mathematical Feynman Path Integrals and Their Applications , 2nd ed. (World Scientific, Singapore, 2022). [32] H. F. Trotter, On the product of semi-groups of operators, Proc. Amer. Math. Soc. 10 , 545 (1959). [33] E. Nelson, Feynman integrals and the schrödinger equation, J. Math. Phys. 5, 332–343 (1964). [34] P. R. Chernoff, Note on product formulas for operator semigroups, J. Funct. Anal. 2, 238 (1968). [35] M. Reed and B. Simon, Methods of Modern Mathematical Physics. Volume I: Functional 27 
+
+Analysis , Revised and Enlarged ed. (Academic Press, San Diego, London, 1980). [36] K. Huang, Statistical Mechanics , 2nd ed. (John Wiley & Sons, New York, NY, 1987). [37] S. Blair, G. Zicari, A. Belenchia, et al. , Nonequilibrium quantum probing through linear response, Phys. Rev. Res. 6, 013152 (2024). [38] G. Ciccotti, R. Kapral, and A. Sergi, Non-equilibrium molecular dynamics, in Handbook of Materials Modeling , edited by S. Yip (Springer, Dordrecht, 2005) pp. 745–761. [39] G. Ciccotti and G. Jacucci, Direct computation of dynamical response by molecular dynamics: The mobility of a charged Lennard-Jones particle, Phys. Rev. Lett. 35 , 789 (1975). [40] S. Bonella, M. Ferrario, and G. Ciccotti, Thermal diffusion in binary mixtures: Transient behavior and transport coefficients from equilibrium and nonequilib- rium molecular dynamics, Langmuir 33 , 11281 (2017). [41] R. Ebrahimi Viand, F. Höfling, R. Klein, and L. Delle Site, Theory and simulation of open systems out of equilibrium, J. Chem. Phys. 153 , 101102 (2020). [42] H. Wang, C. Schütte, G. Ciccotti, and L. Delle Site, Exploring the conformational dynamics of alanine dipeptide in solution subjected to an external electric field: A nonequilibrium molecular dynamics simulation, J. Chem. Theroy Comput. 10 , 1376 (2014). [43] M. Ferrario, G. Ciccotti, D. Mansutti, et al. , A NEMD approach to the melt-front evolution under gravity, J. Chem. Phys. 162 , 074503 (2025). [44] G. Ciccotti, G. Jacucci, and I. R. McDonald, “Thought-experiments” by molecular dynamics, J. Stat. Phys. 21 , 1 (1979). [45] C.-A. Pillet, Quantum Dynamical Systems, in Open Quantum Systems I. The Hamiltonian Approach , Lecture Notes in Mathematics No. 1880, edited by S. Attal, A. Joye, and C.-A. Pillet (Springer, Berlin, Heidelberg, 2006) pp. 107–182. [46] From a structural point of view, the quantum-mechanical argument is analogous to the classical argument of Eq. (10) because the trace gives rise to an inner product on the space of Hilbert-Schmidt operators; see, e.g., Ref. [88, Section II, esp. Eq. (II.13)]. [47] E. B. Davies, Markovian master equations, Commun. Math. Phys. 39 , 91–110 (1974). [48] E. B. Davies, Markovian master equations. II, Math. Ann. 219 , 147–158 (1976). [49] R. Dümcke and H. Spohn, The proper form of the generator in the weak coupling limit, Z. Phys. B 34 , 419–422 (1979). [50] A. Suárez, R. Silbey, and I. Oppenheim, Memory effects in the relaxation of quantum open systems, J. Chem. Phys. 97 , 5101–5107 (1992). [51] F. Benatti and R. Floreanini, Open quantum dynamics: Complete positivity and entanglement, Int. J. Mod. Phys. B 19 , 3063 (2005). [52] R. S. Whitney, Staying positive: going beyond Lindblad with perturbative master equations, J. Phys. A: Math. Theor. 41 , 175304 (2008). [53] D. Tupkary, A. Dhar, M. Kulkarni, et al. , Searching for Lindbladians obeying local conservation 28 
+
+laws and showing thermalization, Phys. Rev. A 107 , 062216 (2023). [54] F. Campaioli, J. H. Cole, and H. Hapuarachchi, Quantum master equations: Tips and tricks for quantum optics, quantum computing, and beyond, PRX Quantum 5, 020202 (2024). [55] P. Gaspard and M. Nagaoka, Slippage of initial conditions for the Redfield master equation, J. Chem. Phys. 111 , 5668–5675 (1999). [56] G. Schaller and T. Brandes, Preservation of positivity by dynamical coarse graining, Phys. Rev. A 78 , 022106 (2008). [57] D. Taj and F. Rossi, Completely positive markovian quantum dynamics in the weak-coupling limit, Phys. Rev. A 78 , 052113 (2008). [58] F. Benatti, R. Floreanini, and U. Marzolino, Entangling two unequal atoms through a common bath, Phys. Rev. A 81 , 012105 (2010). [59] C. Majenz, T. Albash, H.-P. Breuer, et al. , Coarse graining can beat the rotating-wave approximation in quantum Markovian master equations, Phys. Rev. A 88 , 012103 (2013). [60] J. Jeske, D. J. Ing, M. B. Plenio, et al. , Bloch-Redfield equations for modeling light-harvesting complexes, J. Chem. Phys. 142 , 064104 (2015). [61] D. Farina and V. Giovannetti, Open-quantum-system dynamics: Recovering positivity of the Redfield equation via the partial secular approximation, Phys. Rev. A 100 , 012107 (2019). [62] R. Hartmann and W. T. Strunz, Accuracy assessment of perturbative master equations: Embracing nonpositivity, Phys. Rev. A 101 , 012103 (2020). [63] A. Trushechkin, Unified Gorini-Kossakowski-Lindblad-Sudarshan quantum master equation beyond the secular approximation, Phys. Rev. A 103 , 062226 (2021). [64] D. Tupkary, A. Dhar, M. Kulkarni, et al. , Fundamental limitations in Lindblad descriptions of systems weakly coupled to baths, Phys. Rev. A 105 , 032208 (2022). [65] L. Diosi, On high-temperature Markovian equation for quantum Brownian motion, EPL 22 , 1 (1993). [66] A. Das, A. Dhar, I. Santra, et al. , Quantum Brownian motion: Drude and Ohmic baths as continuum limits of the Rubin model, Phys. Rev. E 102 , 062130 (2020). [67] Z. Chen, Y. Lu, H. Wang, et al. , Quantum Langevin dynamics for optimization, Commun. Math. Phys. 406 , 52 (2025). [68] B. M. Reible and L. Delle Site, Open quantum systems and the grand canonical ensemble, Phys. Rev. E 112 , 024130 (2025). [69] L. Delle Site and A. Djurdjevac, An effective Hamiltonian for the simulation of open quantum molecular systems, J. Phys. A: Math. Theor. 57 , 255002 (2024). [70] L. Delle Site and C. Hartmann, Computationally feasible bounds for the free energy of nonequi-librium steady states, applied to simple models of heat conduction, Mol. Phys. 123 , e2391484 (2024). [71] A. Agarwal and L. Delle Site, Path integral molecular dynamics within the grand canonical-like 29 
+
+adaptive resolution technique: Simulation of liquid water, J. Chem. Phys. 143 , 094102 (2015). [72] S. Panahian Jand, Z. Nourbakhsh, and L. Delle Site, Nuclear quantum effects in fullerene– fullerene aggregation in water, Front. Chem. 10 , 1072665 (2022). [73] M. Kryvohuz, Semiclassical instanton approach to calculation of reaction rate constants in multidimensional chemical systems, J. Chem. Phys. 134 , 114103 (2011). [74] K. A. Jung, P. E. Videla, and V. S. Batista, Multi-time formulation of matsubara dynamics, J. Chem. Phys. 151 , 034108 (2019). [75] A. Rivas, A. D. K. Plato, S. F. Huelga, et al. , Markovian master equations: a critical study, New J. Phys. 12 , 113032 (2010). [76] S. Nakajima, On quantum theory of transport phenomena: Steady diffusion, Prog. Theor. Phys. 
+
+20 , 948–959 (1958). [77] R. Zwanzig, Ensemble method in the theory of irreversibility, J. Chem. Phys. 33 , 1338–1341 (1960). [78] A. G. Redfield, On the theory of relaxation processes, IBM J. Res. Dev. 1, 19 (1957). [79] S. Bonella, M. Monteferrante, C. Pierleoni, et al. , Path integral based calculations of symmetrized time correlation functions. I., J. Chem. Phys. 133 , 164104 (2010). [80] A. Agarwal and L. Delle Site, Grand-canonical adaptive resolution centroid molecular dynamics: Implementation and application, Comput. Phys. Commun. 206 , 26 (2016). [81] A. Agarwal, C. Clementi, and L. Delle Site, Path integral-GC-AdResS simulation of a large hydrophobic solute in water: a tool to investigate the interplay between local microscopic structures and quantum delocalization of atoms in space, Chem. Phys. Phys. Chem. 19 , 13030 (2017). [82] S. Plimpton, Fast parallel algorithms for short-range molecular dynamics, J. Comput. Phys. 
+
+117 , 1 (1995). [83] A. P. Thompson, H. M. Aktulga, R. Berger, et al. , Lammps – a flexible simulation tool for particle-based materials modeling at the atomic, meso, and continuum scales, Comput. Phys. Commun. 271 , 108171 (2022). [84] S. Habershon, T. E. Markland, and D. E. Manolopoulos, Competing quantum effects in the dynamics of a flexible water model, J. Chem. Phys. 131 , 024501 (2009). [85] M. Ceriotti, M. Parrinello, T. E. Markland, et al. , Efficient stochastic thermostatting of path integral molecular dynamics, J. Chem. Phys. 133 , 124104 (2010). [86] B. Fernando, Non-equilibrium computer simulations of coupling effects under thermal gradients, CMST 23 , 165 (2017). [87] D. Surblys, H. Matsubara, G. Kikugawa, et al. , Methodology and meaning of computing heat flux via atomic stress in systems with constraint dynamics, J. Appl. Phys. 130 , 215104 (2021). [88] V. Bach, J. Fröhlich, and I. M. Sigal, Return to equilibrium, J. Math. Phys. 41 , 3985–4060 (2000).

@@ -1,0 +1,1038 @@
+Title: 2603.12778v1.pdf
+
+URL Source: https://arxiv.org/pdf/2603.12778v1
+
+Published Time: Mon, 16 Mar 2026 00:41:36 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+Hydrogen -atom roaming reactions in water 
+
+# clusters:  Unveiling an unusual dimension of 
+
+# water reactivity through first -principles 
+
+# calculations and machine learning 
+
+## Rui Liu, 1 Baiqiang Liu, 1 Zhen Gong ,1 Zhaohua Cui, 1 Yue Feng ,1 and Zhigang 
+
+## Wang 1,2 ,*
+
+> 1
+
+## Key Laboratory of Material Simulation Methods & Software of Ministry of 
+
+## Education, College of Physics, Jilin University, Changchun 130012, China 
+
+> 2
+
+## Institute  of Theoretical Chemistry, College of Chemist ry, Jilin University, 
+
+## Changchun 130023, China 
+
+> *
+
+## Email : wangzg@jlu.edu.cn (Z. W.) 
+
+# Abstract 
+
+Water mediates a broad range of chemical  reaction s, including  proton transfer, bond 
+
+rearrangement, and conventional radical processes , defining a continuously expanding 
+
+repertoire of intrinsic reactivity . However, roaming, a fundamental reaction mechanism that 
+
+a departing fragment bypasses the minimum energy path to recombine , has not been 
+
+identified in water itself.  Here, we report the discovery of hydrogen -atom roaming reactions 
+
+in water clusters . High -precision ab initio calculations of first -principles  reveal that  a neutral 
+
+hydrogen atom departs as a radical , roams across the flat potential energy surface, and 
+
+recombines along pathways that connect the same reactants and products as known 
+
+hydrogen -bond network rearrangements . Interpretable machine learning an alysis identifies 
+
+the reactant dipole moment as the decisive switch governing whether roaming occurs ,underpinned by exchange -repulsion and electrostatic interactions. Once roaming is initiated, 
+
+polarizability and spin population determine barrier heights, while the charge distribution of 
+
+the roaming hydrogen atom governs barrier widths, collectively shape d by electrostatic, 
+
+orbital, and dispersion contributions . These findings establish hydrogen -atom roaming as a 
+
+previously unrecognized intrinsic reaction class in water,  complement ing  a fundamental 
+
+dimension to  the  mechanistic picture  of water reactivity .
+
+# Introduction 
+
+Water is one of the most fundamental substances in nature , provid ing  the solvent 
+
+environment  essential  for protein folding, enzyme catalysis, and DNA replication .1-7
+
+Beyond its role as a passive  solvent , water participates directly  in a wide range of 
+
+reactions  across a well -defined repertoire of intrinsic reaction classes , including  proton 
+
+transport,  acid –base  reactions , hydrolysis, redox, and  conventional  radical  processe s,
+
+many of which a  proceed through  hydrogen -bond  network  rearrangement .8-14 Each 
+
+newly  identifi ed  reaction  clas s within this repertoire has  enriched  the mechanistic 
+
+picture  of water  reactivity , and t o date,  nearly  every  fundamental reaction mechanism 
+
+has found its counterpart in water . One  notable  exception  is roaming , a mechanism that 
+
+stray s from the minimum energy path  along which conventional water reaction classes 
+
+proceed. 
+
+The early roaming reaction was discovered in the photodissociation study of 
+
+formaldehyde .15 In such reactions,  nearly detached  fragments  wander across a flat 
+
+region of the potential  energy surface before  intramolecular  abstracti on  to form 
+
+molecular products .16 -22  Extensive  studies  ha ve  documented roaming across combustion, atmospheric, and interstellar chemistry , establishing it as a broadly 
+
+significant  and common  reaction phenomenon .23 -27 Remarkably, water  has  emerged as 
+
+an active participant  in  several  of these processes . Prior studies have shown that 
+
+ambient water molecules  can  modulate the roaming pathways of nitrobenzene, 28 and 
+
+that a water -assisted roaming mechanism  plays an important role in  Criegee 
+
+intermediate reactions relevant to atmospheric chemistry,  in which  new water molecules 
+
+are  generated  in the course of  these reactions .29 -31 In every documented case, however, 
+
+water acts as an external modulator rather than the roaming substrate itself . Whether 
+
+water is intrinsically capable of roaming  remains an open question , leaving a missing 
+
+piece in the mechanistic picture of water reactivity .
+
+Resolving  this question  demands  more than  accurate energies and geometries for 
+
+water system s, even obtained from  high -precision ab initio calculations of first -
+
+principles . The  intrinsic reactivity  of water systems  arises from  multiple competing 
+
+intermolecular interactions, 32,3 3 and the resulting  high -dimensional complexity  makes it 
+
+difficult  for  conventional analysis  to identify the key  determinants  that steer  roaming. 
+
+Machine learning (ML) offers a  powerful  route  to  this complexity, owing to its capacity 
+
+to extract intricate, nonlinear relations from extensive molecular datasets .34,35 Its 
+
+application to water  systems  has shown success across a range of chemically distinct 
+
+problems.  For instance,  classification and regression tree models  have been applied to 
+
+identify the local structural order parameters that govern water autoionization . This 
+
+analysis revealed that specific anomalies in the hydrogen -bond network , rather than 
+
+any single geometric criterion , serve as the proximal triggers for proton transfer .36Moving beyond static descriptors, a decision tree trained on transition path -sampling 
+
+data demonstrated that reactive and nonreactive trajectories in water can be 
+
+distinguished with high accuracy, thereby exposing collective variables along the 
+
+reaction co ordinate that are inaccessible to conventional chemical intuition .37 More 
+
+recently, a combination of 23 structural and connectivity descriptors with ML regression 
+
+models achieved quantitative prediction of the energetic stability of water clusters 
+
+across a range of sizes, illuminating how hydrogen -bond topology evolves upon 
+
+progressive aggregation. 38 These  studies establish that descriptor -based ML approaches 
+
+can decode  the structural and reactive  properties  of water with near -quantitative 
+
+accuracy.  However,  no such  analysis has been directed at roaming . Crucially, this 
+
+problem requires not only predictive accuracy but mechanistic transparency, a need 
+
+met by interpretable approaches such as Shapley additive explanations (SHAP) ,39 which 
+
+quantify the contribution of individual molecular descriptors to specific outcomes .
+
+Here , we report  the  discovery of  hydrogen -atom roaming  reaction s in water clusters .
+
+First -principles calculations  shows  that  a neutral hydrogen atom departs as a radical, 
+
+roams across the flat potential energy surface, and recombines along pathways that 
+
+connect the same reactants and products as known hydrogen -bond network 
+
+rearrangements, with barrier heights comparable to the O -H bond dissociation energy. 
+
+Interpretable machine learning analysis reveals the reactant dipole moment as the 
+
+decisive switch controlling roaming occurrence, and further identifies the interaction 
+
+mechanisms that govern barrier heights and widths. These findings establish hydrogen -
+
+at om roaming as a previously unrecognized intrinsic reaction class rooted in the intrinsic properties of water. 
+
+# Results and discussion 
+
+Identification of  hydrogen -atom roaming reactions  and d ataset  construction 
+
+A central question is whether roaming pathways exist alongside the known  hydrogen -bond 
+
+network rearrangement (HBNR)  mechanisms in water clusters. We addressed this using the 
+
+water dimer and trimer as prototype systems that encompass all elementary  HBNR 
+
+processes. 40 -44 Conventional HBNR mechanisms have been extensively characterized for 
+
+both the dimer , including acceptor tunneling, bifurcation tunneling, donor –acceptor 
+
+interchange, and  the trimer,  including  single flipping, bifurcation tunneling, concerted proton 
+
+transfer .45-47 Notably, analogous HBNR processes extend to larger water clusters, where the 
+
+elementary HBNR established in the dimer and trimer recur and combine into more complex 
+
+concerted mechanisms. 48-52  Here,  our calculations across varied intermolecular separations 
+
+reveal multiple hydrogen -atom roaming pathways  that connect the same reactants and 
+
+products as  these  known HBNR processes . Fig.  1a illustrates two  such  pathways in the water 
+
+dimer, including roaming -mediated donor -acceptor exchange and  roaming -mediated 
+
+bifurcation. Both  pathways  exhibit  geometrically similar roaming saddle points with closest 
+
+H· ··H distances of 2.16 –2.32 Å , and differ principally in the timing of  the  O-H bond rotat io n
+
+between Step 1 and Step 2 . The water trimer displays three distinct roaming -mediated HBNR 
+
+pathways (Fig. 1b), including roaming -mediated proton transfer, single flipping, and 
+
+bifurcation, with closest H· ··H distances ranging from 1.77 to 2.62 Å . The key mechanistic 
+
+differences among these pathways arise from the sequence of bond cleavage and ro tation: 
+
+in  the  Step 1, the roaming -mediated proton transfer and single flipping pathways both cleave Fig . 1 |  Construction of the dataset  of  geometries and energies of hydrogen -atom roaming 
+
+reactions in water dimer and trimer . a,  Roaming -mediated hydrogen -bond network rearrangement 
+
+(HBNR) pathways in the water dimer.  b,  Roaming -mediated HBNR pathways in the water trimer. Dotted 
+
+lines indicate the O -H axis (C2 axis). Each pathway proceeds through three stages:  Step 1 (Min) , Step 
+
+2 (rSPs) , and  End  (Min) . c, d,  Potential energy profiles and  variation in O -H and  H· ··O distances along 
+
+the intrinsic reaction coordinate  for representative roaming -mediated processes in the dimer (c) and 
+
+trimer (d). The origin (x = 0) corresponds to the roaming saddle point. Inset panels show spin 
+
+populations at the roaming saddle points. Electronic energies were computed at the spin -unrest ricted 
+
+CCSD(T)/AVTZ level .
+
+all donor O -H bonds, whereas the bifurcation pathway cleaves one. In  the  Step 2, the former Table 1. Detailed definitions of the 15 features screened as Input X in machine learning model.                               
+
+> Feature Detailed definition Feature Detailed definition Feature Detailed definition
+> DM Dipole moment OHO O-H···O angle EInteraction energy
+> Gap HOMO -LUMO gap OH O-H bond length Eelec Electrostatic energy
+> Pol Polarizability HO H···O distance Eexch Exchange -repulsion energy
+> Chg Charge OO O···O distance Eorb Orbital energy
+> SP Spin population Etot Total energy Edisp Dispersion energy
+
+two differ in the mode of hydrogen reattachment and which O -H bond rotates.  Notably, 
+
+roam ing also occurs at intermolecular separations of 3.18 –3.33 Åwithout inducing structural 
+
+rearrangement, and persists at separations exceeding 5.85 Å, where the dissociated 
+
+hydrogen atom roams between monomers rather than circulating within the cluster ring .
+
+This long -range behavior suggests that hydrogen -atom roaming is not a structural anomaly 
+
+but rather an intrinsic feature of water accessible across a broad separation r egion .
+
+To clarify the mechanistic nature of roaming, we analyzed potential energy surface, 
+
+geometric changes, and spin populations at representative roaming saddle points (Fig. 1c, 
+
+d). All roaming  path ways exhibit relative barrier heights of ~122 kcal/mol, comparable to 
+
+the O -H bond dissociation energy of ~118 kcal/mol, 53,54  consistent with such reactions 
+
+occurring in the near -dissociative regions. The barrier widths, however, vary substantially 
+
+across different roaming types. All roaming saddle points retain a highly spin -polarized 
+
+singlet state with similar spin population  patterns (Supplementary Fig. 1), consistent with 
+
+the radical character of the roaming hydrogen atom. Interaction region indicator isosurfaces, 
+
+localized orbital locator analysis, and energy decomposition trends (Supplementary Fig. 2) 
+
+consistently indicate  that roaming occurs within loosely bound van der Waals regions, 55 -57  in 
+
+contrast to the covalent character of conventional transition states.  Having identified these 
+
+pathways, we next constructed a comprehensive dataset to explore the physical factors that influence when and how roaming occurs. 
+
+The dataset is organized into input descriptors (Input X) and target labels (Output Y) so 
+
+that the models can learn quantitative relations between molecular descriptors and roaming 
+
+behaviors. Output Y addresses two tasks, including classification of roamin g versus non -
+
+roaming classes, and regression of the factors controlling barrier height and width of these 
+
+reactions. Input X comprises a set of physically meaningful descriptors that capture the 
+
+electronic, geometric, and energetic  propertie s (Table 1). El ectronic descriptors include the 
+
+dipole moment (DM), HOMO -LUMO gap (Gap), polarizability (Pol), atomic charges (Chg), 
+
+and spin populations (SP). Geometric descriptors that characterize hydrogen bonding 
+
+strength and directionality include O–H· ··O angle (OHO ), O -H bond length (OH), H· ··O
+
+distance (HO), and O· ··O distance (OO). Energetic descriptors include the total energy (E tot ), 
+
+interaction energy (E), electrostatic (E elec ), exchange -repulsion (E exch ), orbital (E orb ), and 
+
+dispersion (E disp ) components. 
+
+Model  establishment and  evaluation 
+
+The machine learning workflow used to capture nonlinear descriptor relations underlying 
+
+roaming behavior is summarized in Fig. 2. The curated dataset encodes geometric, 
+
+electronic, and energetic descriptors for tens of thousands of  the  configurations,  providing a 
+
+foundation for model development.  A classification model is first trained to distinguish 
+
+roaming from non -roaming classes, with predictive performance evaluated using a random -
+
+extracted and recoverable cross -validation (RE -RCV) protocol, 58,59  which offers improved 
+
+stability over the conventional k-fold validation for datasets of this complexity. 
+
+Complementary regression models are then built to quantify how  the  individual descriptors Fig. 2 |  Interpretable machine learning framework incorporating dataset construction, model  
+
+> establishment, model evaluation, and feature analysis .In the RE -RCV evaluation protocol, a
+> randomly extracted test set is used for evaluation and subsequently returned to the full dataset before
+> the next extraction cycle.
+
+govern roaming barrier height and width, with performance assessed by mean absolute error 
+
+(MAE), mean squared error (MSE), root mean squared error (RMSE), and coefficient of 
+
+determination (R 2). This workflow integrates  the  dataset construction, model establishment, 
+
+model evaluation,  and feature analysis into a unified, interpretable framework for exploring 
+
+the factors that control roaming reactions in water clusters. 
+
+Model evaluation is central to selecting an algorithmic structure that captures roaming 
+
+be havior. Five representative classification algorithms were examined, including  the  support 
+
+vector machine (SVM), 62  neural -network model (NNM), 63  random forest (RF), 64  k-nearest 
+
+neighbor (KNN), 65  and naive Bayes (NB). 66  Each algorithm embodies a distinct inductive bias 
+
+and therefore probes distinct aspects of the descriptor space. Although k-fold cross -
+
+validation is widely used, it can yield unstable accuracy estimates when dataset sizes are 
+
+limited. To ensure robust evaluation, we employed the RE -RCV protocol, in which 20% of  th eFig. 3 |  Machine learning classification of roaming versus non -roaming  case s in water dimer 
+
+and trimer . a,  Pearson correlation matrix among the eight screened descriptors. Values within each 
+
+cell are Pearson correlation coefficients; positive and negative values indicate positive and negative 
+
+correlations, respectively. Classification accuracies for  b,  single ML models and  c,  stacked ML models 
+
+evaluated by RE -RCV.  d,  Accuracy and associated error range for the RF model evaluated by RE -RCV 
+
+and k -fold cross -validation, each repeated 100 times.  e, Confusion matrix of the final RF model . The 
+
+values in each cell represent model precision on a 0–100% color scale.  f,  Global SHAP feature 
+
+importance ranking for roaming and non -roaming classification . Features are ranked in descending order of importance, and the red -to -blue color scale represents high -to -low feature values.  g,  SHAP               
+
+> contribution differences for each descriptor toward roaming versus non -roaming classification. h, Mean
+> absolute SHAP values for each descriptor across roaming and non -roaming classes. i, Energy
+> decomposition contributions to pathway classification, showing the relative importance of the four
+> interaction energy components.
+
+the data are randomly drawn as a test set, accuracy is recorded, and the extracted data  are 
+
+returned to the full dataset. This process is repeated this cycle 100 times, yielding 
+
+statistically reliable accuracy estimates that reflect the intrinsic performance of each model. 
+
+RE ‑RCV evaluation exposes pronounced performance differences among single model 
+
+classifiers (Fig. 3b). The RF model achieves the highest performance, with an accuracy of 
+
+98.5%. The KNN model also performs well, with an accuracy above 90%. NB model reaches 
+
+a moderate accuracy level, while SVM and NNM show noticeably lower performance. These 
+
+results suggest that ensemble -based and distance -based classifiers are better suited  to 
+
+capturing the nonlinear descriptor relations associated with roaming reactions than margin -
+
+based or neural -network models. Given that limited datasets can render  individual 
+
+algorithms susceptible to overfitting and biased decision boundaries, 67  we constructed 
+
+stacked models by pairing algorithms to reduce these issues and produce a unified predictor. 
+
+The stacked models for roaming pathway classification in water clusters (Fig. 3c) further 
+
+confirm the dominant role of RF model. The model constructed from two RF classifiers 
+
+performs equivalently to the single RF model, demonstrating that RF has captured  the 
+
+dominant predictive patterns and that additional stacking provides no further improvement. 
+
+Combinations of RF and KNN also perform well, with  the  accuracies approaching 90%. These results confirm that the RF model offers the most robust classification performance among 
+
+the algorithms tested. 
+
+To assess the reliability of the evaluation strategy, we directly compared RE -RCV and k -
+
+fold cross -validation using the RF classifier  (Fig. 3d). Both methods were repeated 100 times 
+
+with continuously varied test sets to quantify the sensitivity of the reported accuracy to data 
+
+partitioning. The resulting accuracy distributions show that RE -RCV produces a substantially 
+
+narrower error rang e than k -fold, confirming its superior stability, as further supported by 
+
+the consistently lower coefficient of variation  observed for RE -RCV across all models. 
+
+In addition to the overall model accuracy, it is equally important to  assess  the prediction 
+
+reliability within each Output Y class. This class -specific prediction probability, referred to as 
+
+model precision, reflects how  often the predicted class matches the true class and therefore 
+
+provides a more reliable measure of classification performance.  The confusion matrix of the 
+
+final model  (Fig. 3e)  shows  precision of approximately  100%  for both roaming and non -
+
+roaming classes. This balanced performance indicates that the classifier does not  favor one 
+
+class over the other and classifies roaming and non -roaming  classe s with comparable 
+
+reliability across the dataset .
+
+Feature analysis 
+
+To  understand  which descriptors  drive the roaming versus non -roaming classification , we 
+
+applied SHAP  analysis  to the final classifier. The global SHAP ranking  (Fig.  3f ) reveals a clear ,
+
+physically interpretable hierarchy among the eight screened features. Electronic response 
+
+properties, including  the reactant  dipole moment,  total  energy, and polarizability , emerge 
+
+sequentially as the most influential descriptors , suggesting  that the electronic  properties of the reactant play a dominant role in determining whether a roaming pathway is accessible. 
+
+Geometric descriptors contribute more moderately but provide additional information about 
+
+the spatial arrangement of the roaming hydrogen atom .
+
+Class -resolved SHAP analysis further  clarifies  how  descriptor importance shifts between 
+
+pathway type s (Fig.  3g , h).  Roaming pathways show enhanced sensitivity to  O-H bond 
+
+elongation, whereas descriptors associated with the broader hydrogen -bond network 
+
+contribute more to non -roaming cases. This redistribution suggests that  roaming becomes 
+
+accessible when the system samples a weakly  and broad separation regime . In contrast, 
+
+electronic descriptors remain consistently influential across both classes . These results 
+
+indicate that roaming is not triggered by a single parameter but instead reflects a
+
+cooperative interplay among multiple descriptors . The cooperative effect of hydrogen bonds 
+
+is known to be sensitive to geometric boundaries, 68,6 9 providing a structural basis for the 
+
+multi -descriptor dependence of roaming pathway selection. 
+
+Complementary interaction analysis (Fig.  3i) quantifies  the contributions of intermolecular 
+
+energy terms to pathway classification . Exchange -repulsion and electrostatic components 
+
+jointly account for  approximately 67% of the total contribution, while dispersion contributes 
+
+near ly 24%. This partitioning supports a picture in which pathway selection is governed by 
+
+a cooperative balance among exchange -repulsion, electrostatics, and dispersion, consistent 
+
+with the SHAP feature analysis. 
+
+Regression model s for  roaming barrier height and width 
+
+To identify the descriptors governing roaming barrier height and width, we trained 
+
+regression models on the same geometric, electronic, and energetic  data set. Model  performanc eFig.  4 | Machine learning analysis of roaming barrier height and width  in water  dimers and 
+
+trimer s and  their underlying physical determinants . a,b,  Feature importance profiles for barrier 
+
+height (a) and barrier width (b), with descriptors ranked in descending order of importance.  c,d,  Energy 
+
+decomposition contributions governing barrier height (c) and barrier width (d) for roaming saddle points 
+
+of the water dimer (RTS WD ), water trimer (RTS WT ), and their combination (RTS WD,WT ). All regression 
+
+models employed the ExtraTrees regress ion  with 100 -fold cross -validation. 
+
+was assessed  via  MAE, MSE, RMSE, R 2, and deviation metrics (Supplementar y Figs. 3 -10). 
+
+Among all tested algorithms, the ExtraTrees regression (ET) 70  delivered the highest 
+
+predictive accuracy, followed by random forest (RF), 64  CatBoost (CB), 71  gradient boosting 
+
+(GB), 72  linear regression (LG), 73  XGBoost (XB), 74  ridge regression (Ridge), 75  and partial 
+
+least -squares regression (PLSR). 76  The superior performance of nonlinear ensemble methods 
+
+underscores their capacity to capture complex, nonadditive relations between descriptors 
+
+and barrier properties. Using the ET model as the optimal regressor, we quantified feature importance for the 
+
+water dimer, water trimer, and combined datasets (Fig. 4a). For barrier height in combined 
+
+dataset, the polarizabilities of the reactant and of the roaming saddle point  dominate, 
+
+together accounting for approximately 83% of total importance. This result suggests that 
+
+electronic flexibility, that is,  the capacity of the electron density to reorganize in response to 
+
+structural deformation is closely linked to the barrier he ight of roaming  reactions . When 
+
+dimer and trimer systems are analyzed separately, the dimer follows the combined trend 
+
+with polarizability dominant, whereas the trimer exhibits a more distributed importance 
+
+profile in which the O -H spin population also emerges as a significant con tributor, indicating 
+
+that spin redistribution plays an important role in larger clusters .
+
+The determinants of barrier width follow a different pattern (Fig. 4b). In the combined 
+
+dataset, the charge on the roaming hydrogen atom and polarizability together account for 
+
+nearly 37.7% of total importance.  As  analyzed separately, water dimer shows  polarizability 
+
+and O -H spin population jointly accounting for approximately 69.4% of the importance, while 
+
+the water trimer exhibits a more distributed profile in which the dipole moment and 
+
+polarizability emerge as prominent contributors. These system -depend ent differences 
+
+indicate that the determinants of barrier width are more sensitive to cluster size than those 
+
+governing barrier heigh t, suggesting that as the hydrogen -bond network grows in complexity, 
+
+collective electronic effects become increasingly important in  determ ini ng the spatial extent 
+
+of the roaming barrier. 
+
+To  connect the ML feature importance results with the underlying intermolecular energetics ,
+
+we performed energy decomposition analysis  (Fig.  4c , d).  For barrier height, electrostatic interactions dominate, with a non -negligible orbital contribution, together accounting for 
+
+approximately 65% of the total.  In contrast, the barrier width is dominated by electrostatic 
+
+and dispersion interactions, accounting for nearly 45% of the total.  These energy 
+
+decomposition trends  corroborate  the ML feature importance results, providing a  physically 
+
+interpretable picture of the  physical determinants dictating  roaming barriers in water clusters. 
+
+# Conclusion 
+
+In summary,  this work  present s hydrogen -atom roaming reactions in water clusters. First -
+
+principles calculations  indicate  that a neutral hydrogen atom departs as a radical, roams 
+
+across a flat potential energy surface, and recombines to yield the same reactants and 
+
+products as conventional hydrogen -bond network rearrangements.  The associated barrier 
+
+heights, comparable to the O -H bond dissociation energy, place these pathways in the near -
+
+dissociative  region  and thereby establish hydrogen -atom roaming as a previously 
+
+unrecognized intrinsic  reaction class in water.  Interpretable machine learning analysis 
+
+reveals the physical origins governing these roaming pathways.  The reactant dipole moment 
+
+emerge s as a decisive switch that controls whether roaming occurs, underpinned by 
+
+exchange -repulsion and electrostatic interactions. Once roaming is initiated, polarizability 
+
+and spin population determine barrier heights, while the charge distribution of the roa ming 
+
+hydrogen atom governs barrier widths, collectively shaped by electrostatic, orbital, and 
+
+dispersion contributions.  These findings  suggest that hydrogen -atom roaming constitutes a 
+
+fundamental dimension rooted in the intrinsic properties of water itself , thereby 
+
+complement ing  the mechanistic picture of water reactivity .
+
+# Method Machine  learning details 
+
+For the classification task,  five supervised learning algorithms were examined to 
+
+distinguish roaming from non -roaming  classe s, including  support vector machine (SVM), 62 
+
+neural -network model (NNM), 63 random forest (RF), 64 k-nearest neighbor (KNN), 65 and naive 
+
+Bayes (NB). 66
+
+For the regression task, roaming barrier height and width were predicted using a suite of 
+
+regression algorithms , including  the ExtraTrees  regression  (ET) ,70  random forest (RF), 64
+
+CatBoost (CB), 71  gradient boosting (GB), 72  linear regression (LG), 73 XGBoost (XB), 74 ridge 
+
+regression (Ridge), 75 and partial least -squares regression (PLSR). 76
+
+To identify and remove redundant descriptors, pairwise linear correlations among all 
+
+features were quantified using Pearson's correlation coefficient, which normalizes the 
+
+covariance between two variables by their individual standard deviations (Eq. 1). Fe ature 
+
+pairs with |p| > 0.8 were considered strongly collinear; only one descriptor from each such 
+
+pair was retained to ensure the final feature set remained compact and non -degenerate, 
+
+𝑝  = ∑ [(𝑥 𝑖  − 𝑥 ̅ ) × (𝑦 𝑖  − 𝑦 )]𝑛 
+
+> 𝑖 =1
+
+√∑ (𝑥 𝑖  − 𝑥 ̅ )2𝑛  
+
+> 𝑖 =1
+
+× √∑ (𝑦 𝑖  − 𝑦 ̅ )2𝑛 
+
+> 𝑖 =1
+
+(1)
+
+where  𝑥 𝑖  and  𝑦 𝑖  are the values of two features in the respective data,  𝑥 ̅ and  𝑦 ̅ are the 
+
+average values of these two features. 
+
+Model evaluation method 
+
+To evaluate model performance with enhanced statistical robustness, a  random -extracted 
+
+and recoverable cross -validation  (RE -RCV) strategy was employed. In each iteration, a fixed 
+
+proportion (20%) of samples was randomly drawn from the full dataset to serve as a test 
+
+set, and the model was trained on the remaining data. After the accuracy for that iteration was recorded, the extracted samples were returned to the full dataset. This process was 
+
+repeated 100 independent times, with each test subset newly and independently drawn. 
+
+Final model accuracy was obtained by averaging across all 100 iterations. 
+
+Computational details 
+
+All stationary point descriptors, including  DM, Gap, Pol, Chg, SP, OHO, OH , HO , OO , Etot ,
+
+E, Eelec , Eexch , Eorb , and  Edisp , were computed using first -principles calculations at the spin -
+
+unrestricted CCSD(T)//B3LYP/AVTZ level of theory. Highly spin -polarized roaming saddle 
+
+points were located using broken -symmetry DFT with transition -state searches based on the 
+
+geometry  direct  inversion in the  iterative  subspace method .77 Intrinsic reaction coordinate 
+
+calculations employing the Local Quadratic Approximation method 78 were performed along 
+
+the spin -polarized potential energy surface to confirm the connectivity between roaming 
+
+saddle points and their corresponding reactant and product minima. All electronic structure 
+
+calculations were carried out using Gaussian 09. 79 Energy decomposition analysis was 
+
+performed using the sobEDA code. 80  Electronic structure and property analyses were 
+
+conducted using Multiwfn. 81 
+
+# Data availability 
+
+The data that support the findings of this study are available from the corresponding author 
+
+upon reasonable request. 
+
+# References 
+
+1 Kennedy, D. & Norman, C. What don't we know?  Science  309 , 75 -75 (2005). 
+
+2 Eisenberg, D. & Kauzmann, W.  The structure and properties of water . (Oxford University 
+
+Press, 2005). 
+
+3 Kratochvil, H. T.  et al.  Transient water wires mediate selective proton transport in 
+
+designed channel proteins.  Nat.  Chem . 15 , 1012 -1021 (2023). 4 Chaplin, M. Do we underestimate the importance of water in cell biology?  Nat. Rev. Mol. 
+
+Cell Biol.  7, 861 -866 (2006). 
+
+5 Pal, S. K. & Zewail, A. H. Dynamics of water in biological recognition.  Chem. Rev.  104 ,
+
+2099 -2124 (2004). 
+
+6 Bellissent -Funel, M. -C.  et al.  Water Determines the Structure and Dynamics of Proteins. 
+
+Chem. Rev.  116 , 7673 -7697 (2016). 
+
+7 Sun, C. Q. & Sun, Y. The attribute of water.  Springer Ser. Chem. Phys.  113  (2016). 
+
+8 Balzani, V., Moggi, L., Manfrin, M. F., Bolletta, F. & Gleria, M. Solar Energy Conversion 
+
+by Water Photodissociation.  Science  189 , 852 -856 (1975). 
+
+9 Vohringer -Martinez, E.  et al.  Water catalysis of a radical -molecule gas -phase reaction. 
+
+Science  315 , 497 -501 (2007). 
+
+10  Ma, X.  et al.  Hydrogen -Bond Network Promotes Water Splitting on the TiO2 Surface.  J.
+
+Am . Chem . Soc . 144 , 13565 -13573 (2022). 
+
+11 Day, T. J. F., Schmitt, U. W. & Voth, G. A. The Mechanism of Hydrated Proton Transport 
+
+in Water.  J. Am. Chem. Soc.  122 , 12027 -12028 (2000). 
+
+12 Akiya, N. & Savage, P. E. Roles of Water for Chemical Reactions in High -Temperature 
+
+Water.  Chem . Rev . 102 , 2725 -2750 (2002). 
+
+13 Jencks, W. P. General acid -base catalysis of complex reactions in water.  Chem. Rev.  72 ,
+
+705 -718 (1972). 
+
+14 Parvulescu, V. I., Epron, F., Garcia, H. & Granger, P. Recent Progress and Prospects in 
+
+Catalytic Water Treatment.  Chem. Rev.  122 , 2981 -3121 (2022). 
+
+15 Townsend, D.  et al.  The roaming atom: straying from the reaction path in formaldehyde 
+
+decomposition.  Science  306 , 1158 -1161 (2004). 
+
+16 Heazlewood, B. R.  et al.  Near -threshold H/D exchange in CD 3CHO photodissociation. 
+
+Nat. Chem.  3, 443 -448 (2011). 
+
+17 Mereshchenko, A. S., Butaeva, E. V., Borin, V. A., Eyzips, A. & Tarnovsky, A. N. Roaming -
+
+mediated ultrafast isomerization of geminal tri -bromides in the gas and liquid phases.  Nat. 
+
+Chem.  7, 562 -568 (2015). 
+
+18 Nandi, A., Zhang, P., Chen, J., Guo, H. & Bowman, J. M. Quasiclassical simulations based 
+
+on cluster models reveal vibration -facilitated roaming in the isomerization of CO adsorbed 
+
+on NaCl.  Nat. Chem.  13 , 249 -254 (2021). 
+
+19  Endo, T.  et al.  Capturing roaming molecular fragments in real time.  Science  370 , 1072 -
+
+1077 (2020). 
+
+20 Choi, E. H.  et al.  Filming ultrafast roaming -mediated isomerization of bismuth triiodide 
+
+in solution.  Nat. Commun.  12 , 4732 (2021). 
+
+21 Abma, G. L.  et al.  Direct Observation of a Roaming Intermediate and Its Dynamics.  J. 
+
+Am. Chem. Soc.  146 , 12595 -12600 (2024). 
+
+22 Suits, A. G. Roaming Atoms and Radicals: A New Mechanism in Molecular Dissociation. 
+
+Acc. Chem. Res.  41 , 873 -881 (2008). 
+
+23 Grubb, M. P.  et al.  No straight path: roaming in both ground -and excited -state photolytic 
+
+channels of NO3 → NO+ O2.  Science  335 , 1075 -1078 (2012). 
+
+24 Hause, M. L., Herath, N., Zhu, R., Lin, M. -C. & Suits, A. G. Roaming -mediated 
+
+isomerization in the photodissociation of nitrobenzene.  Nat. Chem.  3, 932 -937 (2011). 25 Giussani, A. & Worth, G. A. A First Proposal on the Nitrobenzene Photorelease 
+
+Mechanism of NO2 and Its Relation to NO Formation through a Roaming Mechanism.  J. Phys. 
+
+Chem. Lett.  15 , 2216 -2221 (2024). 
+
+26 Heazlewood, B. R.  et al.  Roaming is the dominant mechanism for molecular products in 
+
+acetaldehyde photodissociation.  Proc. Natl. Acad. Sci.  105 , 12719 -12724 (2008). 
+
+27 Li, Z.  et al.  Roaming in highly excited states: The central atom elimination of triatomic 
+
+molecule decomposition.  Science  383 , 746 -750 (2024). 
+
+28 Liu, R.  et al.  The Influence of Hydrogen Bonds on the Roaming Reaction.  J. Phys. Chem. 
+
+Lett.  14 , 9351 -9356 (2023). 
+
+29  Liu, Y.  et al.  Reactivity of syn -CH3CHOO with H2O enhanced through a roaming 
+
+mechanism in the entrance channel.  Nat. Chem.  17 , 897 -903 (2025). 
+
+30 Liu, L.  et al.  OH Roaming as a Key Pathway in the Anti -CH3CHOO+ H2O Reaction 
+
+Yielding CH3COOH and H2O.  J. Phys. Chem. A  129 , 4364 -4373 (2025). 
+
+31 Wu, H., Fu, Y., Fu, B. & Zhang, D. H. Roaming Dynamics in Hydroxymethyl 
+
+Hydroperoxide Decomposition Revealed by the Full -Dimensional Potential Energy Surface of 
+
+the CH2OO+ H2O Reaction.  J. Phys. Chem.  A 127 , 9098 -9105 (2023). 
+
+32  Cisneros, G. A.  et al.  Modeling Molecular Interactions in Water: From Pairwise to Many -
+
+Body Potential Energy Functions.  Chem. Rev.  116 , 7501 -7528 (2016). 
+
+33 Zhang, D.  et al.  Pauli Repulsion Enhances Mobility of Ultraconfined Water.  ACS Nano  15 ,
+
+2490 -2496 (2021). 
+
+34 Zhao, Y.  et al.  Discovery of temperature -induced stability reversal in perovskites using 
+
+high -throughput robotic learning.  Nat. Commun.  12 , 2191 (2021). 
+
+35 Lin, B., Jiang, J., Zeng, X. C. & Li, L. Temperature -pressure phase diagram of confined 
+
+monolayer water/ice at first -principles accuracy with a machine -learning force field.  Nat. 
+
+Commun.  14 , 4110 (2023). 
+
+36 Moqadam, M.  et al.  Local initiation conditions for water autoionization.  Proc. Natl. Acad. 
+
+Sci.  115 , E4569 -E4576 (2018). 
+
+37 Roet, S., Daub, C. D. & Riccardi, E. Chemistrees: Data -Driven Identification of Reaction 
+
+Pathways via Machine Learning.  J. Chem. Theory Comput.  17 , 6193 -6202 (2021). 
+
+38 Santis, G. D., Herman, K. M., Heindel, J. P. & Xantheas, S. S. Descriptors of water 
+
+aggregation.  J. Chem . Phys . 160 , 054306  (2024). 
+
+39 Lundberg, S. M. & Lee, S. -I. A unified approach to interpreting model predictions.  Adv. 
+
+Neural Inf. Process. Syst.  30  (2017). 
+
+40  Zhang, R.  et al.  Synthesis of a distinct water dimer inside fullerene C70.  Nat. Chem.  8,
+
+435 -441 (2016). 
+
+41 Yu, Q. & Bowman, J. M. Manipulating hydrogen bond dissociation rates and mechanisms 
+
+in water dimer through vibrational strong coupling.  Nat. Commun.  14 , 3527 (2023). 
+
+42 Keutsch, F. N., Cruzan, J. D. & Saykally, R. J. The water trimer.  Chem. Rev.  103 , 2533 -
+
+2578 (2003). 
+
+43 Laage, D. & Hynes, J. T. A molecular jump mechanism of water reorientation.  Science 
+
+311 , 832 -835 (2006). 
+
+44 Dyke, T. R., Mack, K. M. & Muenter, J. S. The structure of water dimer from molecular 
+
+beam electric resonance spectroscopy.  J. Chem. Phys.  66 , 498 -510 (1977). 45 Ranea, V.  et al.  Water dimer diffusion on Pd {111} assisted by an H -bond donor -
+
+acceptor tunneling exchange.  Phys. Rev. Lett.  92 , 136104 (2004). 
+
+46 Kumagai, T.  et al.  Direct observation of hydrogen -bond exchange within a single water 
+
+dimer.  Phys. Rev. Lett.  100 , 166101 (2008). 
+
+47 Fraser, G. T. (H2O) 2: spectroscopy, structure and dynamics.  Int. Rev. Phys. Chem.  10 ,
+
+189 -206 (1991). 
+
+48 Richardson, J. O.  et al.  Concerted hydrogen -bond breaking by quantum tunneling in the 
+
+water hexamer prism.  Science  351 , 1310 -1313 (2016). 
+
+49 Keutsch, F. N. & Saykally, R. J. Water clusters: untangling the mysteries of the liquid, 
+
+one molecule at a time.  Proc Natl Acad Sci U S A  98 , 10533 -10540 (2001). 
+
+conducted using Multiwfn. 81 
+
+50  Wang, B., Jiang, W., Gao, Y., Teo, B. K. & Wang, Z. Chirality recognition in concerted 
+
+proton transfer process for prismatic water clusters.  Nano Res.  9, 2782 -2795 (2016). 
+
+51  Cole, W. T. S. & Saykally, R. J. Hydrogen bond network rearrangement dynamics in 
+
+water clusters: Effects of intermolecular vibrational excitation on tunneling rates.  J. Chem. 
+
+Phys.  147 , 064301 (2017). 
+
+52  Yang, X.  et al.  Two co -existing and opposing mechanisms of proton transfer in one -
+
+dimensional open -end water chains.  J. Chem. Phys.  160 , 194904 (2024). 
+
+53 Warren, J. J., Tronic, T. A. & Mayer, J. M. Thermochemistry of Proton -Coupled Electron 
+
+Transfer Reagents and its Implications.  Chem. Rev.  110 , 6961 -7001  (2010) .
+
+54 Agarwal, R. G.  et al.  Free Energies of Proton -Coupled Electron Transfer Reagents and 
+
+Their Applications.  Chem. Rev.  122 , 1 -49  (2022) .
+
+55 Kamarchik, E., Koziol, L., Reisler, H., Bowman, J. M. & Krylov, A. I. Roaming pathway 
+
+leading to unexpected water+ vinyl products in C2H4OH dissociation.  J. Phys. Chem. Lett. 
+
+1, 3058 -3065 (2010). 
+
+56 Suits, A. G. Roaming Reactions and Dynamics in the van der Waals Region.  Annu. Rev. 
+
+Phys. Chem.  71 , 77 -100 (2020). 
+
+57 Joalland, B., Shi, Y., Kamasah, A., Suits, A. G. & Mebel, A. M. Roaming dynamics in 
+
+radical addition –elimination reactions.  Nat. Commun.  5, 4064 (2014). 
+
+58 Burman, P. A comparative study of ordinary cross -validation, v -fold cross -validation and 
+
+the repeated learning -testing methods.  Biometrika  76 , 503 -514 (1989). 
+
+59 Zhang, X.  et al.  Machine learning for screening small molecules as passivation materials 
+
+for enhanced perovskite solar cells.  Adv. Funct. Mater.  34 , 2314529 (2024). 
+
+60  Kirch, Wilhelm.  Encyclopedia of Public Health . New York: Springer  1090 -1091 (2008). 
+
+61  Pearson, K. VII. Mathematical contributions to the theory of evolution. —III. Regression, 
+
+heredity, and panmixia.  Philosophical Transactions of the Royal Society of London, Series A: 
+
+Containing Papers of a Mathematical or Physical Character , 187 , 253 -318  (1896). 
+
+62  Chang, C. & Lin, C.  LIBSVM: A library for support vector machines.  ACM Trans. Intell. 
+
+Syst. Technol.  2, 1 -27 (2011). 
+
+63 Basheer, I. A. & Hajmeer, M. Artificial neural networks: fundamentals, computing, 
+
+design, and application.  J. Microbiol. Methods  43 , 3 -31 (2000). 
+
+64 Ho, T. K. The random subspace method for constructing decision forests.  IEEE Trans. 
+
+Pattern Anal. Mach. Intell.  20 , 832 -844 (1998). 65 Cover, T. & Hart, P. Nearest neighbor pattern classification.  IEEE Trans. Inf. Theory  13 ,
+
+21 -27 (1967). 
+
+66 Zhang, H. The optimality of naive Bayes.  Aa  1, 3 (2004). 
+
+67 Lever, J., Krzywinski, M. & Altman, N. Model selection and overfitting.  Nat. Methods  13 ,
+
+703 -704 (2016). 
+
+68 Sun, C. Q., Huang, Y., Zhang, X., Ma, Z. & Wang, B. The physics behind water irregularity. 
+
+Phys . Rep . 998 , 1 -68 (2023). 
+
+69 Liu, R.  et al.  An ab initio study on boundaries for characterizing cooperative effect of 
+
+hydrogen bonds by intermolecular compression.  Chin. Chem. Lett.  34 , 107857 (2023). 
+
+70  Geurts, P., Ernst, D. & Wehenkel, L. Extremely randomized trees.  Mach. Learn.  63 , 3 -
+
+42 (2006). 
+
+71  Prokhorenkova, L., Gusev, G., Vorobev, A., Dorogush, A. V. & Gulin, A. CatBoost: 
+
+unbiased boosting with categorical features.  Adv. Neural Inf. Process. Syst.  31  (2018). 
+
+72  Nguyen, H., Vu, T., Vo, T. P. & Thai, H. -T. Efficient machine learning models for prediction 
+
+of concrete strengths.  Constr. Build. Mater.  266 , 120950 (2021). 
+
+73 Groß, J.  Linear regression . Vol. 175 (Springer Science & Business Media, 2003). 
+
+74 Chen, T.  Guestrin, C.  XGBoost: A Scalable Tree Boosting System.  Proc. 22nd ACM 
+
+SIGKDD Int. Conf. on Knowledge Discovery and Data Mining, 785 –794 (2016) .
+
+75 Hoerl, A. E. & Kennard, R. W. Ridge regression: Biased estimation for nonorthogonal 
+
+problems.  Technometrics  12 , 55 -67 (1970). 
+
+76 Wold, S. Personal memories of the early PLS development.  Chemom. Intell. Lab. Syst. 
+
+58 , 83 -84 (2001). 
+
+77 Pulay, P. Improved SCF convergence acceleration.  J. Comput. Chem.  3, 556 -560 (1982). 
+
+78 Schlegel, H. B. Optimization of equilibrium geometries and transition structures.  J. 
+
+Comput. Chem.  3, 214 -218 (1982). 
+
+79 Frisch, M.  et al.  Gaussian09 Revision D. 01, Gaussian Inc., Wallingford CT, 2009. 
+
+80  Lu, T. & Chen, Q. Simple, Efficient, and Universal Energy Decomposition Analysis Method 
+
+Based on Dispersion -Corrected Density Functional Theory.  J. Phys. Chem.  A 127 , 7023 -7035 
+
+(2023). 
+
+81  Lu, T. & Chen, F. Multiwfn: A multifunctional wavefunction analyzer.  J. Comput. Chem. 
+
+33 , 580 -592 (2012). 
+
+# Acknowledgements 
+
+The authors wish to acknowledge  Dr. Xinrui Yang and Ms. Siyang Liu  for academic 
+
+discussions . This work was supported by  the Science and Technology Development Program 
+
+of Jilin Province of China (20250102014JC) and the National Key Research and Development 
+
+Program of China (No. 2024YFA1409900). Z. W. also acknowledges the assistance of the High -Performance Computing Center of Jilin University and National Supercomputing Center 
+
+in Shanghai. 
+
+# Author contributions 
+
+Zhigang Wang  initiated , designed  and  supervised  the work.  Rui Liu performed the theoretical 
+
+simulations.  Rui Liu , Baiqiang Liu, Zhen Gong, Zhaohua Cui, Yue Feng,  and Zhigang Wang 
+
+discussed the results and wrote the article. 
+
+# Competing interests 
+
+All authors declare no competing interests.

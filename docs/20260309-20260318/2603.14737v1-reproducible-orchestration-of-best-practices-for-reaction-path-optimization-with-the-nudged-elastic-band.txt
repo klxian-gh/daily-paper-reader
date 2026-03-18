@@ -1,0 +1,256 @@
+Title: Reproducible Orchestration of Best Practices for Reaction Path Optimization with the Nudged Elastic Band
+
+URL Source: https://arxiv.org/pdf/2603.14737v1
+
+Published Time: Tue, 17 Mar 2026 06:37:09 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+A Preprint 
+
+# Reproducible Orchestration of Best Practices for Reaction Path Optimization with the Nudged Elastic Band 
+
+## Rohit Goswami Institute IMX and Lab-COSMO École polytechnique fédérale de Lausanne (EPFL) Station 12, CH-1015 Lausanne Switzerland 
+
+## rohit.goswami@epfl.ch 
+
+March 17, 2026 
+
+## Abstract 
+
+The nudged elastic band (NEB) method is the standard approach for finding minimum energy paths and transition states on potential energy surfaces. Practical NEB calculations require several pre-processing steps: endpoint minimization, structural alignment, and initial path generation. These steps are typically handled by ad-hoc scripts or manual intervention, introducing errors and hindering reproducibility. We present a fully automated, open-source Snakemake workflow for small gas phase molecules that couples modern machine learning potentials (PET-MAD) to the eOn saddle point search software. Each step of the calculation lifecycle is encoded as an explicit dependency graph, from model retrieval and endpoint preparation through path initialization and band optimization. The workflow resolves all software dependencies from conda-forge, ensuring identical execution across platforms. Validation on the HCN to HNC isomerization demonstrates that the automated pipeline recovers the known single-barrier energy profile and product energy without manual intervention. 
+
+Keywords: Reaction Path Optimization; Snakemake; Nudged Elastic Band; Reproducibility; Workflow Automation; High Performance Computing 
+
+## 1 Introduction 
+
+The Nudged Elastic Band (NEB) method [ 1] finds the Minimum Energy Path (MEP) or the path of highest statistical weight in configuration space by optimizing a chain of N images connecting reactant and product endpoints. Each image experiences a projected potential force perpendicular to the path and a spring force parallel to it; the resulting “nudged” force prevents corner-cutting while maintaining image spacing. The climbing image modification [ 2] drives the highest-energy image to the first-order saddle point, and energy-weighted springs [ 3 ] concentrate images near the barrier region. Modern implementations combine band optimization with single-ended saddle search refinement for higher accuracy at the transition state [ 4 , 5]or even switch to locally approximated surfaces [6–8]. In practice, NEB calculations require careful preprocessing: endpoint structures must be minimized, atom orderings aligned, and an initial path generated that avoids atomic collisions. Mismatched atom labels or poor initial guesses cause outright failure or convergence to irrelevant saddle points. These steps are seldom integrated into NEB codes, leaving users to assemble ad-hoc scripts that are difficult to reproduce. We present an open-source Snakemake [ 9] workflow that automates this entire lifecycle, with all dependencies resolved from conda-forge via pixi . The workflow encodes each step as an explicit node in a dependency graph: endpoints are minimized and aligned, an initial path is generated via pairwise-potential interpolation, and only then does the NEB optimization begin. Users supply endpoint structures and a configuration file; the workflow handles the rest. 1
+
+> arXiv:2603.14737v1 [physics.chem-ph] 16 Mar 2026
+
+A Preprint 
+
+## 2 The NEB Orchestrator Workflow 
+
+2.1 Workflow as a Directed Acyclic Graph 
+
+The workflow is encoded as a directed acyclic graph (DAG) G = ( V, E ) where vertices represent rules (get_model , minimize , align , idpp , neb , visualize ) and edges represent data dependencies (Figure 1). Three properties follow directly: 
+
+Automatic parallelization Independent rules execute concurrently, e.g. minimize (R) ∥ minimize (P).
+
+Incremental recomputation Modifying the reactant re-runs downstream rules but skips model retrieval and product minimization. 
+
+Enforced ordering neb ← idpp ← align ← minimize ← raw inputs. Snakemake traverses this graph, executing rules only when dependencies are satisfied and inputs have changed. 
+
+2.2 Automated Dependency Management 
+
+Beyond code, reproducibility requires pinning the workflow itself, including the models. The get_model.smk 
+
+rule fetches a specific version of the PET-MAD [ 10 ] checkpoint from HuggingFace ( lab-cosmo/upet ), converts it to a deployable .pt file via mtt export (metatrain), and marks the output as protected against accidental deletion. Alternative models are supported through the same metatomic interface [ 11 ], requiring only a configuration change. Other models supported by eOn 1 are also a parameter away. 
+
+2.3 Endpoint Preparation 
+
+Consistent atom-to-atom mapping between reactant and product is essential. The workflow implements a two-stage preparation process. 
+
+2.3.1 Minimization 
+
+The minimize_endpoints rule relaxes each endpoint structure to the nearest local minimum on the chosen potential energy surface, preventing the NEB band from stalling on steep gradients at its ends. Configuration parameters: 
+
+Optimizer Limited memory Broyden–Fletcher–Goldfarb–Shanno [12] 
+
+Force convergence 0.0514221 eV/Å \ (10 −3 Ha/Bohr) 
+
+Maximum iterations 2000 
+
+Maximum movement 0.1 Å 
+
+2.3.2 Alignment 
+
+The workflow implements the Iterative Rotational Alignment (IRA) [13] in two stages (Figure 3): 
+
+Pre-minimization Raw endpoints centered in [25 , 25 , 25]Å cell, aligned using IRA with kmax = 1 .8Å −1
+
+(configurable). Ensures consistent atom ordering before geometry optimization. 
+
+Post-minimization After endpoint relaxation, IRA alignment reapplied to correct atom mapping drift during minimization. Final RMSD (Root mean squared deviation) between reactant and product logged for verification. The ira_align module employs the Iterative Rotational Alignment method [ 13 ], calculating optimal rotation and permutation to minimize Hausdorff distance. For configurations X with N atoms, the permutation-invariant RMSD is: 
+
+> 1https://eondocs.org
+
+2A Preprint 
+
+d(X, Xref ) = min 
+
+> Q∈SO (3) ,Π∈SN
+
+√ 1
+
+N ∥X − QX ref Π∥2 
+
+> F
+
+(2.1) where Q is the optimal rotation matrix and Π the permutation matrix. Automating this step ensures the path starts from the shortest distance between endpoints in configuration space. 
+
+2.4 Initial Path Generation 
+
+With aligned endpoints, the workflow generates an initial collision-free path using Sequential IDPP (SIDPP) [ 14 ]. Unlike standard IDPP [ 15 ] which interpolates all images at once then optimizes, SIDPP grows the path sequentially (Figure 4): 1. Start with only endpoints [R, P] 2. Add one image at a time (alternating reactant and product sides) 3. Optimize all intermediate images after each addition 4. Repeat until target image count reached Sequential growth with intermediate optimization avoids local minima that trap standard IDPP for complex reactions. The step size parameter α = 0 .33 controls placement of each new image relative to the frontier. Standard IDPP is available as a fallback. 
+
+2.5 Off-path CI-NEB (OCINEB) Optimization 
+
+The optimization uses Climbing Image NEB (CI-NEB) [ 2] with energy-weighted springs [ 3 ] and minimum mode following (MMF) refinement [7]. For image i with positions Ri, the NEB force is: 
+
+FNEB  
+
+> i
+
+= −∇ E(Ri)|⊥ + Fspring  
+
+> i
+
+|∥ (2.2) where ∇E|⊥ is the potential force component perpendicular to the path tangent and Fspring |∥ is the spring force projected along the tangent. The energy-weighted spring constant ki = kmin + ∆ k max (Ei − Eref , 0) /(Emax −
+
+Eref ) concentrates images near the barrier by stiffening springs between high-energy images. The climbing image inverts the parallel force component at the highest-energy image RCI :
+
+FCI = −∇ E(RCI ) + 2 ( ∇E(RCI ) · ˆτ ) ˆ τ (2.3) driving it uphill along the path tangent ˆτ while relaxing perpendicular to it. Once the climbing image converges, the workflow switches to off-path climbing image NEB (OCI-NEB) [ 5 ] with MMF refinement along the lowest curvature mode. Configuration parameters: 
+
+Images 18 (including endpoints) 
+
+Maximum iterations 1000 
+
+Force convergence 0.0514221 eV/Å \ (10 −3 Ha/Bohr) [16] 
+
+SIDPP growth ( α) 0.33 
+
+Climbing image activation 80% convergence 
+
+Energy-weighted springs true (0.972–9.72 eV/Å 2)
+
+Mode alignment with NEB tangent 0.8 (amount by which the rotated dimer can differ from) All parameters are user-configurable, and Snakemake re-runs only those steps whose inputs have changed. The complete set of parameters are part of the accompanying repository and documented there. 3A Preprint  
+
+> Table 1. Default parameters and tuning guidelines by system type
+
+Parameter Small Medium Complex (5–20 atoms) (20–50 atoms) (50+ atoms) 
+
+NEB images 12–16 18–24 24–30 Force threshold (eV/Å) 0.051 0.051 0.026 IRA kmax (Å −1) 1.5–2.0 2.0–3.0 3.0–5.0 Cell size (Å) 20–25 25–30 30–40 
+
+2.6 Applicability and Parameter Guidelines 
+
+The workflow is optimized for gas-phase molecular systems with 5–50 atoms. Table 1 provides default parameters and tuning guidelines for different system types. Parameter selection principles: 
+
+Number of images Simple reactions (single bond break/form) need 12–16 images. Complex rearrangements with multiple bond changes require 24–30 images for adequate path resolution. 
+
+Force convergence Standard threshold (0.051 eV/Å \ = 10 −3 Ha/Bohr) suffices for most applications. High-precision kinetics studies should use 0.026 eV/Å \ (0.5$ ×10 -3 $ Ha/Bohr). 
+
+IRA kmax Controls permutation matching strictness. Well-behaved small molecules work with kmax=1.5– 2.0 Å −1. Difficult atom mapping (symmetric molecules, multiple identical fragments) may require kmax=3.0– 5.0 Å −1. The 2D RMSD visualization uses fixed kmax=14 Å −1 for consistency across systems. The IRA procedure becomes infeasible for extended systems in most cases. 
+
+Cell size Must be large enough to avoid periodic boundary artifacts. Default [25, 25, 25] Å \ works for most medium-sized molecules. Surface reactions or condensed-phase systems require modifications to handle periodic boundary conditions correctly, which is part of eOn natively, and so the workflow extends to these systems without modification. 
+
+## 3 Method Validation 
+
+To demonstrate that the workflow produces correct results from raw inputs without user intervention, we apply it to the HCN → HNC isomerization, a 3-atom proton transfer with a single transition state. CCSD(T)/cc-pCV5Z calculations [ 17 ] place the barrier at 2.09 eV and the HCN–HNC energy difference at 0.65 eV. Starting from endpoint structure files alone, the workflow completes minimization, IRA alignment, SIDPP path generation, and hybrid CI-NEB-MMF optimization. The resulting energy profile (Figure 5) recovers the expected single-barrier topology with a barrier of 2.46 eV and a product energy 0.57 eV above the reactant. The 2D RMSD landscape (Figure 6) resolves the reactant, saddle point, and product basins. The repository includes four additional systems: the alanine dipeptide C7 eq → C5 conformational transition, Diels-Alder cycloaddition of ethylene and butadiene, the SN2 identity reaction F - + CH 3F , and vinyl alcohol to acetaldehyde tautomerization. Each requires only an endpoint pair and a YAML configuration file; the workflow handles alignment, path generation, and optimization identically. All five systems converge without manual intervention, and adding a new system amounts to providing two endpoint structures and editing a single configuration file. 
+
+## 4 Reproduction 
+
+Complete reproduction proceeds as follows:  
+
+> git clone https://github.com/HaoZeke/eon_orchestrator
+> cd eon_orchestrator pixi shell -e eon
+
+4A Preprint  
+
+> Figure 1. Workflow pipeline showing the Snakemake dependency graph. Raw endpoints undergo minimization and IRA alignment before SIDPP path generation. The hybrid CI-NEB-MMF optimization then refines the path to the MEP and transition state.
+> snakemake --configfile examples/hcn_isom/config.yaml -c4
+
+This generates plots and intermediates in the results folder. To reproduce the exact figures: 
+
+> # Figures 1-4: TikZ schematics (pre-built) # See paper/imgs/tikz/ in the manuscript repository # Figures 5-6: Energy profile and 2D landscape # Generated automatically in results/plots/hcn_isom/
+> ls results/plots/hcn_isom/
+> # 1D_path.png (Figure 5) and 2D_rmsd.png (Figure 6)
+
+Documentation accompanies the repository with tutorial guidelines. 
+
+## 5 Visualization Framework 
+
+The workflow produces two complementary visualizations. 
+
+5.1 One-Dimensional Energy Profiles 
+
+Energy is plotted against a scalar reaction coordinate. Three variants are available: 
+
+Image index Simplest, plots Ei vs. i ∈ [0 , N ]. Loses all geometric information about inter-image spacing. 
+
+Cumulative path length si = ∑ij=1 ∥Xj − Xj−1∥2. Accounts for non-uniform image distribution but remains path-dependent. 
+
+RMSD from reactant ri = d(Xi, Xreact ). Uses permutation-invariant RMSD; different methods can be compared on the same axis. All profiles use the tangential forces F∥,i = −Fi · ˆτi to constrain the energy derivative during interpolation, producing physically consistent barriers [2]. 
+
+5.2 Two-Dimensional RMSD Landscapes 
+
+One-dimensional projections collapse the $3N$-dimensional configuration space onto a single axis, obscuring path tortuosity and basin topology. The 2D framework projects onto intrinsic coordinates defined by the endpoints themselves [18]. Using the permutation-invariant RMSD from Eq. (1), we compute distances from each configuration X to both reactant ( R) and product ( P). The raw coordinates (r, p ) = ( d(X, R), d (X, P)) form a triangular region in the RMSD plane. A rigid rotation decomposes these into: 5A Preprint 
+
+s = reaction progress (along path) (5.1) 
+
+d = orthogonal deviation (perpendicular to path) (5.2) This decomposition separates forward progress from lateral excursions, analogous to path collective variables [19] but without smoothing parameters or training requirements. The 2D landscape exposes path tortuosity, intermediate basins, and stagnation regions that 1D profiles collapse into featureless shoulders. The projection operates directly on Cartesian coordinates without training data; the ≈ 10 3 geometries from a single NEB run suffice. Visualization code is provided in the chemparseplot 
+
+and rgpycrumbs Python packages. 
+
+## 6 Limitations 
+
+ML potential accuracy PET-MAD-XS provides point estimates without uncertainty quantification. Bar-rier heights should be validated with DFT single-point calculations for quantitative kinetics. Systems outside the training domain (transition metals [20], long range effect systems [21]) may require model finetuning. 
+
+Permutation sensitivity Two-stage IRA alignment ensures consistent endpoint mapping but does not guarantee correct permutations along the entire path. Reactions with many equivalent atoms or soft rotational modes warrant visual inspection of the initial path [5]. These limitations reflect the current state of ML potentials and permutation-invariant alignment, not the workflow itself. 
+
+## 7 Conclusions 
+
+The workflow automates NEB calculations from raw endpoint structures through publication-quality visual-izations, with every step declared as a node in a Snakemake DAG. The explicit dependency graph removes the manual setup that causes most NEB failures in practice: mismatched atom orderings, un-minimized endpoints, and poorly initialized paths. All dependencies resolve from conda-forge via pixi, so reproduction requires four commands. The workflow accepts any eOn compatible potential including the many metatomic interfaces [11] and runs unchanged on a laptop or HPC cluster. 
+
+## 8 CRediT Author Statement 
+
+Rohit Goswami: Conceptualization, Methodology, Software, Visualization, Writing - Original draft preparation, Writing - Reviewing and Editing 
+
+## 9 Acknowledgments 
+
+R.G. acknowledges support from his family, particularly Ruhila Goswami, Prof. D. Goswami, S. Goswami, Dr. A. Goswami, Dr. M. Sallermann and co-authors on the metatensor ecosystem publication. R.G. also acknowledges support from Lab-COSMO at EPFL, in particular Prof. Ceriotti and Dr. Fraux. R.G. would like to specially thank his pets, plants, birds, garden cats, turtles, and other constant supportive help. Dedicated to the memory of Snoopy. This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. 
+
+## 10 Data Availability 
+
+The workflow source code is available at https://github.com/HaoZeke/eon_orchestrator under the MIT license. A complete data archive containing all computed results, the ML potential model, per-iteration NEB data, and publication-quality figures is deposited on the Materials Cloud 6A Preprint Archive. Extracting the archive at the repository root recreates the exact computational state used in this work. See the included README.md for the data layout and file format descriptions. This resource is expected to facilitate rapid exploration of energy surfaces with scalable reproducible workflows. Part of the concepts described here are part of the atomistic cookbook as well. 
+
+## 11 Declarations 
+
+11.1 Ethics statements 
+
+Not applicable. 
+
+11.2 Declaration of interests 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. 
+
+## References 
+
+[1] Hannes Jónsson, Gregory Mills, and Karsten W. Jacobsen. Nudged elastic band method for finding minimum energy paths of transitions. In Classical and Quantum Dynamics in Condensed Phase Simulations , pages 385–404. World Scientific, 1998. doi:10.1142/9789812839664_0016. [2] Graeme Henkelman, Blas P. Uberuaga, and Hannes Jónsson. A climbing image nudged elastic band method for finding saddle points and minimum energy paths. Journal of Chemical Physics , 113(22): 9901–9904, November 2000. ISSN 0021-9606. doi:10.1063/1.1329672. [3] Vilhjálmur Ásgeirsson, Benedikt Orri Birgisson, Ragnar Bjornsson, Ute Becker, Frank Neese, Christoph Riplinger, and Hannes Jónsson. Nudged Elastic Band Method for Molecular Reactions Using Energy-Weighted Springs Combined with Eigenvector Following. Journal of Chemical Theory and Computation ,17(8):4929–4945, August 2021. ISSN 1549-9618. doi:10.1021/acs.jctc.1c00462. [4] Rohit Goswami. Efficient exploration of chemical kinetics, October 2025. [5] Rohit Goswami, Miha Gunde, and Hannes Jónsson. Enhanced climbing image nudged elastic band method with hessian eigenmode alignment, January 2026. [6] Rohit Goswami, Mikhail Masterov, Sreyan Kamath, Alberto Peña-Torres, and Hannes Jónsson. Efficient implementation of Gaussian Process Regression Accelerated Saddle Point Searches with application to molecular reactions. Journal of Chemical Theory and Computation , 21(16):7935–7943, 2025. ISSN 1549-9618. doi:10.1021/acs.jctc.5c00866. [7] Rohit Goswami and Hannes Jónsson. Adaptive pruning for increased robustness and reduced computa-tional overhead in Gaussian process accelerated saddle point searches. ChemPhysChem , page e202500730, 2025. ISSN 1439-7641. doi:10.1002/cphc.202500730. [8] Andrew A. Peterson. Acceleration of saddle-point searches with machine learning. The Journal of Chemical Physics , 145(7):074106, August 2016. doi:10.1063/1.4960708. [9] Felix Mölder, Kim Philipp Jablonski, Brice Letcher, Michael B. Hall, Christopher H. Tomkins-Tinch, Vanessa Sochat, Jan Forster, Soohyun Lee, Sven O. Twardziok, Alexander Kanitz, Andreas Wilm, Manuel Holtgrewe, Sven Rahmann, and Johannes Köster. Sustainable data analysis with Snakemake. 
+
+F1000Research , 10:33, April 2021. doi:10.12688/f1000research.29032.2. [10] Arslan Mazitov, Filippo Bigi, Matthias Kellner, Paolo Pegolo, Davide Tisi, Guillaume Fraux, Sergey Pozdnyakov, Philip Loche, and Michele Ceriotti. PET-MAD as a lightweight universal interatomic potential for advanced materials modeling. Nature Communications , 16(1):10653, 2025. ISSN 2041-1723. doi:10.1038/s41467-025-65662-7. [11] Filippo Bigi, Joseph W. Abbott, Philip Loche, Arslan Mazitov, Davide Tisi, Marcel F. Langer, Alexander Goscinski, Paolo Pegolo, Sanggyu Chong, Rohit Goswami, Sofiia Chorna, Matthias Kellner, Michele 7A Preprint Ceriotti, and Guillaume Fraux. Metatensor and metatomic: Foundational libraries for interoperable atomistic machine learning, August 2025. [12] Jorge Nocedal. Updating quasi-Newton matrices with limited storage. Mathematics of Computation , 35 (151):773–782, 1980. doi:10.1090/S0025-5718-1980-0572855-7. [13] Miha Gunde, Nicolas Salles, Arnaud Hémeryck, and Livia Martin-Samos. IRA: A Shape Matching Approach for Recognition and Comparison of Generic Atomic Patterns. Journal of Chemical Information and Modeling , 61(11):5446–5457, November 2021. ISSN 1549-9596. doi:10.1021/acs.jcim.1c00567. [14] Yorick L. A. Schmerwitz, Vilhjálmur Ásgeirsson, and Hannes Jónsson. Improved Initialization of Optimal Path Calculations Using Sequential Traversal over the Image-Dependent Pair Potential Sur-face. Journal of Chemical Theory and Computation , 20(1):155–163, January 2024. ISSN 1549-9618. doi:10.1021/acs.jctc.3c01111. [15] Søren Smidstrup, Anders Pedersen, Kurt Stokbro, and Hannes Jónsson. Improved initial guess for minimum energy path calculations. Journal of Chemical Physics , 140(21):214106, 2014. ISSN 0021-9606. doi:10.1063/1.4878664. [16] Jonah Marks and Joseph Gomes. Incorporation of Internal Coordinates Interpolation into the Freezing String Method. Journal of Chemical Theory and Computation , November 2025. doi:10.1021/acs.jctc.5c01492. [17] Tanja van Mourik, Gregory J. Harris, Oleg L. Polyansky, Jonathan Tennyson, Attila G. Császár, and Peter J. Knowles. Ab initio global potential, dipole, adiabatic, and relativistic correction surfaces for the HCN–HNC system. The Journal of Chemical Physics , 115(8):3706–3718, 2001. doi:10.1063/1.1383586. [18] Rohit Goswami. Two-dimensional RMSD projections for reaction path visualization and validation. 
+
+MethodsX , page 103851, March 2026. ISSN 2215-0161. doi:10.1016/j.mex.2026.103851. [19] Davide Branduardi, Francesco Luigi Gervasio, and Michele Parrinello. From A to B in free energy space. 
+
+Journal of Chemical Physics , 126(5):54103, February 2007. ISSN 0021-9606. doi:10.1063/1.2432340. [20] Mathias Schreiner, Arghya Bhowmik, Tejs Vegge, Jonas Busk, and Ole Winther. Transition1x - a dataset for building generalizable reactive machine learning potentials. Scientific Data , 9(1):779, December 2022. doi:10.1038/s41597-022-01870-w. [21] Philip Loche, Kevin K. Huguenin-Dumittan, Melika Honarmand, Qianjun Xu, Egor Rumiantsev, Wei Bin How, Marcel F. Langer, and Michele Ceriotti. Fast and flexible long-range models for atomistic machine learning. Journal of Chemical Physics , 162(14):142501, April 2025. doi:10.1063/5.0251713. 8A Preprint 
+
+Figure 2. Hybrid CI-NEB-MMF optimization strategy. The CI-NEB phase performs global path optimization with a climbing image. When the climbing image force falls below threshold ( ≈ 0.5 eV/Å), the method switches to MMF for local saddle refinement via the lowest curvature mode. 
+
+9A Preprint 
+
+Figure 3. Two-stage IRA alignment process. Raw endpoints are centered and aligned before minimization to establish consistent atom ordering. After geometry relaxation, alignment is reapplied to correct any atom mapping drift introduced during optimization. Both stages solve the joint rotation-permutation problem via the IRA algorithm. 
+
+10 A Preprint 
+
+Figure 4. Sequential IDPP (SIDPP) path growth. Unlike standard IDPP which interpolates all images simultaneously, SIDPP adds one image at a time, alternating between reactant and product sides. After each addition, all intermediate images are re-optimized. The step size parameter α controls placement of each new image relative to the frontier. This sequential growth avoids local minima that trap simultaneous interpolation for complex reactions. 
+
+11 A Preprint 
+
+Figure 5. One-dimensional energy profile for the HCN → HNC isomerization. The single barrier of 2.46 eV separates the HCN reactant from the HNC product (0.57 eV above HCN). Colored traces show the optimization history from initial SIDPP guess (outer traces) to the converged path (black). Inset structures show the reactant, saddle point, and product geometries. 
+
+12 A Preprint 
+
+Figure 6. Two-dimensional RMSD landscape for the HCN → HNC isomerization. Axes represent permutation-invariant RMSD from reactant (reaction progress s) and orthogonal deviation ( d). The color scale indicates interpolated energy. The reactant (R), saddle point (SP), and product (P) basins are clearly resolved. 
+
+13

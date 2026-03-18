@@ -1,16 +1,447 @@
 {
   "mode": "standard",
-  "generated_at": "2026-03-18T16:50:39.316834+00:00",
+  "generated_at": "2026-03-18T17:02:22.527555+00:00",
   "stats": {
     "mode": "standard",
     "tag_count": 1,
     "deep_divecandidates": 0,
-    "deep_cap": null,
+    "deep_cap": 6,
     "deep_selected": 0,
-    "quick_candidates": 0,
+    "quick_candidates": 12,
     "quick_skim_target": 11,
-    "quick_selected": 0
+    "quick_selected": 11
   },
   "deep_dive": [],
-  "quick_skim": []
+  "quick_skim": [
+    {
+      "id": "2603.12694v1",
+      "title": "RXNRECer Enables Fine-grained Enzymatic Function Annotation through Active Learning and Protein Language Models",
+      "abstract": "A key challenge in enzyme annotation is identifying the biochemical reactions catalyzed by proteins. Most existing methods rely on Enzyme Commission (EC) numbers as intermediaries: they first predict an EC number and then retrieve the associated reactions. This indirect strategy introduces ambiguity due to the complex many-to-many mappings among proteins, EC numbers, and reactions, and is further complicated by frequent updates to EC numbers and inconsistencies across databases. To address these challenges, we present RXNRECer, a transformer-based ensemble framework that directly predicts enzyme-catalyzed reactions without relying on EC numbers. It integrates protein language modeling and active learning to capture both high-level sequence semantics and fine-grained transformation patterns. Evaluations on curated cross-validation and temporal test sets demonstrate consistent improvements over six EC-based baselines, with gains of 16.54% in F1 score and 15.43% in accuracy. Beyond accuracy gains, the framework offers clear advantages for downstream applications, including scalable proteome-wide reaction annotation, enhanced specificity in refining generic reaction schemas, systematic annotation of previously uncurated proteins, and reliable identification of enzyme promiscuity. By incorporating large language models, it also provides interpretable rationales for predictions. These capabilities make RXNRECer a robust and versatile solution for EC-free, fine-grained enzyme function prediction, with potential applications across multiple areas of enzyme research and industrial applications.",
+      "authors": [
+        "Zhenkun Shi",
+        "Jun Zhu",
+        "Dehang Wang",
+        "BoYu Chen",
+        "Qianqian Yuan",
+        "Zhitao Mao",
+        "Fan Wei",
+        "Weining Wu",
+        "Xiaoping Liao",
+        "Hongwu Ma"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "q-bio.QM"
+      ],
+      "published": "2026-03-13T06:20:14+00:00",
+      "link": "https://arxiv.org/pdf/2603.12694v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "identifying biochemical reactions catalyzed by proteins",
+      "llm_evidence_cn": "鉴定蛋白质催化的生化反应",
+      "llm_evidence": "鉴定蛋白质催化的生化反应",
+      "canonical_evidence": "鉴定蛋白质催化的生化反应",
+      "llm_tldr_en": "Direct prediction of enzyme-catalyzed reactions using protein language models and active learning.",
+      "llm_tldr_cn": "利用蛋白质语言模型和主动学习直接预测酶催化的反应。",
+      "llm_tldr": "利用蛋白质语言模型和主动学习直接预测酶催化的反应。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.07977v2",
+      "title": "Scaling Machine Learning Interatomic Potentials with Mixtures of Experts",
+      "abstract": "Machine Learning Interatomic Potentials (MLIPs) enable accurate large-scale atomistic simulations, yet improving their expressive capacity efficiently remains challenging. Here we systematically develop Mixture-of-Experts (MoE) and Mixture-of-Linear-Experts (MoLE) architectures for MLIPs and analyze the effects of routing strategies and expert designs. We show that sparse activation combined with shared experts yields substantial performance gains, and that nonlinear MoE formulations outperform MoLE when shared experts are present, underscoring the importance of nonlinear expert specialization. Furthermore, element-wise routing consistently surpasses configuration-level routing, while global MoE routing often leads to numerical instability. The resulting element-wise MoE model achieves state-of-the-art accuracy across the OMol25, OMat24, and OC20M benchmarks. Analysis of routing patterns reveals chemically interpretable expert specialization aligned with periodic-table trends, indicating that the model effectively captures element-specific chemical characteristics for precise interatomic modeling.",
+      "authors": [
+        "Yuzhi Liu",
+        "Duo Zhang",
+        "Anyang Peng",
+        "Weinan E",
+        "Linfeng Zhang",
+        "Han Wang"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-09T05:27:38+00:00",
+      "link": "https://arxiv.org/pdf/2603.07977v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning interatomic potentials for atomistic simulations",
+      "llm_evidence_cn": "用于原子模拟的机器学习原子间势能",
+      "llm_evidence": "用于原子模拟的机器学习原子间势能",
+      "canonical_evidence": "用于原子模拟的机器学习原子间势能",
+      "llm_tldr_en": "Develops Mixture-of-Experts architectures to scale machine learning interatomic potentials for large simulations.",
+      "llm_tldr_cn": "开发了混合专家架构，以扩展用于大规模模拟的机器学习原子间势能。",
+      "llm_tldr": "开发了混合专家架构，以扩展用于大规模模拟的机器学习原子间势能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.14102v1",
+      "title": "Nonadiabatic rare events from transition-path sampling of MASH trajectories",
+      "abstract": "Rare nonadiabatic reactions are a key component of many important molecular processes but are challenging to capture with direct dynamical simulations. In this paper, we combine our recently developed mapping approach to surface hopping (MASH) with transition-path sampling to create a framework to efficiently simulate these rare events. This is possible because MASH trajectories are Markovian, time-reversible and obey Liouville's theorem. The combined approach generates nonadiabatic reactive pathways without biasing the underlying dynamics. The resulting ensemble allows for a detailed analysis of reaction mechanisms and the unraveling of statistical and dynamical properties, including rate constants. We apply the method to study a spin-boson model in thermal equilibrium over a wide range of diabatic coupling strengths. Our results demonstrate how this approach provides a practical and systematic tool for investigating rare nonadiabatic processes, potentially beyond the reach of brute-force simulations.",
+      "authors": [
+        "Danial Ghamari",
+        "Jeremy O. Richardson"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-14T20:09:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.14102v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "simulating rare nonadiabatic reaction mechanisms and pathways",
+      "llm_evidence_cn": "模拟稀有非绝热反应机理和路径",
+      "llm_evidence": "模拟稀有非绝热反应机理和路径",
+      "canonical_evidence": "模拟稀有非绝热反应机理和路径",
+      "llm_tldr_en": "Combines MASH with transition-path sampling to simulate rare nonadiabatic reaction mechanisms and rate constants.",
+      "llm_tldr_cn": "结合MASH与过渡路径采样，用于模拟稀有非绝热反应机理及速率常数。",
+      "llm_tldr": "结合MASH与过渡路径采样，用于模拟稀有非绝热反应机理及速率常数。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.08677v1",
+      "title": "NATPS: Nonadiabatic Transition Path Sampling Using Time-Reversible MASH Dynamics",
+      "abstract": "Rare nonadiabatic events play a central role in photochemistry but remain difficult to simulate because excited-state dynamics is computationally demanding and often stochastic. Here we introduce a deterministic and time-reversible implementation of nonadiabatic dynamics that enables the application of transition path sampling (TPS) to excited-state processes. Our approach builds on the Mapping Approach to Surface Hopping (MASH) and establishes the conditions required for path ensemble sampling, in particular time reversibility and detailed balance. Combining this dynamics with the TPS framework yields a new method, termed nonadiabatic transition path sampling (NATPS).   Using a model system of electronically coupled potential energy surfaces, we demonstrate that NATPS efficiently generates ensembles of reactive trajectories and provides mechanistic insight into nonadiabatic pathways. Compared with brute-force trajectory simulations and forward-flux sampling approaches, NATPS substantially reduces the computational effort required to obtain reactive trajectories.",
+      "authors": [
+        "Xiran Yang",
+        "Madlen Maria Reiner",
+        "Brigitta Bachmair",
+        "Leticia González",
+        "Johannes C. B. Dietschreit",
+        "Christoph Dellago"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-09T17:48:03+00:00",
+      "link": "https://arxiv.org/pdf/2603.08677v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transition path sampling for nonadiabatic dynamics",
+      "llm_evidence_cn": "非绝热动力学的转变路径采样",
+      "llm_evidence": "非绝热动力学的转变路径采样",
+      "canonical_evidence": "非绝热动力学的转变路径采样",
+      "llm_tldr_en": "Introduces a nonadiabatic transition path sampling method for simulating rare events in chemical processes.",
+      "llm_tldr_cn": "引入了一种非绝热转变路径采样方法，用于模拟化学过程中的罕见事件。",
+      "llm_tldr": "引入了一种非绝热转变路径采样方法，用于模拟化学过程中的罕见事件。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.14737v1",
+      "title": "Reproducible Orchestration of Best Practices for Reaction Path Optimization with the Nudged Elastic Band",
+      "abstract": "The nudged elastic band (NEB) method is the standard approach for finding minimum energy paths and transition states on potential energy surfaces. Practical NEB calculations require several pre-processing steps: endpoint minimization, structural alignment, and initial path generation. These steps are typically handled by ad-hoc scripts or manual intervention, introducing errors and hindering reproducibility. We present a fully automated, open-source Snakemake workflow for small gas phase molecules that couples modern machine learning potentials (PET-MAD) to the eOn saddle point search software. Each step of the calculation lifecycle is encoded as an explicit dependency graph, from model retrieval and endpoint preparation through path initialization and band optimization. The workflow resolves all software dependencies from conda-forge, ensuring identical execution across platforms. Validation on the HCN to HNC isomerization demonstrates that the automated pipeline recovers the known single-barrier energy profile and product energy without manual intervention.",
+      "authors": [
+        "Rohit Goswami"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-16T02:22:17+00:00",
+      "link": "https://arxiv.org/pdf/2603.14737v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reaction path optimization and transition states",
+      "llm_evidence_cn": "反应路径优化与过渡态",
+      "llm_evidence": "反应路径优化与过渡态",
+      "canonical_evidence": "反应路径优化与过渡态",
+      "llm_tldr_en": "Automates the Nudged Elastic Band method for finding minimum energy paths and transition states in reactions.",
+      "llm_tldr_cn": "自动化NEB方法以寻找反应中的最小能量路径和过渡态。",
+      "llm_tldr": "自动化NEB方法以寻找反应中的最小能量路径和过渡态。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.10839v1",
+      "title": "Open quantum systems beyond equilibrium: Lindblad equation and path integral molecular dynamics",
+      "abstract": "The Lindblad equation determines the time evolution of the density operator of open quantum systems. While valid for any system size, its use is, in practice, restricted to prototype/surrogate models with the aim of tackling specific aspects of the overall quantum complexity of a multi-atomic system. Path integral molecular dynamics (PIMD) instead provides static and dynamical quantum statistical averages of physical observables for systems in equilibrium composed of up to thousands of atoms over timescales up to nanoseconds, under the condition that short-time quantum coherence is not relevant for the properties of interest. PIMD relies on the well-established technique of molecular dynamics (MD) with its associated classical trajectories. However, it cannot describe a direct time evolution of a system and its convergence to a stationary state in situations out of equilibrium. In this work, we analyze the link between the Lindblad equation and PIMD; specifically, we will discuss how PIMD can actually be used to calculate the time evolution of ensemble-averaged physical observables and their convergence to a stationary state for situations out of equilibrium, bypassing the need of explicitly solving the Lindblad equation. Yet, at the same time, the Lindblad equation and PIMD are linked to one another through a formal relation of equivalence, which provides an argument for the consistency of PIMD results, namely the positivity of the density operator at any time. A numerical study of a prototype system, which is of interest in chemical physics, will be used to showcase the method.",
+      "authors": [
+        "Benedikt M. Reible",
+        "Somayeh Ahmadkhani",
+        "Luigi Delle Site"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cond-mat.stat-mech",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-11T14:46:35+00:00",
+      "link": "https://arxiv.org/pdf/2603.10839v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "path integral molecular dynamics for quantum statistical averages",
+      "llm_evidence_cn": "用于量子统计平均的路径积分分子动力学",
+      "llm_evidence": "用于量子统计平均的路径积分分子动力学",
+      "canonical_evidence": "用于量子统计平均的路径积分分子动力学",
+      "llm_tldr_en": "Combining Lindblad equation and path integral molecular dynamics for open quantum systems.",
+      "llm_tldr_cn": "将林德布拉德方程与路径积分分子动力学结合用于开放量子系统。",
+      "llm_tldr": "将林德布拉德方程与路径积分分子动力学结合用于开放量子系统。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.10939v1",
+      "title": "Nuclear Quantum Effects in Multi-Step Condensed Matter Chemistry: A Path Integral Molecular Dynamics Study of Thermal Decomposition",
+      "abstract": "Nuclear quantum effects (NQEs) are often central to a predictive understanding of chemical reactions and rates. While their incorporation in gas-phase reactions is well established, studies involving condensed matter often neglect or approximate such effects. To clarify the role of NQEs in multi-step, multi-molecular reactions in a molecular crystal, we compare atomistic simulations of the thermal decomposition of the energetic material TATB using path integral molecular dynamics (PIMD), the more approximate quantum thermal bath (QTB), and classical MD (ClMD). PIMD samples the quantum canonical distribution by representing each atom as a string of beads (replicas), while QTB uses a frequency-dependent thermostat to reproduce the Bose-Einstein distribution. We find that PIMD results in faster chemical decomposition of the TATB crystal compared to ClMD, as the initial steps involve hydrogen transfer processes. Interestingly, some of the subsequent reactions (e.g. the formation of N2) occur on identical timescales. The PIMD simulations also predict a reduction in overall activation energy by ~8% as compared to the classical result. As observed in model systems and simple unimolecular gas-phase reactions, the QTB significantly overestimates quantum acceleration of chemical reactions and the reduction in activation energy. A comparison of the kinetic energy operator in PIMD and the centroid dynamics provides insight into the physics behind the differences between the QTB and PIMD results.",
+      "authors": [
+        "Jalen Macatangay",
+        "Alejandro Strachan"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-03-11T16:24:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.10939v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "path integral molecular dynamics for chemical reactions",
+      "llm_evidence_cn": "用于化学反应的路径积分分子动力学",
+      "llm_evidence": "用于化学反应的路径积分分子动力学",
+      "canonical_evidence": "用于化学反应的路径积分分子动力学",
+      "llm_tldr_en": "Studies nuclear quantum effects in multi-step chemical reactions using path integral molecular dynamics.",
+      "llm_tldr_cn": "利用路径积分分子动力学研究了多步化学反应中的核量子效应。",
+      "llm_tldr": "利用路径积分分子动力学研究了多步化学反应中的核量子效应。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.12233v1",
+      "title": "Permutation invariant multi-scale full quantum neural network wavefunction",
+      "abstract": "Solving the intricate quantum behavior of interacting particles is key to unlocking the mysteries of condensed matter, but capturing their complex correlations across different scales remains a monumental challenge. We introduce a neural network framework that overcomes this barrier by modeling the full quantum wavefunction of a system, including electrons, nuclei and muons, directly capturing the full quantum effects beyond the Born-Oppenheimer approximation. The neural network approximates joint wavefunction of different interacting particles with a rigorous handling of permutation invariance, enabling simultaneous treatment of nuclear quantum effects and electron-nucleus-muon couplings without explicit excited states. Validated on molecular systems, this approach offers a computationally feasible way to model full quantum phenomena in complex many-body systems, establishing a direct connection between fundamental particle properties and emergent material behavior.",
+      "authors": [
+        "Pengzhen Cai",
+        "Yubing Qian",
+        "Li Deng",
+        "Weizhong Fu",
+        "Lei Yang",
+        "Zhiyu Sun",
+        "Xin-Zheng Li",
+        "En-Ge Wang",
+        "Liangwen Chen",
+        "Weiluo Ren",
+        "Ji Chen"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-12T17:52:15+00:00",
+      "link": "https://arxiv.org/pdf/2603.12233v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "full quantum wavefunction modeling of electrons and nuclei",
+      "llm_evidence_cn": "电子和原子核的全量子波函数建模",
+      "llm_evidence": "电子和原子核的全量子波函数建模",
+      "canonical_evidence": "电子和原子核的全量子波函数建模",
+      "llm_tldr_en": "A neural network framework for full quantum wavefunction modeling beyond the Born-Oppenheimer approximation.",
+      "llm_tldr_cn": "一种超越玻恩-奥本海默近似的全量子波函数建模神经网络框架。",
+      "llm_tldr": "一种超越玻恩-奥本海默近似的全量子波函数建模神经网络框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.12373v1",
+      "title": "Nuclear-Electronic Quantum Dynamics in a Plasmonic Nanocavity",
+      "abstract": "Plasmonic nanocavities are a promising platform for strong light-matter coupling and enhanced spectroscopies at the single-molecule level. These nanoscale environments are challenging to model due to their strongly multimodal character and short cavity lifetimes. Herein, we study the effects of these environments using real-time nuclear-electronic orbital time-dependent density functional theory (RT-NEO-TDDFT) coupled to multiple classical cavity modes in a manner that includes cavity loss. In RT-NEO-TDDFT, the quantum mechanical densities of all electrons and specified nuclei, typically protons, are propagated in real time. We show that a cavity with many modes at different frequencies can be used to probe and modify the nuclear-electronic quantum dynamics of chemical systems. Ultrafast excited-state proton transfer reactions can be probed through the time- and energy-resolved cavity emission of a multimode cavity. Under strong coupling conditions, the cavity can modify the dynamics, in some cases suppressing proton transfer and exhibiting Rabi-like oscillations of the cavity emission due to polariton formation. Utilizing the spectral density for an experimentally relevant nanoparticle-on-mirror single-molecule cavity, we show that an excited-state proton transfer system can evolve into resonance with the cavity even when initially out of resonance with the dominant cavity peak. In this case, tuning the dominant cavity peak to be resonant with the electronic transition leads to polariton formation for a small collection of molecules. The RT-NEO framework with multimode cavities enables the efficient simulation of chemical reactions in physically realistic electromagnetic environments, providing fundamental insights into the dynamics and associated spectroscopic signatures.",
+      "authors": [
+        "Jonathan H. Fetherolf",
+        "Tao E. Li",
+        "Sharon Hammes-Schiffer"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-12T18:51:33+00:00",
+      "link": "https://arxiv.org/pdf/2603.12373v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Real-time nuclear-electronic quantum dynamics with classical cavity modes",
+      "llm_evidence_cn": "结合经典腔模的实时核-电子量子动力学",
+      "llm_evidence": "结合经典腔模的实时核-电子量子动力学",
+      "canonical_evidence": "结合经典腔模的实时核-电子量子动力学",
+      "llm_tldr_en": "Couples quantum nuclear-electronic dynamics with classical modes, sharing methodological parallels with QM/MM.",
+      "llm_tldr_cn": "将量子核-电子动力学与经典模式耦合，在方法论上与QM/MM有相似之处。",
+      "llm_tldr": "将量子核-电子动力学与经典模式耦合，在方法论上与QM/MM有相似之处。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.12778v1",
+      "title": "Hydrogen-atom roaming reactions in water clusters: Unveiling an unusual dimension of water reactivity through first-principles calculations and machine learning",
+      "abstract": "Water mediates a broad range of chemical reactions, including proton transfer, bond rearrangement, and conventional radical processes, defining a continuously expanding repertoire of intrinsic reactivity. However, roaming, a fundamental reaction mechanism that a departing fragment bypasses the minimum energy path to recombine, has not been identified in water itself. Here, we report the discovery of hydrogen-atom roaming reactions in water clusters through high-precision ab initio calculations of first-principles. A neutral hydrogen atom departs as a radical, roams across the flat potential energy surface, and recombines along pathways that connect the same reactants and products as known hydrogen-bond network rearrangements. Interpretable machine learning analysis identifies the reactant dipole moment as the decisive switch governing whether roaming occurs, underpinned by exchange-repulsion and electrostatic interactions. Once roaming is initiated, polarizability and spin population determine barrier heights, while the charge distribution of the roaming hydrogen atom governs barrier widths, collectively shaped by electrostatic, orbital, and dispersion contributions. These findings establish hydrogen-atom roaming as a previously unrecognized intrinsic reaction class in water, complementing a fundamental dimension to the mechanistic picture of water reactivity.",
+      "authors": [
+        "Rui Liu",
+        "Baiqiang Liu",
+        "Zhen Gong",
+        "Zhaohua Cui",
+        "Yue Feng",
+        "Zhigang Wang"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.atm-clus",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-13T08:28:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.12778v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Ab initio calculations of reaction mechanisms and pathways",
+      "llm_evidence_cn": "反应机理和路径的从头计算",
+      "llm_evidence": "反应机理和路径的从头计算",
+      "canonical_evidence": "反应机理和路径的从头计算",
+      "llm_tldr_en": "Uses first-principles calculations to discover roaming reaction mechanisms in water clusters.",
+      "llm_tldr_cn": "利用第一性原理计算发现了水团簇中的漫游反应机理。",
+      "llm_tldr": "利用第一性原理计算发现了水团簇中的漫游反应机理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.14414v1",
+      "title": "Auto-WHATMD : Automated Wasserstein-based High-dimensional feature extraction Analysis of Trajectories from Molecular Dynamics",
+      "abstract": "Comparing multiple protein systems with variation such as different binding ligands or mutations, and understanding their effects is one of the objectives in molecular dynamics simulations. Representation of these systems by a few features enables quantitative comparison. However, because molecular dynamics simulation trajectories are high-dimensional spatiotemporal data, selection of key features relies on domain expertise, sometimes introducing arbitrary assumptions. Here, we present an approach that uses the optimal transport distance to compare high-dimensional trajectory data, and employs simulated annealing to identify the residues that best distinguish multiple systems. We term this algorithm auto-WHATMD (automated Wasserstein-based High-dimensional feature extraction Analysis for Trajectories of Molecular Dynamics). We applied auto-WHATMD to multiple protein-ligand systems of bromodomain 4 with different ligands, identifying the most discriminative residues in the loop region. Moreover, even a few selected residues were sufficient to capture the correlation with ligand-binding affinities, indicating that auto-WHATMD effectively prioritizes the most informative residues. Our approach can be used to efficiently determine key residues and design features for multiple analogous systems.",
+      "authors": [
+        "Sosuke Asano",
+        "Ikki Yasuda",
+        "Katsuhiro Endo",
+        "Yoshinori Hirano",
+        "Kenji Yasuoka"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.bio-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-15T14:57:52+00:00",
+      "link": "https://arxiv.org/pdf/2603.14414v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "analysis of trajectories from molecular dynamics",
+      "llm_evidence_cn": "分子动力学轨迹分析",
+      "llm_evidence": "分子动力学轨迹分析",
+      "canonical_evidence": "分子动力学轨迹分析",
+      "llm_tldr_en": "Automated feature extraction from MD trajectories using Wasserstein distance and simulated annealing.",
+      "llm_tldr_cn": "使用Wasserstein距离和模拟退火算法从分子动力学轨迹中自动提取特征。",
+      "llm_tldr": "使用Wasserstein距离和模拟退火算法从分子动力学轨迹中自动提取特征。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
 }

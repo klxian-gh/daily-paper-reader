@@ -1,0 +1,1016 @@
+Title: Permutation invariant multi-scale full quantum neural network wavefunction
+
+URL Source: https://arxiv.org/pdf/2603.12233v1
+
+Published Time: Fri, 13 Mar 2026 01:18:20 GMT
+
+Number of Pages: 34
+
+Markdown Content:
+# Permutation invariant multi-scale full quantum neural network wavefunction 
+
+## Pengzhen Cai 1∗, Yubing Qian 1,2∗, Li Deng 3,4∗, Weizhong Fu 1,2, Lei Yang 4,3,5,6,Zhiyu Sun 4,3,5,6, Xin-Zheng Li 1,7,8, En-Ge Wang 1,7, Liangwen Chen 4,3,5,6†,Weiluo Ren 2‡, Ji Chen 1,7,8§
+
+> 1
+
+School of Physics, Peking University, Beijing 100871, People’s Republic of China. 
+
+> 2
+
+ByteDance Seed, Beijing 100098, People’s Republic of China. 
+
+> 3
+
+Advanced Energy Science and Technology Guangdong Laboratory, Huizhou 516000, China. 
+
+> 4
+
+Institute of Modern Physics, Chinese Academy of Sciences, Lanzhou 730000, China. 
+
+> 5
+
+State Key Laboratory of Heavy Ion Science and Technology, Institute of Modern Physics, Chinese Academy of Sciences, Lanzhou 730000, China. 
+
+> 6
+
+School of Nuclear Science and Technology, University of Chinese Academy of Sciences, Beijing 100049, China. 
+
+> 7
+
+Interdisciplinary Institute of Light-Element Quantum Materials, Research Center for Light-Element Advanced Materials, Peking University, Beijing 100871, People’s Republic of China. 
+
+> 8
+
+State Key Laboratory of Artificial Microstructure and Mesoscopic Physics, Frontiers Science Center for Nano-Optoelectronics, Peking University, Beijing 100871, People’s Republic of China. 
+
+> ∗
+
+These authors contributed equally to this work. 
+
+> †
+
+Corresponding author. Email: chenlw@impcas.ac.cn 
+
+1
+
+> arXiv:2603.12233v1 [physics.chem-ph] 12 Mar 2026 ‡Corresponding author. Email: renweiluo@bytedance.com
+> §Corresponding author. Email: ji.chen@pku.edu.cn.
+
+Solving the intricate quantum behavior of interacting particles is key to unlocking the mysteries of condensed matter, but capturing their complex correlations across dif-ferent scales remains a monumental challenge. We introduce a neural network frame-work that overcomes this barrier by modeling the full quantum wavefunction of a sys-tem, including electrons, nuclei and muons, directly capturing the full quantum ef-fects beyond the Born-Oppenheimer approximation. The neural network approximates joint wavefunction of different interacting particles with a rigorous handling of per-mutation invariance, enabling simultaneous treatment of nuclear quantum effects and electron-nucleus-muon couplings without explicit excited states. Validated on molecu-lar systems, this approach offers a computationally feasible way to model full quantum phenomena in complex many-body systems, establishing a direct connection between fundamental particle properties and emergent material behavior. 
+
+# 1 Introduction 
+
+Solving the Schrödinger equation for many-particles across multiple scales holds the key to unravel-ing emergent phenomena in condensed matter physics and its interdisciplinary frontiers. However, this task remains computationally intractable due to the strong coupling between different parti-cles, most notably electrons and nuclei, whose vastly different quantum behaviors and orders-of-magnitude mass difference present a fundamental challenge ( 1). The Born-Oppenheimer approxi-mation (BOA) ( 2) mitigates this difficulty by decoupling nuclear and electronic motions, and has become a ubiquitous framework across diverse systems. Within the BOA paradigm, most com-putational studies of molecules and materials focus either on first principles electronic structure calculations or on classical nuclear dynamics simulations. Nevertheless, the BOA becomes inade-quate in systems involving light nucleonic particles such as light nuclei and muons, low-temperature environments, and ultrafast dynamical processes, where the intricate interplay between nucleonic 2and electronic degrees of freedom can no longer be neglected ( 1). For example, superconductivity in hydrides is strongly influenced by nuclear quantum effects ( 3), chemical reactions can be ac-celerated by nuclear quantum effects ( 4), and the quantum fluctuation of muons can significantly influence their coupling with magnetic signals ( 5), among others. To capture full quantum effects beyond BOA, several methodologies have been developed, each navigating distinct trade-offs between computational scalability and accuracy. The rigorous Born-Huang expansion (BHE) ( 6–8 ) provides a formal framework for including these effects but is often computationally prohibitive due to its requirement for numerous electronic excited states. Nuclear-electronic orbital ( 9) and multicomponent density functional theory ( 10 ) offer scalability, though accurate treatment of electron-nucleus correlation remains challenging. Conversely, explicitly cor-related Gaussian methods ( 11 ) provide benchmark accuracy yet remain restricted to small systems with few quantum nuclei. Traditional quantum Monte Carlo approaches bridge this gap for larger systems but require specially designed trial wave functions and struggle with high electron-nuclear correlation ( 12 ). In this work, we introduce a permutation-invariant full-quantum neural network wavefunction architecture, dubbed PermNet, to address these challenges. Electronic neural network wavefunction architectures have advanced rapidly over the past few years, emerging as a cutting-edge frontier in many-body electronic structure calculations ( 13–25 ). Building on these developments, by treating electrons and nucleonic particles on an equal footing, PermNet explicitly captures electron-nucleus quantum correlations that are inherently neglected within BOA. Compared to other recent attempts to extend neural network wavefunctions to electron-nucleus coupled systems ( 26–28 ) and efforts to construct potential energy surfaces with a single neural network framework ( 16, 29, 30 ), PermNet naturally enforces particle exchange symmetry, making it extendable to mixed boson-fermion sys-tems. Additionally, PermNet’s unified treatment of electrons and nuclei enables the investigation of strongly correlated systems with particles of comparable masses, allowing for the simultaneous probing of both nuclear quantum effects and non-adiabatic effects. Using PermNet, we demonstrate full-quantum effects of several prototypical systems, including the isotope-dependent bond lengths of hydrogen, the dielectric properties of ammonia, and the hyperfine couplings of muoniated ethy-lene. Besides, our framework facilitates the computation of the potential energy surface within BOA in a single calculation, holding promise for extension to more complex systems. 3χ(R,{r}) 
+
+> Correlation
+> Equivariant Embedding
+> Equivariant feature
+> det
+> ψ(r,{R})
+> Correlation
+> Equivariant Embedding
+> Equivariant feature
+> det
+> Jastrow
+
+Ψ
+
+> χi(R)
+> Correlation
+> Equivariant feature
+> det
+> ψi(r,R)
+> Correlation
+> Equivariant feature
+> det
+> Jastrow-Like
+
+Σi Ψ
+
+RI-r i
+
+RI-R J
+
+ri-r j
+
+electron nucleus r electron coordinate 
+
+R nuclear coordinate Figure 1 : Sketch of neural network architecture. Due to translation invariance, only the relative positions of particles are selected as input to the neural network. Drawing on the idea of the Born-Huang expansion, the overall network can be constructed by multiplying the wavefunction com-ponents of positively and negatively charged particles (similar to how the nuclear wavefunction is multiplied by the electron wavefunction). The determinant or permanent is used to maintain exchange symmetry, and a multi-determinant/permanent structure can enhance the representation capability of neural networks. 42 Results 
+
+## 2.1 Construction of neural network wavefunction 
+
+The PermNet architecture (Fig. 1) is inspired by the BHE: 
+
+Ψ(R, r) =
+
+’
+
+> 𝑚
+
+𝜒 𝑚 (R)𝜓 𝑚 (r; R), (1) where r and R denote electronic and nuclear coordinates, respectively. 𝜓 𝑚 (r; R) is the 𝑚 -th elec-tronic state at fixed R, and 𝜒 𝑚 (R) are corresponding nuclear wave packet. While it is possible to compute the excited states using neural network methods ( 19, 31, 32 ), doing so remains computa-tionally expensive. Instead, we model 𝜓 net  
+
+> 𝑚
+
+(r; R) without restricting it to Hamiltonian eigenfunc-tions, using a general-purpose architecture such as FermiNet ( 14 ): 
+
+𝜓 net  
+
+> 𝑚
+
+(r; R) = det [𝜙 (𝑚 ) 
+
+> 𝑗
+
+(r𝑖 , {r≠𝑖 }; R)] . (2) Here, r𝑖 denotes the spatial coordinate of the 𝑖 -th electron, and {r≠𝑖 } indicates dependence on the remaining electrons in a permutation-invariant manner, ensuring the overall antisymmetry of the electronic wavefunction. For 𝜒 net  
+
+> 𝑚
+
+(R), we generalize the Hartree product by allowing nuclear or-bitals 𝜑 𝐼 (R) to depend on all nuclear coordinates: 
+
+𝜒 net  
+
+> 𝑚
+
+(R) =
+
+÷
+
+> 𝐼
+
+𝜑 𝐼 (R). (3) The nuclear wavefunction can be further generalized to satisfy exchange symmetry while embed-ding the electronic coordinates, as detailed in Section 4.4. The complete wavefunction ansatz is then given by 
+
+Ψnet =
+
+> 𝑀
+
+’
+
+> 𝑚 =1
+
+𝜒 net  
+
+> 𝑚
+
+𝜓 net  
+
+> 𝑚
+
+, (4) where 𝑀 is a tunable hyperparameter. Although exact factorization ( 33 ) suggests that 𝑀 = 1 is theoretically sufficient, in practice, increasing 𝑀 improves the accuracy of the wavefunction rep-resentation. Additionally, to ensure zero center-of-mass momentum in the ground state, the neural network wavefunction is constructed to be translationally invariant by using only relative coordi-nates, as detailed in Section 4.1. 50 0000 0000 0000 
+
+## & # # '(% 
+
+  
+
+  
+
+  
+
+  
+
+  
+
+> #&+ ) 
+
+##  
+
+ 2
+
+ 2
+
+ 2
+
+&" ( 
+
+      
+
+>  μ
+
+## ) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+> √ ⟨)
+
+##  
+
+!)!(( 
+
+ #& (
+
+# # ("''! " (
+
+    ) 
+
+  
+
+  
+
+  
+
+  
+
+  
+
+> ⟩ )
+
+##      
+
+>     
+>  )
+> 
+> 
+> 
+> 
+> 
+> )
+
+$!# * ,  
+
+>  
+
+)  
+
+>  
+
+)    
+
+>   Δ
+
+) Figure 2 : (a) The training curve of isotopologues of the hydrogen molecule. The Jastrow factor is chosen to be of Gaussian type. A moving window average over 500 steps is applied. The dashed line represents the energy in BOA computed by FermiNet ( 14 ) at equilibrium configuration. (b) The linear fit of the average internuclear distance ⟨𝑅 ⟩ for the hydrogen molecule and its isotopologues as a function of the inverse square root of the reduced mass 1/√𝜇 of the two-body system. (c) PES of hydrogen calculated using a model trained under different conditions. The red line is calculated by traditional basis method ( 34 ). The green, yellow and blue line are model trained under different hydrogen mass with the GEM-type Jastrow factor described in Equation (16). The horizontal axis coordinate 𝑅 represents the static nuclear distance as in the BOA. The vertical axis of the inset Δ𝐸 
+
+represents the energy difference relative to the traditional basis method (red line). The blue line exhibits non-physical divergence at the far end and is truncated here for clarity. For details, please refer to the SI. 62.2 Molecular structure 
+
+The conventional notion of molecular structure as a static arrangement of nuclei at potential energy surface (PES) minima is an artificial constraint imposed by the BOA. Within our full quantum framework, molecular geometry emerges naturally from the expectation values of nuclear position operators in the entangled electron-nuclear wavefunction Ψ(R, r). For any distance 𝑅 𝑖 𝑗 between nuclei 𝑖 and 𝑗 , the quantum-mechanical bond length is obtained as: 
+
+⟨𝑅 𝑖 𝑗 ⟩ =
+
+∫ |Ψ(R, r)| 2 𝑅 𝑖 𝑗 dR dr
+
+∫ |Ψ(R, r)| 2 dR dr . (5) This formulation generalizes the classical concept of equilibrium bond length by incorporating nuclear zero-point motion and electron-nuclear correlation effects. The distinction is most clearly illustrated in isotopologues. For instance, in a diatomic molecule such as the hydrogen molecule, the equilibrium distance 𝑅 𝑒 predicted by BOA remains constant regardless of whether the molecule comprises hydrogen, deuterium, or tritium atoms. In contrast, our quantum-corrected bond length ⟨𝑅 ⟩ deviates from the BOA result and exhibits a strong linear dependence on the inverse square root of the reduced mass 𝜇 , as demonstrated in Fig. 2(b). The fitting yields the following relationship: 
+
+⟨𝑅 ⟩ = 1.4010 + 1.4831 · 1
+
+√𝜇 ,
+
+with a coefficient of determination of 0.99993. This result aligns with the findings of a perturba-tion theory analysis, detailed in the Supplemental Material, that extends beyond the lowest-order approximation of the interatomic harmonic potential by including a cubic term, thereby demonstrat-ing that our method can effectively detect non-harmonic effects. Moreover, when extrapolated to the point corresponding to infinite mass (yellow star), this bond length shows excellent agreement with the equilibrium distance 𝑅 𝑒 = 1.400 a.u. calculated under the BOA ( 35 ). Under the BOA, another important concept is the potential energy surface. Since the nuclear wave packet has a finite spatial extent, the full quantum wavefunction incorporates contributions not only from the equilibrium electronic state but also from nearby electronic states. If the system is well described within the BOA: 
+
+Ψ(R, r) ≈ 𝜒 0 (R)𝜓 0 (r; R), (6) 7then the ground state potential energy surface 𝐸 0 (R) can be extracted by integrating out the elec-tronic degrees of freedom: 
+
+𝐸 0 (R) ≈ 
+
+∫ Ψ∗ (R, r) ˆ𝐻 𝑒 Ψ(R, r) dr
+
+∫ |Ψ(R, r)| 2 dr , (7) where ˆ𝐻 𝑒 denotes the electronic component of the Hamiltonian. Unlike the traditional calculation of potential energy surfaces based on electronic wavefunctions, which necessitates optimization for each nuclear configuration and consumes substantial computational resources in high-dimensional cases, the full-quantum approach requires only a single optimization of the full quantum wavefunc-tion. Consequently, this method demands computational resources comparable to optimizing the electronic wavefunction at a single atomic configuration of the same system. In Fig. 2(c), we present the PES calculation for the hydrogen molecule. A Gaussian-exponential-mixture-type (GEM-type) Jastrow factor is employed to enforce the dissociation asymptotic condi-tion, as discussed in detail in Section 4.3. The red line in Fig. 2(c) represents the PES of the hydro-gen molecule calculated under BOA using a variational method with generalized James–Coolidge functions ( 34 ). The inset of Fig. 2(c) shows the energy difference between the PES derived from the full quantum state and the PES calculated directly under the BOA, near the equilibrium coordinate. Notably, using the true nuclear mass for hydrogen, our derived PES (blue line) agrees very well with the results by Wolniewicz ( 34 ) (red line) near the equilibrium geometry. However, the derived PES deviates more noticeably from the reference results at larger distances, eventually becoming too large to be displayed. This non-physical behavior likely arises because Monte Carlo sampling is sparse in regions of small wavefunction amplitude, corresponding to nuclear coordinates far from the PES minimum. To alleviate this error, we artificially reduce the nuclear mass to 100 a.u. (orange curve) and 10 a.u. (green curve), causing the nuclear wavefunction to become more diffused; this greatly improves sampling at long bond lengths, allowing the PES to match the reference energies more closely in that region. However, since reducing the nuclear mass renders the BOA less valid, the PES derived from these calculations is less accurate than that obtained using the true hydrogen mass near equilibrium. In practice, when constructing a PES using our full quantum wavefunction, one may choose an optimal effective nuclear mass to balance the numerical error induced by finite sampling against the physical bias caused by artificially small nuclear masses. 8Electric field Figure 3 : (a) Schematic diagram of ammonia molecule polarization under an external electric field. (b) Particle density distribution projected onto the 𝑋 –𝑌 plane, where green, red, and blue denote hy-drogen, nitrogen, and electrons, respectively, with darker shades indicating higher probability den-sities. (c) Training curve of the ammonia system under uniform electric fields of varying intensities 
+
+E. A Gaussian-type Jastrow factor is used, and a moving window average over 5000 optimization steps is applied. (d) Quadratic fit of the ground state energy 𝐸 of the ammonia system as a function of the intensity E of the applied uniform electric field. (e) Dipole moment of the ammonia molecule as a function of training steps, with nuclear mass reduced to 10% (red line) and 1% (green line) of its original value. 92.3 Stark effect 
+
+Since the total Hamiltonian in full-quantum regime commutes with both the parity operator and the rotational operator, the ground state of any molecule should have zero dipole moment. To dis-tinguish between polar and nonpolar molecules, we rely on the Stark effect, wherein molecules with a permanent dipole moment exhibit a linear energy shift with respect to the external electric field intensity, whereas those without a permanent dipole moment display a quadratic relationship. However, since the nuclear energy gaps are small and comparable to the energy shifts induced by the electric field, we observe a mixture of linear and quadratic Stark effects for polar molecules, as demonstrated in the following calculations using ammonia as an example. In Fig. 3(c), a series of lines illustrates the training curves for the ammonia system under an external electric field E. These curves exhibit similar convergence rates across different electric field intensities E and accurately capture the ground state energy shifts induced by the field, thereby demonstrating the robustness of our method. In Fig. 3(d), the energies corresponding to each electric field are computed using the well-trained wavefunction models. We fit the relationship between the energies and electric field intensities to a quadratic curve, obtaining an excellent fit where the linear term coefficient corresponds to the permanent dipole moment 𝜇 = 0.580 a .u. of the ammonia system. This result demonstrates strong consistency with numerous experimental findings ( 36, 37 ). Additionally, we directly calculated the dipole moment of the ammonia system using a model trained under zero electric field, obtaining 𝜇 = 0.56 a.u. in contrast to the theoretical prediction of zero. Fig. 3(b) illustrates the ground-state particle distribution, offering an intuitive explanation for this non-zero dipole moment even at zero field: the hydrogen nuclei exhibit distinct localization rather than a uniform circular distribution. This discrepancy arises because the ammonia molecule possesses an extremely small inversion energy splitting, Δ𝐸 = 3.6 × 10 −6 a.u. ( 38 ), which lies beyond our current resolution limits. Due to this small energy level, minor random errors during the VMC calculation can cause symmetry breaking, leading the system to eventually converge to a localized state. In Fig. 3(e), we reduce the nuclear mass to increase the energy separation. We find that when the nuclear mass is reduced to 1% of its original value, the neural network can accurately distinguish the two states and provide the correct expectation value for the zero dipole moment. In addition, because ammonia has three hydrogen atoms, we test the influence of the nuclear exchange 10 effect. As detailed in the Supplementary Material, light nuclei exhibit a significant exchange effect, which can be accounted for by enforcing nuclear exchange symmetry in PermNet. For systems with light nuclei, such as muoniated ethylene discussed in the next section, it is essential to use PermNet with nuclear exchange symmetry included. 
+
+## 2.4 Muoniated molecules 
+
+In 𝜇 SR spectroscopy, positive muons are commonly employed as local magnetic probes to inves-tigate muon-electron and muon-nuclear spin-spin interactions ( 5). For molecular systems, avoided level crossing 𝜇 SR can precisely measure the hyperfine couplings of the muon, which fundamen-tally represent the two-body contact spin density between the muon and electrons. Given that the muon mass is only one-ninth that of a proton, properly accounting for its quantum effects is crucial. Owing to their inherent theoretical limitations, conventional methods based on density functional theory (DFT) and the BOA often fail to achieve quantitative agreement with experimental data. Within our full quantum framework, the quantum effects of muoniated molecules are captured by the expectation values of nuclear position operators in the entangled electron-nuclear wavefunction 
+
+Ψ(R, r).In general, the hyperfine coupling constant 𝐴 for a nucleus is given by: 
+
+𝐴 𝐼 = 2𝜇 0
+
+3 𝛾 𝑒 𝛾 𝐼 𝜌 𝑠 (r𝐼 ) , (8) where 𝐼 denotes the nuclei and the muon, 𝜇 0 is the vacuum permeability, 𝛾 represents the gyromag-netic ratio and 𝜌 𝑠 is the electron-nucleus contact spin density. Regarding the hyperfine couplings of the muon, 𝜌 𝑠 
+
+(r𝜇 
+
+) can be expressed as: 
+
+𝜌 𝑠 
+
+(r𝜇 
+
+) =
+
+
+
+> 𝑁 ↑
+
+’
+
+> 𝑖
+
+⟨Ψ| ˆ𝑂 ↑ 
+
+> 𝑖
+
+𝛿 (r𝑖 − r𝜇 
+
+) |Ψ⟩⟨Ψ | Ψ⟩−
+
+> 𝑁 ↓
+
+’
+
+> 𝑖
+
+⟨Ψ| ˆ𝑂 ↓ 
+
+> 𝑖
+
+𝛿 (r𝑖 − r𝜇 
+
+) |Ψ⟩⟨Ψ | Ψ⟩
+
+
+
+.
+
+(9) Here ↑ and ↓ denote spin-up and spin-down electrons, respectively, and ˆ𝑂 ↑/↓  
+
+> 𝑖
+
+are the correspond-ing spin operators. Within the static muon approximation, this expression simplifies to 𝜌 𝑠 (r𝜇 ) =
+
+11 𝜌 ↑ (r𝜇 ) − 𝜌 ↓ (r𝜇 ), where 𝜌 ↑/↓ (r𝜇 ) are the spin-up and spin-down electron densities at the muon’s position. In order to better understand the full quantum effects in muoniated molecules, the muoniated ethylene system (C 2H4Mu, where Mu is the muonium) is chosen and the corresponding hyperfine coupling of the muon is investigated. In addition to calculations performed with PermNet, where the quantum effects of all the nuclei including the muon are incorporated in the wavefunction, we also performed calculations with FermiNet, which applies the static muon approximation. The results are summarized in Fig. 4. The electron-muon contact spin density is obtained by performing a histogram analysis of the muon-electron distance versus density from the wavefunction and extrapolating to zero distance (details provided in the Supplementary Material). Fig. 4(a) shows that both PermNet and Fer-miNet produce converged total energies, with PermNet achieving a lower energy. This discrepancy arises because FermiNet relies on nuclear positions obtained from DFT geometry optimization, which may not represent the true energy minimum, a common challenge in calculations employ-ing point-nucleus models. We note that in a recent preprint that appeared during the preparation of this manuscript, Carr et al. extended Psiformer ( 39 ), a different neural network wavefunction architecture, to 𝜇 SR calculations with quantum muons and protons ( 28 ). Figs. 4(b) and 4(c) indicate that the calculations are converged with respect to both the number of neural network optimization steps (approximately 100,000 steps) and the order of the extrapolation polynomial (beyond the second-order). Using a third-order polynomial extrapolation and averaging results beyond 100,000 steps, PermNet yields a hyperfine coupling (represented as contact density) of 0.0348(9), while FermiNet gives 0.0429(12). The experimental reference range is 0.0334–0.0356 (150-160 MHz, extrapolation to 0 K of the muon hyperfine couplings in pure ethene) ( 40 ). In Fig. 4(d), the muons exhibit a wider distribution range than carbon and hydrogen, which is a natural consequence of their low mass. To enable a direct comparison of the local density, the radial density distributions of the muon, hydrogen, and carbon as functions of the distance to the center of mass are shown in Fig. 4(e). The calculated C-Mu bond length is roughly consistent with the phonon calculation (see Supplementary Materials for details), which further supports the validity of the PermNet calculation. PermNet demonstrates obvious superiority over FermiNet, yielding notably more reliable nu-12 0 100000 200000 300000 
+
+Training step 
+
+> 79.050
+> 79.025
+> 79.000
+> 78.975
+> 78.950
+> Energy (a.u.)
+
+(a)   
+
+> PermNet
+> FermiNet
+> 0200000 400000
+
+Training step 
+
+> 0.02
+> 0.03
+> 0.04
+> 0.05
+> 0.06
+> 0.07
+> Contact density (a.u.)
+
+(b)     
+
+> Experiment
+> FermiNet
+> PermNet
+> 12345
+
+Fitted order 
+
+> 0.030
+> 0.035
+> 0.040
+> 0.045
+> 0.050
+> 0.055
+
+(c) 
+
+> Experiment
+> FermiNet
+> PermNet
+> 2
+> 0
+> 2
+
+X (a.u.)   
+
+> 202
+
+Y (a.u.) 
+
+> 2
+> 0
+> 2
+> Z (a.u.)
+
+(d) Hydrogen      
+
+> Carbon
+> Mu
+> 012345
+
+r (a.u.)   
+
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> 10 2
+> g(r)
+
+(e) 
+
+> H
+> C
+> Mu
+> e
+
+Figure 4 : (a) Training curve of the C 2H4Mu system using PermNet (green line) and FermiNet (red line). The GEM-type Jastrow factor is used, and a moving window average over 5000 optimization steps is applied. (b) Contact spin density as a function of training steps, calculated via the third-order polynomial extrapolation. (c) Contact spin density calculated via different fitting order polynomial extrapolation at 500,000 training steps. (d) Particle density distribution of the C 2H4Mu system in real space, where green, red, and blue denote hydrogen, carbon, and muon, respectively. (e) The radial density distributions of different particles as functions of the distance to the center of mass, where green denotes hydrogen, red dashed lines denote carbon, blue dashed lines denote the muon, and yellow dashed lines denote electrons. 13 clear density distributions as well as key observables. This result establishes it as a robust method for probing full quantum effects in light nuclei, as exemplified by muoniated molecules. 
+
+# 3 Discussion 
+
+In this work, we have developed PermNet, a neural network-based quantum Monte Carlo frame-work that enables the direct solution of the full nuclear-electronic Schrödinger equation beyond the Born–Oppenheimer approximation. By representing the joint electron-nuclear wavefunction with a flexible neural network ansatz, our approach captures essential quantum correlations and non-adiabatic effects, offering a unified and computationally tractable route to studying coupled quantum dynamics in molecular systems. We have demonstrated the capability of this method in accurately predicting quantum-mechanical properties such as bond lengths in isotopologues, poten-tial energy surfaces, electric field responses in molecules like ammonia, and the hyperfine couplings of muoniated molecules like ethylene, all without relying on excited electronic states calculations required by the Born–Huang formalism. Looking forward, this approach opens promising avenues for exploring a wider range of quan-tum phenomena in complex systems, such as proton transfer, nuclear-quantum-effect-enhanced su-perconductivity, and non-adiabatic dynamics in photochemical processes, as well as the muon be-havior in 𝜇 SR spectroscopy. The integration of more expressive network architectures, such as symmetry-aware graph neural networks or attention mechanisms, could further enhance the repre-sentational power and physical interpretability of the wavefunction. Despite its demonstrated accuracy, the current approach has limitations. A notable challenge is its limited resolution for rotational energy levels, as the subtle energy differences are often obscured by the statistical noise inherent in the Monte Carlo procedure. This restricts its immediate appli-cation to high-resolution rotational spectroscopy. Further developments could focus on enhancing sampling efficiency and explicitly incorporating symmetries into the ansatz to address this gap. Nevertheless, the present work establishes a robust and extensible foundation for full quantum modeling of coupled electron-nuclear systems, bridging a critical gap between quantum theory and computational simulation in condensed matter and chemical physics. 14 4 Methods 
+
+## 4.1 Translational invariance and internal Hamiltonian 
+
+The total Hamiltonian for a system of charged particles interacting via Coulomb forces is given by 
+
+ˆ𝐻 tot = −
+
+> 𝑁
+
+’
+
+> 𝑖 =1
+
+12𝑀 𝑖 
+
+∇2 
+
+> 𝑖
+
++
+
+> 𝑁
+
+’
+
+> 𝑖< 𝑗
+
+𝑍 𝑖 𝑍 𝑗 
+
+|X𝑖 − X𝑗 | , (10) where 𝑁 is the total number of particles, X𝑖 , 𝑀 𝑖 , and 𝑍 𝑖 denote the spatial coordinates, mass, and charge of the 𝑖 -th particle, and ∇2 
+
+> 𝑖
+
+is the Laplacian operator acting on the coordinates of the 𝑖 -th particle. Due to the Hamiltonian’s continuous translational symmetry, the ground state must have uniform density, which poses challenges in modeling the wavefunction over the entire spatial domain. To address this, we construct a neural network wavefunction that is explicitly translationally invariant by expressing it exclusively in terms of relative coordinates: 
+
+Ψ(X) = Ψ ({ X𝑖 − X𝑗 }) , (11) where X represents the coordinates of all particles for brevity. This formulation automatically re-moves the center-of-mass kinetic energy in Equation (10), and the remaining parts describe the internal Hamiltonian. This allows us to focus solely on the internal dynamics in relative coordi-nates, significantly simplifying the modeling of the wavefunction within a finite spatial range. In contrast to center-of-mass translation, rotational and vibrational motions cannot be decoupled without introducing additional approximations. 
+
+## 4.2 Wavefunction optimization 
+
+The neural network wavefunction is optimized by minimizing the variational energy of the system. This procedure follows the principles of traditional variational Monte Carlo, with the key distinction being the use of a neural network as the trial wavefunction. Given a Hamiltonian ˆ𝐻 and a neural network wavefunction Ψ𝜃 , where 𝜃 represents the set of trainable parameters, the variational energy 
+
+𝐸 𝑣 as a function of 𝜃 is expressed as 
+
+𝐸 𝑣 (𝜃 ) =
+
+∫ |Ψ𝜃 (X)| 2𝐸 𝐿 (X; 𝜃 ) dX
+
+∫ |Ψ𝜃 (X)| 2 dX . (12) 15 The local energy 𝐸 𝐿 (X; 𝜃 ) is defined as 
+
+𝐸 𝐿 (X; 𝜃 ) = ˆ𝐻 Ψ𝜃 (X)
+
+Ψ𝜃 (X) . (13) The integrals can be efficiently evaluated using Monte Carlo integration with importance sampling, where the sampling probability is proportional to |Ψ𝜃 (X)| 2.However, the widely used Metropolis-Hastings algorithm for sampling becomes inefficient when applied to full-quantum wavefunctions. This inefficiency originates from two factors: different types of particles may exhibit distinct characteristic motion scales, and the full quantum wavefunction is globally translationally invariant. Inspired by Cassella et al. (41 ), we implement a modified Gibbs sampling algorithm. In each move proposal X → X′, only the positions of one type of particle are updated. The acceptance probability for the move is given by 
+
+𝑝 (X → X′) = min 
+
+{ |Ψ𝜃 (X′)| 2
+
+|Ψ𝜃 (X)| 2 , 1
+
+}
+
+. (14) This approach breaks the global translational symmetry of the trial move and allows independent adjustment of the trial move width for each particle type, thereby enhancing sampling efficiency. We then perform gradient descent on the parameters 𝜃 , using 𝐸 𝑣 (𝜃 ) as the loss function to optimize the neural network wavefunction. For efficient optimization, we employ the Kronecker-factored approximate curvature (KFAC) ( 42,43 ) optimizer, which approximates the imaginary time evolution dynamics. 
+
+## 4.3 Nuclear Jastrow factor 
+
+To improve optimization stability in the presence of limited sampling, we leverage the fact that nuclear wavefunctions are highly localized. We incorporate this physical insight by constraining the nuclear part of the neural network wavefunction using a Jastrow-like factor. As a first approximation, we assume that nucleus 𝐼 experiences a set of independent harmonic potentials, quadratic in the internuclear distances 𝑅 𝐼𝐽 = |R𝐼 − R𝐽 |. Accordingly, the nuclear wavefunction for nucleus 𝐼 is approximated as a product of Gaussian functions centered around equilibrium positions: 
+
+𝜒 ({ R𝐼 − R𝐽 }) ∝ 
+
+÷
+
+> 𝐼,𝐽
+
+exp 
+
+[
+
+−Γ𝐼𝐽 
+
+(
+
+𝑅 𝐼𝐽 − 𝑅 (0)
+
+> 𝐼𝐽
+
+)2]
+
+, (15) 16 where Γ𝐼𝐽 and 𝑅 (0) 
+
+> 𝐼𝐽
+
+are trainable parameters, initialized using the internuclear distances used in the BOA. This Gaussian product is multiplied with the neural network nuclear wavefunction, signifi-cantly enhancing optimization stability. To further encode the correct asymptotic behavior when nuclei are far apart which is particu-larly important for PES evaluations, we extend beyond the simple Gaussian form. For two isolated nuclei at large separation, the wavefunction should decay exponentially with increasing internuclear distance. Combining this requirement with Equation (15), we construct a GEM-type Jastrow factor 
+
+J for the nuclear orbital function as: 
+
+J =
+
+÷
+
+> 𝐼,𝐽
+
+exp 
+
+
+
+−Γ𝐼𝐽 
+
+(
+
+𝑅 𝐼𝐽 − 𝑅 (0)
+
+> 𝐼𝐽
+
+)2
+
+√
+
+1 + 𝜎 𝐼𝐽 
+
+(
+
+𝑅 𝐼𝐽 − 𝑅 (0)
+
+> 𝐼𝐽
+
+)2
+
+
+
+, (16) where 𝜎 𝐼𝐽 is an additional learnable parameter that controls the transition between short- and long-range behavior. The exponential decay terms between electrons and nuclei are already included in FermiNet architecture for the electrons, and we should not repeat them. 
+
+## 4.4 Nuclear exchange symmetry 
+
+The exchange symmetry of multi-fermion or multi-boson systems plays a crucial role in certain regimes, such as those involving low-mass particles or high-pressure conditions. To account for nuclear exchange symmetry, we reformulate the nuclear wavefunction by replacing the Hartree product with a determinant (for fermions) or a permanent (for bosons): 
+
+𝜒 net  
+
+> 𝑚
+
+=
+
+÷
+
+> 𝛼
+
+det 
+
+[
+
+𝜑 (𝑚 ) 
+
+> 𝐾
+
+(R𝛼,𝐿 , {R𝛼, ≠𝐿 }, {R≠𝛼 }; r)
+
+]
+
+, (17) where 𝐾 labels orbitals and 𝐿 labels nuclei within species 𝛼 , and they correspond to the rows and columns of the determinant, respectively. For bosonic species, the determinant is replaced by a permanent to ensure the correct exchange symmetry under particle permutation. Most previous neural network architectures address permutation symmetry for only one type of particle. These approaches are insufficient in the full-quantum case, where we must ensure that permuting electrons does not affect the nuclear part of the wavefunction, and vice versa. Inspired by Cassella et al. in the context of positronic chemistry, we propose a Deep Sets-like ( 44 ) structure for 17 constructing input features. The single-particle input features are divided into positive ( h(+) ) and negative ( h(−) ) charge channels: 
+
+ℎ(+)  
+
+> 𝐼 𝑝
+
+=
+
+’
+
+> 𝑖
+
+W𝐼 𝑝 D ( R𝐼 , r𝑖 ) + 𝑏 𝐼 𝑝 , (18) 
+
+ℎ(−)  
+
+> 𝑖 𝑝
+
+=
+
+’
+
+> 𝐼
+
+V𝑖 𝑝 D ( r𝑖 , R𝐼 ) + 𝑐 𝑖 𝑝 , (19) where ℎ(+)  
+
+> 𝐼 𝑝
+
+is the 𝑝 -th feature of nucleus 𝐼 ’s one-particle feature, and similar for ℎ(−)  
+
+> 𝑖 𝑝
+
+. W𝐼 𝑝 , V𝑖 𝑝 ,
+
+𝑏 𝐼 𝑝 , and 𝑐 𝑖 𝑝 are learnable parameters. D is a pairwise descriptor function that takes two position vectors and returns the concatenated scalar distance and displacement vector: 
+
+D ( X𝑖 , X𝑗 ) = ©≠´
+
+|X𝑖 − X𝑗 |
+
+X𝑖 − X𝑗 
+
+™Æ¨
+
+∈ R4. (20) Similarly, the two-particle input features are constructed as: 
+
+g(+)  
+
+> 𝐼𝐽
+
+= concatenate [D ( r𝐼 , r𝐽 ); ∀𝐽 ] , (21) 
+
+g(−)  
+
+> 𝑖 𝑗
+
+= concatenate [D ( r𝑖 , r𝑗 ); ∀ 𝑗 ] . (22) 
+
+# References and Notes 
+
+1. E. Wang, Full Quantum Effects in Condensed Matter Physics: Beyond the Born-Oppenheimer Approximation (Cambridge University Press, Cambridge) (2026). 2. M. Born, R. Oppenheimer, Zur Quantentheorie Der Molekeln. Annalen der Physik 389 (20), 457–484 (1927). 3. P. Hou, F. Belli, T. Bi, E. Zurek, I. Errea, Effect of Quantum Anharmonicity on the Supercon-ductivity of 𝐼 43 𝑚 CH 4−H3S at High Pressures: A First-Principles Study. Physical Review B 
+
+111 (14), 144509 (2025). 4. M. Ceriotti, et al. , Nuclear quantum effects in water and aqueous systems: Experiment, theory, and current challenges. Chemical reviews 116 (13), 7529–7550 (2016). 5. A. D. Hillier, et al. , Muon spin spectroscopy. Nature Reviews Methods Primers 2 (1), 4 (2022). 18 6. M. Born, K. Huang, Dynamical Theory of Crystal Lattices (Clarendon Press, Oxford) (1954). 7. X.-W. Zhang, E.-G. Wang, X.-Z. Li, Ab Initio Investigation on the Experimental Observation of Metallic Hydrogen. Physical Review B 98 (13), 134110 (2018), doi:10.1103/PhysRevB.98. 134110. 8. T. Yonehara, K. Hanasaki, K. Takatsuka, Fundamental approaches to nonadiabaticity: Toward a chemical theory beyond the Born–Oppenheimer paradigm. Chemical Reviews 112 (1), 499– 542 (2012). 9. S. P. Webb, T. Iordanov, S. Hammes-Schiffer, Multiconfigurational nuclear-electronic orbital approach: Incorporation of nuclear quantum effects in electronic structure calculations. The Journal of chemical physics 117 (9), 4106–4118 (2002). 10. T. Kreibich, E. Gross, Multicomponent density-functional theory for electrons and nuclei. 
+
+Physical Review Letters 86 (14), 2984 (2001). 11. J. Mitroy, et al. , Theory and Application of Explicitly Correlated Gaussians. Reviews of Modern Physics 85 (2), 693–749 (2013), doi:10.1103/RevModPhys.85.693. 12. N. M. Tubman, I. Kylänpää, S. Hammes-Schiffer, D. M. Ceperley, Beyond the Born-Oppenheimer Approximation with Quantum Monte Carlo Methods. Physical Review A 90 (4), 042507 (2014), doi:10.1103/PhysRevA.90.042507. 13. G. Carleo, M. Troyer, Solving the Quantum Many-Body Problem with Artificial Neural Net-works. Science 355 (6325), 602–606 (2017). 14. D. Pfau, J. S. Spencer, A. G. Matthews, W. M. C. Foulkes, Ab initio solution of the many-electron Schrödinger equation with deep neural networks. Physical review research 2 (3), 033429 (2020). 15. J. Hermann, Z. Schätzle, F. Noé, Deep-Neural-Network Solution of the Electronic Schrödinger Equation. Nature Chemistry 12 (10), 891–897 (2020). 19 16. M. Scherbela, R. Reisenhofer, L. Gerard, P. Marquetand, P. Grohs, Solving the Electronic Schrödinger Equation for Multiple Nuclear Geometries with Weight-Sharing Deep Neural Net-works. Nature Computational Science 2 (5), 331–341 (2022). 17. X. Li, Z. Li, J. Chen, Ab Initio Calculation of Real Solids via Neural Network Ansatz. Nature Communications 13 (1), 7895 (2022). 18. W. Ren, W. Fu, X. Wu, J. Chen, Towards the Ground State of Molecules via Diffusion Monte Carlo on Neural Networks. Nature Communications 14 (1), 1860 (2023). 19. Z. Li, et al. , Spin-Symmetry-Enforced Solution of the Many-Body Schrödinger Equation with a Deep Neural Network. Nature Computational Science 4 (12), 910–919 (2024). 20. R. Li, et al. , A Computational Framework for Neural Network-Based Variational Monte Carlo with Forward Laplacian. Nature Machine Intelligence 6 (2), 209–219 (2024), doi:10.1038/ s42256-024-00794-x. 21. H. Shang, C. Guo, Y. Wu, Z. Li, J. Yang, Solving the Many-Electron Schrödinger Equation with a Transformer-Based Framework. Nature Communications 16 (1), 8464 (2025). 22. D. Luo, B. K. Clark, Backflow Transformations via Neural Networks for Quantum Many-Body Wave Functions. Physical Review Letters 122 (22), 226401 (2019). 23. J. Hermann, et al. , Ab Initio Quantum Chemistry with Neural-Network Wavefunctions. Nature Reviews Chemistry 7 (10), 692–709 (2023). 24. Y. Qian, X. Li, Z. Li, W. Ren, J. Chen, Deep Learning Quantum Monte Carlo for Solids. WIREs Computational Molecular Science 15 (2), e70015 (2025). 25. Z. Tang, et al. , Deep-Learning Electronic Structure Calculations. Nature Computational Sci-ence 5 (12), 1133–1146 (2025). 26. Y. Zhang, B. Jiang, H. Guo, SchrodingerNet: A Universal Neural Network Solver for the Schrodinger Equation. Journal of Chemical Theory and Computation 21 (2), 670–677 (2025). 27. S. Chai, et al. , Revisiting the Broken Symmetry Phase of Solid Hydrogen: A Neural Network Variational Monte Carlo Study (2025). 20 28. J. Carr, M. Volkai, W. M. C. Foulkes, A. P. Fadon, Neural Wavefunction Calculations of 𝜇 SR Spectra with Quantum Muons and Protons (2026). 29. N. Gao, S. Günnemann, Ab-Initio Potential Energy Surfaces by Pairing GNNs with Neural Wave Functions, in International Conference on Learning Representations (arXiv) (2021). 30. N. Gao, S. Günnemann, Sampling-Free Inference for Ab-Initio Potential Energy Surface Net-works, in The Eleventh International Conference on Learning Representations (2022). 31. D. Pfau, S. Axelrod, H. Sutterud, I. Von Glehn, J. S. Spencer, Accurate Computation of Quan-tum Excited States with Neural Networks. Science 385 (6711), eadn0137 (2024). 32. M. T. Entwistle, Z. Schätzle, P. A. Erdman, J. Hermann, F. Noé, Electronic Excited States in Deep Variational Monte Carlo. Nature Communications 14 (1), 274 (2023). 33. A. Abedi, N. T. Maitra, E. K. U. Gross, Exact Factorization of the Time-Dependent Electron-Nuclear Wave Function. Physical Review Letters 105 (12), 123002 (2010). 34. L. Wolniewicz, Nonadiabatic energies of the ground state of the hydrogen molecule. The Jour-nal of chemical physics 103 (5), 1792–1799 (1995). 35. J. M. Martin, Benchmark ab initio potential curves for the light diatomic hydrides. Unusually large nonadiabatic effects in BeH and BH. Chemical physics letters 283 (5-6), 283–293 (1998). 36. J. Chamberlain, A. Costley, H. Gebbie, The sub-millimetre dispersion, rotational line strengths and dipole moment of gaseous ammonia. Spectrochimica Acta Part A: Molecular Spectroscopy 
+
+25 (1), 9–18 (1969). 37. M. D. Marshall, J. S. Muenter, Stark-Hyperfine Measurements in K = 0 and K = 1 States of NH3. Journal of Molecular Spectroscopy 85 (2), 322–326 (1981). 38. P. T. Ho, C. H. Townes, Interstellar ammonia. IN: Annual review of astronomy and astrophysics. Volume 21 (A84-10851 01-90). Palo Alto, CA, Annual Reviews, Inc., 1983, p. 239-270. 21 , 239– 270 (1983). 21 39. I. von Glehn, J. S. Spencer, D. Pfau, A Self-Attention Ansatz for Ab-Initio Quantum Chemistry, in The Eleventh International Conference on Learning Representations, ICLR 2023 (OpenRe-view.net, kigali, rwanda) (2023). 40. P. Cormier, et al. , Free radical formation in supercritical CO2, using muonium as a probe and implication for H atom reaction with ethene. The Journal of Physical Chemistry A 112 (20), 4593–4600 (2008). 41. G. Cassella, W. Foulkes, D. Pfau, J. S. Spencer, Neural network variational Monte Carlo for positronic chemistry. Nature Communications 15 (1), 5214 (2024). 42. J. Martens, R. Grosse, Optimizing Neural Networks with Kronecker-factored Approximate Curvature, in Proceedings of the 32nd International Conference on Machine Learning (PMLR) (2015), pp. 2408–2417. 43. F. Dangel, B. Mucsányi, T. Weber, R. Eschenhagen, Kronecker-Factored Approximate Curva-ture (KFAC) From Scratch (2025). 44. M. Zaheer, et al. , Deep sets. Advances in neural information processing systems 30 (2017). 
+
+# Acknowledgement 
+
+The authors thank the High Performance Computing Platform of Peking University for computa-tional resources and the Dongjiang Yuan Intelligent Computing Center supercomputing facility. 
+
+Funding: J.C. is funded by the National Science Foundation of China under Grant No. 12334003. Y.Q. is supported by the National Natural Science Foundation of China under Grant No. 125B2083. L.C. is supported by the National Natural Science Foundation of China under Grant No. 12405337, the Guangdong Basic and Applied Basic Research Foundation under Grant No. 2023B1515120067, the Research Program of State Key Laboratory of Heavy Ion Science and Technology, Institute of Modern Physics, Chinese Academy of Sciences, under Grant No. HIST2025CS06. X.L. is sup-ported by the National Natural Science Foundation of China under Grant No. 12550005. 22 Author contributions: Conceptualization: L.C., W.R., and J.C. Data curation: P.C., Y.Q., and L.D. Formal analysis: P.C., Y.Q., and L.D. Funding acquisition: Y.Q., X.L., L.C., W.R., and J.C. Investigation: P.C., Y.Q., and L.D. Methodology: P.C., Y.Q., L.D., and W.F. Project administration: L.C., W.R., and J.C. Resources: L.Y., Z.S., X.L., E.W., L.C., W.R., and J.C. Software: P.C., Y.Q., and L.D. Supervision: L.Y., Z.S., X.L., E.W., L.C., W.R., and J.C. Validation: P.C., Y.Q., L.D., L.C., W.R., and J.C. Visualization: P.C., Y.Q., and L.D. Writing—original draft: P.C., Y.Q., L.D., L.C., W.R., and J.C. Writing—review and editing: P.C., Y.Q., L.D., W.F., L.Y., Z.S., X.L., E.W., L.C., W.R., and J.C. 
+
+Competing interests: There are no competing interests to declare. 
+
+Data and materials availability: All data underlying the study, including the neural network parameters and training scripts, will be deposited in a public repository (e.g., Zenodo) upon pub-lication of the manuscript. Currently, the datasets are available from the corresponding authors upon reasonable request. There are no restrictions on data availability, and no Materials Transfer Agreements (MTA) are required. 23 Supplementary material: Permutation invariant multi-scale full quantum neural network wavefunction 
+
+Pengzhen Cai, 1, ∗ Yubing Qian, 1, 2, ∗ Li Deng, 3, 4, ∗ Weizhong Fu, 1, 2 Lei Yang, 4, 3, 5, 6 Zhiyu Sun, 4, 3, 5, 6 Xin-Zheng Li, 1, 7, 8 En-Ge Wang, 1, 7 Liangwen Chen, 4, 3, 5, 6, † Weiluo Ren, 2, ‡ and Ji Chen 1, 7, 8, §
+
+> 1
+
+School of Physics, Peking University, Beijing 100871, People’s Republic of China 
+
+> 2
+
+ByteDance Seed, Beijing 100098, People’s Republic of China 
+
+> 3
+
+Advanced Energy Science and Technology Guangdong Laboratory, Huizhou 516000, China 
+
+> 4
+
+Institute of Modern Physics, Chinese Academy of Sciences, Lanzhou 730000, China 
+
+> 5
+
+State Key Laboratory of Heavy Ion Science and Technology, Institute of Modern Physics, Chinese Academy of Sciences, Lanzhou 730000, China 
+
+> 6
+
+School of Nuclear Science and Technology, University of Chinese Academy of Sciences, Beijing 100049, China 
+
+> 7
+
+Interdisciplinary Institute of Light-Element Quantum Materials, Research Center for Light-Element Advanced Materials, Peking University, Beijing 100871, People’s Republic of China 
+
+> 8
+
+State Key Laboratory of Artificial Microstructure and Mesoscopic Physics, Frontiers Science Center for Nano-Optoelectronics, Peking University, Beijing 100871, People’s Republic of China 
+
+1CONTENTS 
+
+I. Asymptotic Jastrow factors 3II. Nuclear exchange effect 4III. Analysis of the relationship between bond length and nuclear mass using perturbation theory 6IV. Calculation of the Contact Spin Density 8V. Muon Spatial Distribution: A Comparison of PermNet and the Harmonic Approximation 10     
+
+> ∗These authors contributed equally to this work.
+> †chenlw@impcas.ac.cn
+> ‡renweiluo@bytedance.com
+> §ji.chen@pku.edu.cn
+
+2I. ASYMPTOTIC JASTROW FACTORS 
+
+The increasing errors in regions of PES away from the equilibrium point when using a full quantum state to calculate is inherent because of the important sampling. As designed in the main text, we exhibit the effect of asymptotic Jastrow factors on PES calculation comparing to the simple Gaussian-type Jastrow factors in Fig. S1 1  
+
+> R
+
+#  
+
+##  11 
+
+##  1 
+
+##   
+
+##    
+
+> 0 R
+> 0
+
+##   
+
+> 00
+
+##   
+
+> 
+
+##   
+
+> 0
+
+##   
+
+> 00
+
+##   
+
+> 
+
+##  
+
+FIG. S1. PES of hydrogen calculated using a model trained under different conditions. The green, yellow and blue line are model trained under different hydrogen mass. The dashed lines represent the model with a Gaussian-type Jastrow factor, while the solid lines represent the model with the GEM-type Jastrow factor described in the main text. 
+
+3II. NUCLEAR EXCHANGE EFFECT 
+
+The key challenge in enforcing nuclear exchange symmetry is the inclusion of different particles in a single function, such as an electronic wavefunction that contains both electronic and nuclear coordinates, ψe(r, R). Since nuclei can be fermions or bosons, a straightforward strategy is to isolate and handle the exchange symmetry within each function, such that: 
+
+ψe(r, R) → ψe(r, {R}) (S1) The detailed implementation of this property is explained in the main text. The exchange symmetry can then be treated separately in the nuclear and electronic wave functions. Alternatively, one can embed the electronic coordinates into the nuclear wave function: 
+
+χ(R) → χ(R, {r}) (S2) 0 0000 00000  0000 00000 
+
+##   
+
+   0
+
+   
+
+   0 
+
+   0
+
+   00 
+
+   
+
+> #!
+
+##  
+
+ 
+
+#  
+
+#  " ! 
+
+      
+
+##    
+
+   
+
+   
+
+   
+
+   
+
+  
+
+   
+
+> #!
+
+##  
+
+ 
+
+#  
+
+#  " ! 
+
+FIG. S2. (a) Training curve of the ammonia system. The red line represents the Hatree-type nuclear wavefunction, which has no constraints on nuclear exchange symmetry. The orange line represents the nuclear exchange symmetry enforcing wavefunction, but the nuclear wavefunction contains only nuclear coordinates. The green line represents the nuclear exchange symmetry en-forcing wavefunction, with the nuclear wavefunction containing electronic coordinates in addition, as expressed in Equation (S2). (b) Training curve of the ammonia system with nuclear mass re-duced to 1% of its original value. All other settings match those in panel (a). 
+
+4The results in Fig. S2 indicate that for systems with light nuclei, it is essential to account for nuclear exchange symmetry. In such cases, the mixing of nuclear and electronic coordi-nates in the nuclear wavefunction can further enhance the expressive power of PermNet. 5III. ANALYSIS OF THE RELATIONSHIP BETWEEN BOND LENGTH AND NUCLEAR MASS USING PERTURBATION THEORY 
+
+In this section, we present a simple calculation of the relationship between bond length and nuclear mass in a diatomic molecule, using atomic units. This relationship can be derived by considering the lowest-order anharmonic term in the potential energy. Within the BOA, the nuclear wavefunction of a diatomic molecule satisify: 
+
+(
+
+− ∇21
+
+2M1
+
+− ∇22
+
+2M2
+
++ E0(R1, R2)
+
+)
+
+χ(R1, R2) = Eχ (R1, R2) (S3) where m1 and m2 denote the nuclear masses of the two nuclei in a diatomic molecule, R1
+
+and R2 denote their coordinates, and ∇21 and ∇22 are the Laplacian operators acting on R1
+
+and R2, respectively. Here, E0 is the PES and E is a constant. Considering the two-body reduction, we introduce R = R1 −R2 as the only variable, with μ =
+
+√ M1M2 
+
+> M1+M2
+
+as the reduced mass, and neglect the irrelevant center-of-mass and rotational motions. The equation can then be transformed into: 
+
+(
+
+− 12μ∂2
+
+∂R 2 + E0(R)
+
+)
+
+χ(R) = Eχ (R) (S4) Around the equilibrium distance R0, the potential energy can be expanded as: 
+
+E0(R) = E00 + a2(R − R0)2 + a3(R − R0)3 + · · · (S5) where E00 , a2, and a3 are constants. The energy shift E00 can be absorbed into E, and the harmonic term dominates the potential. Treating the cubic term as a perturbation, the ground-state nuclear wavefunction near harmonic states can be approximated as |ψ⟩ =
+
+|ψ(0) ⟩ + |ψ(1) ⟩ + ... . Since the states can be chosen as real, the bond length is then calculated as: 
+
+⟨R⟩ = ⟨ψ|R|ψ⟩ = ⟨ψ(0) |R|ψ(0) ⟩ + 2 ⟨ψ(1) |R|ψ(0) ⟩ (S6) The ground harmonic state |ψ0⟩ = |0⟩ is symmetric about the equilibrium point, so 
+
+⟨ψ0|R|ψ0⟩ = R0. Define the harmonic frequency ω =
+
+√2a2 
+
+> μ
+
+. According to perturbation theory, the first-order perturbation term is: 
+
+|ψ(1) ⟩ = ∑ 
+
+> m̸=0
+
+⟨m|a3(R − R0)3|0⟩
+
+(0 − m)ω |m⟩ (S7) 6where |m⟩ denotes the m-th excited harmonic state. Using the orthogonality between |ψ(0) ⟩
+
+and |ψ(1) ⟩, we have ⟨ψ(1) |R0|ψ(0) ⟩ = 0 . Substituting Equation S7 into Equation S6 yields: 
+
+⟨R⟩ = R0 − ∑ 
+
+> m̸=0
+
+⟨0|a3(R − R0)3|m⟩⟨ m|(R − R0)|0⟩
+
+mω (S8) Using the theory of ladder operators, R−R0 = 1√2μω (ˆ a† +ˆ a), the final result can be obtained: 
+
+⟨R⟩ = R0 − 3a3
+
+4μ2ω3 = R0 − 3a3
+
+272 a32 
+
+> 2
+
+μ12
+
+(S9) This result shows that the lowest-order anharmonic correction term is proportional to the inverse square root of the nuclear mass. Additionally, the figure of the PES confirms that 
+
+a3 < 0, so the correction term is generally positive. 7IV. CALCULATION OF THE CONTACT SPIN DENSITY 
+
+In PermNet and Ferminet, we can directly sample wave function configurations to sta-tistically determine the true two-body density ρ(r). Due to the severe inefficiency of Monte Carlo sampling as r = |r1 −r2| → 0, the two-body contact density at zero distance cannot be obtained directly. Therefore, it must be extrapolated from the two-body density measured at finite distances. Here, we choose to compute the average two-body density with distance less than r (i.e., within a sphere, not a shell), which effectively increases the statistical weight of the data with r → 0. Due to the cusp condition: 
+
+ddr ln ψ(r)
+
+∣∣∣∣r=0 
+
+= −mZ, (S10) where Z is the charge of the particle, m is the reduced mass. We have: 
+
+ψ(r) = ψ(0) (1 − mZr + O(r2)) , (S11) and since ρ(r) = |ψ(r)|2,
+
+ρ(r) = ρ0
+
+(1 − 2mZr + O(r2)) . (S12) Defining the average two-body density within a sphere of radius r as: 
+
+ρball (r) = 3
+
+r3
+
+∫ r
+
+> 0
+
+ρ(r′)r′2dr ′. (S13) Combining with Eq. (S12) we obtain: 
+
+ρball (r) = ρ0
+
+(
+
+1 − 32mZr + O(r2)
+
+)
+
+. (S14) Assuming a polynomial extrapolation formula ρball (r) = a0 +a1r +a2r2 +· · · , the coefficients satisfy: 
+
+a0 = ρ0, a1 = −32mZa 0. (S15) This imposes a constraint on the first-order term: a1 ≃ − 1.5a0.The extrapolations performed with and without this constraint are shown Fig. S3(a). The hyperfine couplings obtained via the unconstrained extrapolation are shown in Fig. S3(b), while the constrained results are reserved for the main text (Fig. 4). Given that the constraint has a slight effect on the hyperfine couplings, we therefore present the constrained results as the primary finding in the main text. 8000 0 0 0 0 00 
+
+# "#$ 
+
+00 
+
+00 
+
+00 
+
+00 
+
+> ##"#&$
+
+#  
+
+!# $ 
+
+!# "#! 
+
+!# $ 
+
+!# "#! 
+
+  
+
+# ##!! 
+
+000 
+
+00 
+
+00 0
+
+00 
+
+00 0
+
+00 
+
+#  
+
+% !# 
+
+!# 
+
+!# 
+
+ 0  0 
+
+# #$ 
+
+0   
+
+0   
+
+0   
+
+0 0
+
+> !#&"#&$
+
+#  
+
+!# 
+
+$""# FIG. S3. (a) The contact spin density fitting curve calculated by FermiNet and PermNet using a cubic polynomial fitting function. The dashed line represents the fitting process without any constraint on the first-order term. The solid line represents the fitting process that satisfies the constraint condition, as in Equation (S15). (b) Contact spin density calculated via different fitting order polynomial extrapolation at 500,000 training steps. The fitting process without any constraint on the first-order term. (c) C–Mu distance distribution calculated from PermNet. The green dashed line represent the fitting curve using a Gaussian function. 
+
+9V. MUON SPATIAL DISTRIBUTION: A COMPARISON OF PERMNET AND THE HARMONIC APPROXIMATION 
+
+This section compares the muon spatial distribution obtained from the fully quantized PermNet with that from the BO-harmonic approximation. Since PermNet accounts for molecular translation and overall rotation, we present the relative positions by evaluating the C–Mu distance via its bond length distribution, as shown in Fig. S3(c). Comparing the C–Mu bond length distributions between PermNet and the BO-harmonic approximation serves to validate our calculations and estimate the strength of anharmonic effects. Under the BO-harmonic approximation, phonon calculations for muoniated ethylene were performed by solving the following equations: 
+
+˜Hv k = λkvk, (S16) where ˜H is the mass-weighted Hessian matrix: 
+
+˜Hij = 1
+
+√mimj
+
+Hij , Hij = ∂2Etot 
+
+∂x i∂x j
+
+. (S17) The angular frequency for each vibrational mode is obtained via ωk = √λk. The calculations were performed using the Gaussian software with the UB3LYP functional, and the Hessian matrix was obtained analytically. The results are shown in Table S1. Mode 15 is a stretching mode where the muon moves along the C–Mu bond direc-tion, allowing for a direct comparison with the PermNet C–Mu bond length distribution (other muon-localized modes lack motion along the C–Mu bond direction, see D in Ta-ble S1). Within the harmonic phonon model, the Gaussian width σ at 0 K is given by 
+
+σ = √ℏ/(2 ωM ν ), where Mν is the reduced mass of the vibrational mode. For mode 15, this yields σ ≈ 0.248 a.u. In comparison, Gaussian fitting of the distribution in Fig. S1(c) gives σ = 0 .2261(8) a.u. This rough agreement supports the validity of the PermNet calcu-lation. In consideration of the slight errors from the functional, the observed difference can be primarily attributed to the strength of anharmonic effects. 10 TABLE S1. Vibrational modes of muoniated ethylene obtained under the BO-harmonic approxi-mation. Mν is the reduced mass of the vibrational mode. D = wMu · ˆrC-Mu , wMu is the vibrational weight of Mu. Mode ν (cm −1) Mν (a.u.) D
+
+1 105.9576 0.7919 0.00 2 496.1460 1.2232 -0.02 3 830.1919 0.9897 0.00 4 1060.5878 2.6761 -0.02 5 1142.7607 1.2187 0.11 6 1214.7514 1.3165 0.00 7 1455.8200 1.1047 0.01 8 1477.2494 1.1712 0.01 9 3024.5570 0.9261 -0.02 10 3038.8369 0.5620 0.00 11 3140.0073 1.0503 0.00 12 3239.1521 1.0612 0.00 13 3334.0719 0.1398 0.00 14 3391.7190 0.1195 0.01 15 8519.8272 0.1143 -1.00 
+
+11

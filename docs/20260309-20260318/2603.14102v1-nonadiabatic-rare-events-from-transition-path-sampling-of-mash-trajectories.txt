@@ -1,0 +1,1063 @@
+Title: Nonadiabatic rare events from transition-path sampling of MASH trajectories
+
+URL Source: https://arxiv.org/pdf/2603.14102v1
+
+Published Time: Tue, 17 Mar 2026 01:57:11 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# Nonadiabatic rare events from transition-path sampling of MASH trajectories 
+
+Danial Ghamari and Jeremy O. Richardson 
+
+> Institute of Molecular Physical Science, ETH Zurich, 8093 Zurich, Switzerland
+> (*Electronic mail: jeremy.richardson@phys.chem.ethz.ch) (Dated: 17 March 2026)
+
+Rare nonadiabatic reactions are a key component of many important molecular processes but are challenging to capture with direct dynamical simulations. In this paper, we combine our recently developed mapping approach to surface hopping (MASH) with transition-path sampling to create a framework to efficiently simulate these rare events. This is possible because MASH trajectories are Markovian, time-reversible and obey Liouville’s theorem. The combined approach generates nonadiabatic reactive pathways without biasing the underlying dynamics. The resulting ensemble allows for a detailed analysis of reaction mechanisms and the unraveling of statistical and dynamical properties, in-cluding rate constants. We apply the method to study a spin–boson model in thermal equilibrium over a wide range of diabatic coupling strengths. Our results demonstrate how this approach provides a practical and systematic tool for investigating rare nonadiabatic processes, potentially beyond the reach of brute-force simulations.  
+
+> I. INTRODUCTION
+
+When a molecule or material is excited by the absorp-tion of light, it can induce dynamical processes relevant to physics, chemistry, and biology. 1 Theoretical descriptions of these photoinduced phenomena require the time evolution of coupled electronic and nuclear degrees of freedom (DoF) af-ter an initial nonadiabatic excitation from the ground state to a higher potential energy surface (PES). Even though these dy-namics could, in principle, be described with a full quantum-mechanical treatment, it remains practically impossible due to the computational demand that scales exponentially with the dimension of the system’s Hilbert space. Fortunately, the rel-atively high mass of the nuclei justifies treating them as clas-sical particles with well-defined positions and momenta, as long as the electronic DoF remain fully quantum mechanical. This idea has motivated the development of a large class of mixed quantum–classical methods, 2 of which Tully’s fewest-switches surface hopping (FSSH) is one of the most popular and well-known approaches. 3–6 
+
+FSSH introduces a stochastic hopping between states to generalize classical molecular dynamics to nonadiabatic pro-cesses. Despite its popularity, however, the method lacks a rigorous derivation and a number of major challenges have been identified. 7 For instance, as FSSH trajectories evolve, the electronic DoF and the active state do not necessarily re-main consistent. 8 Moreover, the trajectories do not satisfy mi-croscopic reversibility, 9 and their ensemble averages are not guaranteed to relax to the correct Boltzmann equilibrium. 10 
+
+As such, to utilize FSSH for the study of nonadiabatic reac-tions and rates, one is typically forced to rely on long-time simulations of population transfer and cannot benefit directly from more efficient rare-event theories. 11 While some pho-toinduced reactions occur on a femtosecond timescale, others may take nanoseconds or longer due to energetic or entropic barriers on the excited PES. There is thus a significant chal-lenge due to the separation of timescales between the fast in-trinsic dynamics of the molecular vibrations and the slow re-action process. Modern attempts to tackle this problem have been based around constructing cheap machine-learned PESs to make the direct simulation of the rare events feasible. 12,13 
+
+As useful as these approaches are, they do not really get to the heart of the problem, which is that the majority of the com-puter time is spent simulating uninteresting dynamics, while the important reactive transitions occur only rarely. Such challenges are not particular to the simulation of nonadiabatic dynamics, and in the field of classical molec-ular dynamics (on a single Born–Oppenheimer PES), many enhanced-sampling methods have been developed to address the same difficulty posed by the separation of timescales. 11 
+
+In particular, transition-path sampling (TPS), developed by Dellago et al., 14,15 is a method that captures rare events with-out needing to parameterize a reaction coordinate or even a set of good collective variables (CVs). The goal in TPS is to utilize Monte Carlo sampling to focus the computational power solely on generating reactive trajectories, and avoiding wasting time sampling paths that do not contribute to the re-action under study. In more than 20 years since the devel-opment of TPS and its variant, forward-flux sampling, 16,17 
+
+these approaches have demonstrated great success in simu-lating rare events. 18–23 Even though most of these applica-tions have been for systems evolving (classically) on a sin-gle PES, attempts were also made to integrate path-sampling schemes with FSSH to study nonadiabatic reactions. A par-ticular complication is the lack of microscopic reversibility along an FSSH trajectory, which is a key component of TPS. Sherman and Corcelli 24 utilized a reweighting scheme, orig-inally proposed by Hammes-Schiffer and Tully, 9 to circum-vent this difficulty. However, this importance-sampling ap-proach can significantly reduce the sampling efficiency, when-ever the approximate hopping probabilities used to generate the trial backwards trajectory deviate strongly from the “cor-rect” FSSH probabilities. Additionally, Reiner et al. 25 devel-oped a method based on combining FSSH with forward-flux sampling. In contrast to TPS, this approach does not impose any requirement on the microscopic reversibility of dynamics or knowledge of the equilibrium probability distribution in the reactant. However, the efficiency of forward-flux sampling is 
+
+> arXiv:2603.14102v1 [physics.chem-ph] 14 Mar 2026
+
+2highly sensitive to the choice of the reaction coordinate, and the location of interfaces in that space. 19 Nevertheless, the ap-plication of this method to two model systems, one with an avoided crossing and another with a conical intersection, ob-tained good overall agreement with brute-force FSSH calcula-tions, while increasing the efficiency of simulation to varying degrees. 25 
+
+Recently, our group has developed an alternative quantum– classical method for simulating nonadiabatic dynamics called the mapping approach to surface hopping (MASH). 26,27 It was designed to combine the practicality offered by FSSH with the rigor of linearized semiclassical mapping approaches. 28–34 
+
+Like FSSH, MASH is computationally efficient, and can be applied in conjunction with on-the-fly ab initio electronic-structure theory to simulate photochemistry. 35,36 However, unlike FSSH, MASH’s equations of motion are determin-istic and time-reversible. 37 Reference 38 showed that this makes it possible to employ the Bennett–Chandler reactive-flux approach 39,40 within the MASH formalism to efficiently calculate the rate constant of nonadiabatic reactions, as long as the reaction coordinate and the transition region are suffi-ciently easy to identify. In addition to offering this significant computational advantage, the MASH predictions were more reliable than those of FSSH due to the fact that it guarantees consistency between the most populated electronic state and the active surface. In particular, MASH was able to correctly capture the known behavior of Marcus theory, where FSSH predicts an incorrect scaling unless complicated decoherence corrections are applied. 41,42 
+
+In general, however, it is not always so easy to identify a good reaction coordinate in order to apply the Bennett– Chandler approach. For this reason, it is worth investigat-ing the possibility of using more powerful enhanced-sampling methods such as TPS. In this work, we thus propose a nona-diabatic framework called MASH-TPS, which samples an en-semble of reactive MASH trajectories and allows for an ef-ficient calculation of the nonadiabatic reaction rate. In addi-tion, this ensemble can be used to interpret the mechanism and identify the most important collective variables in a reaction. After introducing the formalism behind both the MASH and TPS approaches, we apply the combined method to study the nonadiabatic reaction rate in a spin–boson model over a range of coupling strengths from the adiabatic to the nonadiabatic limit.  
+
+> II. ENHANCED SAMPLING OF NONADIABATIC DYNAMICS
+
+In the following, we first provide a brief description of how MASH can be used to simulate the nonadiabatic dynamics of a two-level quantum system coupled to multiple classical degrees of freedom. In particular, we point out differences between MASH and the commonly-used FSSH formalism. Then, we introduce the general framework of TPS and de-scribe how it can be extended to obtain an ensemble of reac-tive MASH trajectories. Finally, we explain how to calculate the nonadiabatic rate constant from the transition-path ensem-ble.  
+
+> A. Nonadiabatic dynamics with MASH
+
+In mixed quantum–classical dynamics, the coordinates and momenta of f nuclear degrees of freedom are represented as classical variables, q = {q1, . . . , q f } and p = {p1, . . . , p f }.The electronic degrees of freedom are treated quantum me-chanically in a basis of adiabatic states, |Φ±(q)⟩, which diag-onalize the potential operator (also known as the electronic Hamiltonian), ˆV (q) = ¯V (q) ˆI + Vz(q) ˆσz(q), where ˆσz(q) = 
+
+|Φ+⟩⟨ Φ+| − | Φ−⟩⟨ Φ−| is the Pauli matrix at the nuclear con-figuration q and ˆ I is the identity operator. Here, we have as-sumed that the dynamics of interest can be described using a truncated electronic Hilbert space of two adiabatic states. In this representation, the general nonadiabatic Hamilto-nian that couples the nuclear and electronic DoF is written as ˆH(q, p) = 
+
+> f
+
+# ∑
+
+> j=1
+
+p2
+
+> j
+
+2m j
+
++ ˆV (q), (1) where m j is the mass associated with the j-th degree of free-dom. The nuclei follow classical equations of motion, ˙q j = p j/m j, ˙p j = Fj, (2) where the definition of the force components, Fj, will be dis-cussed later. Following ideas of the spin-mapping approach, 33 MASH employs an isomorphism between a two-level system and a spin- 12 particle, which maps the instantaneous electronic wavefunction |Ψ⟩ = c+|Φ+(q)⟩ + c−|Φ−(q)⟩ onto a (normal-ized) spin vector S = ( Sx, Sy, Sz) on a Bloch sphere. The rela-tions between the coefficients c± of the wavefunction and the spin variables are 
+
+Sx = 2 Re [c+c∗−], (3a) 
+
+Sy = 2 Im [c+c∗−], (3b) 
+
+Sz = |c+|2 − | c−|2. (3c) In this form, the Schrödinger equation governing the elec-tronic DoF as the system moves along the nuclear trajectory is ˙Sx = ∑
+
+> j
+
+2d j(q)p j
+
+m j
+
+Sz − 2¯hVz(q)Sy, (4a) ˙Sy = 2¯hVz(q)Sx, (4b) ˙Sz = − ∑
+
+> j
+
+2d j(q)p j
+
+m j
+
+Sx. (4c) Here, d j(q) = ⟨Φ+(q)| ∂∂ q j Φ−(q)⟩ is the j-th element of the nonadiabatic coupling vector, which accounts for the change of basis along the trajectory. 1,27 
+
+MASH is inspired by the FSSH approach, 3 in which the nu-clei move according to the force of the active adiabatic state. 3However, whereas FSSH stochastically hops between active states with probabilities determined by the electronic coeffi-cients, MASH hops deterministically according to the value of sgn (Sz), where sgn (Sz) = −1, 0, 1 for Sz < 0, Sz = 0, and 
+
+Sz > 0. 26 The nuclei thus move according to the force of the upper state when the spin vector is in the northern hemisphere and hop down to the lower state when the spin vector crosses the equator of the Bloch sphere. In this way, MASH avoids the inconsistency problem of FSSH, in which the active state may differ from the most populated electronic state leading to significant errors. 7,8,38,41 The force in MASH is thus defined as 
+
+Fj = − ∂ ¯V
+
+∂ q j
+
+− ∂Vz
+
+∂ q j
+
+sgn (Sz) + 4Vz(q) d j(q) Sx δ (Sz). (5) The final term applies an impulse when a hop from one sur-face to another occurs and rescales the momenta (along the direction of the nonadiabatic coupling vector) to ensure con-servation of the energy function 
+
+E(q, p, S) = 
+
+> f
+
+# ∑
+
+> j=1
+
+p2
+
+> j
+
+2m j
+
++ ¯V (q) + Vz(q)sgn (Sz). (6) In cases when a trajectory has insufficient energy to hop up (called a frustrated hop), the momentum is reflected and the spin vector remains in the lower hemisphere. 26 Importantly, unlike FSSH, whose active state depends on the history of the trajectory, 943 the MASH equations of motion are not only time-translationally invariant but also time-reversible. 37 This property allows MASH to be naturally incorporated into the TPS formalism, as we shall explore in this work. We must also specify the procedure to calculate observables from ensembles of MASH trajectories. Here, we only focus on observables defined in terms of the adiabatic populations and nuclear configurations, although we note that MASH ad-ditionally provides rigorous prescriptions for cases involving electronic coherences. 44,45 In particular, the population pro-jection operators |Φ±⟩⟨ Φ±| are represented by the Heaviside step functions h(±Sz) while nuclear operators are represented by their classical counterparts. In the MASH formalism, correlation functions take the form of an ensemble average 
+
+CAB (t) = A(q, p, S) B(q(t), p(t), S(t)) , (7) where B(q, p, S) is the MASH representation of a measure-ment operator. 27 Here, ⟨· · · ⟩ is an integral over the phase space variables 
+
+⟨· · · ⟩ =
+
+> ZZZ
+
+dq dp dS ρ0(q, p, S)W (S) · · · , (8) where ρ0(q, p, S) and A(q, p, S) together define the initial distribution but are defined as two terms for notational convenience. 46 The term W (S) is a positive weighting fac-tor that was constructed to ensure that the MASH correlation function matches the quantum-mechanical electronic evolu-tion along a pre-specified nuclear path. 26,27 For all the cases relevant to this work, the weighting factor is W (S) = 2|Sz|.Note that all the ensemble averages below follow the formu-lation specified in Eq. (8), i.e., including ρ0 and W (S). The integration over the S variable is defined by 
+
+> Z
+
+dS · · · = 12π 
+
+> Zπ
+> 0
+
+sin θ dθ 
+
+> Z2π
+> 0
+
+dϕ · · · , (9) where Sx = sin θ cos ϕ, Sy = sin θ sin ϕ, and Sz = cos θ . In the standard MASH approach, this integral is evaluated by Monte Carlo sampling of q, p, cos θ and ϕ, typically re-lying on uniform sampling of the Bloch sphere followed by reweighting. MASH trajectories conserve energy, and thus correctly preserve an equilibrium ensemble such as 
+
+ρ0 ∝ exp [−β E(q, p, S)] . The dynamics also preserve phase-space volume according to Liouville’s theorem, d q dp dS =
+
+dq(t) dp(t) dS(t).26 Although MASH does not rigorously obey 
+
+CAB (t) = CBA (−t) [because of the existence of the weight-ing function W (S)], the trajectories themselves are time-reversible. This is sufficient to enable the direct use of the TPS technique.  
+
+> B. Transition-path sampling
+
+In MASH, a microstate is completely defined by a point in the extended phase space x = {q, p, S} and a trajectory can be denoted as an ordered sequence of states visited along the path 47,48 
+
+X(T ) = {x0, x1, x2, . . . , xN } . (10) Here, the trajectory has been discretized using timesteps of δt,such that the total time is T = Nδt, and xi denotes a point in the phase space occupied at the i-th step. Assuming Marko-vianity, the probability of observing this path is given by 
+
+P[X(T )] = ρ0(x0)
+
+> N−1
+
+# ∏
+
+> i=0
+
+P(xi → xi+1), (11) where ρ0(x0) is the unconstrained probability distribution of the starting point, and P(xi → xi+1) is the transition proba-bility along the trajectory. In the deterministic dynamics of MASH, the latter takes the form of Dirac’s delta function 
+
+δ (xi+1 − φδt (xi)) , where φδt (x) is the flow map 49 determined by the finite-time integrator of MASH. 37 Bear in mind that this form is only applicable in the absence of an external source of stochastic noise, such as a heat bath. In this case, the MASH equations include a Langevin friction with random forces, which we will discuss in Sec. III. However, as long as the friction is Markovian, one can still express the probabil-ity of the path as in Eq. (11), albeit with Gaussian transition probabilities, which cancel out in the final expressions. The probability distribution that characterizes the ensemble of reactive paths which connect the reactant R and product P
+
+is 14,48 
+
+Preact. [X] = 1
+
+Zreact. 
+
+hR(x0)hP(xN )P[X], (12) where the functions hR(x) and hP(x) return unity if x is lo-cated in the reactant/product basin and 0 otherwise, and the 4partition function Zreact. ensures the probability is normalized in the subspace of reactive paths, R D[X]Preact. [X] = 1. We note that the definition of the functions R and P typically re-lies on a CV (or a collection of CVs). However, this is the only part of algorithm that depends on user-selected CVs. More-over, it is often much easier to identify an adequate CV for the definition of the two states, than parameterizing a good reac-tion coordinate for enhancing the sampling. This is the main advantage of TPS over alternative rare-event methods. In order to initilize the Monte Carlo (MC) process for TPS, we require a single arbitrary reactive path. Here, one often relies on direct simulations to capture a rare transition be-tween the two metastable states; however, especially in high-dimensional problems where entropic effects make transitions very unlikely, this arduous task could be achieved with more efficient approaches, such as metadynamics. 50 In the present study, generating this initial path was not problematic as the barriers were low enough that direct simulations from the re-actant were sufficient to generate a few reactive trajectories. Once the (old) path Xold is obtained, various techniques ex-ist to generate a new trial pathway Xnew . Among them, the original suggestions of shooting and shifting moves are sim-ple and efficient. 51 We have thus adopted them in this paper and will discuss their generalization to MASH dynamics in Secs. II B 1 and II B 2. After generating this trial pathway, we decide whether to accept or reject it by invoking the Metropo-lis criterion with the acceptance probability: 
+
+Pacc. [Xold → Xnew ] = 
+
+min 
+
+
+
+1, Preact. [Xnew ] Pgen. [Xnew → Xold ]
+
+Preact. [Xold ] Pgen. [Xold → Xnew ]
+
+
+
+. (13) The form of the generation probability Pgen. [Xold →
+
+Xnew ] depends on the trial move utilized, as de-scribed in Secs. II B 1 and II B 2. This criterion in Eq. (13) ensures detailed balance in the path space, 
+
+Preact .[Xold ]Pgen .[Xold → Xnew ]Pacc [Xold → Xnew ] =
+
+Preact .[Xnew ]Pgen .[Xnew → Xold ]Pacc .[Xnew → Xold ]. Fi-nally, by iteratively generating new paths using the trial moves, we obtain an ensemble of reactive pathways between the two states with the probability Eq. (12).  
+
+> 1. Shooting moves
+
+In a shooting move, we start by randomly choosing (with a discrete uniform distribution) a state xold  
+
+> n
+
+along the old path from the transition region (between the reactant and product states). Typically, in applications of TPS to Newtonian dy-namics, a new state is generated by adding a perturbation in the form of random Gaussian noise δ p to the momentum of the old state pnew  
+
+> n
+
+= pold  
+
+> n
+
++ δ p. The noise is taken to have zero mean and a variance empirically adjusted to optimize the sam-pling efficiency. In MASH dynamics, however, the momentum perturba-tion alone may not be sufficient. Therefore, we also intro-duce shooting moves for the spin vector S using the follow-ing procedure. We start by finding two orthogonal vectors to 
+
+S, e.g., S′ = α(1/Sx, −1/Sy, 0) with α = |SxSy|/
+
+q
+
+(S2 
+
+> x
+
++ S2 
+
+> y
+
+)
+
+and S′′ = S × S′. Next, we generate a random vector, Γ =
+
+S′ cos η + S′′ sin η, where η ∈ [0, 2π) is sampled uniformly. Next, we rotate S around Γ with the random angle χ (chosen from a Gaussian distribution centred at 0) 
+
+Snew  
+
+> n
+
+= exp [χW(Γ)] · Sold  
+
+> n
+
+, (14) where 
+
+W(Γ) = 
+
+ 0 −Γz Γy
+
+Γz 0 −Γx
+
+−Γy Γx 0
+
+ . (15) Like the momentum shooting, this transformation ensures that the perturbation is symmetric, i.e., the probability to go from 
+
+Sold  
+
+> n
+
+to Snew  
+
+> n
+
+is the same as the probability to go from Snew  
+
+> n
+
+to 
+
+Sold  
+
+> n
+
+.In the next step of shooting, we initialize two MASH sim-ulations from the new state, one forwards and one back-wards in time. The procedure for the former is a straightfor-ward integration of MASH equations for the interval [nδt, T ].For the latter simulation however, according to equations of MASH, we first have to reverse pnew  
+
+> n
+
+→ − pnew  
+
+> n
+
+, and (Sy)new  
+
+> n
+
+→
+
+(−Sy)new  
+
+> n
+
+, and then integrate until t = 0 is reached. 52 Finally, by applying the same reversal procedure on the backward tra-jectory and appending it to the beginning of the forward seg-ment, we obtain a new trial trajectory Xnew (T ). The genera-tion probability of this path is given by 
+
+Pgen. [Xold → Xnew ] = Pshoot (xold  
+
+> n
+
+→ xnew  
+
+> n
+
+)
+
+×
+
+> N−1
+
+# ∏
+
+> i=0
+
+P(xnew  
+
+> i
+
+→ xnew  
+
+> i+1
+
+), (16) where Pshoot is the probability of singling out the state in the transition region of the path and generating the new state (in-cluding the choice of the shooting point n and is thus inversely proportional to the number of points in the transition region, 
+
+Nshoot ). Inserting this expression in Eq. (13) and bearing in mind that every old path must be reactive, the Metropolis cri-terion can be simplified to 
+
+Pacc. [Xold → Xnew ] = hR(xnew 0 )hP(xnew  
+
+> N
+
+) min 
+
+
+
+1, Nold shoot ρ0(xnew 0 )
+
+Nnew shoot ρ0(xold 0 )
+
+
+
+.
+
+(17)  
+
+> 2. Shifting moves
+
+A particularly computationally efficient method to gener-ate new pathways is by time-translation of the initial condi-tions of previously generated paths. For instance, the new trial path could be selected as Xnew (T ) = {xold  
+
+> L
+
+, . . . , xold 
+
+> N+L
+
+} or 
+
+Xnew (T ) = {xold 
+
+> −L
+
+, . . . , xold 
+
+> N−L
+
+}, where the old path has been ex-tended by L steps in either the forward or backward direction. Provided that the direction is chosen at random, the generation probabilities are symmetric and the acceptance probability of such a move is also given by Eq. (17). 5It is generally suggested to attempt shifting moves much more frequently than the computationally more expensive shooting ones. Even though shifting does not result in signif-icantly different new paths, it provides statistical refinement for variables and correlation functions that one obtains from analyzing the TPS ensemble.  
+
+> C. Rate constant
+
+In a reaction process, the reactive flux k(t) is one of the most important quantities to determine. For a dynamical sys-tem with two metastable states, this function is related to the time correlation function C(t) through 40 
+
+k(t) = ddt C(t), C(t) = ⟨hR(0) hP(t)⟩⟨hR⟩ , (18) where we use a simplified notation hP(t) ≡ hP(xi) for t = iδt.Here, the ensemble average is defined in Eq. (8). Therefore, 
+
+k(t) signifies the rate at which the fraction of reactive trajec-tories (which start in R and end in P) builds up in time. It is expected that C(t) approaches its asymptotic value exponentially 40 
+
+C(t) ∼ ⟨ hP⟩∞ (1 − e−t/τrxn ), (19) where ⟨hP⟩∞ is the product population in the long-time limit and τrxn = [ kRP + kPR ]−1 is the reaction time with kRP (kPR )being the forward (backward) rate constant that we wish to compute. By definition, in rare reactions, there exists a gap between the slow and fast modes of the dynamics. Conse-quently, there exists a regime longer than the characteristic molecular timescale, τmol , but shorter than the overall reac-tion time where 
+
+k(t) ≈ kRP for τmol ≪ t ≪ τrxn . (20) Therefore, in this regime, the reactive flux, k(t), displays a plateau whose value is the forward rate constant. Hereafter, wherever the rate constant is mentioned, we refer to this quan-tity. Of course, calculating the rate constant as the direct time derivative of C(t) is computationally very difficult, due to the rarity of the reaction event. Fortunately, one can circumvent this difficulty through utilizing the TPS framework. 53 We start by factorizing C(t) from Eq. (18): 
+
+C(t) = ⟨hR(0) hP(t)⟩⟨hR(0) hP(T ′)⟩ · ⟨hR(0) hP(T ′)⟩⟨hR⟩
+
+= ⟨hR(0) hP(t)⟩⟨hR(0) hP(T ′)⟩ C(T ′). (21) We then define the indicator function 
+
+HP(X) = max  
+
+> t≤T
+
+hP(t), (22) which equals 1 if at any time the trajectory X(T ) visits the product state (regardless of where in the phase space it ends), and 0 otherwise. For t ∈ [0, T ], the equality hP(t)HP(X) = 
+
+hP(t) allows us to rewrite Eq. (21) as: 
+
+C(t) = ⟨hR(0)hP(t)HP(X)⟩⟨hR(0)HP(X)⟩ · ⟨hR(0)HP(X)⟩⟨hR(0)hP(T ′)HP(X)⟩ C(T ′).
+
+(23) This expression can be written concisely as 
+
+C(t) = ⟨hP(t)⟩TPS 
+
+⟨hP(T ′)⟩TPS 
+
+C(T ′), (24) where ⟨. . . ⟩TPS indicates averaging over the TPS ensemble [weighted by ρ0 and W (S)] of all trajectories of length T that start in the reactant and by the time T , have passed through the product’s boundary at least once. Using this factorization, the ardeous task of evaluating C(t) for a range of times has been replaced by one TPS ensemble average scaled by the value of C(T ′) evaluated only for a single reference time, T ′,whose value can be taken much smaller than T . The value of 
+
+C(T ′) can be evaluated using a similar TPS algorithm 53 and the Weighted Histogram Analysis Method (WHAM). 54 
+
+In particular, C(T ′) can be calculated using a simple one-dimensional reaction coordinate similar to a standard free-energy calculation. The space spanned by the reaction coor-dinate is divided into M overlapping bins. Then, for each bin, we initiate a TPS simulation where trajectories of length T ′
+
+starting from the reactant are accepted only if their endpoints fall in the respective bin. Using the collected endpoints, we construct a probability distribution in the reaction-coordinate space. Next, WHAM is utilized to connect the overlapping histograms into a complete, normalized conditional probabil-ity distribution. C(T ′) is given by the integral over this prob-ability distribution in the product region. Finally, the corre-lation function is reconstructed from Eq. (24) for t ∈ [0, T ]
+
+and the rate constant can be extracted from its numerical time-derivative in the plateau region. This TPS procedure can be far more computationally efficient than evaluating C(t) directly using Eq. (18), especially for slow reactions. 53 Although in principle the TPS rate calculation should recover exactly the same result as a converged brute-force simulation, in prac-tice, the calculation of C(T ′) is hampered by a compromise between accuracy and efficiency in selecting the bin size and by the reliability of the WHAM procedure. Future work will explore whether alternative approaches such as MBAR (multi-state Bennett acceptance ratio) 55 can be used to achieve more accurate results.  
+
+> III. RESULTS
+
+For the application of MASH-TPS, we study the symmet-ric spin–boson model, which is often taken as a prototype for a wide variety of chemical and physical processes, e.g., electron transfer and polaron dynamics. 56–58 In the Brownian-oscillator formulation, the diabatic potential acting on the mass-weighted solvent polarization coordinate, R (which here 6plays the role of √m jq j) is given by ˆV (R) = 
+
+ Va(R) ∆∆ Vb(R)
+
+
+
+, (25) with Va/b(R) being two harmonic surfaces defined as: 
+
+Va/b(R) = 12 Ω20 R ±
+
+s
+
+Λ
+
+2Ω20
+
+!2
+
+. (26) Here, Λ is the Marcus reorganization energy, Ω0 denotes the characteristic frequency of R, and the diabatic coupling 
+
+∆ is constant. In order to employ MASH, we must first transform to an adiabatic basis using ¯V (R) = 12 (Va + Vb),
+
+Vz(R) = 12
+
+p(Va −Vb)2 + 4∆2 and where |Φ±⟩ are defined as the eigenvectors of ˆV (R). The gradients can be ob-tained from the Hellmann–Feynman theorem as ∂ ¯V  
+
+> ∂R
+
+± ∂Vz  
+
+> ∂R
+
+=
+
+⟨Φ±| ∂ ˆV  
+
+> ∂R
+
+|Φ±⟩ and the nonadiabatic coupling vector as d j =
+
+− ⟨ Φ+| ∂ ˆV  
+
+> ∂R
+
+|Φ−⟩ /2Vz.59 In order to describe thermally acti-vated reactions, the solvent coordinate is further coupled to an Ohmic bath with spectral density J(ω) = γω .Recently, Ref. 38 compared the numerical calculations of the rate constant for this model obtained via both MASH and FSSH methods and across various diabatic coupling strengths, with an exact quantum description via the hierarchical equa-tions of motion (HEOM). 60 This study demonstrated that MASH captures the rate well across the whole parameter regime (except at low temperatures where quantum nuclear effects such as tunneling would be required), whereas FSSH fails for weak couplings, as already observed by Landry and Subotnik. 41 Consistent with this previous study, we have set the parameter values: β Λ = 12, β ¯hΩ0 = 1/4, and γ = Ω0,whereas β ∆ is varied between the adiabatic and nonadiabatic limiting behaviors. The system is illustrated in Fig. 1. Integrating out the bath modes results in an Langevin equa-tion of motion for the solvent polarization coordinate: 57,61 
+
+¨R = F(R) − γ ˙R + η(t), (27) where F(R) is the standard MASH force [Eq. (5)] and η(t)
+
+is a zero-mean stochastic force, defined by ⟨η(t)η(t′)⟩ =
+
+2γβ −1δ (t − t′). For the numerical integration of Eq. (27), we utilize the scheme 15 
+
+Ri+1 = Ri + a1 ˙Riδt + a2 ¨Riδt2 + δ R, (28a) ˙Ri+1 = a0 ˙Ri + (a1 − a2) ¨Ri + a2 ¨Ri+1
+
+ δt + δ ˙R, (28b) where 
+
+a0 = e−γδ t , a1 = 1 − a0
+
+γδ t , a2 = 1 − a1
+
+γδ t . (29) The random displacements δ R and δ ˙R at each time step δt
+
+are taken from a multivariate Gaussian distribution with zero average and a covariance matrix given by 
+
+ ⟨δ R2⟩ ⟨δ R δ ˙R⟩⟨δ ˙R δ R⟩ ⟨δ ˙R2⟩
+
+
+
+=
+
+δt
+
+γβ 
+
+ 2 − 3a1 − a0a1 δt(γ a1)2
+
+δt(γ a1)2 γ(1 − a20)/δt
+
+
+
+. (30) 20 10 0 10 20  
+
+> R
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> E
+> Ea= 2.08
+> 2.00
+
+FIG. 1: Diabatic (dashed lines) and adiabatic (solid colored lines) potentials of the spin–boson model with β ∆ = 1. The adiabatic energy gap (avoided crossing) at the transition state 
+
+R = 0 is 2 ∆.It is worth noting that by decreasing the friction γ → 0, Eq. (28) takes the usual velocity-Verlet form. The electronic DoF are propagated exactly according to Eq. (4), in steps that alternate with the nuclear propagation. 36,37,62 This scheme can be achieved by writing: 
+
+Si+1 = eΩ(Ri+1, ˙Ri+1)δt/2 · eΩ(Ri, ˙Ri)δt/2 · Si (31) where 
+
+Ω(R, ˙R) = 
+
+> 
+
+0 − 2¯hVz(R) 2d(R) ˙R
+
+> 2¯h
+
+Vz(R) 0 0
+
+−2d(R) ˙R 0 0
+
+> 
+
+. (32) In cases where a hop takes place, the whole step is split into smaller steps to determine the exact hopping place such that it is clear which active state to use for the force at each time. This ensures that the trajectories are exactly time-reversible. 37 
+
+Note that the integrator can alternatively be defined in terms of wavefunction overlaps instead of nonadiabatic coupling vec-tors. As discussed in Sec. II B, it is crucial to define the bound-aries of the reactant and product states before the application of MASH-TPS. For nonadiabatic systems, one has a choice as to whether to distinguish different adiabatic surfaces in the definition of the two states or solely utilize a position-based definition by bundling them together. In our case, we found that this distinction does not significantly affect the result, as the upper adiabatic state is unlikely to be populated in the re-actant or product wells. As such, the reactant is identified by all the points that satisfy R < −5 and Sz < 0 (i.e., restricted to the ground state only) and the product by those with R > 5(irrespective of the value of Sz). After this definition, we proceed to calculate the rate con-stant in two ways. First, we perform a brute-force calcula-730 20 10 0 10 20 30 
+
+> R
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> P (R)
+
+FIG. 2: An example of the unweighted probability distributions for the 9 overlapping regions, λ , for the spin–boson model with β ∆ = 1, obtained with the procedure outlined in Sec. II C. tion by thermally sampling 5 ensembles of 8 × 10 5 phase-space points from the reactant region using an MC sampler. The spin vector S for each point is uniformly sampled from the lower half of the Bloch sphere. In this way, we gen-erate the classical Boltzmann ensemble of the ground state 
+
+ρ0 ∝ exp (−β E(q, p, S)) h(−Sz). Finally, the rate constants 
+
+kRP for this portion of our experiments were determined as a time-average over the range in which k(t) is constant [Fig. 6 in the supplementary material]. The final results are reported as blue circles in Fig. 4 after averaging over the 5 ensembles. This result will be used as the benchmark to test our imple-mentation of the MASH-TPS procedure. Next, we evaluate the rate using MASH-TPS. From the plain MASH ensembles and for each value of ∆, we ran-domly select 5 trajectories of length T = 50 β ¯h which obey the reactivity condition hR(0) = hP(T ) = 1. From these, we initialize 5 independent Markov Chain MC processes where 2 × 10 5 trial path generation steps are performed with a 4– to–1 ratio between shifting (with shifts of L = 100 steps in either direction) and alternating momentum and spin shooting moves (with δ ˙R drawn from a normal distribution with vari-ance 0 .01 β −1 and χ drawn from a normal distribution with variance 0 .1 radians). These parameters were chosen to en-sure a reasonable efficiency ( ≈ 20% across the range of dia-batic couplings) in accepting new trial moves. From the re-sulting TPS ensemble, one can generate the ratio in Eq. (24) for any value of t and T ′ in the range [0, T ].Subsequently, for the free-energy calculation necessary to recover the factor of C(T ′) from Eq. (24), we first divide the space of the polarization coordinate R into 9 separate overlapping regions, indexed by λ , covering the interval 
+
+R ∈ [−30 , 30 ]. Then, similar to the previous step, we ran-domly selected 5 initial trajectories of length T ′ = 20 β ¯h, cor-responding to each region. These trajectories must satisfy 30 20 10 0 10 20 30   
+
+> R
+> 8
+> 7
+> 6
+> 5
+> 4
+> 3
+> 2
+> 1
+> log 10  P(R)
+> C(T′) = R5P(R) d R
+> log 10
+> 1.30
+> 1.00
+> 0.65
+> 0.35
+> 0.00
+
+FIG. 3: The graph of (connected) probability distribution averaged over six separate experiments where we first performed MASH-TPS calculations for the 9 overlapping regions (as the example shown in Fig. 2) and then reconstructed with the WHAM, as outlined in Sec. II C. The colors correspond to different values of ∆. The shaded area around each distribution represents a 2 σ error estimate after the averaging. As indicated in the figure, the value of C(T ′)
+
+is obtained by numerically integrating the mean distributions in the product state. 
+
+hR(0) = hλ (T ′) = 1, with hλ being the characteristic func-tion of the region. Finally, we carry out 2 × 10 5 MC steps starting from each initial trajectory and histogram the result-ing values of R(T ′). An example of disconnected distribu-tions, Pλ (R), obtained from this procedure can be seen in Fig. 2. The final probability distribution, P(R), reported in Fig. 3, is constructed via first performing the WHAM proce-dure for each ensemble, and then averaging over the 5 inde-pendent ensembles. The value of C(T ′) is evaluated by nu-merically integrating this distribution over the product region 
+
+R ≥ 5. Finally, C(t) can be constructed using Eq. (24), for which plots are included in the supplementary material. Simi-lar to the brute-force calculation above, we determine the rate constant kRP by taking the time average of k(t) = dC(t)/dt in the range where it is constant (Fig. 7 in supplementary ma-terial). The whole calculation is carried out on 5 different models with varying values of β ∆. All the simulation param-eters pertaining to both sets of experiments are summarized in Table I. Most importantly, Fig. 4 shows that the MASH-TPS results quantitatively agree with the plain MASH simu-lations (within error bars), which confirms the correctness of the MASH-TPS procedure. In this particular case, there is no dramatic efficiency gain from using MASH-TPS rather than the brute-force approach. Although we computed the MASH-TPS rates using fewer and shorter trajectories, in hindsight, one could clearly reduce the length and number of the trajec-tories in the the brute-force simulation without significantly 8TABLE I: Simulation parameters of the MASH and MASH-TPS calculations for the spin–boson model for each value of the diabatic coupling ∆ reported in Fig. 4. The cumulative simulation time of MASH-TPS accounts for the fact that, for every shooting move, 4 shifting moves with L = 100 shifting steps were performed. The assumption here is that for every shooting move, the forward and backward segments of the trajectory were completed before the reactivity conditions were checked. Such an assumption gives the maximum simulation time for the MASH-TPS calculations. 
+
+Calculations Num. of ensembles Num. of traj. per ensemble Duration of traj. Cumulative num. of steps MASH 5 NMASH = 8.0 × 10 5 200 β ¯h = 20 000 δt 8. × 10 10 
+
+MASH-TPS 5 NTPS = 2 × 10 5 T = 50 β ¯h = 5000 δt 1.08 × 10 9
+
+C(T ′) [9 regions] 5 × 9 = 45 N′ 
+
+> TPS
+
+= 2 × 10 5 T ′ = 20 β ¯h = 2000 δt 3.74 × 10 91.4 1.2 1.0 0.8 0.6 0.4 0.2 0.0 
+
+> log 10
+> 5.0
+> 4.5
+> 4.0
+> 3.5
+> 3.0
+> 2.5
+> 2.0
+> log 10  kRP
+> Marcus theory (Ref 38)
+> Classical BO (Ref 38)
+> HEOM (Ref 38)
+> plain MASH (This work)
+> MASH-TPS (This work)
+
+FIG. 4: The reaction rate constant of spin–boson models with varying diabatic couplings, calculated through brute-force (blue triangles) and MASH-TPS (red circles) experiments. The error bars show 2 σ confidence interval of the MASH-TPS rates, whereas the direct MASH simulations are fully converged. Both sets of experiments have quantitatively good overall agreement. The values for Classical BO, Marcus theory and HEOM (taken from Ref. 38) are included for comparison. impacting the error bars. However, this behavior is of course strongly system-specific. We chose this particular system to have a low enough barrier such that the brute-force simula-tion could be converged and provide a benchmark. It is ex-pected that MASH-TPS will give a significant efficiency gain for systems with much larger barriers, e.g., by increasing the reorganization energy, Λ, for which the error of the brute-force simulation will increase exponentially. After this discussion of the efficiency, it is worth reminding the reader of the most important aspect of computer simula-tion. Only MASH gives a reliable rate constant (whether eval-uated directly or using the TPS approach), whereas FSSH un-derestimates the rates in the nonadiabatic limit, as was shown in Ref. 38. Finally, we briefly discuss how TPS can be used to char-acterize the reaction mechanism. The conditional probabil-ity p(TP |x) quantifies the probability for a pathway passing through x to be reactive. To parametrize p(TP |x) using a TPS ensemble, Peters and Trout 63 provide a method in which the parameters of a postulated model are adapted to maximize the likelihood of observing a particular sequence of accepted and rejected shooting moves. Extensions to include nonlinear dependence on CVs and/or using Artificial Neural Networks also exist in the literature. 63–65 Our aim in this paper, how-ever, is not to build an explicit model for p(TP |x). Rather, motivated by the formalism adopted in Ref. 63, Fig. 5 shows histograms of accepted shooting moves in the space spanned by R and Sz for each diabatic coupling. These plots are indi-cators of p(TP |x) in the transition region. It is evident from the figure that, for strong diabatic cou-pling, nearly all reactive transitions occur on the ground state and that the closer the shooting point is to R = 0, the higher the probability of generating a reactive trajectory. This fol-lows the expectation that for an adiabatic reaction, the optimal transition state is located at the barrier top. However, for weak diabatic coupling, most reactive trajectories have spin vec-tors just below the Bloch-sphere equator, where they have a higher probability of remaining on the ground state after pass-ing through the region of strong nonadiabatic coupling (which almost inverts the spin vector 38 ). In this case, there is also a reasonable probability of generating reactive trajectories from the excited state, but this is limited to the low-energy region around the origin. Additionally, there is a spike at R = 0 where the trajectories are midway through the nonadiabatic coupling region, meaning that the spin vector can rotate significantly in order to reach (or remain on) the ground state in both the forwards and backwards directions. This dramatic shift in the behavior of the histograms captures the change in mechanism from adiabatic to nonadiabatic reactions and can be used to characterize the importance of nonadiabatic effects. 
+
+IV. CONCLUSION AND DISCUSSION 
+
+In this paper, we have developed an efficient molecular dy-namics framework based on a combination of MASH and TPS methods to study nonadiabatic reactions. MASH-TPS is particularly useful for complex reactions that exhibit a sep-aration of timescales, but for which a reaction coordinate is not at our disposal a priori . The key ingredient that allowed for its development was the Markovianity and time reversibil-90.00 
+
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> 1.75
+> log 10  n
+
+FIG. 5: The distribution of accepted shooting moves in the transition-path ensemble of spin–boson models with a range of diabatic couplings. ity provided by MASH trajectories. In this way, the MASH formalism is not just more accurate than FSSH but also pro-vides a more efficient approach to simulate nonadiabatic dy-namics. Moreover, in reactions hampered by entropic effects, the lack of requirement for a reaction coordinate makes TPS more robust in comparison to other path sampling methods like forward-flux sampling. The efficiency of TPS is particu-larly prominent when one only needs to identify the reaction mechanism from the ensemble and can skip the calculation of 
+
+C(T ′).In our application, we restricted ourselves to a system that could be sufficiently described by two adiabatic states. However, the framework introduced here is also directly ap-plicable to multi-state cases using multi-state extensions of MASH. 27,62,66–70 In particular, we recommend the unSMASH approach of Ref. 69 for photochemistry applications, whereas for exciton models, the methods of Refs. 62 and 66 are pre-ferred. With regard to the TPS component of our framework, we note that more sophisticated shooting strategies have been developed for the generation of trial trajectories. For in-stance, specialized methods exist for guiding the noise in trajectories with stochastic forces. 71 Another method called ‘shooting-from-the-top’ 72 restricts shooting to configurations in the vicinity of the (predefined) transition state, and tra-jectory propagation is terminated once the path reaches the boundaries of the metastable basins. This strategy signif-icantly enhances sampling efficiency by focusing computa-tional effort on the transition region and avoiding unnecessary sampling within the metastable states. The statistical quan-tities, such as rate constants, can be retrieved in a somewhat similar fashion to the original TPS method outlined above. In a closely related approach, rather than prescribing the shoot-ing region a priori , Jung et al. 65 employ a scheme where a neural network adaptively identifies the transition state based on information obtained from previously accepted and re-jected shooting points. This data-driven strategy enables a dy-namic localization of the transition region during the sampling procedure. A particular advantage of the TPS formalism is that it gives mechanistic insight into the reaction process. In particular, it gives easy access to the committor, which quantifies the like-lihood of a trajectory initiated from a configuration reaching the product state before returning to the reactant, and is there-fore commonly regarded as the ideal reaction coordinate. 47,73 
+
+In fact, its maximum in the transition region coincides with the true transition state. We have shown how this approach identifies the bottlenecks of the reaction mechanism and gives insight into the role played by nonadiabatic transitions. Finally, we also briefly highlight three cases recently stud-ied in our group where MASH-TPS could be a valuable tool. In photodissociation, one is often interested in the yield of the various products. This can in principle be obtained from brute-force simulations, 36 although one then obtains poor statistics on the minor product channels. In principle, MASH-TPS would allow the study of the rates, mechanisms and rela-tive yields of different photodissociation products. In another study, MASH was employed to predict the elec-tronic coherences after the systems passes near a conical intersection. 45 It was shown that MASH accurately repro-duces these coherence observables, demonstrating its poten-tial as a reliable simulation approach for novel X-ray spec-troscopies. However, more trajectories were required to con-verge the coherences than for standard simulations of time-dependent populations. We propose that the MASH-TPS framework can be leveraged to enhance the sampling of co-herences by focusing on trajectories which spend time near the equator where the contribution is largest. Finally, we have recently introduced a formalism to study open quantum systems, by combining the deterministic dy-namics of MASH with a stochastic unravelling of secular Red-field theory. 74 With this method, we showed that one can cap-ture spontaneous emission from a molecule undergoing nona-diabatic processes. However, as spontaneous emission is a rare event, many trajectories were required to obtain good statistics on the photon emission probabilities. As the dynam-ics is sill Markovian, we propose that such processes could be more efficiently studied using MASH-TPS. 
+
+> SUPPLEMENTARY MATERIAL
+
+In Fig. 6, we have plotted C(t) and k(t) for the spin–boson model calculated from an ensemble of plain MASH trajecto-10 ries for 5 values of diabatic coupling. The period in which k(t)
+
+becomes constant for each ∆ has been highlighted. It is worth mentioning that as the value of diabatic coupling ∆ increases, the nonadiabatic effects dampen, and with it the rarity of tran-sition. This results in a shift of the constant period of kplain (t)
+
+toward zero and also shrinking of its size. Figure 7 shows the same quantities calculated with MASH-TPS and averaged over 5 ensembles. 
+
+AUTHOR CONTRIBUTIONS 
+
+> 1
+
+L. González and R. Lindh, eds., Quantum Chemistry and Dynamics of Ex-cited States: Methods and Applications (Wiley, 2021). 
+
+> 2
+
+G. Stock and M. Thoss, “Classical description of nonadiabatic quantum dynamics,” Adv. Chem. Phys. 131 , 243–376 (2005). 
+
+> 3
+
+J. C. Tully, “Molecular dynamics with electronic transitions,” J. Chem. Phys. 93 , 1061–1071 (1990). 
+
+> 4
+
+J. E. Subotnik, A. Jain, B. Landry, A. Petit, W. Ouyang, and N. Bellonzi, “Understanding the surface hopping view of electronic transitions and de-coherence,” Annu. Rev. Phys. Chem. 67 , 387–417 (2016). 
+
+> 5
+
+M. Barbatti, M. Ruckenbauer, F. Plasser, J. Pittner, G. Granucci, M. Persico, and H. Lischka, “Newton-X: a surface-hopping program for nonadiabatic molecular dynamics,” WIREs Comput Mol Sci 4, 26–33 (2014). 
+
+> 6
+
+S. Mai, P. Marquetand, and L. González, “Nonadiabatic dynamics: The SHARC approach,” WIREs Comput. Mol. Sci. 8, e1370 (2018). 
+
+> 7
+
+G. Granucci and M. Persico, “Critical appraisal of the fewest switches al-gorithm for surface hopping,” J. Chem. Phys. 126 , 134114 (2007). 
+
+> 8
+
+J.-Y. Fang and S. Hammes-Schiffer, “Improvement of the internal consis-tency in trajectory surface hopping,” The Journal of Physical Chemistry A 
+
+103 , 9399–9407 (1999). 
+
+> 9
+
+S. Hammes-Schiffer and J. C. Tully, “Nonadiabatic transition state theory and multiple potential energy surface molecular dynamics of infrequent events,” J. Chem. Phys. 103 , 8528–8537 (1995). 
+
+> 10
+
+J. R. Schmidt, P. V. Parandekar, and J. C. Tully, “Mixed quantum-classical equilibrium: Surface hopping,” J. Chem. Phys. 129 , 044104 (2008). 
+
+> 11
+
+B. Peters, Reaction Rate Theory and Rare Events (Elsevier, Amsterdam, 2017). 
+
+> 12
+
+J. Westermayr and P. Marquetand, “Machine learning and excited-state molecular dynamics,” Machine Learning: Science and Technology 1,043001 (2020). 
+
+> 13
+
+J. Li and S. A. Lopez, “A look inside the black box of machine learning photodynamics simulations,” Acc. Chem. Res. 55 , 1972–1984 (2022). 
+
+> 14
+
+C. Dellago, P. G. Bolhuis, and D. Chandler, “Efficient transition path sam-pling: Application to lennard-jones cluster rearrangements,” The Journal of Chemical Physics 108 , 9236–9245 (1998). 
+
+> 15
+
+C. Dellago, P. G. Bolhuis, F. S. Csajka, and D. Chandler, “Transition path sampling and the calculation of rate constants,” The Journal of Chemical Physics 108 , 1964–1977 (1998). 
+
+> 16
+
+R. J. Allen, P. B. Warren, and P. R. ten Wolde, “Sampling rare switch-ing events in biochemical networks,” Physical Review Letters 94 (2005), 10.1103/physrevlett.94.018104. 
+
+> 17
+
+R. J. Allen, D. Frenkel, and P. R. ten Wolde, “Simulating rare events in equilibrium or nonequilibrium stochastic systems,” The Journal of Chemi-cal Physics 124 (2006), 10.1063/1.2140273. 
+
+> 18
+
+J. Juraszek and P. G. Bolhuis, “Sampling the multiple folding mechanisms of trp-cage in explicit solvent,” Proceedings of the National Academy of Sciences 103 , 15859–15864 (2006). 
+
+> 19
+
+F. A. Escobedo, E. E. Borrero, and J. C. Araque, “Transition path sampling and forward flux sampling. applications to biological systems,” Journal of Physics: Condensed Matter 21 , 333101 (2009). 
+
+> 20
+
+G. C. Sosso, J. Chen, S. J. Cox, M. Fitzner, P. Pedevilla, A. Zen, and A. Michaelides, “Crystal nucleation in liquids: Open questions and future challenges in molecular dynamics simulations,” Chemical Reviews 116 ,7078–7116 (2016). 
+
+> 21
+
+S. Hussain and A. Haji-Akbari, “Studying rare events using forward-flux sampling: Recent breakthroughs and future outlook,” The Journal of Chem-ical Physics 152 (2020), 10.1063/1.5127780. 
+
+> 22
+
+P. G. Bolhuis and D. W. H. Swenson, “Transition path sampling as markov chain monte carlo of trajectories: Recent algorithms, software, applica-tions, and future outlook,” Advanced Theory and Simulations 4 (2021), 10.1002/adts.202000237. 
+
+> 23
+
+C. P. Royall, P. Charbonneau, M. Dijkstra, J. Russo, F. Smallenburg, T. Speck, and C. Valeriani, “Colloidal hard spheres: Triumphs, challenges, and mysteries,” Reviews of Modern Physics 96 (2024), 10.1103/revmod-phys.96.045003. 
+
+> 24
+
+M. C. Sherman and S. A. Corcelli, “Nonadiabatic transition path sampling,” The Journal of Chemical Physics 145 (2016), 10.1063/1.4959038. 
+
+> 25
+
+M. M. Reiner, B. Bachmair, M. X. Tiefenbacher, S. Mai, L. González, P. Marquetand, and C. Dellago, “Nonadiabatic forward flux sampling for excited-state rare events,” Journal of Chemical Theory and Computation 19 ,1657–1671 (2023). 
+
+> 26
+
+J. R. Mannouch and J. O. Richardson, “A mapping approach to sur-face hopping,” J. Chem. Phys. 158 , 104111 (2023), arXiv:2212.11773 [physics.chem-ph]. 
+
+> 27
+
+J. O. Richardson, J. E. Lawrence, and J. R. Mannouch, “Mapping Approach to Surface Hopping (MASH),” Annu. Rev. Phys. Chem. 76 , 29 (2025). 
+
+> 28
+
+H.-D. Meyer and W. H. Miller, “A classical analog for electronic degrees of freedom in nonadiabatic collision processes,” J. Chem. Phys. 70 , 3214– 3223 (1979). 
+
+> 29
+
+G. Stock and M. Thoss, “Semiclassical description of nonadiabatic quan-tum dynamics,” Phys. Rev. Lett. 78 , 578–581 (1997). 
+
+> 30
+
+X. Sun, H. Wang, and W. H. Miller, “Semiclassical theory of electronically nonadiabatic dynamics: Results of a linearized approximation to the initial value representation,” J. Chem. Phys. 109 , 7064–7074 (1998). 
+
+> 31
+
+H. Wang, X. Song, D. Chandler, and W. H. Miller, “Semiclassical study of electronically nonadiabatic dynamics in the condensed-phase: Spin-boson problem with Debye spectral density,” J. Chem. Phys. 110 , 4828–4840 (1999). 
+
+> 32
+
+W. H. Miller and S. J. Cotton, “Classical molecular dynamics simulation of electronically non-adiabatic processes,” Faraday Discuss. 195 , 9–30 (2016). 
+
+> 33
+
+J. E. Runeson and J. O. Richardson, “Spin-mapping approach for nona-diabatic molecular dynamics,” J. Chem. Phys. 151 , 044119 (2019), arXiv:1904.08293 [physics.chem-ph]. 
+
+> 34
+
+J. E. Runeson and J. O. Richardson, “Generalized spin mapping for quantum-classical dynamics,” J. Chem. Phys. 152 , 084110 (2020), arXiv:1912.10906 [physics.chem-ph]. 
+
+> 35
+
+J. R. Mannouch and A. Kelly, “Quantum quality with classical cost: Ab initio nonadiabatic dynamics simulations using the mapping approach to surface hopping,” J. Phys. Chem. Lett. 15 , 5814–5823 (2024). 
+
+> 36
+
+J. E. Lawrence, I. M. Ansari, J. R. Mannouch, M. A. Manae, K. Asnaashari, A. Kelly, and J. O. Richardson, “A MASH simulation of the photoex-cited dynamics of cyclobutanone,” J. Chem. Phys. 160 , 174306 (2024), arXiv:2402.10410. 
+
+> 37
+
+J. A. Geuther, K. Asnaashari, and J. O. Richardson, “Time-Reversible Im-plementation of MASH for Efficient Nonadiabatic Molecular Dynamics,” J. Chem. Theory Comput. 21 , 2179–2188 (2025). 
+
+> 38
+
+J. E. Lawrence, J. R. Mannouch, and J. O. Richardson, “Recovering Mar-cus Theory Rates and Beyond without the Need for Decoherence Correc-tions: The Mapping Approach to Surface Hopping,” J. Phys. Chem. Lett. 
+
+15 , 707–716 (2024), 2311.08802. 
+
+> 39
+
+D. Frenkel and B. Smit, Understanding Molecular Simulation , 2nd ed. (El-sevier, San Diego, 1996). 
+
+> 40
+
+D. Chandler, Introduction to Modern Statistical Mechanics (Oxford Uni-versity Press, New York, 1987). 
+
+> 41
+
+B. R. Landry and J. E. Subotnik, “Communication: Standard surface hop-ping predicts incorrect scaling for Marcus’ golden-rule rate: The decoher-ence problem cannot be ignored,” J. Chem. Phys. 135 , 191101 (2011). 
+
+> 42
+
+B. R. Landry and J. E. Subotnik, “How to recover Marcus theory with fewest switches surface hopping: Add just a touch of decoherence,” J. Chem. Phys. 137 , 22A513 (2012). 
+
+> 43
+
+Hammes-Schiffer and Tully used a phase space consisting of q, p and the active state label. If instead one additionally includes c±, the FSSH tra-jectories can be thought of as Markovian. However, unlike MASH, where trajectories are initialized in a hemisphere, FSSH trajectories are defined to start at a pole of the Bloch sphere, which is of measure 0 such that (almost) 11 0 100 200                    
+
+> 0.000
+> 0.002
+> 0.004
+> 0.006
+> 0.008
+> 0.010
+> C(t)
+> = 5.01e-02
+> 0100 200
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> = 1.00e-01
+> 0100 200
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.10
+> 0.12
+> = 2.24e-01
+> 0100 200
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> = 4.47e-01
+> 0100 200
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> 0.30
+> 0.35 = 1.00e+00
+> 0100 200
+> t/
+> 0.0002
+> 0.0001
+> 0.0000
+> 0.0001
+> 0.0002
+> 0.0003
+> k(t)
+> 0100 200
+> t/
+> 0.0004
+> 0.0002
+> 0.0000
+> 0.0002
+> 0.0004
+> 0.0006
+> 0.0008
+> 0100 200
+> t/
+> 0.0005
+> 0.0000
+> 0.0005
+> 0.0010
+> 0.0015
+> 0100 200
+> t/
+> 0.0005
+> 0.0000
+> 0.0005
+> 0.0010
+> 0.0015
+> 0.0020
+> 0.0025
+> 0100 200
+> t/
+> 0.001
+> 0.000
+> 0.001
+> 0.002
+> 0.003
+> 0.004
+
+FIG. 6: The plot of C(t) (top) and k(t) (bottom) for plain MASH ensembles in the spin–boson models. The range in k(t) graphs from where we calculate the brute-force rate constants (Fig. 4 of the main text) is highlighted for each value of β ∆.0 10 20 30 40 50 
+
+t/
+
+0.00 
+
+0.02 
+
+0.04 
+
+0.06 
+
+0.08 
+
+0.10 
+
+0.12 
+
+> C(t)
+
+0 10 20 30 40 50 
+
+t/
+
+6.0 
+
+5.5 
+
+5.0 
+
+4.5 
+
+4.0 
+
+3.5 
+
+3.0 
+
+2.5 
+
+2.0 
+
+> log 10  k(t)
+
+log 10 
+
+1.30 
+
+1.00 
+
+0.65 
+
+0.35 
+
+0.00 
+
+FIG. 7: The plot of normalized C(t) (left) and k(t) (right) calculated from 5 individual MASH-TPS ensembles. Similar to Fig. 6, we have highlighted the period for calculating the rate constant in the k(t) graph. The shaded areas depict the 2 σ error of averaging over 5 ensembles. 12 
+
+all trajectories generated by TPS will be rejected. 
+
+> 44
+
+J. R. Mannouch and A. Kelly, “Toward a correct description of initial elec-tronic coherence in nonadiabatic dynamics simulations,” J. Phys. Chem. Lett. 15 , 11687–11695 (2024). 
+
+> 45
+
+D. Furlanetto and J. O. Richardson, “Simulating electronic coherences in-duced by conical intersections using MASH: Application to attosecond X-ray spectroscopy,” J. Phys. Chem. Lett. 16 , 6794–6800 (2025), 2505.05403. 
+
+> 46
+
+Classical distributions are used throughout this work rather than Wigner functions so as to avoid zero-point energy leakage and take advantage of the statistical properties of classical equilibrium distributions combined with classical dynamics. 
+
+> 47
+
+C. Dellago, P. G. Bolhuis, and P. L. Geissler, “Transition path sampling methods,” in Computer Simulations in Condensed Matter Systems: From Materials to Chemical Biology Volume 1 , edited by M. Ferrario, G. Ciccotti, and K. Binder (Springer Berlin Heidelberg, Berlin, Heidelberg, 2006) pp. 349–391. 
+
+> 48
+
+M. E. Tuckerman, Statistical Mechanics: Theory and Molecular Simulation 
+
+(Oxford University Press, Oxford, 2010). 
+
+> 49
+
+B. Leimkuhler and S. Reich, Simulating Hamiltonian Dynamics (Cam-bridge University Press, 2004). 
+
+> 50
+
+A. Laio and M. Parrinello, “Escaping free-energy minima,” Proceedings of the National Academy of Sciences 99 , 12562–12566 (2002). 
+
+> 51
+
+C. Dellago, P. G. Bolhuis, and P. L. Geissler, “Transition path sampling,” Adv. Chem. Phys. 123 , 1–78 (2002). 
+
+> 52
+
+Alternatively, one can simply use the same integrator with a negative value of δt, taking advantage of our recently-derived reversible integrators. 37 .
+
+> 53
+
+C. Dellago, P. G. Bolhuis, and D. Chandler, “On the calculation of reaction rate constants in the transition path ensemble,” The Journal of Chemical Physics 110 , 6617–6625 (1999). 
+
+> 54
+
+S. Kumar, J. M. Rosenberg, D. Bouzida, R. H. Swendsen, and P. A. Koll-man, “The weighted histogram analysis method for free-energy calculations on biomolecules. i. the method,” Journal of Computational Chemistry 13 ,1011–1021 (1992). 
+
+> 55
+
+M. R. Shirts and J. D. Chodera, “Statistically optimal analysis of samples from multiple equilibrium states,” The Journal of Chemical Physics 129 
+
+(2008), 10.1063/1.2978177. 
+
+> 56
+
+A. J. Leggett, S. Chakravarty, A. T. Dorsey, M. P. A. Fisher, A. Garg, and W. Zwerger, “Dynamics of the dissipative two-state system,” Rev. Mod. Phys. 59 , 1 (1987). 
+
+> 57
+
+U. Weiss, Quantum Dissipative Systems , 4th ed. (World Scientific, Singa-pore, 2012). 
+
+> 58
+
+R. A. Marcus and N. Sutin, “Electron transfers in chemistry and biology,” Biochim. Biophys. Acta 811 , 265–322 (1985). 
+
+> 59
+
+L. S. Cederbaum, “Conical intersections: Electronic structure, dynamics and spectroscopy,” (World Scientific, 2004) Chap. 1. 
+
+> 60
+
+Y. Tanimura, “Numerically “exact” approach to open quantum dynam-ics: The hierarchical equations of motion (HEOM),” J. Chem. Phys. 153 ,020901 (2020). 
+
+> 61
+
+R. Zwanzig, Nonequilibrium Statistical Mechanics (Oxford University Press, New York, 2001). 
+
+> 62
+
+J. E. Runeson and D. E. Manolopoulos, “A multi-state mapping approach to surface hopping,” J. Chem. Phys. 159 , 094115 (2023). 
+
+> 63
+
+B. Peters and B. L. Trout, “Obtaining reaction coordinates by likelihood maximization,” J. Chem. Phys. 125 , 054108 (2006). 
+
+> 64
+
+W. Lechner, J. Rogal, J. Juraszek, B. Ensing, and P. G. Bolhuis, “Nonlinear reaction coordinate analysis in the reweighted path ensemble,” The Journal of Chemical Physics 133 (2010), 10.1063/1.3491818. 
+
+> 65
+
+H. Jung, R. Covino, A. Arjun, C. Leitold, C. Dellago, P. G. Bolhuis, and G. Hummer, “Machine-guided path sampling to discover mechanisms of molecular self-organization,” Nature Computational Science 3, 334–345 (2023). 
+
+> 66
+
+J. E. Runeson, T. P. Fay, and D. E. Manolopoulos, “Exciton dynamics from the mapping approach to surface hopping: Comparison with Förster and Redfield theories,” Phys. Chem. Chem. Phys. 26 , 4929–4938 (2024). 
+
+> 67
+
+J. E. Runeson, T. J. G. Drayton, and D. E. Manolopoulos, “Charge transport in organic semiconductors from the mapping approach to surface hopping,” The Journal of Chemical Physics 161 (2024), 10.1063/5.0226001. 
+
+> 68
+
+J. E. Runeson and D. E. Manolopoulos, “Nuclear quantum effects slow down the energy transfer in biological light-harvesting complexes,” Science Advances 11 , eadw4798 (2025). 
+
+> 69
+
+J. E. Lawrence, J. R. Mannouch, and J. O. Richardson, “A size-consistent multi-state mapping approach to surface hopping,” J. Chem. Phys. 160 ,244112 (2024). 
+
+> 70
+
+S. Botticelli, D. Accomasso, and G. Granucci, “A semi-focused multi-state variant of the mapping approach to surface hopping,” (2025). 
+
+> 71
+
+T. R. Gingrich and P. L. Geissler, “Preserving correlations between trajec-tories for efficient path sampling,” The Journal of chemical physics 142 
+
+(2015). 
+
+> 72
+
+H. Jung, K.-i. Okazaki, and G. Hummer, “Transition path sampling of rare events by shooting from the top,” The Journal of Chemical Physics 147 
+
+(2017), 10.1063/1.4997378. 
+
+> 73
+
+P. G. Bolhuis and C. Dellago, “Practical and conceptual path sampling issues,” The European Physical Journal Special Topics 224 , 2409–2427 (2015). 
+
+> 74
+
+K. Asnaashari and J. O. Richardson, “Open quantum-classical systems: A hybrid mash master equation,” (2025).

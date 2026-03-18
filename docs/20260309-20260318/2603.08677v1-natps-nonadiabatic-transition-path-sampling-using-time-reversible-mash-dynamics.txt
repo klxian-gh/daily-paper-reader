@@ -1,0 +1,3129 @@
+Title: NATPS: Nonadiabatic Transition Path Sampling Using Time-Reversible MASH Dynamics
+
+URL Source: https://arxiv.org/pdf/2603.08677v1
+
+Published Time: Tue, 10 Mar 2026 02:43:35 GMT
+
+Number of Pages: 32
+
+Markdown Content:
+# NATPS: N ONADIABATIC TRANSITION PATH SAMPLING USING 
+
+# TIME -R EVERSIBLE MASH D YNAMICS 
+
+Xiran Yang 
+
+Institute of Theoretical Chemistry Faculty of Chemistry, University of Vienna 1090 Vienna, Austria Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+Madlen Maria Reiner 
+
+Faculty of Physics & Vienna Doctoral School of Physics University of Vienna 1090 Vienna, Austria Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+Brigitta Bachmair 
+
+Institute of Theoretical Chemistry Faculty of Chemistry & Vienna Doctoral School of Chemistry, University of Vienna 1090 Vienna, Austria Department of Mechanical and Materials Engineering University of Turku FI-20014 Turku, Finland Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+Leticia González 
+
+Institute of Theoretical Chemistry Faculty of Chemistry, University of Vienna 1090 Vienna, Austria Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+leticia.gonzalez@univie.ac.at 
+
+Johannes C. B. Dietschreit 
+
+Institute of Theoretical Chemistry Faculty of Chemistry, University of Vienna 1090 Vienna, Austria Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+johannes.dietschreit@univie.ac.at 
+
+Christoph Dellago 
+
+Faculty of Physics University of Vienna 1090 Vienna, Austria Research Platform on Accelerating Photoreaction Discovery (ViRAPID) 
+
+christoph.dellago@univie.ac.at 
+
+March 10, 2026 
+
+# ABSTRACT 
+
+Rare nonadiabatic events play a central role in photochemistry but remain difficult to simulate because excited-state dynamics is computationally demanding and often stochastic. Here we introduce a de-terministic and time-reversible implementation of nonadiabatic dynamics that enables the application of transition path sampling (TPS) to excited-state processes. Our approach builds on the Mapping Approach to Surface Hopping (MASH) and establishes the conditions required for path ensemble sampling, in particular time reversibility and detailed balance. Combining this dynamics with the TPS framework yields a new method, termed nonadiabatic transition path sampling (NATPS). Using a model system of electronically coupled potential energy surfaces, we demonstrate that NATPS efficiently generates ensembles of reactive trajectories and provides mechanistic insight into nonadiabatic pathways. Compared with brute-force trajectory simulations and forward-flux sampling approaches, NATPS substantially reduces the computational effort required to obtain reactive trajectories. 
+
+Keywords Nonadiabatic molecular dynamics · transition path sampling · enhanced sampling · Mapping Approach to Surface Hopping · excited-state rare events 
+
+> arXiv:2603.08677v1 [physics.comp-ph] 9 Mar 2026
+
+# 1 Introduction 
+
+Nonadiabatic events such as photoinduced ring opening, electronically driven isomerization, or internal conversion at conical intersections play a central role in modern photochemistry and molecular photophysics [ 1, 2 ]. Although the nonadiabatic transitions themselves typically occur on femtosecond timescales [ 3], the overall kinetics of excited-state processes may span many orders of magnitude. Access to conical intersections or other electronically coupled regions can require thermally activated motion, diffusion through complex phase-space landscapes, or escape from long-lived excited-state minima [ 4 , 3 ]. Examples of such slow photoinduced processes include electron transfer [ 5], (pre)dissociation [ 6, 7], photoisomerization [ 8, 9, 10 ], and intersystem crossing [ 11 ]. Consequently, many photochemical reactions constitute kinetically rare events despite their ultrafast microscopic dynamics. At the same time, the mixed quantum-classical simulation methods commonly used to study these processes in silico 
+
+are computationally demanding. This makes it highly desirable to employ enhanced-sampling techniques capable of extracting statistically meaningful information from a limited number of trajectory time steps. Trajectory-based enhanced sampling methods such as transition path sampling (TPS) [ 12 , 13 , 14 , 15 ], transition interface sampling (TIS) [ 16 , 17 , 18 ], and forward flux sampling (FFS) [ 19 , 20 , 21 , 22 ] provide powerful tools for the mechanistic characterization of rare events. However, the application of such path-ensemble methods to electronically nonadiabatic dynamics has long remained challenging. Path sampling techniques that generate both forward and backward trajectories require the underlying dynamics to be time reversible, to conserve phase-space volume, and to satisfy detailed balance in order to define a consistent trajectory probability measure. Standard mixed quantum-classical approaches generally do not fulfill these conditions [23]. In particular, fewest-switches surface hopping (FSSH) [ 24 ] introduces stochastic switching rules for discrete electronic transitions that break microscopic reversibility and violate detailed balance [ 23 ]. Nevertheless, progress has recently been made toward rare-event sampling of nonadiabatic dynamics. The earliest attempt to reconcile the apparent time irreversibility of surface hopping with transition path sampling was introduced by Sherman and Corcelli [ 25 ], who generated backward segments using a surrogate, history-independent hopping scheme and recovered the correct path probability by reweighting through forward retracing of the nuclear trajectory to reconstruct the true fewest-switches probabilities. In addition, Reiner et al. [ 26 ] developed a nonadiabatic extension of forward flux sampling (NAFFS), which is feasible because FFS only requires forward trajectory propagation and therefore places less stringent constraints on the underlying dynamics. More generally, recent work has focused on identifying nonadiabatic dynamics approaches that preserve the statistical-mechanical structure required for path sampling. In this contribution, we focus on the Mapping Approach to Surface Hopping (MASH) [ 27 ]. MASH provides a framework for nonadiabatic dynamics that fulfills detailed balance [ 28 ] and time reversibility [ 29 ]. By representing the electronic degrees of freedom through a continuous spin vector coupled to classical nuclei, MASH yields smooth, deterministic equations of motion for the combined nuclear–electronic phase space. In this work, we develop a transition path sampling framework for nonadiabatic dynamics based on MASH. 
+
+# 2 Theory 
+
+2.1 Mapping Approach to Surface Hopping (MASH) 
+
+Assuming the system can be represented by two coupled electronic states with the energy function 
+
+E(q, p,⃗ S ) = X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q) sign( Sz ), (1) where q = ( q1, . . . , q N )⊤ are the generalized nuclear coordinates and p = ( p1, . . . , p N )⊤ the conjugate nuclear momenta for a system with N degrees of freedom. ¯V (q) denotes the average, state-independent potential, while Vz (q)
+
+represents the difference between the two electronic potential energy surfaces (PESs) (see Appendix A). Sz is the 
+
+z-component of the auxiliary spin vector ⃗ S = ( Sx, S y , S z )⊤. [30, 29] Using the associated Fokker-Planck equation (Appendix A.4), it can be shown that the canonical Boltzmann distribution 
+
+ρ(q, p,⃗ S ) ∝ exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q) sign( Sz )
+
+!# 
+
+δ(|⃗S| − 1) (2) is stationary under the MASH dynamics. Here β = 1 /k BT , where kB denotes the Boltzmann constant and T the absolute temperature. The projection of the full Boltzmann distribution onto the z-axis of the spin vector gives the 2marginal probability density along Sz , which is uniform for each hemisphere (Appendix A.3) [ 30 ]. The free energy difference between the upper and lower electronic states can then be obtained by direct integration of the respective regions of the marginal distribution [ 31 ]. These central equations have previously appeared [ 28 ], however, to our knowledge, the detailed and mathematically rigorous derivation we provide in Appendix A has been missing. For the application of MASH within transition path sampling (TPS) [ 12 , 32 ], the underlying dynamics must additionally satisfy time reversibility. In Appendix C we show that both the nuclear degrees of freedom and the extended spin vector conserve phase-space volume under the MASH equations of motion. Under time reversal, the phase-space variables transform according to their parity. For the nuclear coordinates and momenta, this corresponds to the usual classical transformation, positions remain unchanged and momenta invert their sign. The components of the auxiliary spin vector exhibit a different symmetry. The x- and z-components behave as position-like variables, while the y-component changes sign under time reversal (see Appendix B for a detailed derivation). Using these parity relations, it can be shown that the MASH dynamics obey detailed balance (Appendix D). In practice, most nonadiabatic dynamics codes propagate the coefficients ci of the electronic wavefunction, 
+
+|Ψ( t)⟩ = X
+
+> i
+
+ci |ψi⟩ , (3) rather than the spin vector directly. For a two-state system, the coefficients are related to the spin-vector components through the mapping [33] 
+
+Sx = 2 Re c∗
+
+> +
+
+c−
+
+ , and Sy = 2 Im c∗
+
+> +
+
+c−
+
+ , and Sz = |c+|2 − | c−|2 , (4) where c+ and c− denote the coefficients of the upper and lower electronic states, respectively. It can be shown that propagations of coefficients c and spin-vector ⃗ S are equivalent (Appendix E and F). Applying the time-reversal transformation of the spin-vector components to these relations leads to the corresponding symmetry for the electronic coefficients (see Appendix G), 
+
+ci → c∗ 
+
+> i
+
+. (5) 
+
+2.2 Transition Path Sampling 
+
+Transition path sampling provides a general framework for sampling rare reactive trajectories without prior knowledge of the reaction coordinate. [ 13 , 14 , 15 , 34 ] The idea of sampling directly in path space rather than configuration space was first introduced by Dellago and co-workers [ 12 ]. For a trajectory X of length L, the path probability distribution P
+
+is defined as [35] 
+
+P [X(L)] := ρ(Γ0)
+
+> L−1
+
+Y
+
+> i=0
+
+P (Γi → Γi+1 ), (6) where Γ = ( q⊤, p⊤, S x, S y , S z )⊤ a point in the extended phase space, ρ(Γ0) is the equilibrium probability of the initial phase-space point Γ0, and P (Γi → Γi+1 ) is the short-time transition probabilities determined by the underlying dynamical propagator. The conditional path probability for trajectories that start in basin A and end in basin B is then given by 
+
+PAB [X(L)] = Z−1 
+
+> AB
+
+HAB [X(L)] P [X(L)] , (7) where HAB [X(L)] is only unity for a transition path X, i.e., if the first configuration of the trajectory lies in basin A
+
+and the last in basin B, while no other configurations are in A or B, and zero otherwise [ 35 ]. ZAB is the normalization factor. Trajectories in this restricted path ensemble are sampled using a Monte Carlo (MC) random walk in path space [ 36 ]. Given an existing path X(o), a new path X(n) is proposed and accepted according to the Metropolis-Hastings criterion. If (i) the dynamical propagator satisfies microscopic reversibility and (ii) the path-generation procedure obeys detailed balance, the acceptance probability is 
+
+Pacc (X(o) → X(n)) = hA(Γ(n)0 ) hB (Γ(n) 
+
+> Ln
+
+) min 
+
+
+
+1, Lo
+
+Ln
+
+
+
+, (8) where Γ(n)0 and Γ(n) 
+
+> Ln
+
+denote the first and last configurations of the proposed trajectory. New trajectories are generated using a shooting algorithm. At each MC step, a configuration is randomly selected from the current trajectory and perturbed. The perturbation typically involves modifying the velocity associated with the selected configuration. The specific velocity perturbation determines the statistical ensemble sampled by the path ensemble. For instance, sampling the microcanonical (NVE) ensemble requires that the kinetic energy of the selected 3configuration remains unchanged. In one-dimensional systems, this restriction limits the velocity modification to a mere sign change, which significantly reduces the diversity of sampled trajectories. In contrast, sampling the canonical (NVT) ensemble allows the velocity to fluctuate according to the Maxwell-Boltzmann (MB) distribution at a given temperature. To ensure detailed balance of the path generation, new velocities v′ are obtained using the Ornstein-Uhlenbeck [ 37 ]perturbation scheme, 
+
+v′ = αv + p1 − α2 ∆v, (9) where v is the current velocity, ∆v is a random variable drawn from the MB velocity distribution at temperature T , and 
+
+α ∈ (0 , 1) is a predefined mixing parameter. In this work, we fix α at 0.9.After selecting and perturbing a configuration Γτ , the system is propagated both forward and backward in time from this configuration to generate a new trajectory. The resulting path is accepted or rejected according to Eq. (8). If the proposed path is rejected, the previous trajectory is retained in the ensemble to maintain the correct path probability distribution. This shooting procedure is repeated until the desired number of trajectories has been collected. 
+
+2.3 Local Diabatization 
+
+Within the MASH framework, the nuclear degrees of freedom are propagated using the velocity-Verlet algorithm. The electronic coefficients are evolved using the local diabatization (LD) scheme [ 38 ], after which they are mapped onto the components of the spin vector ⃗ S. The propagation of the electronic coefficient vector is given by 
+
+c(t + ∆ t) = T−1e− i 
+
+> 2ℏ(E(t)+ ˜H(t+∆ t))∆ t
+
+c(t) , (10) where T is the Löwdin-orthogonalized overlap matrix between the adiabatic basis at times t and t + ∆ t:
+
+T = S(S†S)− 12 with [S]ij = ⟨ψi(t)|ψj (t + ∆ t)⟩ , (11) with ψi(t) denoting the eigenvectors of the Hamiltonian H(q(t)) . The locally diabatic Hamiltonian is constructed from the diagonal adiabatic energy matrix E(t + ∆ t) according to 
+
+˜H(t + ∆ t) = TE (t + ∆ t)T−1. (12) In the absence of surface hops, the velocity-Verlet integrator guarantees time-reversible nuclear dynamics. However, in conventional surface-hopping implementations, a change of the electronic state is only detected after completion of a nuclear time step. As a result, the potential energy surface governing the nuclear propagation during a hopping event depends on the direction of time (forward vs. backward). This asymmetry breaks time-reversal symmetry, even though the underlying MASH equations of motion are microscopically reversible. To resolve this asymmetry, we adopt the piecewise continuous approach developed by Geuther and Richardson [ 29 ]. In this approach, potential hopping events are detected before the nuclear propagation step is completed. A line-search algorithm is used to determine the precise time at which the hop occurs. The system is then propagated with a reduced time step up to the hopping event, where the velocity rescaling or reflection is performed, followed by the propagation for the remainder of the original time step. This approach ensures that the nuclei traverse the correct potential energy surfaces regardless of time direction, thus restoring full time-reversibility. This method assumes that at most one hop occurs per time step. That this variable time step implementation is crucial for time-reversibility is shown with numerical experiments in Appendix H. 
+
+# 3 Results and Discussion 
+
+In this work, we consider the one-dimensional dynamics of a particle with the mass of a hydrogen atom evolving on a two-state potential formed by two coupled harmonic oscillators, as illustrated in Fig. 1. Despite its simplicity, this model captures the essential physics of electronically coupled diabatic states [39, 5]. The diabatic Hamiltonian of the system is defined as 
+
+H(q) = 
+
+" ϵx20
+
+(q − x0)2 Vc
+
+Vc ϵx20
+
+(q + x0)2
+
+#
+
+, (13) where ϵ = 0 .05 Ha and x0 = 1 .0 a0 everywhere in this work. All quantities are expressed in atomic units. For convenience, the electronic coupling Vc is reported in units of ϵ. The Hamiltonian and choice of parameters are identical 4Figure 1: a) Illustration of the analytic potential along the nuclear coordinate q. b) Reactive trajectory connecting basins 
+
+B and A. c) Corresponding time evolution of the spin-vector component Sz . Red segments indicate portions of the trajectory evolving on the excited state. The discontinuities in Sz near the equator is a result of the choice of trajectory frame bookkeeping and does not represent a physical jump in Sz .to those of the publication on NAFFS [ 26 ], except that the system here is strictly one-dimensional. A discussion of further details of the analytical model can be found in Appendix I. The off-diagonal coupling Vc induces an avoided crossing between the adiabatic potential energy surfaces. Evaluating the energy gap at q = 0 yields the minimum adiabatic splitting g = 2 Vc, which is directly related to the barrier height on the adiabatic ground-state surface, 
+
+Ea =
+
+
+
+1 − Vc
+
+ϵ
+
+
+
+ϵ . (14) The barrier Ea defines the rare transition that we investigate in this model system. We define the left basin A to include any configuration in the adiabatic ground state with q < −0.8 and B to encompass ground state configurations with 
+
+q > 0.8.To ensure the root search remains robust, we utilize a time step of ∆t = 5 a.t.u. . Furthermore, to make sure that we sample from the correct TPS ensemble, we always discard the first 1500 generated transition paths (15% of the paths) as equilibration-phase (for a discussion, see Appendix J). 
+
+3.1 Analysis of the Transition Path Ensemble 
+
+To demonstrate that our implementation of MASH combined with TPS can correctly sample nonadiabatic trajectories, we perform simulations with an off-diagonal coupling of Vc = 0 .2ϵ = 0 .01 Ha as defined in Eq. (13). 10,000 transition paths are generated at a temperature of T = 12 , 000 K using the Ornstein-Uhlenbeck velocity perturbation scheme described in Eq. (9). The trajectory, from which the TPS sampling is started, has an initial velocity of v = −0.0087 ,which is equivalent to 44 , 000 K for a particle with 1836.15 me, and is started at q = 1 .0 a0.
+
+35% of the analyzed paths display at least two nonadiabatic transitions (upward and downward surface hops) in the ensemble at 12 , 000 K, confirming that the chosen hyperparameters ( T and Vc) are suitable for sampling both adiabatic and nonadiabatic transition paths. The evolution of the ensemble in path space is illustrated by the path lineage history shown in Fig. 2a. Earlier trajectories are displayed as faint, thin lines, while more recently accepted trajectories are rendered as thicker solid lines. Consecutive paths in the ensemble exhibit significant correlation, as each new trajectory is generated from a modification of a previous one. Such correlations are expected for path sampling algorithms and imply that consecutive paths cannot be treated as statistically independent samples. To quantify the correlation between sequential trajectories, we analyze their transition times, defined as the duration required for a trajectory to travel between basins A and B.The degree of correlation can be measured using the transition-time autocorrelation function, which is shown in Fig. 2b. Under the current conditions, the decorrelation length is approximately 9 MC steps. Consequently, a TPS simulation that generates 10,000 trajectories yields an effective sample size of roughly 1100 statistically independent paths. This high ratio of independent paths to total MC steps highlights the efficiency of the NATPS sampling algorithm in exploring the nonadiabatic path space. 5Figure 2: a) Lineage history of trajectories during ten successive Monte Carlo steps in path space. Earlier trajectories are shown as faint thin lines, while the most recent trajectories are plotted as solid thick lines. Shooting points, from which new trajectories are sampled, are highlighted with a diamond. b) Autocorrelation function associated with the transition time in MC path space. On average, a statistically independent path emerges after every 9 random walks, where this is visually hinted from a), judging from the similarities among the trajectories. 
+
+Figure 3: Distribution of transition times at a) T = 12000 K and b) T = 1000 K. The average transition time ⟨τ ⟩ is indicated by a red line. The golden line in a) indicates the mean transition time obtained from the brute-force MASH simulation, which matches with the TPS-accelerated result. c) Distribution of hopping positions at 12000 K. Hops are mainly concentrated symmetrically near the crossing seam where q = 1 .0. Any apparent asymmetries arise from the stochastic noises due to finite sampling. A kernel density envelope (KDE) is placed over the distribution to provide visual guidance on the general trend. Beyond providing statistically independent trajectories, the TPS ensemble also contains mechanistic information about the reaction pathways. In particular, the distribution of transition times offers insight into the dynamical processes underlying the reactive trajectories. As shown in Fig. 3a, the transition-time distribution at T = 12 , 000 K is right-skewed and bimodal. This particular shape has two root causes. First, the transition time is asymmetrically bounded. There exists a minimum time imposed by the distance between the two basins and the kinetic energy of the system, but there is no strict upper bound except for the maximum path length used in the simulation. Second, there are two mechanistically different pathways, adiabatic and nonadiabatic, present in the TPS ensemble. The nonadiabatic paths are typically slower, as they are trapped in the excited state for some time before connecting the two basins, which are strictly located in the ground state. In contrast, at the lower temperature of T = 1000 K, the available kinetic energy is insufficient to induce upward hops to the excited state. Consequently, only adiabatic pathways remain and the transition-time distribution becomes unimodal, as shown in Fig. 3b. Finally, TPS simulations also provide direct mechanistic insight into the location of nonadiabatic transitions. For the present one-dimensional model, this information is contained in the distribution of hopping geometries along the reaction coordinate, shown in Fig. 3c. The distribution is centered symmetrically around the crossing seam located at 6Table 1: Efficiency ratio ER = n(total steps generated )/n (transition paths ), defined as the average number of inte-gration steps required to generate one reactive trajectory, for NATPS (MASH combined with TPS) and brute-force trajectory surface hopping (TSH). The effective barrier height Ea is expressed in units of kBT and is controlled by varying the ensemble temperature. Larger values of Ea therefore correspond to rarer reactive events. 
+
+Ea (kBT ) ER(NATPS) ER(brute-force MASH) ER(brute-force TSH)[26] 3 399 7752 2464 4 345 17,710 7219 5 390 72,115 16,677 6 401 122,951 38,889 10 372 no transition paths found 226,465 
+
+q = 0 , where the energy gap between the adiabatic states is minimal and the nonadiabatic coupling is the strongest. While finite sampling introduces minor stochastic noise, the convergence of the mean hopping position toward the theoretical crossing seam confirms that the sampled trajectories correctly capture the expected nonadiabatic transition region. 
+
+3.2 Efficiency Statistics 
+
+Although transition path sampling is not strictly required to obtain quantities such as transition-time distributions or hopping geometries, its primary advantage lies in its ability to efficiently sample rare reactive trajectories compared to brute-force molecular dynamics simulations. To quantify this advantage, we define the efficiency ratio (ER) as Table 1 reports the efficiency ratio for NATPS (MASH combined with TPS), nonadiabatic forward-flux sampling (NAFFS), and brute-force trajectory surface hopping (TSH) simulations at different effective barrier heights Ea, as modulated by the temperature. For the deterministic, brute-force MASH simulation, the temperature is manifested in the sampling of initial conditions from the stationary MASH distribution of Eq. (2) conditioned at the ground state. Across all investigated barrier heights, NATPS consistently requires significantly fewer integration steps to generate reactive trajectories than brute-force simulations. For the largest barrier ( Ea = 10 kT ), NATPS is roughly three orders of magnitude more efficient than brute-force simulations through TSH, whereas no transition paths are found using the brute-force MASH simulation at this temperature. While the efficiency of brute-force dynamics decreases rapidly as the barrier height increases, the computational cost of NATPS remains nearly constant across the tested range, indicating that the algorithm efficiently samples reactive trajectories without suffering from the exponential slowdown typical of brute-force simulations. Note that the NATPS simulations, as carried out here, produce a transition path ensemble but lack state population or flux information; i.e., waiting times spent in the basins are not obtained, and thus it is unknown how frequently the transition occurs in the unbiased system. As a result, some kinetic properties, such as the reaction rate constant, are not accessible within the NATPS simulation time stated in Table 1, but they are available within the NAFFS and brute-force simulation times. 
+
+3.3 Temperature and Coupling Effects on Reactive Trajectories 
+
+The kinetic bifurcation observed in Fig. 3 suggests that the composition of the TPS ensemble depends strongly on the extent of nonadiabaticity of the system. We therefore examine how the ensemble properties change with the temperature 
+
+T and the electronic coupling Vc.
+
+Temperature dependence. First, the coupling is fixed at Vc = 0 .2ϵ and the temperature is varied between 300 
+
+and 30 , 000 K. To ensure stable equilibration across this wide temperature range, we employ a path-space annealing procedure: sampling begins at the highest temperature and the final trajectory of each ensemble is used to initialize the simulation at the next lower temperature. The resulting temperature dependence of the mean transition time (MTT), the mean number of hops, and the standard deviation of the transition time is shown in Fig. 4. In the low temperature range (up to 2000 K), the mean transition time decreases rapidly as T increases, reflecting the larger kinetic energy available for barrier crossing. However, this trend weakens significantly at higher temperatures. Simultaneously, the variance of the transition time increases and closely follows the growth in the mean number of hops. To understand this behavior, we separate trajectories into purely adiabatic paths and paths involving surface hops (Fig. 4e). Adiabatic trajectories shorten steadily with temperature, as expected for increasingly ballistic motion. In contrast, nonadiabatic trajectories show only a weak temperature dependence. This behavior originates from excited-state trapping: once a trajectory hops to the excited state, the time required to return to the ground state is primarily governed 7Figure 4: Temperature dependence of TPS ensemble statistics: (a) mean transition time ⟨τ ⟩ and mean number of hops ⟨Nhop ⟩, and (b) the standard deviation of transition times ⟨στ ⟩. Simulated for Vc = 0 .2ϵ. Dependence of (c) mean transition time ⟨τ ⟩ and mean number of hops ⟨Nhop ⟩ and (d) standard deviation of the hopping time ⟨στ ⟩ on the electronic coupling Vc; simulated at 10,000 K. (e) analysis of the average transition time for adiabatic and nonadiabatic paths seperately. by the electronic coupling rather than the nuclear momentum. As a result, the excited-state lifetime becomes the dominant contribution to the total transition time, producing an effective kinetic plateau. 
+
+Spatial structure of the path ensemble. The influence of temperature is also visible in the spatial statistics of the TPS ensemble. Figure 5a shows the distribution of hopping positions along the reaction coordinate. At low temperatures, hops occur predominantly near the avoided crossing where the energy gap is smallest. As the temperature increases, larger nuclear momenta allow hops farther away from the crossing seam, leading to a gradual broadening of the hopping distribution. This trend is also reflected in the state-resolved path densities shown in Fig. 5c-e. Higher temperatures promote trajectories that explore larger regions of the excited-state surface before returning to the ground state. 
+
+Effect of electronic coupling. We next examine the influence of the electronic coupling Vc, fixing the temperature at 10 , 000 K to ensure sufficient sampling of nonadiabatic paths. Reducing Vc lowers the adiabatic energy gap and increases the nonadiabatic coupling, thereby promoting surface hops. Conversely, increasing Vc suppresses nonadiabatic transitions. Fig. 4c shows the resulting changes in the mean transition time and the mean number of hops as a function of the off-diagonal element Vc.While increasing temperature and decreasing Vc both promote hopping events, they do so through fundamentally different mechanisms. Temperature increases the available nuclear kinetic energy, whereas the coupling strength directly controls the electronic transition probability. This distinction is reflected in the hopping distributions shown in Fig. 5b. The temperature-induced broadening of the hopping distribution is gradual, whereas variations in Vc lead to much stronger changes because the spatial localization of the nonadiabatic coupling depends directly on the electronic Hamiltonian. Since the nonadiabatic coupling magnitude is sharply peaked near the crossing seam for small Vc (for details see Appendix I), we obtain highly localized hopping regions, while larger couplings smear out the hopping distribution over a wider spatial range. 8Figure 5: Distribution of hopping positions for (a) varying temperature and (b) varying electronic coupling and state-resolved path densities at (c) 300 K, (d) 2500 K, and (e) 30 , 000 K. 
+
+# 4 Conclusions 
+
+In this work, we introduced a nonadiabatic transition path sampling framework (NATPS) based on the mapping approach to surface hopping (MASH). By implementing a time-reversible propagation scheme for the MASH dynamics, we obtain a deterministic nonadiabatic dynamics method that satisfies detailed balance and is therefore compatible with trajectory-based path sampling algorithms. This allows the application of transition path sampling methods that rely on backward propagation of partial trajectories, such as transition interface sampling, which are not generally accessible with conventional stochastic surface-hopping dynamics. We demonstrated the NATPS approach using a one-dimensional model of two coupled diabatic potentials. The resulting path ensembles reproduce the expected mechanistic features of the system, including the distribution of hopping geometries near the avoided crossing and the presence of distinct adiabatic and nonadiabatic reaction pathways. Analysis of the path statistics further shows that NATPS efficiently generates statistically independent reactive trajectories and provides direct access to mechanistic observables. In addition, we find that variations in temperature primarily affect the nuclear kinetic energy and thereby the frequency of surface hops, while changes in the electronic coupling modify the spatial localization and probability of nonadiabatic transitions. Overall, NATPS offers a practical framework for studying rare nonadiabatic transitions using path sampling techniques. Because the method is based on deterministic dynamics that preserves the statistical-mechanical structure required for trajectory sampling, it provides a natural route toward applying advanced path ensemble methods to electronically excited-state processes in more complex molecular systems. Future work will focus on the implementation in nonadiabatic dynamics packages such as SHARC [ 40 , 41 ] and on applying NATPS to multidimensional molecular systems and combining it with interface-based sampling techniques [ 16 , 18 ] for the calculation of nonadiabatic rate constants. 9Data Availability Statement 
+
+The code used to generate all data in this paper can be found at https://github.com/Chikakoyanagida/sharc_ model .
+
+# Acknowledgments 
+
+The authors thank Jeremy Richardson and Jonathan Mannouch for fruitful discussions. 
+
+# References 
+
+[1] Carlos E. Crespo-Hernández, Boiko Cohen, Patrick M. Hare, and Bern Kohler. Ultrafast excited-state dynamics in nucleic acids. Chemical Reviews , 104(4):1977–2020, April 2004. ISSN 1520-6890. doi:10.1021/cr0206770. URL http://dx.doi.org/10.1021/cr0206770 .[2] Paolo Melchiorre. Introduction: Photochemical catalytic processes. Chemical Reviews , 122(2):1483–1484, January 2022. ISSN 1520-6890. doi:10.1021/acs.chemrev.1c00993. URL http://dx.doi.org/10.1021/acs. chemrev.1c00993 .[3] Rebeca de Nalda and Luis Bañares, editors. Ultrafast Phenomena in Molecular Sciences: Femtosecond Physics and Chemistry , volume 107 of Springer Series in Chemical Physics . Springer International Publishing, Cham, Switzerland, 2014. ISBN 978-3-319-02051-8. Proceedings or edited volume. [4] Wolfgang Domcke, David R. Yarkony, and Horst Köppel, editors. Conical Intersections: Theory, Computation and Experiment , volume 17 of Advanced Series in Physical Chemistry . World Scientific Publishing Co., Singapore, 2011. ISBN 978-981-431345 2. doi:10.1142/7803. [5] Rudolph A. Marcus. Chemical and electrochemical electron-transfer theory. Annual Review of Physical Chemistry ,15(1):155–196, 1964. doi:10.1146/annurev.pc.15.100164.001103. [6] Hajime. Kato and Masaaki. Baba. Dynamics of excited molecules: Predissociation. Chemical Reviews , 95(7): 2311–2349, November 1995. ISSN 1520-6890. doi:10.1021/cr00039a003. URL http://dx.doi.org/10. 1021/cr00039a003 .[7] Hiroyasu Sato. Photodissociation of simple molecules in the gas phase. Chemical Reviews , 101(9):2687–2726, September 2001. ISSN 1520-6890. doi:10.1021/cr990403l. URL http://dx.doi.org/10.1021/cr990403l .[8] J.A. Güida, M.A. Ramos, O.E. Piro, and P.J. Aymonino. Infrared spectra of k 2[rucl 5no] in two excited metastable states and the evidence for the no linkage photoisomerization of metastable state i (msi) in [rux 5 no] 2− (x=cl, cn). 
+
+Journal of Molecular Structure , 609(1–3):39–46, May 2002. ISSN 0022-2860. doi:10.1016/s0022-2860(01)00897-3. URL http://dx.doi.org/10.1016/S0022-2860(01)00897-3 .[9] Ying-Zhong Ma, Uvinduni I. Premadasa, Vyacheslav S. Bryantsev, Audrey R. Miles, Ilia N. Ivanov, Adnan Elgattar, Yi Liao, and Benjamin Doughty. Unravelling photoisomerization dynamics in a metastable-state photoacid. 
+
+Physical Chemistry Chemical Physics , 26(5):4062–4070, 2024. ISSN 1463-9084. doi:10.1039/d3cp04454h. URL 
+
+http://dx.doi.org/10.1039/D3CP04454H .[10] Ying-Zhong Ma, Uvinduni I. Premadasa, May Waters, Nitesh Kumar, Benjamin Doughty, Melyse Laud, Yi Liao, and Vyacheslav S. Bryantsev. Accessing transient isomers in the photoreaction of metastable-state photoacid. 
+
+ChemPhysChem , 26(13), June 2025. ISSN 1439-7641. doi:10.1002/cphc.202500184. URL http://dx.doi. org/10.1002/cphc.202500184 .[11] Thomas J. Penfold, Etienne Gindensperger, Chantal Daniel, and Christel M. Marian. Spin-vibronic mech-anism for intersystem crossing. Chemical Reviews , 118(15):6975–7025, March 2018. ISSN 1520-6890. doi:10.1021/acs.chemrev.7b00617. URL http://dx.doi.org/10.1021/acs.chemrev.7b00617 .[12] Christoph Dellago, Peter G. Bolhuis, Félix S. Csajka, and David Chandler. Transition path sampling and the calculation of rate constants. The Journal of Chemical Physics , 108(5):1964–1977, February 1998. ISSN 1089-7690. doi:10.1063/1.475562. URL http://dx.doi.org/10.1063/1.475562 .[13] Peter G Bolhuis, Christoph Dellago, Phillip L Geissler, and David Chandler. Transition path sampling: throwing ropes over mountains in the dark. Journal of Physics: Condensed Matter , 12(8A):A147–A152, February 2000. ISSN 1361-648X. doi:10.1088/0953-8984/12/8a/316. URL http://dx.doi.org/10.1088/0953-8984/12/ 8A/316 .[14] Christoph Dellago, Peter G. Bolhuis, and Phillip L. Geissler. Transition path sampling, July 2002. ISSN 1934-4791. URL http://dx.doi.org/10.1002/0471231509.ch1 .10 [15] Christoph Dellago and Peter G. Bolhuis. Transition Path Sampling and other Advanced Simulation Techniques for Rare Events , pages 167–233. Springer Berlin Heidelberg, 2009. ISBN 1424406285. [16] Titus S. van Erp, Daniele Moroni, and Peter G. Bolhuis. A novel path sampling method for the calcula-tion of rate constants. The Journal of Chemical Physics , 118(17):7762–7774, May 2003. ISSN 1089-7690. doi:10.1063/1.1562614. URL http://dx.doi.org/10.1063/1.1562614 .[17] Daniele Moroni, Titus S. van Erp, and Peter G. Bolhuis. Investigating rare events by transition interface sampling. 
+
+Physica A: Statistical Mechanics and its Applications , 340(1–3):395–401, September 2004. ISSN 0378-4371. doi:10.1016/j.physa.2004.04.033. URL http://dx.doi.org/10.1016/j.physa.2004.04.033 .[18] Titus S. van Erp and Peter G. Bolhuis. Elaborating transition interface sampling methods. Journal of Computational Physics , 205(1):157–181, May 2005. ISSN 0021-9991. doi:10.1016/j.jcp.2004.11.003. URL http://dx.doi. org/10.1016/j.jcp.2004.11.003 .[19] Rosalind J. Allen, Patrick B. Warren, and Pieter Rein Ten Wolde. Sampling rare switching events in biochemical networks. Physical Review Letters , 94(1):018104, 2005. doi:10.1103/PhysRevLett.94.018104. [20] Rosalind J. Allen, Daan Frenkel, and Pieter Rein Ten Wolde. Simulating rare events in equilibrium or nonequilib-rium stochastic systems. The Journal of Chemical Physics , 124(2):024102, 2006. doi:10.1063/1.2140273. [21] Rosalind J. Allen, Daan Frenkel, and Pieter Rein Ten Wolde. Forward flux sampling–type schemes for simulating rare events: Efficiency analysis. The Journal of Chemical Physics , 124(19):194111, 2006. doi:10.1063/1.2198827. [22] Rosalind J. Allen, Chantal Valeriani, and Pieter Rein Ten Wolde. Forward flux sampling for rare event simulations. 
+
+Journal of Physics Condensed Matter , 21:1–40, 2009. ISSN 09538984. doi:10.1088/0953-8984/21/46/463102. [23] Joseph E. Subotnik and Young Min Rhee. On surface hopping and time-reversal. The Journal of Physical Chemistry A , 119(6):990–995, January 2015. ISSN 1520-5215. doi:10.1021/jp512024w. URL http://dx.doi. org/10.1021/jp512024w .[24] John C. Tully. Molecular dynamics with electronic transitions. The Journal of Chemical Physics , 93(2):1061–1071, July 1990. ISSN 1089-7690. doi:10.1063/1.459170. URL http://dx.doi.org/10.1063/1.459170 .[25] M.C. Sherman and Corcelli S.A. Nonadiabatic transition path sampling. The Journal of Chemical Physics , 2016. [26] Madlen Maria Reiner, Brigitta Bachmair, Maximilian Xaver Tiefenbacher, Sebastian Mai, Leticia González, Philipp Marquetand, and Christoph Dellago. Nonadiabatic forward flux sampling for excited-state rare events. Journal of Chemical Theory and Computation , 19(6):1657–1671, March 2023. ISSN 1549-9626. doi:10.1021/acs.jctc.2c01088. URL http://dx.doi.org/10.1021/acs.jctc.2c01088 .[27] Jonathan R. Mannouch and Jeremy O. Richardson. A mapping approach to surface hopping. The Journal of Chemical Physics , 158(10), March 2023. ISSN 1089-7690. doi:10.1063/5.0139734. URL http://dx.doi.org/ 10.1063/5.0139734 .[28] Graziano Amati, Jonathan R. Mannouch, and Jeremy O. Richardson. Detailed balance in mixed quan-tum–classical mapping approaches. The Journal of Chemical Physics , 159(21), December 2023. ISSN 1089-7690. doi:10.1063/5.0176291. URL http://dx.doi.org/10.1063/5.0176291 .[29] J. Amira Geuther, Kasra Asnaashari, and Jeremy O. Richardson. Time-reversible implementation of mash for efficient nonadiabatic molecular dynamics. Journal of Chemical Theory and Computation , 21(5):2179–2188, February 2025. ISSN 1549-9626. doi:10.1021/acs.jctc.4c01684. URL http://dx.doi.org/10.1021/acs. jctc.4c01684 .[30] Jeremy O. Richardson, Joseph E. Lawrence, and Jonathan R. Mannouch. Nonadiabatic dynamics with the mapping approach to surface hopping (mash). Annual Review of Physical Chemistry , 76(1):663–687, April 2025. ISSN 1545-1593. doi:10.1146/annurev-physchem-082423-120631. URL http://dx.doi.org/10. 1146/annurev-physchem-082423-120631 .[31] Johannes C. B. Dietschreit, Dennis J. Diestler, and Christian Ochsenfeld. How to obtain reaction free energies from free-energy profiles. The Journal of Chemical Physics , 156(11):114105, March 2022. doi:10.1063/5.0083423. URL https://pubs.aip.org/jcp/article/156/11/114105/2840874/ How-to-obtain-reaction-free-energies-from-free .[32] Peter G. Bolhuis, David Chandler, Christoph Dellago, and Phillip L. Geissler. Transition path sampling: Throwing ropes over rough mountain passes, in the dark. Annual Review of Physical Chemistry , 53:291–318, 2002. ISSN 0066426X. doi:10.1146/annurev.physchem.53.082301.113146. [33] Joseph E. Lawrence, Jonathan R. Mannouch, and Jeremy O. Richardson. A size-consistent multi-state map-ping approach to surface hopping. The Journal of Chemical Physics , 160(24), June 2024. ISSN 1089-7690. doi:10.1063/5.0208575. URL http://dx.doi.org/10.1063/5.0208575 .11 [34] Fernando A. Escobedo, Ernesto E. Borrero, and Juan C. Araque. Transition path sampling and forward flux sampling. applications to biological systems. Journal of Physics Condensed Matter , 21:333101, 2009. ISSN 09538984. doi:10.1088/0953-8984/21/33/333101. [35] Magdalena Häupl, Sebastian Falkner, Peter G. Bolhuis, Christoph Dellago, and Alessandro Coretti. An always-accepting algorithm for transition path sampling, 2026. URL https://arxiv.org/abs/2602.13130 .[36] P. Buijsman and P. G. Bolhuis. Transition path sampling for non-equilibrium dynamics without predefined reaction coordinates. Journal of Chemical Physics , 152, 2020. ISSN 00219606. doi:10.1063/1.5130760. URL 
+
+https://doi.org/10.1063/1.5130760 .[37] G. E. Uhlenbeck and L. S. Ornstein. On the theory of the brownian motion. Phys. Rev. , 36:823–841, Sep 1930. doi:10.1103/PhysRev.36.823. URL https://link.aps.org/doi/10.1103/PhysRev.36.823 .[38] Felix Plasser, Giovanni Granucci, Jiri Pittner, Mario Barbatti, Persico Maurizio, and Lischka Hans. Surface hopping dynamics using a locally diabatic formalism: Charge transfer in the ethylene dimer cation and excited state dynamics in the 2-pyridone dimer. The Journal of Chemical Physics , 2012. [39] Rudolph A. Marcus. Electron transfer reactions in chemistry. theory and experiment. Reviews of Modern Physics ,65(3):599–610, July 1993. ISSN 1539-0756. doi:10.1103/revmodphys.65.599. URL http://dx.doi.org/10. 1103/RevModPhys.65.599 .[40] Sebastian Mai, Brigitta Bachmair, Laura Gagliardi, Hans Georg Gallmetzer, Lorenz Grünewald, Matthew R. Hennefarth, Nicolai Machholdt Høyer, Feven A. Korsaye, Sascha Mausenberger, Markus Oppel, Tomislav Piteša, Severin Polonius, Eduarda Sangiogo Gil, Yinan Shu, Nadja K. Singer, Maximilian X. Tiefenbacher, Donald G. Truhlar, Dóra Vörös, Linyao Zhang, and Leticia González. SHARC4.0: Surface hopping including arbitrary couplings — program package for non-adiabatic dynamics. https://sharc-md.org/, 2025. [41] Sebastian Mai, Philipp Marquetand, and Leticia González. Nonadiabatic dynamics: The SHARC approach. Wiley Interdisciplinary Reviews: Computational Molecular Science , 8(6):1–23, 2018. doi:10.1002/wcms.1370. [42] Crispin W. Gardiner. Handbook of stochastic methods for physics, chemistry and the natural sciences. Springer Series in Synergetics , 1985. ISSN 0172-7389. doi:10.1007/978-3-662-02452-2. URL https://cir.nii.ac. jp/crid/1360855570504742656 .12 Appendix A Invariant Distribution of MASH 
+
+To find the stationary distribution generated by the Mapping Approach to Surface Hopping (MASH), we consider a two-state system with the energy function E,
+
+E(q, p,⃗ S ) = 
+
+> N
+
+X
+
+> i=1
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q) sign( Sz ) (A-1) with 2N + 3 degrees of freedom, representing the positions q = ( q1, q 2, . . . , q N )⊤, conjugated momenta p =(p1, p 2, . . . , p N )⊤, masses mi, and the spin vector ⃗ S,⃗S =
+
+Sx
+
+Sy
+
+Sz
+
+!
+
+The sign of Sz indicates whether the spin vector ⃗ S is in the northern (+) or southern (−) hemisphere of the Bloch sphere. The hemispheres correspond to the upper and lower potential energy surfaces (PESs), V+ and V−, which are two different electronic states of the system, e.g. ground and excited state. The state–independent potential ¯V (q) is taken to be the average of the two states 
+
+¯V (q) = V−(q) + V+(q)2 (A-2) and the difference-potential Vz (q) is 
+
+Vz (q) = V+(q) − V−(q)2 (A-3) hence, the potential energy gap between upper and lower PESs corresponds to 2Vz (q). Using Eq. (A-2) and Eq. (A-3) the ground and excited state potentials can be written as 
+
+V−(q) = ¯V (q) − Vz (q) (A-4) 
+
+V+(q) = ¯V (q) + Vz (q) (A-5) 
+
+A.1 Equations of motion in phase space 
+
+The equations of motion in phase space (i.e., for positions qi and conjugated momenta pi) in the MASH approach are given as 
+
+˙qi = pi
+
+mi
+
+(A-6) 
+
+˙pi = ¯Fi(q) + F MASH  
+
+> i
+
+(q,⃗ S ) (A-7) with mass m, where ¯F is the average force induced by the state-independent potential ¯V ,
+
+¯Fi(q) = − ∂ ¯V (q)
+
+∂q i
+
+(A-8) and F MASH (cf. Eq. (8b) in [ 28 ]) includes the derivative of the difference-potential Vz as well as a nonadiabatic coupling term 
+
+F MASH  
+
+> i
+
+(q,⃗ S ) = − ∂V z (q)
+
+∂q i
+
+sign( Sz ) + 4 Vz (q) di(q) Sx δ(Sz ) (A-9) with di(q) being the nonadiabatic coupling vector. The delta function δ(Sz ) activates the last term on the right hand side when the spin vector ⃗ S crosses the equator of the Bloch sphere, i.e., the hemisphere changes from northern to southern or vice versa. If the system is coupled to a heat bath, the equations of motion become 
+
+˙qi = pi
+
+mi
+
+(A-10) 
+
+˙pi = − ∂ ¯V (q)
+
+∂q i
+
+− ∂V z (q)
+
+∂q i
+
+sign( Sz ) + 4 Vz (q) di(q)Sx δ(Sz ) − γmi
+
+pi + Fi(t) (A-11) 13 where a friction term with friction constant γ and random force Fi(t) are introduced. The random force fulfills the fluctuation dissipation theorem, such that 
+
+⟨F i(t) Fj (t′)⟩ = 2 γk B T δ ij δ(t − t′) (A-12) for times t and t′ with Boltzmann constant kB , where T is the absolute temperature of the bath. 
+
+A.2 Equations of motion for the spin vector 
+
+The equations of motion for the spin vector ⃗ S are 
+
+˙Sx = 2 X
+
+> i
+
+di(q) pi
+
+mi
+
+!
+
+Sz − 2Vz (q) Sy (A-13) 
+
+˙Sy = 2 Vz (q) Sx (A-14) 
+
+˙Sz = −2 X
+
+> i
+
+di(q) pi
+
+mi
+
+!
+
+Sx (A-15) They can be re-written in vector form as 
+
+˙⃗S =⃗ H ×⃗ S,⃗ H =
+
+ 02 P 
+
+> i
+
+di(q) pi
+
+> mi
+
+2Vz (q)
+
+ (A-16) with the cross product structure ⃗H ×⃗ S =
+
+Hx
+
+Hy
+
+Hz
+
+!
+
+×
+
+Sx
+
+Sy
+
+Sz
+
+!
+
+=
+
+Hy Sz − Hz Sy
+
+Hz Sx − HxSz
+
+HxSy − Hy Sx
+
+!
+
+(A-17) Here ⃗ H can be interpreted as an effective magnetic field. Since ˙⃗S ⊥⃗ S, the magnitude of ⃗ S is conserved, 
+
+ddt |⃗S| = 0 
+
+Notice that the heat bath does not couple to the virtual spin degrees of freedom. We can interpret the motion of the spin vector as a precession around the axis ⃗ H, where Hy describes the nonadiabatic coupling and the energy difference between ground and excited state enters via Vz (see Eq. (A-3)). 
+
+A.3 Stationary Distribution 
+
+We would like to prove that the stationary distribution of this dynamics is the distribution 
+
+ρ(q, p,⃗ S ) ∝ exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q) sign( Sz )
+
+!# 
+
+δ(|⃗S| − 1) (A-18) with the first term stemming from the Boltzmann distribution and the delta function confining the virtual spin vector to the surface of the Bloch sphere. β ≡ 1/k B T is the inverse temperature. The distribution on the Bloch sphere is 
+
+ρ(⃗S) = 
+
+Z
+
+dq dp ρ(q, p,⃗ S )= 1
+
+Q
+
+Z
+
+dp exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
+# Z
+
+dq exp −β   ¯V (q) + Vz (q)sign( Sz ) δ(|⃗S| − 1) (A-19) where Q is the partition function. We denote the configuration integral for the full two-state system as 
+
+1
+
+Z = 1
+
+Q
+
+Z
+
+dp exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
+#
+
+(A-20) 14 and introduce Zα as the integral over only PES Vα with α ∈ { +, −} ,
+
+Z+ =
+
+Z
+
+dq exp −β   ¯V (q) + Vz (q) (A-21) 
+
+Z− =
+
+Z
+
+dq exp −β   ¯V (q) − Vz (q) (A-22) For the case Sz > 0, i.e., the spin vector on the northern (excited state) hemisphere, we get 
+
+ρ(⃗S) = 1
+
+Z
+
+Z
+
+dq exp −β   ¯V (q) + Vz (q) δ(|⃗S| − 1) = Z+
+
+Z δ(|⃗S| − 1) (A-23) and accordingly, for the case Sz < 0, i.e., the spin vector on the southern (ground state) hemisphere, 
+
+ρ(⃗S) = 1
+
+Z
+
+Z
+
+dq exp −β   ¯V (q) − Vz (q) δ(|⃗S| − 1) = Z−
+
+Z δ(|⃗S| − 1) (A-24) Eqs. (A-23) and (A-24) show that the probability density of ⃗ S is uniform on each hemisphere. The relative population of the northern (excited state) and the southern (ground state) hemisphere is 
+
+P+
+
+P−
+
+= Z+
+
+Z−
+
+=
+
+R dq e−βV +(q)
+
+R dq e−βV −(q) (A-25) by using eqs. (A-4) and (A-5). Using the difference potential Vz (see Eq. (A-3)), the relative population of the hemispheres is proportional to the exponentiated free energy difference ∆F between both states 
+
+P+
+
+P−
+
+= e−β∆F . (A-26) We can rewrite the ratio Eq. (A-25) as ensemble averages 
+
+⟨. . . ⟩ ¯V =
+
+R dq e−β ¯V (q) . . . 
+
+R dq e−β ¯V (q)
+
+over the state-independent potential ¯V (q) (cf. Eq. (A-2)) as 
+
+P+
+
+P−
+
+= Z+
+
+Z−
+
+= ⟨e−β(V+(q)− ¯V (q)) ⟩ ¯V
+
+⟨e−β(V−(q)− ¯V (q)) ⟩ ¯V
+
+(A-27) Using eqs. (A-4) and (A-5) this becomes (cf. Eq. (A-25)) 
+
+P+
+
+P−
+
+= e−βV z (q) ¯V
+
+eβV z (q) ¯V
+
+(A-28) The probability of being in one particular state is 
+
+P+
+
+P+ + P−
+
+=
+
+ P+ + P−
+
+P+
+
+−1
+
+=
+
+ ⟨e−βV z (q)⟩ ¯V + ⟨e+βV z (q)⟩ ¯V
+
+⟨e−βV z (q)⟩ ¯V
+
+−1
+
+=
+
+ ⟨2 cosh( βV z (q)) ⟩ ¯V
+
+⟨e−βV z (q)⟩ ¯V
+
+−1
+
+P+
+
+P+ + P−
+
+= e−βV z (q) ¯V
+
+2 ⟨cosh( βV z (q)) ⟩ ¯V
+
+(A-29) and thus 
+
+P−
+
+P+ + P−
+
+= eβV z (q) ¯V
+
+2 ⟨cosh( βV z (q)) ⟩ ¯V
+
+(A-30) 15 Hence, the probability density as a function of only Sz is 
+
+ρ(Sz ) = e−βV z (q) sign( Sz ) ¯V
+
+2 ⟨cosh( βV z (q)) ⟩ ¯V
+
+(A-31) Eq. (A-31) is the identical result as obtained by Amati et al. in Eq. (26b) of [ 28 ] (J. Chem. Phys. 159, 214114 (2023)). For the free energy difference between the two states, one obtains 
+
+∆F = −kBT ln e−βV z (q) ¯V
+
+eβV z (q) ¯V
+
+!
+
+(A-32) 
+
+A.4 Fokker–Planck equation for (q, p,⃗ S )
+
+Combining eqs. (A-10), (A-11), and (A-16) we can write the Langevin dynamics as drift-diffusion process in the general form 
+
+dΓt = μ(Γt, t ) d t + σ(Γt, t ) d Wt (A-33) Here Γ is the state vector 
+
+Γ =
+
+
+
+...
+
+qi
+
+...
+
+pi
+
+...
+
+Sx
+
+Sy
+
+Sz
+
+
+
+(A-34) 
+
+μ denotes the drift vector 
+
+μ(Γ) = 
+
+
+
+...
+
+pi/m i
+
+...
+
+− ∂i ¯V∂q i − ∂iVz 
+
+> ∂q i
+
+sign( Sz ) + 4 Vz diSxδ(Sz ) − γp i/m i
+
+...
+
+(⃗H ×⃗ S)x
+
+(⃗ H ×⃗ S)y
+
+(⃗H ×⃗ S)z
+
+
+
+(A-35) and σ the (2 N + 3) × N noise matrix; in block structure with the q block ( N × N matrix) being 0, the p block ( N × N
+
+matrix) being the noise, and the S block ( 3 × 3 matrix) being 0: 
+
+σ =
+
+ 0√2γk B T In
+
+0
+
+ (A-36) and Wt the N -dimensional vector of the Wiener process, such that the Wiener increment is: 
+
+σ dWt =
+
+
+
+...
+
+0
+
+...√2γk B T dW i
+
+...
+
+000
+
+
+
+(A-37) 16 The corresponding diffusion tensor D is given by 
+
+D = 12 σσ T (A-38) where the components are 
+
+Dij (Γ) = 12
+
+> N
+
+X
+
+> k=1
+
+σik (Γ) σjk (Γ) (A-39) Due to the block structure of σ (cf. Eq. (A-36)), the diffusion tensor D has a similar structure and can be written in the form of a (2 N + 3) × (2 N + 3) matrix as 
+
+D = 12
+
+ 0√2γk B T In
+
+0
+
+ 
+
+0, p2γk B T In, 0
+
+
+
+= 12
+
+0 0 00 2γk B T In 00 0 0
+
+!
+
+=
+
+0 0 00 γk B T In 00 0 0
+
+!
+
+(A-40) Let ρ(Γ, t ) be the probability density in Γ-space and its time derivative 
+
+∂ρ ∂t = −
+
+> l
+
+X
+
+> i=1
+
+∂∂Γi
+
+[μi(Γ, t )ρ(Γ, t )] + 
+
+> l
+
+X
+
+> i=1
+> l
+
+X
+
+> j=1
+
+∂2
+
+∂Γi∂Γj
+
+[Dij ρ(Γ, t )] (A-41) with l = 2 N + 3 . D has only diagonal non-zero elements and only the diagonal components of D corresponding to the momenta p are non-zero ( Dij = γk B T δ ij for momentum indices pi=j ). Thus 
+
+> l
+
+X
+
+> i=1
+> l
+
+X
+
+> j=1
+
+∂2
+
+∂Γi∂Γj
+
+[Dij ρ(Γ, t )] = 
+
+> N
+
+X
+
+> i=1
+
+∂2
+
+∂p 2
+
+> i
+
+[γk B T ρ (Γ, t )] (A-42) Expanding drift terms, we obtain: 
+
+−
+
+> l
+
+X
+
+> i=1
+
+∂∂Γi
+
+[μi(Γ, t )ρ(Γ, t )] = −
+
+> N
+
+X
+
+> i=1
+
+∂∂q i
+
+ pi
+
+mi
+
+ρ(Γ, t )
+
+
+
+−
+
+> N
+
+X
+
+> i=1
+
+∂∂p i
+
+ 
+
+− ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz ) + 4 Vz diSxδ(Sz ) − γmi
+
+pi
+
+
+
+ρ(Γ, t )
+
+
+
+−
+
+> 3
+
+X
+
+> α=1
+
+∂∂S α
+
+h
+
+(⃗H ×⃗ S)α ρ(Γ, t )
+
+i
+
+= −
+
+> N
+
+X
+
+> i=1
+
+pi
+
+mi
+
+∂ρ ∂q i
+
+−
+
+> N
+
+X
+
+> i=1
+
+
+
+− ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz ) + 4 Vz diSxδ(Sz ) − γmi
+
+pi
+
+ ∂ρ ∂p i
+
++
+
+> N
+
+X
+
+> i=1
+
+γmi
+
+∂∂p i
+
+[piρ] −
+
+> 3
+
+X
+
+> α=1
+
+∂∂S α
+
+h
+
+(⃗ H ×⃗ S)α ρ
+
+i
+
+(A-43) where for the indices in the spin terms, we for simplicity use the notation α = 1 , 2, 3 equivalent to α = x, y, z .Inspecting the last cross-product term closer we find 
+
+X
+
+> α
+
+∂∂S α
+
+h
+
+(⃗H ×⃗ S)αρ
+
+i
+
+= X
+
+> α
+
+ ∂∂S α
+
+(⃗H ×⃗ S)α
+
+
+
+ρ + ( ⃗ H ×⃗ S)α
+
+∂ρ ∂S α
+
+(A-44) Due to the property of the cross-product (cf. Eq. (A-17)) we can see that Sα does not appear in the element (⃗ H ×⃗ S)α,the first term of Eq. (A-44) becomes zero, such that we can simplify 
+
+X
+
+> α
+
+∂∂S α
+
+h
+
+(⃗ H ×⃗ S)αρ
+
+i
+
+= X
+
+> α
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
+(A-45) Combining eqs. (A-45), (A-43) and (A-42) with Eq. (A-41), we obtain the Fokker-Planck equation 17 ∂ρ ∂t = −
+
+> N
+
+X
+
+> i=1
+
+pi
+
+mi
+
+∂ρ ∂q i
+
+−
+
+> N
+
+X
+
+> i=1
+
+
+
+− ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz ) + 4 Vz diSxδ(Sz )
+
+ ∂ρ ∂p i
+
++ γ
+
+> N
+
+X
+
+> i=1
+
+∂∂p i
+
+ pi
+
+mi
+
+ρ
+
+
+
+−
+
+> 3
+
+X
+
+> α=1
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
++ γk B T
+
+> N
+
+X
+
+> i=1
+
+∂2ρ∂p 2
+
+> i
+
+(A-46) We now check whether the normalized probability density function 
+
+ρ(Γ) = ρ(q, p,⃗ S ) = 1
+
+Q exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q)sign( Sz )
+
+!# 
+
+δ(|⃗S| − 1) (A-47) (cf. Eq. (A-18) ) is stationary. To accomplish this we inspect the single terms in Eq. (A-46) separately, i.e., we evaluate the right hand side of Eq. (A-46) to show that the normalized probability density function is stationary. The second derivative of ρ with respect to the momenta is 
+
+∂2ρ∂p 2
+
+> i
+
+= ∂∂p i
+
+∂ρ ∂p i
+
+= ∂∂p i
+
+exp −β   ¯V (q) + Vz (q)sign( Sz ) δ(|⃗S| − 1) exp 
+
+−β
+
+> N
+
+X
+
+> j=1
+
+p2
+
+> j
+
+2mj
+
+ ×
+
+
+
+− βmi
+
+2pi
+
+
+
+= ∂∂p i
+
+
+
+−β pi
+
+mi
+
+ρ
+
+
+
+(A-48) Hence 
+
+γk B T
+
+> N
+
+X
+
+> i=1
+
+∂2ρ∂p 2
+
+> i
+
+= γk B T
+
+> N
+
+X
+
+> i=1
+
+∂∂p i
+
+
+
+−β pi
+
+mi
+
+ρ
+
+
+
+= −γ
+
+> N
+
+X
+
+> i=1
+
+1
+
+mi
+
+∂∂p i
+
+[piρ] (A-49) such that the terms 
+
+γ
+
+> N
+
+X
+
+> i=1
+
+∂∂p i
+
+ pi
+
+mi
+
+ρ
+
+
+
+and γk B T
+
+> N
+
+X
+
+> i=1
+
+∂2ρ∂p 2
+
+> i
+
+of Eq. (A-46) cancel. Next we consider the first two terms. 
+
+A.4.1 Case “away from the equator” ( Sz̸ = 0 )
+
+Here 4Vz diSxδ(Sz ) = 0 such that the derivatives of ρ are: 
+
+∂ρ ∂q i
+
+= ρ
+
+
+
+−β ∂ ¯V∂q i
+
+− β ∂V z
+
+∂q i
+
+sign( Sz )
+
+
+
+(A-50) 
+
+∂ρ ∂p i
+
+= −β pi
+
+mi
+
+ρ (A-51) Then the two terms of Eq. (A-46) 
+
+− X
+
+> i
+
+pi
+
+mi
+
+∂ρ ∂q i
+
+− X
+
+> i
+
+
+
+− ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz )
+
+ ∂ρ ∂p i
+
+= − X
+
+> i
+
+pi
+
+mi
+
+ρ
+
+
+
+−β ∂ ¯V∂q i
+
+− β ∂V z
+
+∂q i
+
+sign( Sz )
+
+
+
++ X
+
+> i
+
+
+
+−β ∂ ¯V∂q i
+
+− β ∂V z
+
+∂q i
+
+sign( Sz )
+
+  
+
+− pi
+
+mi
+
+ρ
+
+
+
+=0 
+
+cancel. Hence, we are left with only a single term on the right hand side (RHS) of Eq. (A-46). RHS =
+
+> 3
+
+X
+
+> α=1
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
+18 Away from the equator the only ⃗ S-dependence of ρ is in the factor δ(|⃗S|− 1) . By writing ρ(q, p,⃗ S ) = g0(q, p)δ(|⃗S|− 1) 
+
+we get: 
+
+> 3
+
+X
+
+> α=1
+
+(⃗ H ×⃗ S)α
+
+∂ρ ∂S α
+
+=
+
+> 3
+
+X
+
+> α=1
+
+(⃗ H ×⃗ S)α g0(q, p) ∂ δ (|⃗ S| − 1) 
+
+∂|⃗S|
+
+∂|⃗S|
+
+∂S α
+
+= g0(q, p) ∂ δ (|⃗ S| − 1) 
+
+∂|⃗S|
+
+X
+
+> α
+
+(⃗H ×⃗ S)α
+
+∂|⃗S|
+
+∂S α
+
+= g0(q, p) ∂ δ (|⃗ S| − 1) 
+
+∂|⃗S|
+
+1
+
+|⃗S|
+
+X
+
+> α
+
+(⃗ H ×⃗ S)α Sα
+
+= g0(q, p) ∂ δ (|⃗ S| − 1) 
+
+∂|⃗S|
+
+1
+
+|⃗S|
+
+h
+
+(⃗ H ×⃗ S) ·⃗ S
+
+i
+
+But (⃗H ×⃗ S) ⊥⃗ S such that 
+
+(⃗H ×⃗ S) ·⃗ S = 0 (A-52) Thus 3X
+
+> α=1
+
+(⃗ H ×⃗ S)α
+
+∂ρ ∂S α
+
+= 0 (A-53) This holds for any distribution ρ depending only on |⃗S|. Therefore, away from the equator, the RHS = 0, and ρ is stationary. 
+
+A.4.2 Case “at the equator” ( Sz = 0 )
+
+At the equator, all previously considered terms cancel, but we get two extra contributions: RHS = −
+
+> N
+
+X
+
+> i=1
+
+4Vz (q)di(q)Sx δ(Sz ) ∂ρ ∂p i
+
+−
+
+> 3
+
+X
+
+> α=1
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
+(A-54) From what we have derived in the previous subsection we can write the first term as 
+
+−
+
+> N
+
+X
+
+> i=1
+
+4Vz (q)di(q)Sx δ(Sz ) ∂ρ ∂p i
+
+= β
+
+> N
+
+X
+
+> i=1
+
+4Vz (q)di(q)Sx δ(Sz ) pi
+
+mi
+
+ρ
+
+Inspecting the derivative of the probability density function with respect to the components of the spin vector, we find 
+
+∂ρ ∂S α
+
+= 1
+
+Q exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q)sign( Sz )
+
+!# 
+
+∂∂S α
+
+δ(|⃗S| − 1) + 1
+
+Q exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q)sign( Sz )
+
+!# 
+
+δ(|⃗S| − 1) 
+
+
+
+−βV z (q) ∂ sign( Sz )
+
+∂S α
+
+
+
+= 1
+
+Q exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q)sign( Sz )
+
+!# 
+
+∂δ (|⃗ S| − 1) 
+
+∂|⃗S|
+
+Sα
+
+|⃗S|− βρV z (q) ∂ sign( Sz )
+
+∂S z
+
+δαz 
+
+The first term gives a contribution (⃗H ×⃗ S) ·⃗ S = 0 as before. Only the second term warrants further inspection: 
+
+> 3
+
+X
+
+> α=1
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
+= −βρV z (q) ( ⃗H ×⃗ S)z
+
+∂ sign( Sz )
+
+∂S z
+
+Using 
+
+∂∂S z
+
+sign( Sz ) = 2 δ(Sz ),
+
+19 and 
+
+(⃗H ×⃗ S)z = −2SxNX
+
+> i
+
+pi
+
+mi
+
+di(q)
+
+we obtain 
+
+> 3
+
+X
+
+> α=1
+
+(⃗H ×⃗ S)α
+
+∂ρ ∂S α
+
+= −2βρV z (q)δ(Sz ) −2SxNX
+
+> i=1
+
+pi
+
+mi
+
+di(q)
+
+!
+
+= 4 βρV z (q)Sx
+
+> N
+
+X
+
+> i=1
+
+pi
+
+mi
+
+di(q)
+
+!
+
+.
+
+Hence we get for the entire RHS: RHS = 4 βρV z (q)Sx
+
+> N
+
+X
+
+> i
+
+pi
+
+mi
+
+di(q)
+
+!
+
+− 4βρV z (q)Sx
+
+> N
+
+X
+
+> i
+
+pi
+
+mi
+
+di(q)
+
+!
+
+= 0 
+
+Hence, we have shown that ρ (Eq. (A-18) or (A-47) ) is the stationary solution of the Fokker-Planck equation (Eq. (A-46)). 20 B Inverting MASH Dynamics 
+
+B.1 MASH equations of motion 
+
+Here we repeat the equations of motion of MASH dynamics for an easier overview: 
+
+˙qi = pi
+
+mi
+
+˙pi = − ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz ) + 4 Vz (q)di(q)Sxδ(Sz ) − γmi
+
+pi + Fi(t)˙⃗S =⃗ H(q, p) ×⃗ S,⃗ H =
+
+
+
+02 PNi=1 di(q) pi
+
+> mi
+
+2Vz (q)
+
+
+
+˙⃗S =
+
+
+
+2 PNi=1 di(q) pi 
+
+> mi
+
+Sz − 2Vz (q)Sy
+
+2Vz (q)Sx
+
+−2 PNi=1 di(q) pi 
+
+> mi
+
+Sx
+
+
+
+B.2 Interpretation of time reversal 
+
+In configuration space, we want trajectories to retrace when momenta are inverted. Thus, any variable that appears “like a coordinate” should not change sign under time reversal. For that to happen, Sz should retrace its trajectory as well. Since it appears in the potential energy and in the force, it should not change sign upon time inversion. It behaves like a "position-like" variable. The equation of motion for Sz is 
+
+˙Sz = −q X
+
+> i
+
+di(q) pi
+
+mi
+
+Sx
+
+So if the momenta are inverted, ˙Sz changes sign (it needs to do that for the trajectory to go back in time) only if Sx
+
+does not change its sign. Therefore, Sx is a position-like (sign does not flip) variable as well. For the right hand side of the equation of motion of Sx to invert sign: 
+
+˙Sx = 2
+
+m
+
+X
+
+> i
+
+di(q)pi Sz − Vz (q)Sy
+
+Sy needs to be a momentum-like variable, i.e. , Sy changes sign if we move back in time. This is consistent with the equation for Sy :
+
+˙Sy = 2 Vz (q)Sx
+
+The RHS does not change sign under time reversal, as required for the equation of motion of a momentum-like variable. 
+
+B.3 Summary of Time Inversion Transformations 
+
+qi → qi
+
+pi → −pi
+
+Sx → Sx
+
+Sy → −Sy
+
+Sz → Sz
+
+21 C Phase space volume conservation (for γ = 0 )
+
+The volume in (q, p,⃗ S )–space (or Γ-space) is conserved if 
+
+> N
+
+X
+
+> i=1
+
+∂ ˙qi
+
+∂q i
+
++
+
+> N
+
+X
+
+> i=1
+
+∂ ˙pi
+
+∂p i
+
++
+
+> 3
+
+X
+
+> α=1
+
+∂ ˙Sα
+
+∂S α
+
+= 0 (A-55) Since 
+
+˙qi = pi
+
+mi
+
+(cf. Eq. (A-10)) we have X
+
+> i
+
+∂ ˙qi
+
+∂q i
+
+= X
+
+> i
+
+∂∂q i
+
+ pi
+
+m
+
+
+
+= 0 
+
+Next, with 
+
+˙pi = − ∂ ¯V∂q i
+
+− ∂V z
+
+∂q i
+
+sign( Sz )
+
+which contains no dependence on pi, we get X
+
+> i
+
+∂ ˙pi
+
+∂p i
+
+= 0 
+
+Thus, the dynamics in (q, p) conserve phase-space volume. Now, we consider the spin part: 
+
+˙Sα = ( ⃗H ×⃗ S)α
+
+such that X
+
+> α
+
+∂ ˙Sα
+
+∂S α
+
+= X
+
+> α
+
+∂∂S α
+
+
+
+(⃗H ×⃗ S)α
+
+
+
+Using the fully antisymmetric tensor ϵ
+
+(⃗ H ×⃗ S)α = X
+
+> ρ,ν
+
+ϵαρν HρSν ,
+
+we can expand the derivative as X
+
+> α
+
+∂∂S α
+
+(⃗H ×⃗ S)α = X
+
+> α,ρ,ν
+
+ϵαρν Hρ
+
+∂S ν
+
+∂S α
+
+Since ∂S ν
+
+∂S α
+
+= δαν ,
+
+we get X
+
+> α,ρ,ν
+
+ϵαρν Hρδαν = X
+
+> α,ρ
+
+ϵαρα Hρ = 0 
+
+because ϵαρα = 0 . Thus, 
+
+X
+
+> α
+
+∂ ˙Sα
+
+∂S α
+
+= 0 .
+
+And we can conclude that X
+
+> i
+
+∂ ˙qi
+
+∂q i
+
++ X
+
+> i
+
+∂ ˙pi
+
+∂p i
+
++ X
+
+> α
+
+∂ ˙Sα
+
+∂S α
+
+= 0 ,
+
+which means that the phase space volume is conserved .22 D Detailed Balance 
+
+Let Γ be the state vector and ¯Γ its inverted counterpart. 
+
+Γ =
+
+
+
+...
+
+qi
+
+...
+
+pi
+
+...
+
+Sx
+
+Sy
+
+Sz
+
+
+
+, ¯Γ =
+
+
+
+...
+
+qi
+
+...
+
+−pi
+
+...
+
+Sx
+
+−Sy
+
+Sz
+
+
+
+.
+
+Here, qi, S x, S z are even under time reversal, and pi, S y are odd. The condition for detailed balance is 
+
+ρ(Γ1) P (Γ1 → Γ2) = ρ(¯Γ2) P (¯Γ2 → ¯Γ1) (A-56) with probability distribution ρ and transition rates P . As a reminder, the stationary distribution is 
+
+ρ(Γ) = Q−1 exp 
+
+"
+
+−β X
+
+> i
+
+p2
+
+> i
+
+2mi
+
++ ¯V (q) + Vz (q) sign( Sz )
+
+!# 
+
+δ(|⃗S| − 1) 
+
+and the Fokker-Planck equation 
+
+∂f ∂t = −
+
+> m
+
+X
+
+> i=1
+
+∂∂Γi
+
+[μi(Γ, t )f (Γ, t )] + 
+
+> m
+
+X
+
+> i=1
+> m
+
+X
+
+> j=1
+
+∂2
+
+∂X i∂X j
+
+[Dij f (Γ, t )] ,
+
+with drift vector μ and diffusion matrix D defined in Eq. (A-35) and (A-40), respectively. 
+
+D.1 Time-reversal parity operator 
+
+Introduce εi such that 
+
+εi =
+
++1 , Γi even under time reversal ,
+
+−1, Γi odd under time reversal .
+
+and 
+
+¯Γ = εΓ =
+
+
+
+ε1Γ1
+
+ε2Γ2
+
+...
+
+εmΓm
+
+ .
+
+Using the parity operator the detailed balance expression becomes 
+
+ρ(Γ1) p(Γ1 → Γ2) = ρ(εΓ2) p(εΓ2 → εΓ1). (A-57) For our probability density function ρ we have 
+
+ρ(Γ) = ρ(εΓ) ,
+
+which means that the stationary distribution is invariant under time reversal. 
+
+D.2 Conditions for Detailed Balance 
+
+The following conditions are necessary and sufficient for detailed balance [42]: 
+
+εiμi(εΓ) ρ(Γ) = −μi(Γ)ρ(Γ) + X
+
+> j
+
+∂∂Γj
+
+(2 Dij ρ(Γ)) (A-58) 
+
+εiεj Dij (εΓ) = Dij (Γ) (A-59) 23 D.3 Check condition Eq. (A-58) As a reminder the elements of the time-reversal parity operator are: 
+
+εi =
+
+
+
++1 , i = 1 , . . . , N (positions: even) 
+
+−1, i = N + 1 , . . . , 2N (momenta: odd) 
+
++1 , i = 2 N + 1 , 2N + 3 (spin Sx, S z even) 
+
+−1, i = 2 N + 2 (spin Sy odd) 
+
+D.3.1 Case 1: positions ( i = 1 , . . . , N , εi = 1 )
+
+For the elements of μ corresponding to the position indices, we have 
+
+μi = pi
+
+mi
+
+such that εiμi(εΓ) = − pi
+
+mi
+
+.
+
+For these indices, diffusion does not contribute anything: 
+
+X
+
+> j
+
+∂∂Γj
+
+(Dij ρ(Γ)) = 0 
+
+Thus 
+
+εiμi(εΓ)ρ(Γ) = − pi
+
+mi
+
+ρ(Γ) = −μi(Γ)ρ(Γ),
+
+and the condition is satisfied for coordinates. 
+
+D.3.2 Case 2: momenta ( i = N + 1 , . . . , 2N , εi = −1)
+
+For these indices, the drift vector has the values 
+
+μi = − ∂ ¯V∂q i−N
+
+− ∂V z
+
+∂q i−N
+
+sign( Sz ) + 4 Vz di−N Sxδ(Sz ) − γmi−N
+
+pi−N
+
+Under time reversal of the vector, we obtain 
+
+εiμi(εΓ)ρ(Γ) = −
+
+
+
+− ∂ ¯V∂q i−N
+
+− ∂V z
+
+∂q i−N
+
+sign( Sz ) + 4 Vz di−N Sxδ(Sz ) + γmi−N
+
+pi−N
+
+
+
+ρ(Γ)
+
+and 
+
+−μi(Γ)ρ(Γ) = −
+
+
+
+− ∂ ¯V∂q i−N
+
+− ∂V z
+
+∂q i−N
+
+sign( Sz ) + 4 Vz di−N Sxδ(Sz ) − γmi−N
+
+pi−N
+
+
+
+ρ(Γ)
+
+such that 
+
+εiμi(εΓ)ρ(Γ) + μi(Γ)ρ(Γ) = −2γ pi−N
+
+mi−N
+
+ρ(Γ)
+
+As a reminder, the elements of the diffusion matrix are: 
+
+Dij =
+
+γk B T δ ij , j = N + 1 , . . . , 2N
+
+0, else The derivative of the diffusion term in Eq. (A-58) for the momenta indices is therefore 
+
+X
+
+> j
+
+∂∂Γj
+
+(2 Dij ρ(Γ)) = 2 γk B T
+
+> 2N
+
+X 
+
+> j=N+1
+
+∂ρ (Γ)
+
+∂p j−N
+
+δij = −2βγk B T pi−N
+
+mi−N
+
+ρ(Γ) = −2γ pi−N
+
+mi−N
+
+ρ(Γ).
+
+Hence, condition Eq. (A-58) is also fulfilled for the momenta. 24 D.3.3 Case 3: Spin components ( i = 2 N + 1 , 2N + 2 , 2N + 3 )
+
+For spin degrees of freedom we have Dij = 0 (cf. Eq. (A-40). Thus we only must check: 
+
+εiμi(εΓ)ρ(Γ) = −μi(Γ)ρ(Γ)
+
+For the left hand side, we have 
+
+εiμi(εΓ)ρ(Γ) = 
+
+ 1 ˙Sx(εΓ)
+
+−1 ˙Sy (εΓ)1 ˙Sz (εΓ)
+
+ ρ(Γ) = 
+
+
+
+−2 P 
+
+> i
+
+di(q) pi 
+
+> mi
+
+Sz + 2 Vz (q)Sy
+
+−2Vz (q)Sx
+
++2 P 
+
+> i
+
+di(q) pi 
+
+> mi
+
+Sx
+
+ ρ(Γ)
+
+and for the right hand side 
+
+−μi(Γ)ρ(Γ) = −
+
+1 ˙Sx(Γ)1 ˙Sy (Γ)1 ˙Sz (Γ)
+
+ ρ(Γ) = −
+
+
+
+2 P 
+
+> i
+
+di(q) pi 
+
+> mi
+
+Sz − 2Vz (q)Sy
+
++2 Vz (q)Sx
+
+−2 P 
+
+> i
+
+di(q) pi 
+
+> mi
+
+Sx
+
+ ρ(Γ)
+
+Thus, the condition holds for all spin degrees of freedom as well. 
+
+D.4 Check condition Eq. (A-59) For the diffusion matrix, we have: 
+
+εiεj Dij (εΓ) = Dij (Γ)
+
+This is true, because only the diagonal elements for the momentum indices are non-zero and constant. 
+
+D =
+
+0 0 00 γk B T In 00 0 0
+
+!
+
+In other words, the nonzero entries only for momenta mean that • indices i, j ∈ { N + 1 , . . . , 2N },• for these: εi = εj = −1,• thus εiεj = +1 .Such that for the momentum indices we have 
+
+εiεj Dij (εΓ) = Dij (Γ).
+
+and everywhere else Dij = 0 , so the condition holds trivially. Thus, condition Eq. (A-59) holds as well. 
+
+Hence, MASH dynamics satisfies detailed balance. 
+
+25 E Relation of the dynamics of ⃗ S to that of c+ and c−
+
+The wave function of a two-state system, can be written as 
+
+|Ψ⟩ = c− |ψ−(q)⟩ + c+ |ψ+(q)⟩ , (A-60) where the first term denotes the ground state and the second one denotes the excited state. In the adiabatic representation, the Schrödinger equation using the energy impression from Eq. (A-1) leads to the following equations of motion for the coefficients c− and c+
+
+˙c− = − i
+
+ℏ c−V−(q) − ˙q · F(q)c+ (A-61) 
+
+˙c+ = − i
+
+ℏ c+V+(q) + ˙ q · F(q)c− (A-62) where F = ⟨ψ−| ∂∂q |ψ+⟩ is the nonadiabatic coupling element. Note that F = −F∗.In order to connect the equations of motion for the coefficients with those of the spin vector, the elements of the spin vector are related to the coefficients by: 
+
+Sx = 2Re c∗
+
+> +
+
+c−
+
+ (A-63) 
+
+Sy = 2Im c∗
+
+> +
+
+c−
+
+ (A-64) 
+
+Sz = |c+|2 − | c−|2 (A-65) Taking the time derivatives 
+
+˙Sx = 2 ddt Re c∗
+
+> +
+
+c−
+
+ = 2 ddt
+
+ c∗
+
+> +
+
+c− + ( c∗
+
+> +
+
+c−)∗
+
+2 = ddt
+
+ c∗
+
+> +
+
+c− + c+c∗−
+
+
+
+= ˙ c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c− + ˙ c+c −∗ +c+ ˙c∗−
+
+= 2 ˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c− +   ˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c−
+
+∗
+
+2= 2Re  ˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c−
+
+ (A-66) Similarly, 
+
+˙Sy = 2 ddt Im c∗
+
+> +
+
+c−
+
+ = 2Im  ˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c−
+
+ (A-67) and 
+
+˙Sz = ddt
+
+ |c+|2 − | c−|2 = ddt
+
+ c∗
+
+> +
+
+c+ − c∗−c−
+
+
+
+= ˙ c∗
+
+> +
+
+c+ + c∗ 
+
+> +
+
+˙c+ − ˙c∗−c− − c∗− ˙c− . (A-68) Next, we will evaluate the mixed products of coefficients and their time derivatives, and use the assumption that F is real: 
+
+˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c− =
+
+
+
+− i
+
+ℏ c+V+ + ˙ q · F c−
+
+∗
+
+c− + c∗
+
+> +
+
+
+
+− i
+
+ℏ c−V− − ˙q · F c+
+
+
+
+= i
+
+ℏ V+c∗
+
+> +
+
+c− + ˙ q · F c∗−c− − i
+
+ℏ V−c∗
+
+> +
+
+c− − ˙q · F c∗
+
+> +
+
+c+
+
+Using Eq. (A-3) we obtain 
+
+˙c∗
+
+> +
+
+c− + c∗ 
+
+> +
+
+˙c− = 2i
+
+ℏ Vz (q)c∗
+
+> +
+
+c− − ˙q · F  |c+|2 − | c−|2 (A-69) The other products are 
+
+c∗ 
+
+> +
+
+˙c+ = c∗
+
+> +
+
+
+
+− i
+
+ℏ c+V+ + ˙ q · F c−
+
+
+
+= − i
+
+ℏ V+c∗
+
+> +
+
+c+ + ˙ q · F c∗
+
+> +
+
+c− = − i
+
+ℏ V+|c+|2 + ˙ q · F c∗
+
+> +
+
+c−
+
+26 and 
+
+c∗− ˙c− = c∗−
+
+
+
+− i
+
+ℏ c−V− − ˙q · F c+
+
+
+
+= − i
+
+ℏ V−c∗−c− − ˙q · F c∗−c+ = − i
+
+ℏ V−|c−|2 − ˙q · F c∗−c+
+
+Plugging the results into the expressions for ⃗ S (cf. eqs. (A-63), (A-64) and (A-65)), one obtains: 
+
+˙Sx = 2Re 
+
+ 2i
+
+ℏ Vz (q)c∗
+
+> +
+
+c− − ˙q · F  |c+|2 − | c−|2
+
+= 4 Vz
+
+ℏ Re  ic ∗
+
+> +
+
+c−
+
+ − 2 ˙ q · F Sz = −2 Vz
+
+ℏ 2Im  c∗
+
+> +
+
+c−
+
+ − 2 ˙ q · F Sz
+
+= −2 Vz
+
+ℏ Sy − 2 ˙ q · F Sz
+
+and 
+
+˙Sy = 2Im 
+
+ 2i
+
+ℏ Vz (q)c∗
+
+> +
+
+c− − ˙q · F  |c+|2 − | c−|2
+
+= 2Im 
+
+ 2i
+
+ℏ Vz (q)c∗
+
+> +
+
+c−
+
+
+
+= 2 Vz
+
+ℏ Re  c∗
+
+> +
+
+c−
+
+ = 2 Vz
+
+ℏ Sx
+
+and 
+
+˙Sz = 2 ˙ q · F Re( c∗
+
+> +
+
+c−) + 2 ˙ q · F Re( c∗
+
+> +
+
+c−) = 2 ˙ q · F 2Re( c∗
+
+> +
+
+c−) = 2 ˙ q · F Sx
+
+Thus, we arrive at the equations of motion 
+
+˙Sx = − 2Vz (q)
+
+ℏ Sy − 2 ˙ q · F Sz (A-70) 
+
+˙Sy = 2Vz (q)
+
+ℏ Sx (A-71) 
+
+˙Sz = 2 ˙ q · F Sx (A-72) Eqs. (A-70) , (A-71) and (A-72) are identical to the equations of motion from Mannouch et al. [ 27 ]. This means that, alternatively to propagating the spin vector, one can use the coefficients c+ and c− instead. 27 F Reflection of ⃗ S at frustrated transition 
+
+If there is a transition from the southern to the northern hemisphere of the Bloch sphere (or vice versa), or in the language of surface hopping a “hop", and the kinetic energy K is insufficient, K < 2Vz , the hop is frustrated. In this case, the Bloch vector ⃗ S is reflected at the equator. We assume a reflection takes place between time steps t and t + 1 .To the first (linear) approximation, the vector ⃗ S(t + ∆ t) is obtained by reflecting ⃗ S′(t + ∆ t), i.e., the vector calculated without reflection on the equator: 
+
+Sx(t + ∆ t) = S′
+
+> x
+
+(t + ∆ t)
+
+Sy (t + ∆ t) = S′ 
+
+> y
+
+(t + ∆ t)
+
+Sz (t + ∆ t) = −S′ 
+
+> z
+
+(t + ∆ t)
+
+Since we do not run the dynamics in ⃗ S, but rather in the coefficients c+ and c−, we need to implement the reflection in the coefficients c+ and c−. We write c′ 
+
+> +
+
+and c′− — the coefficients before the reflection — as 
+
+c′ 
+
+> +
+
+= r+eiφ +
+
+c′− = r−eiφ −
+
+The reflection is performed by exchanging the norms 
+
+c+ = r−eiφ + = c′
+
+> +
+
+r−
+
+r+
+
+c− = r+eiφ − = c′−
+
+r+
+
+r−
+
+.
+
+This changes ⃗ S in the following way: 
+
+Sx = 2Re[ c∗
+
+> +
+
+c−] = 2Re 
+
+
+
+c′∗ 
+
+> +
+
+r−
+
+r+
+
+c′−
+
+r+
+
+r−
+
+
+
+= 2Re[ c′∗  
+
+> +
+
+c′−] = S′ 
+
+> x
+
+(A-73) 
+
+Sy = 2Im[ c∗
+
+> +
+
+c−] = 2Im 
+
+
+
+]c′∗ 
+
+> +
+
+r−
+
+r+
+
+c′−
+
+r+
+
+r−
+
+
+
+= 2Im[ c′∗  
+
+> +
+
+c′−] = S′ 
+
+> y
+
+(A-74) 
+
+Sz = |c+|2 − | c−|2 = r2 
+
+> −
+
+− r2+ = −(r2+ − r2
+
+> −
+
+) = −S′ 
+
+> z
+
+(A-75) Hence, exchanging the norms r+ and r− leaves Sx and Sy invariant, but changes the sign of Sz , exactly as intended. In the reversible implementation of the MASH dynamics used in this work, however, whether a hop is frustrated can be known exactly when the spin vector crosses the equator. Therefore, the need to reflect Sz as a electronic variable readjustment vanishes. Once the nonadiabatic coupling vector component of velocity is reflected, ˙Sz is inverted automatically, and this reflects the spin vector off the equator. 28 G Inversion of Coefficients 
+
+The following derivation is true for two or multiple pairwise-coupled electronic states. The total electronic wave function is written as a linear combination of electronic basis states |ψi⟩:
+
+|Ψ( t)⟩ = X
+
+> i
+
+ci |ψi⟩ . (A-76) While the electronic wave function spans all states, the classical nuclei evolve at each time step on a single active 
+
+potential energy surface. In the unSMASH [ 33 ] formulation of MASH, a generalization that treats more than two electronic states, the coupling between the active state and each of the remaining states are represented by Ns − 1 Bloch spheres, where Ns is the total number of electronic states. For each Bloch sphere, the corresponding spin vector ⃗ S can be obtained directly from the electronic amplitudes: 
+
+Sx = 2 Re[ c∗
+
+> act
+
+cλ] , (A-77) 
+
+Sy = 2 Im[ c∗
+
+> act
+
+cλ] , (A-78) 
+
+Sz = |cact |2 − | cλ|2 , (A-79) where cact denotes the coefficient of the active state and cλ that of the coupled state. As shown in Section B, under time inversion the components Sx and Sz remain unchanged, whereas Sy changes sign. Because most nonadiabatic dynamics engines propagate only the coefficients ci, time inversion of the Bloch sphere must be implemented through a transformation of the coefficients instead. Complex conjugation of all coefficients produces exactly the required transformation: 
+
+ci −→ c∗ 
+
+> i
+
+, (A-80) for all i.
+
+G.1 Proof 
+
+Each electronic coefficient can be written as 
+
+ci = Re[ ci] + i Im[ ci] ,
+
+so that its complex conjugate is 
+
+c∗ 
+
+> i
+
+= Re[ ci] − i Im[ ci] .
+
+The mixed product entering the Bloch-sphere components is 
+
+c∗
+
+> act
+
+cλ = Re[ cact ] Re[ cλ] + Im[ cact ] Im[ cλ] − i Im[ cact ] Re[ cλ] + i Re[ cact ] Im[ cλ] .
+
+We now examine the three components individually. 
+
+Sx: Since 
+
+Sx(cact , c λ) ∝ Re[ c∗
+
+> act
+
+cλ] = Re[ cact ] Re[ cλ] + Im[ cact ] Im[ cλ],
+
+complex conjugation of all coefficients leaves Sx invariant: 
+
+Re[( c∗
+
+> act
+
+)∗(c∗
+
+> λ
+
+)] = Re[ cact c∗
+
+> λ
+
+] = Re[ cact ] Re[ cλ] + Im[ cact ] Im[ cλ] = Re[ c∗
+
+> act
+
+cλ] ∝ Sx(cact , c λ) .
+
+Sz : Because 
+
+Sz (cact , c λ) = |cact |2 − | cλ|2,
+
+and the modulus is invariant under complex conjugation, 
+
+Sz (c∗
+
+> act
+
+, c ∗
+
+> λ
+
+) = |cact |2 − | cλ|2 = Sz (cact , c λ) .
+
+Sy : For the imaginary component we have 
+
+Sy (cact , c λ) = 2 Im[ c∗
+
+> act
+
+cλ] .
+
+Under conjugation, 
+
+Im[( c∗
+
+> act
+
+)∗c∗
+
+> λ
+
+] = Im[ cact c∗
+
+> λ
+
+] = − Im[ c∗
+
+> act
+
+cλ] ,
+
+which yields 
+
+Sy (c∗
+
+> act
+
+, c ∗
+
+> λ
+
+) = − Sy (cact , c λ) .
+
+Together, these relations demonstrate that complex conjugation of all coefficients produces the correct time-inversion transformation of the spin vector ⃗ S.29 H Numerical Accuracy with Naive Velocity-Verlet 
+
+To verify the practical time reversibility of the implementation, we performed a series of forward–backward propagation tests using three different initial conditions ( q = 1 .0 a.u., c = (1 .0, 0.0) ⊤): (i) high kinetic energy ( v = −0.5 a.u.), leading to multiple hops; (ii) moderate kinetic energy ( v = −0.05 a.u.), producing fewer hops; and (iii) low kinetic energy ( v = −0.002 a.u.), resulting in purely adiabatic dynamics. Trajectories without hops are perfectly reversible for both implementations. However, for trajectories involving electronic transitions, the naive velocity-Verlet implementa-tion accumulates significant deviations after forward–backward propagation, as summarized in Table 2. In contrast, simulations employing the line-search procedure remain reversible up to machine precision. The absolute percentage error (APE) quantifies the relative deviation between the initial phase-space point and the configuration obtained after propagating N steps forward and subsequently N steps backward. For reference, the initial coordinate is q = 1 .0 a.u., so an error of 400% in the coordinate corresponds to an absolute deviation of roughly 
+
+4 a.u., indicating that the trajectory fails to return even approximately to the starting configuration. Similarly, for the moderate-velocity case ( v = −0.05 a.u.), an APE of 17 .5% in the velocity corresponds to an absolute deviation of approximately 8.7 × 10 −3 a.u. For the electronic coefficient, an APE of 64% corresponds to a deviation of about 0.64 
+
+in |c0|, meaning that the final electronic population differs substantially from the initial pure ground-state configuration. The errors grow rapidly with increasing trajectory length whenever surface hops occur. For example, for the moderate-velocity case ( v = −0.05 a.u.), the coordinate error increases from less than 1% at N = 500 to nearly 400% after 1000 
+
+steps, demonstrating a complete loss of reversibility. This behavior arises because, in the conventional velocity-Verlet implementation, the change of electronic state is only detected after completion of a nuclear time step. As a result, the potential energy surface governing the nuclear propagation during a hop differs depending on the direction of time, which breaks microscopic reversibility. These results highlight that even relatively small inconsistencies in the treatment of surface hops can accumulate dramatically during longer trajectories. By contrast, when the piecewise propagation with line search is employed, the forward and backward trajectories retrace each other exactly within numerical precision, restoring strict time reversibility. Table 2: Absolute percentage error (APE) between the initial conditions and the values obtained after one for-ward–backward propagation cycle using the naive velocity-Verlet implementation. The system is propagated forward for N integration steps and subsequently propagated backward for the same number of steps. The reported errors quantify the loss of reversibility introduced by the conventional integration scheme when surface hops occur. Results are shown for two initial velocities that trigger nonadiabatic transitions. Observable Initial velocity (a.u.) N = 100 N = 500 N = 1000 N = 1500 
+
+q −0.05 0.20 0.29 399 381 
+
+q −0.5 0.053 0.19 0.29 400 
+
+v −0.05 0.00037 0.037 4.32 17.48 
+
+v −0.5 0.069 0.039 0.040 0.36 
+
+|c0| −0.05 0.928 5.70 25.86 64.49 
+
+|c0| −0.5 4.46 6.62 9.73 20.47 30 I Analytical Properties of the Model System 
+
+The model system used in this work consists of two coupled harmonic diabatic potentials (see Eq. (13) in the main text). Owing to the simple analytic form of the Hamiltonian, all quantities required for the dynamical simulations can be obtained analytically. 
+
+I.1 Adiabatic Energies 
+
+Diagonalization of the diabatic Hamiltonian yields the adiabatic energies 
+
+E±(q) = 
+
+q2 + 1 ±
+
+s
+
+4q2 +
+
+ Vc
+
+ϵ
+
+2
+
+ ϵ , (A-81) where the symbols + and − denote the excited and ground electronic states, respectively. The two adiabatic surfaces form an avoided crossing centered at q = 0 , where the energy gap between the states is minimal. 
+
+I.2 Nonadiabatic Coupling 
+
+The nonadiabatic coupling between the two adiabatic states is defined as 
+
+d−+(q) = 
+
+⟨ψ− dH 
+
+> dq
+
+ψ+⟩
+
+E+ − E−
+
+. (A-82) For the present model this quantity can be evaluated analytically, yielding 
+
+|d−+(q)| = ϵ|Vc|
+
+4ϵq 2 + V 2
+
+> c
+
+. (A-83) This expression shows that the nonadiabatic coupling is maximal at the avoided crossing ( q = 0 ) and decays with increasing distance from the crossing seam. 
+
+I.3 Dependence on the Electronic Coupling 
+
+The spatial localization of the nonadiabatic coupling depends strongly on the magnitude of the off-diagonal coupling parameter Vc. For small Vc, Eq. (A-83) becomes sharply peaked near q = 0 , leading to highly localized coupling between the two adiabatic states. In this regime, population transfer between the states occurs predominantly in the immediate vicinity of the crossing seam. As Vc increases, the coupling becomes progressively broader in space. The rate of change of the coupling magnitude with respect to Vc is given by 
+
+d|d−+|
+
+dVc
+
+= ϵ(4 ϵq 2 + V 2 
+
+> c
+
+) − 2ϵV 2
+
+> c
+
+(4 ϵq 2 + V 2 
+
+> c
+
+)2 . (A-84) Because this dependence is approximately inverse quadratic in Vc, increasing the coupling parameter rapidly reduces the localization of the nonadiabatic coupling around the crossing seam. Consequently, electronic population transfer can occur over a wider range of nuclear coordinates. 31 J Proof of Rapid Equilibration 
+
+Even when choosing a much lower target temperature of 1000 K for the transition path sampling, the transition time of paths equilibrates rapidly to the baseline average at that temperature, as shown in Figure 6 from the initial 44,000 K. Rarely are longer paths sampled. This shows that by discarding the first 15% of all paths, we ensure that the path ensemble statistics are done under full thermal equilibrium. 
+
+Figure 6: Path transition time with MC steps in the path space overlaying with the moving average of transition time of 200 paths at 1000 K. Under the Ornstein-Uhlenbeck perturbation α = 0 .9, equilibration is rapid (initial part of the gray line), and the discard ratio chosen is considered to be sufficient. 32
