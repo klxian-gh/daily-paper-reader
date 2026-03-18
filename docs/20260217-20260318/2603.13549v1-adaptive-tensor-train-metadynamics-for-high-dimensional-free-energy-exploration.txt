@@ -1,0 +1,748 @@
+Title: Adaptive tensor train metadynamics for high-dimensional free energy exploration
+
+URL Source: https://arxiv.org/pdf/2603.13549v1
+
+Published Time: Tue, 17 Mar 2026 00:46:26 GMT
+
+Number of Pages: 39
+
+Markdown Content:
+# Adaptive tensor train metadynamics for high-dimensional free energy exploration 
+
+## Nils E. Strand, †,‡ Siyao Yang, ‡,¶ Yuehaw Khoo, ‡,¶ and Aaron R. Dinner ∗,§,†,¶
+
+†James Franck Institute, University of Chicago, Chicago, Illinois, 60637, United States 
+
+‡Department of Statistics, University of Chicago, Chicago, Illinois, 60637, United States 
+
+¶Committee on Computational and Applied Mathematics, University of Chicago, Chicago, Illinois, 60637, United States 
+
+§Department of Chemistry, University of Chicago, Chicago, Illinois, 60637, United States 
+
+E-mail: dinner@uchicago.edu 
+
+Abstract 
+
+A key challenge for molecular dynamics simulations is efficient exploration of free energy landscapes over relevant collective variables (CV). Common methods for en-hancing sampling become prohibitively inefficient beyond only a few CVs; in the case of the widely-used metadynamics method, the computational cost of evaluating and storing the bias potential grows exponentially with the number of dimensions. Here, we introduce TT-Metadynamics, in which the accumulated sum of Gaussian functions in the original metadynamics method is periodically compressed into a low-rank ten-sor train (TT) representation. The TT enables efficient memory use and prevents the computational cost of evaluating the bias potential from increasing with simulation time. We present a “sketching” algorithm that allows us to construct the TT with lin-ear scaling in the number of CVs. Applied to benchmark systems with up to 14 CVs, the accuracy of TT-Metadynamics matches or exceeds that of standard metadynamics in long simulations, particularly in systems with high barriers. These results establish 
+
+1
+
+> arXiv:2603.13549v1 [physics.chem-ph] 13 Mar 2026 TT-Metadynamics as a scalable and effective method for computing free energies that are functions of several CVs.
+
+# 1 Introduction 
+
+Over the past few decades, advances in molecular dynamics (MD) algorithms and computer hardware have enabled the simulation of complex molecular phenomena across physics, chem-istry, and biology. These include long-timescale processes such as protein folding, 1–3 voltage sensing in ion channels, 4,5 and drug–target binding. 6 Although the underlying equations of motion are simple, a central challenge in studying molecular systems is that they have many metastable states, and traversing the (free) energy barriers between them can take exorbi-tant amounts of time in unbiased simulations. For the above examples, parallelization has allowed a handful of transition events to be observed in unbiased simulations, 1,4,6 but these simulations do not provide sufficient statistics to accurately estimate thermodynamics and kinetics. Enhanced sampling methods bridge separations of timescales by increasing the probabil-ities of rare but important states to facilitate the recovery of unbiased statistics. 7 A popular example of such an approach is metadynamics. 8 The idea behind metadynamics is to build a bias potential adaptively as a sum of Gaussian functions centered on positions explored by the simulation, which encourages escape from metastable states and, in turn, repeated transitions between them. The bias potential is generally expressed as a function of one or more order parameters or collective variables (CV) that are computed from the Cartesian coordinates used for numerical integration. If the Gaussian heights are tempered as a func-tion of the accumulated bias, as in well-tempered metadynamics ,9 the resulting bias potential can be shown to converge to a scaled negative of the potential of mean force (PMF) along the chosen CVs. 10 
+
+The particular choice of CVs has a strong influence on the amount of simulation time 2required to converge. For systems such as small peptides (e.g., alanine dipeptide, polyala-nines), backbone dihedral angles are common choices for CVs. Some fast-folding proteins are sufficiently well-characterized so that specific CVs that give good control of sampling are established. 2,11–17 However, as the complexity of the system increases, it becomes harder to identify such useful CVs. 18 In its original formulation, 8 metadynamics performs well only when the number of CVs is limited to a small number (typically two or three), since the volume of the CV space to be explored grows exponentially with dimension. This limitation presents a chicken-and-egg problem: CVs that provide good control of sampling are usually not known before simulations are run. When some simulation data are available, one strategy is to use generated data to identify a small number of CVs by unsupervised dimensional reduction. Methods include principal component analysis (PCA), 19 diffusion maps, 20 and autoencoders. 21–24 Perhaps the most successful and thus widely-used unsupervised dimensional reduction methods use two time points to identify slow modes. 25–31 However, these methods can require significant amounts of data. More fundamentally, there is no reason that unsupervised methods should identify the variables that are most important for sampling transitions of interest (i.e., that the properties they optimize align with the scientific problem). An alternative strategy is to modify the sampling algorithm to be able to simultaneously explore a large number of CVs with the hope that they encompass—either in tandem or as a combination—the modes of motion that are important for the transitions of interest. Metadynamics methods that are compatible with biasing along more than three variables at a time have thus been developed. An early such approach, bias-exchange metadynamics, runs multiple parallel simulations, each biasing along a single variable, with configuration exchanges between replicas proposed periodically and accepted or rejected based on the Metropolis criterion. 14,15 This method scales more favorably with the number of CVs than standard metadynamics but remains limited by the fact that inter-variable correlations enter indirectly through replica exchange rather than the bias potential. For example, in the origi-3nal application to the Trp-cage miniprotein, only five CVs were used. 14 More fundamentally, bias-exchange metadynamics does not yield a free energy as a function of all biased variables jointly, but rather a collection of low-dimensional free energy projections. More recently, machine learning methods that incorporate many CVs have been inte-grated with metadynamics. For example, Galvelis and Sugita 32 proposed a method in which the high-dimensional bias potential is represented using artificial neural networks that are trained on the fly with the aid of nearest-neighbor density estimation; they were able to achieve converged results with up to eight CVs. Zhang et al. 33 also represented the bias potential with neural networks and developed a training scheme using an analogy to rein-forcement learning with a reward function based on statistical uncertainty; they presented examples with up to 20 CVs. These methods show the promise of machine learning for meta-dynamics but also make clear that neural networks can be poorly behaved in regions with sparse sampling. As such, enhanced sampling based on bias potentials obtained by machine learning continues to be an active area of research. Tensor decompositions offer a way of representing high-dimensional functions comple-mentary to neural networks. Although neural networks are trained iteratively through gra-dient descent to approximate nonlinear functions, tensor decompositions are grounded in numerical linear algebra and construct low-rank representations through well-established operations such as singular value decompositions and least-squares solves. 34 Biasing strate-gies centered on tensor decompositions were previously applied to the adaptive biasing force (ABF) method. 35 In contrast to metadynamics, which constructs a history-dependent bias potential, the ABF framework estimates and applies the mean force along the reaction co-ordinates directly, with the goal of flattening the free energy landscape through force-based rather than potential-based biasing. However, in its standard form, ABF suffers from the same limitations in the number of CVs. 36 Ehrlacher et al. 35 introduced a variant of ABF in which the free energy is approximated as a memory-efficient sum of separable tensor prod-ucts of one-dimensional functions. The authors established rigorous long-time convergence 4and consistency results for the resulting algorithm and demonstrated numerically that tensor approximations can capture correlations between reaction coordinates in systems with up to five dimensions. Their study focuses primarily on theoretical guarantees and proof-of-concept numerical experiments, leaving open questions regarding algorithmic optimization, integration into large-scale molecular dynamics engines, and performance in substantially higher-dimensional settings. Motivated by the studies above, 32,33,35 here, we develop a form of metadynamics that uses a compact tensor decomposition known as a tensor train (TT) 34 to represent the bias potential. TTs have shown great success in quantum many-body physics, where they are widely known as matrix product states (MPS), 37–39 in data science, 40–42 and in applied mathematics. 43,44 In the context of molecular dynamics, TTs have previously been used to approximate the dynamical evolution (Koopman) operator. 29,45 As we elaborate, TT-based algorithms generalize matrix factorization methods such as QR and singular value decomposition (SVD) to higher-dimensional tensors. The starting point for our method is a version of metadynamics that stores the bias potential on a grid, 46 and where the cost of evaluating the bias potential is therefore constant. However, the memory requirement for grid storage scales exponentially with dimension. 46 
+
+Alternatively, one could compute the bias potential as a sum over the full list of Gaussian functions. Because this list grows without bound, the computational cost to evaluate the bias potential would increase linearly with simulation time, rendering this strategy unappealing. The essential idea of our approach is to replace grid storage with TT storage. With the TT, the cost of evaluating the bias potential is still constant, and the memory grows only linearly with dimension. We achieve this improvement without significant overhead through an efficient compression algorithm that scales linearly with both the dimensionality and the number of Gaussian functions. In addition to compressing the bias potential efficiently, the TT factorization introduces a form of regularization that accelerates convergence by preventing overfitting to localized, undersampled regions of the CV space. We demonstrate 5our method by computing PMFs that are functions of up to 14 CVs for peptides. 
+
+# 2 Methods 
+
+## 2.1 Background 
+
+2.1.1 Metadynamics 
+
+We begin by summarizing the standard metadynamics algorithm, as originally developed by Laio and Parrinello. 8 We are interested in classical systems that move according to a potential function V ≡ V (r), where r is the position of the molecule in Cartesian coordinates. Metadynamics adaptively constructs a bias potential, which is expressed as a function of a chosen set of collective variables (CV) (Vbias ≡ Vbias (x)) , which are themselves functions of the positions of particles (x ≡ x(r)) . Practically, the metadynamics kernels take the form of Gaussian functions with diagonal covariance matrices. A standard metadynamics bias potential takes the form 
+
+V MetaD bias (x) = X
+
+> i
+
+Gi(x)= X
+
+> i
+
+hi exp 
+
+
+
+−|x − xi|2
+
+2σ2
+
+
+
+, (1) where xi is the center position of Gaussian i, hi is its height, and σ is a constant vector of bandwidths assigned to each dimension. It is customary to store the bias potential in a multidimensional grid and update this grid every ω timesteps. 46 The memory requirement of this strategy scales exponentially with the number of CVs, or the number of dimensions D. For computations involving a single compute node (375 GB RAM limit) in the Midway3 cluster within the UChicago Research Computing Center, grid storage is infeasible for D ≥ 6.62.1.2 Tensor trains 
+
+The central idea of the paper is that we can efficiently represent a bias potential that is a function of D CVs using a tensor train (TT) representation. In this section, we briefly review TTs. A D-dimensional tensor P can be represented in TT format if it admits the factorization 34 
+
+P(i1, . . . , i D) = 
+
+> r1
+
+X
+
+> α1=1
+
+· · · 
+
+> rD−1
+
+X
+
+> αD−1=1
+
+G1(i1, α 1)G2(α1, i 2, α 2) · · · GD(αD−1, i D), (2) where the cores G1, . . . , G D are order-3 tensors (except the first and last cores, which are order-2). The main advantage of the TT format is that the memory required to store it scales linearly with D. The tuple (r1, . . . , r D−1) denotes the collection of TT ranks, where each rk is the “bond dimension” between the kth and (k + 1) th TT cores. These ranks are typically small in practice. The low-rank TT format also allows for a linear computational cost of tensor evaluations and various fundamental algebraic operations such as summations, Hadamard products, in-ner products, and integration. In this format, the full tensor value P(i1, . . . , i D) is computed via contractions between the TT cores. Specifically, a contraction refers to a summation over a shared index between two tensors, i.e., the auxiliary indices αk connecting the cores 
+
+Gk and Gk+1 . By contracting all intermediate indices, one sequentially reduces the network of TT cores to a single scalar output. Eq. (2) can be represented graphically as Fig. 1(a). Each core Gk(αk−1, i k, α k) is rep-resented as a node labeled Gk; its indices are represented by the attached edges (“legs”). Whenever two nodes are connected by a common leg, the corresponding index is contracted. There are several existing methods for compressing a high-dimensional tensor into a TT. A classical approach is the TT-SVD algorithm, 34 which constructs the TT representation by repeatedly reshaping the full tensor into matrices, that is, grouping subsets of indices into rows and columns, and applying singular value decompositions (SVDs) to these matrices. 7(a) Tensor train (b) Functional tensor train 
+
+Figure 1: Tensor diagrams illustrating tensor trains (TT). (a) TT representation of the 
+
+D-dimensional tensor defined in Eq. (2). Each vertical solid leg represents a (discrete) coefficient index ik, and each horizontal solid leg represents an (discrete) auxiliary index αk.A horizontal connection between two cores indicates contraction over the associated auxiliary index. (b) Functional TT representation for the bias potential, as in Eq. (3), showing the contraction of the coefficient tensor with a product of univariate basis functions ϕ(k) 
+
+> ik
+
+(xk) for each collective variable xk. Each vertical dashed leg represents a (continuous) coordinate xk,and correlations between different dimensions are mediated by the horizontal solid auxiliary indices. However, since the tensor size grows exponentially with dimension, TT-SVD suffers from the curse of dimensionality in both storage and computation. Another widely used method is TT-Cross, 41 which constructs a TT representation based on interpolation pivots. Although effective in many settings, TT-Cross often requires multiple sweeps across dimensions to identify near-optimal pivots, making the overall computational complexity difficult to con-trol. In this work, we employ TT-Sketch, a method developed and refined by Khoo and co-workers. 43,47,48 As detailed in Section 2.3.1, TT-Sketch leverages randomized “sketching” techniques 49,50 to replace full SVDs with a sequence of tractable linear algebra problems. Unlike TT-Cross, TT-Sketch is one-shot and purely linear algebraic. These properties lead to computational complexity that scales linearly with the number of dimensions, making TT-Sketch well-suited for high-dimensional enhanced sampling frameworks such as the one presented here. 82.2 TT-Metadynamics 
+
+The core algorithm is outlined in Algorithm 1. The main idea of our proposed framework is to compress the sum of Gaussian kernels, each of which is deposited every ω timesteps, into a TT. This compression is carried out every τ timesteps. The bias potential Vbias (x) is defined in a continuous domain and is represented by a product basis expansion constructed from selected univariate orthogonal basis functions ϕ(k) 
+
+> i
+
+(xk) along each dimension k. The corresponding coefficient Pbias is approximated by a low-rank TT as Eq. (2), resulting in the following functional TT representation for the bias potential: 
+
+Vbias (x1, . . . , x D) = 
+
+> n1
+
+X
+
+> i1=1
+
+· · · 
+
+> nD
+
+X 
+
+> iD=1
+
+Pbias (i1, . . . , i D)ϕ(1)  
+
+> i1
+
+(x1) · · · ϕ(D) 
+
+> iD
+
+(xD), (3) where ik is a discrete index iterating over the nk basis functions defined along the dimension 
+
+k. For simplicity, we adopt the same family of Fourier basis functions for all dimensions: 
+
+ϕi(x) = 
+
+
+
+(2 L)−1/2, i = 1 ,
+
+(L)−1/2 cos [ π(x − a)⌊i/ 2⌋/L ] , mod ( i, 2) = 0 ,
+
+(L)−1/2 sin [ π(x − a)⌊i/ 2⌋/L ] , otherwise ,
+
+(4) where L is half the length of the domain of xk and a is the position of the midpoint of the domain. The tensor diagram for Eq. (3) is shown in Fig. 1(b), where each core of the TT representation of the coefficient tensor Pbias connects to the chosen set of Fourier basis functions. The correlation structure of the high-dimensional bias potential is captured by the coefficient tensor Pbias . After obtaining the cores in Pbias , the bias potential can be evaluated using Eq. (3). The computational cost of this evaluation is independent of the number of metadynamics kernels and therefore much cheaper than the cost of adding the entire list of Gaussians accumulated in Eq. (1). 9Algorithm 1 TT-Metadynamics 
+
+Input: Initial r and v, vTT (x) := 0 , ˆv(x) := 0  
+
+> 1:
+
+define Vbias (x) = vTT (x) + ˆ v(x) 
+
+> 2:
+
+for every MD step i do  
+
+> 3:
+
+Compute CV values, xt := x(r) 
+
+> 4:
+
+if ( mod ( i, ω ) = 0 ) then  
+
+> 5:
+
+ˆv(x) := ˆ v(x) + h(t) exp −12
+
+x − xt
+
+σ
+
+> 2
+
+! 
+
+> 6:
+
+end if  
+
+> 7:
+
+if ( mod ( i, τ ) = 0) then  
+
+> 8:
+
+vTT (x) := TT-Sketch (Vbias (x))  
+
+> 9:
+
+ˆv(x) := 0  
+
+> 10:
+
+end if  
+
+> 11:
+
+Fi := −∂V (r)
+
+∂r i
+
+− ∂V bias (x)
+
+∂x x
+
+∂x(r)
+
+∂r i
+
+▷ with kernel smoothing  
+
+> 12:
+
+Propagate r and v by ∆t 
+
+> 13:
+
+end for 
+
+The coefficient tensor can be written in the general form 
+
+Pbias ≡ P prev bias + PMetaD bias , (5) where Pprev bias is the coefficient TT obtained from the previous TT-Sketch procedure ( Pprev bias is zero in the first TT-Sketch) and PMetaD bias is the contribution from the running list of Gaussian functions. Using the orthogonality of the Fourier bases, the latter tensor admits the closed form 
+
+PMetaD bias (i1, . . . , i D) = 
+
+Z
+
+· · · 
+
+Z
+
+V MetaD bias (x1, . . . , x D)ϕi1 (x1) · · · ϕiD (xD) dx1 · · · dxD. (6) Computing the entries of PMetaD bias requires evaluations of inner products between the metady-namics Gaussian functions Gi(x) defined in Eq. (1) and the Fourier basis functions defined in Eq. (4). Assuming the factorization Gi(x) = QDk=1 gik(xk), where gik(xk) is a univariate Gaus-sian function defined along dimension k, inserting the definition of V MetaD bias in (1) produces a 10 Figure 2: Tensor diagram illustrating the closed form (7) of PMetaD bias . Here we omit the scalar weights hi in the tensor diagram for simplicity. factorization of PMetaD bias involving a sum of rank-one functions: 
+
+PMetaD bias (i1, . . . , i D) = X
+
+> i
+
+hif ii1 f ii2 · · · f iiD , (7) where f iik = R gik(x)ϕik (x)dx, expressed as 
+
+f iik =
+
+
+
+hi(π/L k)1/2σk, ik = 1 ,
+
+exp 
+
+h
+
+−(πσ k ⌊ik /2⌋)2
+
+> 2L2
+
+i
+
+(2 π/L k)1/2σk cos[ π(xi,k − ak)⌊ik/2⌋/L k], mod ( ik, 2) = 0 ,
+
+exp 
+
+h
+
+−(πσ k ⌊ik /2⌋)2
+
+> 2L2
+
+i
+
+(2 π/L k)1/2σk sin[ π(xi,k − ak)⌊ik/2⌋/L k], otherwise .
+
+(8) The tensor diagram representation of the formula above is given by Fig. 2. 
+
+## 2.3 TT-Sketch 
+
+As noted above, we compress Pbias into a TT format with TT-Sketch (Algorithm 2). 43,47,48 
+
+For D CVs and N Gaussians in the bias potential, the computational complexity of TT-Sketch is only O(DN ).In TT-Sketch, the desired tensor cores G1, . . . , G D are determined using a system of independent linear core-determining equations of the general form: 
+
+> Rk−1
+
+X
+
+> αk−1=1
+
+Ak(βk−1, α k−1)Gk(αk−1, i k, α k) = Bk(βk−1, i k, α k), (9) 11 Algorithm 2 TT-Sketch 
+
+Input: Coefficient tensor Pbias stored implicitly as (5) and (7), target TT rank rk, and sketch matrices Sk ∈ Rn1··· nk ×Rk , Tk ∈ Rnk+1 ··· nD ×Rk for k = 1 , . . . , D − 1.
+
+Output: Rank-rk TT approximation of Pbias with trimmed tensor cores ¯G1 ∈ Rn1×r1 , ¯G2 ∈
+
+Rr1×n2×r2 , . . . , ¯GD ∈ RrD−1×nD .
+
+1: G1(i1, α 1) := P 
+
+> i2: D
+
+Pbias (i1, i 2: D)T1(i2: D, α 1).
+
+2: for k = 2 , . . . , D − 1 do 
+
+3: A+ 
+
+> k
+
+≡ pseudoinverse (Ak)
+
+4: Gk(αk−1, i k, α k) := PRk−1 
+
+> βk−1=1
+
+A+ 
+
+> k
+
+(αk−1, β k−1)Bk(βk−1, i k, α k).
+
+5: end for 
+
+6: AD(βD−1, α D−1) := P
+
+> i1: D−1
+
+P 
+
+> iD
+
+SD−1(i1: D−1, β D−1)Pbias (i1: D−1, i D)TD−1(iD, α D−1).
+
+7: BD(βD−1, i D) := P 
+
+> i1: D−1
+
+SD−1(i1: D−1, β D−1)Pbias (i1: D−1, i D).
+
+8: A+ 
+
+> D
+
+≡ pseudoinverse (AD)
+
+9: GD(αD−1, i k) := PRD−1 
+
+> βD−1=1
+
+A+
+
+> D
+
+(αD−1, β D−1)BD(βD−1, i D).
+
+10: Rank-rk SVD Ak ≈ UkΣkW Tk . ▷ Trimming 
+
+11: ¯G1(i1, γ 1) := PR1 
+
+> α1=1
+
+G1(i1, α 1)W2(α1, γ 1).
+
+12: for k = 2 , . . . , D − 1 do 
+
+13: ¯Gk(γk−1, i k, γ k) := PRk−1
+
+> αk−1=1
+
+PRk  
+
+> αk=1
+
+Wk(αk−1, γ k−1)Gk(αk−1, i k, α k)Wk+1 (αk, γ k).
+
+14: end for 
+
+15: ¯GD(γD−1, i D) := PRD−1 
+
+> αD−1=1
+
+WD(αD−1, γ D−1)GD(αD−1, i D).
+
+16: return ¯G1, ¯G2, . . . , ¯GD
+
+where the matrices Ak and tensors Bk are, respectively, defined as 
+
+Ak(βk−1, α k−1) = X
+
+> i1: k−1
+
+X
+
+> ik:D
+
+Sk−1(i1: k−1, β k−1)Pbias (i1: k−1, i k:D)Tk−1(ik:D, α k−1),Bk(βk−1, i k, α k) = X
+
+> i1: k−1
+
+X
+
+> ik+1: D
+
+Sk−1(i1: k−1, β k−1)Pbias (i1: k−1, i k, i k+1: D)Tk(ik+1: D, α k).
+
+In each equation, we use the shorthand il:m to denote the grouped multi-index (il, i l+1 , . . . , i m).With this convention, Pbias (i1: k−1, i k:D) and Pbias (i1: k−1, i k, i k+1: D) are the matrix and third-order tensor, respectively, obtained by reshaping the original D-dimensional tensor; {Sk(i1: k, β k)}Rk 
+
+> βk=1
+
+and {Tk(ik+1: D, α k)}Rk  
+
+> αk=1
+
+are, respectively, the left and right sketch matrices , where the sketch size Rk ∼ O(1) is a parameter chosen independently of D. The sketch matrices are used to reduce the exponentially large dimension of the reshaped Pbias to O(DR 2
+
+> k
+
+) in size. The cases k = 1 and k = D require special treatment, as indicated in Algorithm 2. To visualize 12 these equations, a four-dimensional example of this procedure is shown in Fig. S1 in the Supporting Information. The last step of TT-Sketch is “trimming.” After solving the core-determining equations, we obtain a TT whose rank is the sketch size Rk instead of the target rank rk. In practice, the sketch size is usually chosen to be considerably larger than the target rank, resulting in an overdetermined system of core-determining equations. This “oversampling” ensures stability when solving the linear system. To further reduce the rank to the target rk, we perform a rank-rk singular value decomposition (SVD) on the matrices Ak and then “trim” the oversketched TT by inserting the projector WkW Tk , i.e., a resolution of the identity, between every two adjacent cores. The trimming procedure is detailed in Algorithm 2 and depicted in Fig. S2 in the Supporting Information. In this work, we choose the target rank such that the residual error of truncated SVD satisfies 
+
+> Rk
+
+X
+
+> αk−1=rk−1+1
+
+(Σ k(αk−1, α k−1)) 2 < ϵ 
+
+> Rk
+
+X
+
+> αk−1=1
+
+(Σ k(αk−1, α k−1)) 2 ,
+
+where we set the threshold ϵ to 10 −4 throughout this work. 
+
+2.3.1 Choice of sketch matrices 
+
+The choice of sketch matrices is crucial for achieving both high-quality compression and af-fordable computation. Sketch matrices based on cluster basis functions 43,47 have been proven to be effective. To achieve linear complexity, in this work, we follow the idea of randomized SVD techniques 49,50 and choose sketch matrices with independent entries sampled from the standard normal distribution (i.e., Gaussian-distributed scalars with mean 0 and variance 1). Such sketch matrices have been shown to capture the dominant subspace of the original tensor Pbias with high probability. However, using standard normal sketches naïvely still results in an exponential cost in D when forming Ak and Bk since the contractions of Sk, T k
+
+with Pbias are fully dense without any structure for efficient computations. To address this 13 issue, we follow Refs. 48,51 and employ structured random sketches: random tensor trains with prescribed ranks {Rk}D−1 
+
+> k=1
+
+whose cores have i.i.d. Gaussian entries (see Fig. S3 in the Supporting Information). Using the TT structure together with the sum-of-rank-one struc-ture of bias tensor Pbias in Fig. 2, the contractions between the sketch matrices and Pbias can be carried out in O(DN ) operations by iterative computations (see Fig. S4 in the Supporting Information). 
+
+2.3.2 Kernel smoothing 
+
+We found that an additional key step was the application of kernel smoothing: 
+
+evTT (x) = 
+
+Z ∞−∞ 
+
+vTT (x′)K(x, x′)d x′, (10) where vTT is the TT-approximated bias potential and K(x, x′) ≡ Qdk=1 K(xk, x ′
+
+> k
+
+). K(xk, x ′
+
+> k
+
+)
+
+are single-dimensional kernel functions. We observed that kernel smoothing was crucial for enforcing the smoothness of Vbias and controlling the magnitudes of its gradients. For all systems except alanine dipeptide, this kernel smoothing was applied to vTT , the TT-Sketch solution. K(xk, x ′
+
+> k
+
+) is a Gaussian kernel with bandwidth vector ρ. We note that too large a bandwidth can reduce the ability of Vbias to promote transitions over barriers. In practice, the integral in Eq. (10) involves computing inner products between functions in Eq. (4) and the kernel function K(xk, x ′
+
+> k
+
+). evTT (x) becomes the functional TT as in Fig. 1(b) with all the univariate basis functions ϕi(xk) replaced by 
+
+eϕi(xk) = 
+
+
+
+(2 Lk)−1/2, i = 1 ,
+
+exp 
+
+h
+
+−(πρ k ⌊i/ 2⌋)2
+
+> 2L2
+
+i
+
+(Lk)−1/2 cos [ π(xk − ak)⌊i/ 2⌋/L k] , mod ( i, 2) = 0 ,
+
+exp 
+
+h
+
+−(πρ k ⌊i/ 2⌋)2
+
+> 2L2
+
+i
+
+(Lk)−1/2 sin [ π(xk − ak)⌊i/ 2⌋/L k] , otherwise .
+
+(11) When evaluating Vbias and its gradient during molecular dynamics steps, i.e., step 11 of Algorithm 1, we use eϕi(x) in place of ϕi(x). However, during TT-Sketch, Eq. (7) still uses 14 the canonical ϕi(x). The coefficient TT Pbias is unaffected by the kernel smoothing and therefore remains unmodified until the next TT-Sketch procedure. 
+
+2.3.3 Reweighting 
+
+Samples collected throughout the TT-Metadynamics-biased simulations must be reweighted to obtain unbiased statistics. In standard metadynamics calculations, the standard ap-proach is to update a quantity c(t), which, if subtracted from the time-dependent bias potential Vbias (x, t ), yields a time-independent estimator of the free energy, that is, F(x) ≡−(Vbias (x, t ) − c(t)) .52 Histograms and other statistical quantities from the unbiased distri-bution can be easily computed by assigning importance weights wi to samples i as wi ∝
+
+exp  −βF(x(i)). The approximation of c(t) involves nontrivial multidimensional integrals, whose computation is made practical by grid storage of the bias potential, rendering this ap-proach only viable in low-dimensional settings (a few CVs). In the case of TT-Metadynamics, frequent evaluation of c(t) is therefore computationally prohibitive. For the higher-dimensional systems studied in this work (beyond alanine dipeptide), we instead adopt a simpler reweight-ing strategy in which each sample x(i), collected at time t, is assigned a weight proportional to the instantaneous bias potential, 
+
+wi ∝ exp  βV bias (x(i), t ) . (12) This approach avoids the explicit computation of c(t) and was found to be sufficient for accurate estimation of low-dimensional free energy projections in the systems considered. 
+
+## 2.4 Simulation protocol and systems studied 
+
+Listed in order of increasing complexity and dimensionality of Vbias , the molecules used to test TT-Metadynamics in this work were alanine dipeptide (i.e., N -acetyl-alanyl-N ′-methylamide), trialanine, ditryptophan, and a peptide of nine α-aminoisobutyric acids (AIB 9). 15 Figure 3: Workflow of the TT-Metadynamics algorithm, illustrating the steps from sampling to bias potential construction. Alanine dipeptide was mainly included for easy visualization of the bias potential (in 2D) and validation of TT-Metadynamics. Trialanine and ditryptophan involved a dimensionality of 
+
+Vbias large enough (6D and 8D, respectively) for the practical benefits of TT-Metadynamics over its traditional variant to become apparent. Finally, AIB 9 was chosen because it is known to exhibit strong metastability, with several local minima separating two stable helical con-formations; 53–58 a dimension of Vbias as high as 14 was required for our simulations to sample the free energies along selected dihedral angles accurately. Simulations were performed using the Langevin integrator in GROMACS 2024.2, 59 with the timestep and temperature set to 2 fs and 300 K, respectively. All systems except AIB 9
+
+were modeled in vacuum with the AMBER99SB-ILDN force field. 60 In the case of AIB 9, we used the same starting structure and force field (CHARMM36m 61 ) as that used for Ref. 56, without the water molecules. All simulations were preceded by an initial steepest descent energy minimization. TT-Sketch is performed every τ steps; we use τ = 5 × 10 6 for all calculations except those involving alanine dipeptide, which use τ = 5 × 10 5. The Gaussian list defined in Eq. (1) is reset after each sketching step to keep the active list small. After the first τ steps, the 16 sum of Gaussian functions defined in Eq. (1) is fitted to a TT, which becomes the new bias potential. From this point on, the bias potential is computed by adding evaluations of this TT function with sums over the new Gaussian list. In subsequent sketching steps, both the Gaussian list and the prior TT are inputs into the TT-Sketch algorithm to form the next TT. This procedure is summarized in Algorithm 1. Note that the Gaussian heights hi from Eq. (1) follow the well-tempered format of the original metadynamics scheme: 
+
+hi = h0 exp −βV (i−1)  
+
+> bias
+
+(xi)
+
+γ − 1
+
+!
+
+. (13) The parameter γ > 1 is called the bias factor. 8
+
+The TT-Metadynamics code was developed as part of the PLUMED package, version 2.10b; 46 as such, PLUMED was used to patch GROMACS simulations and for CV analy-sis. Tensor-related computations (e.g., contractions, SVD) were performed with the ITensor library. 62 All simulations involved the use of multiple parallel walkers; 63 in all cases, the number of walkers was 10. The simulation times reported are total simulation times, that is, when we say that we ran a simulation that lasted a time tsim , we mean that each walker ran a total time tsim /10 . Moreover, each walker adds a Gaussian function every ω timesteps, but only τ / 10 timesteps within a single walker elapse between consecutive TT-Sketch pro-cedures. Every time a walker deposits a Gaussian function or TT-Sketch occurs, the bias potential shown in Algorithm 1 is communicated between all walkers to ensure that each feels the same bias potential at all times. Several user-specified parameters were carefully tuned for the systems considered in this work. Metadynamics-related parameters, namely the bias factor γ, the common kernel bandwidth σ used for all dihedral angles, and the initial Gaussian height h0 (see Eq. (13)) are listed in Table S1 in the Supporting Information. The Gaussian deposition rate ω is kept at 500 steps throughout. For all calculations, the number of basis functions nk along all dimensions and the sketch tensor ranks Rk used for TT-Sketch were kept fixed at 31 (15 17 cosines/15 sines) and 60, respectively. To validate our method for all systems, 1D potentials of mean force (PMF) obtained from the TT-Metadynamics simulations were compared with similar curves obtained from tem-perature replica exchange molecular dynamics (REMD) simulations. In all cases, exchange moves were proposed every 4 ps. The temperatures for each system were selected using the algorithm from Ref. 64, with the target acceptance ratio set to 0.5. All temperatures are tabulated in Table S2 in the Supporting Information. In the case of alanine dipeptide, each replica was run for a total time 200 ns, while for all other systems, each was run for a total time 2 μs. Samples from all replicas were combined and used to obtain reweighted histograms with the help of the PyMBAR software. 65 The reported root mean square dis-placements (RMSD) for PMFs exclude points where the REMD PMF exceeds 13 β−1 above the minimum value to focus on regions that contribute significantly to molecular populations at 300 K. The CVs that we used are the dihedral angles labeled in gray in Fig. 4. For alanine dipeptide, trialanine, and ditryptophan, there are 2, 6, and 8 CVs, respectively. For AIB 9,we performed two separate simulations: one with 10 CVs, which excluded dihedral angles from residues 1, 2, 8, and 9, and one with 14 CVs, which excluded dihedral angles from residues 1 and 9. 
+
+# 3 Results and discussion 
+
+## 3.1 Alanine dipeptide 
+
+The 22-atom alanine dipeptide has free-energy minima at (ϕ, ψ ) ≈ (−2.5, +2 .7) , (ϕ, ψ ) ≈
+
+(−1.4, +1 .0) , and (ϕ, ψ ) ≈ (+1 .1, −0.7) with a barrier of approximately 10 kBT between the latter two minima at 300 K. TTs require a dimensionality of at least two, and we use TT-Metadynamics to obtain the 2D bias potential as a function of ϕ and ψ. The free energy can be estimated as the negative of the instantaneous bias potential. The evolution of this 18 (a) 
+
+(b) 
+
+(c) 
+
+(d) 
+
+Figure 4: 2D structures of alanine dipeptide (a), trialanine (b), ditryptophan (c), and AIB 9
+
+(d) with annotated dihedral angles. free energy during a 50 ns TT-Metadynamics simulation is shown in Fig. 5. 1D free energy profiles as a function of ϕ and ψ were generated from TT-Metadynamics samples using the “simple” reweighting scheme discussed in the previous section. We assess the effectiveness of the TT-Metadynamics bias by comparing these 1D curves with ones ob-tained from several regular metadynamics simulations (and a REMD reference, as described in the previous section). Three versions of standard metadynamics were considered: (a) grid storage with Tiwary–Parrinello reweighting; 52 (b) grid storage with simple reweighting; and (c) full kernel storage (no grid) with simple reweighting. The relative accuracy and efficiency of all approaches are shown in Fig. 6. When D is low, as it is here, grid lookup is fast, making bias potential computations using grid storage cheaper than those using full kernel storage or TT-Metadynamics. Consequently, version (a) provides both the best accu-racy and efficiency, and version (b) is second best on both counts; the latter converges more slowly because it introduces errors not present in the Tiwary–Parrinello scheme. 52 Between version (c) and TT-Metadynamics, Fig. 6 shows comparable accuracies after 50 ns runs. For this system, there is no clear advantage in using TTs over storing all kernels in memory. The 19 Figure 5: Evolution of free energy of alanine dipeptide during a 50 ns TT-Metadynamics simulation. 2D free energies are approximated as the negative of the instantaneous bias potential, and the examples shown immediately follow sketching (performed every 1 ns). Top left: 1 ns; top right: 2 ns; bottom left: 10 ns; bottom right: 50 ns. 20 main purpose of this example is to compare the accuracy of TT-Metadynamics with grid storage. 
+
+## 3.2 Trialanine and ditryptophan 
+
+For both trialanine ( D = 6 ) and ditryptophan ( D = 8 ), grid storage is no longer feasible given our computational resources, so version (c) and TT-Metadynamics are the only possi-ble biasing schemes. In both Figs. 7 and 8, TT-Metadynamics initially converges slower, but crosses over and outperforms standard metadynamics beyond roughly 200 ns. As expected, the advantage of TT-Metadynamics grows with dimension (i.e., is more noticeable for ditryp-tophan in Fig. 8 than trialanine in Fig. 7). In Fig. 8, both the dark blue (TT-Metadynamics) and light blue (standard metadynamics) curves show sharp spikes. These are the moments when the energetic basin at around 1 radians was discovered by the simulations for the first time. In both cases, it took several tens of nanoseconds for the simulation to successfully overcome the very tall energetic barrier ( > 15 kBT ) that separates the regions explored early in the simulation and this new basin. Even though the spike occurs sooner in the stan-dard metadynamics case, beyond these spikes, free energy curves from TT-Metadynamics consistently remain more accurate than ones from standard metadynamics. For both trialanine and diptryptophan, accuracies of standard metadynamics-based free energies appear to plateau. In addition to severely hampering the speed of the simulation, the boundless accumulation of Gaussian functions in memory likely causes a significant buildup of numerical precision errors. A subtle feature of the free energy curves obtained from the standard metadynamics simulations is that the computational cost per 10 ns window (spacing between the symbols) gradually increases. This is expected as the cost of evaluating the bias potential increases as the number of Gaussian functions increases. By contrast, the computational cost per 10 ns window shrinks over the course of the TT-Metadynamics simulations. This behavior is due to the way the TT rank evolves. As mentioned in Section 2.3, the ranks are adaptively de-21 △△△△△ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △                        
+
+> □□□□ □ □ □□□□□□□□□□□□□
+> ▽
+> ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
+> ○
+> ○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○
+> △
+> □
+> ▽
+> ○△△△ △△ △ △ △ △△ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △ △
+> □□□ □ □ □ □□□□□□□□□□□□
+> ▽
+> ▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽▽
+> ○
+> ○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○○
+> △
+> □
+> ▽
+> ○
+
+Figure 6: 1D free energy convergence for alanine dipeptide across metadynamics vari-ants. Left: evolution of free energies as functions of ϕ (top) and ψ (bottom) from a TT-Metadynamics run. Curves shown immediately follow sketching (performed every 1 ns). For reference, the single dashed curve is the final free energy resulting from a replica exchange run. Right: root mean square displacements (RMSD) between 1D free energy profiles from all four metadynamics versions ((a), (b), (c), and TT-Metadynamics) and those from replica exchange (see text). The RMSDs are plotted as functions of the amount of CPU time (per simulation walker). The primary reason RMSDs plateau around 0.1 β−1 is an accumulation of errors in the estimated free energies within high-energy regions. The Tiwary–Parrinello reweighting scheme 52 was used for samples collected from version (a) of metadynamics. The simple reweighting scheme was used for TT-Metadynamics and versions (b) and (c) of meta-dynamics. 22 △△△△△△△△△△△△△△△△△ △△△△△△△ △△△△△ △△△△△△△△△△△ △△ △△△△△ △                      
+
+> □
+> □
+> □□□□□□ □ □ □ □ □ □ □ □□□□□□□□□□□□
+> △
+> □△△△△△△△△△△△△△△△△△ △△ △△△△△△△△△ △△△△△△△△△△△△ △△ △△△△△ △
+> □□□□ □□□□ □ □ □ □ □ □ □□□□□□□□□□□□
+> △
+> □
+
+Figure 7: 1D free energy convergence for trialanine. Left: 1D free energy profiles as a function of the ϕ (top) and ψ (bottom) of the third residue from a 300 ns metadynamics run and a 500 ns TT-Metadynamics run compared with reference replica exchange simulations. Right: Root mean square deviations (RMSDs) of the indicated 1D free energy profiles from replica exchange results. The data points shown are the results of free energies obtained at simulation snapshots separated by 10 ns. 23 △                   
+
+> △△△ △ △ △ △ △ △ △△△△△△ △△△△△△ △△△ △△△ △△△△△△△△△△△△△△△△△△△△ △
+> □
+> □
+> □□□□□□□□ □ □□□□ □ □ □ □ □□□□□□□□□□
+> △
+> □△△△△△ △ △ △△ △△△△ △△△△△ △△△△ △△△ △△△△△△△ △△△ △△△△△△△△△ △△
+> □
+> □
+> □□□□ □ □ □ □ □ □ □ □ □ □□□□□□□□□□
+> △
+> □
+
+Figure 8: 1D free energy convergence for ditryptophan. Left: 1D free energy profiles as a function of the ϕ (top) and ψ (bottom) of the second residue from a 300 ns metadynamics run and a 500 ns TT-Metadynamics run compared with reference replica exchange simulations. Right: Root mean square deviations (RMSDs) of the indicated 1D free energy profiles from replica exchange results. The data points shown are the results of free energies obtained at simulation snapshots separated by 10 ns. 24 termined to satisfy a fixed relative SVD truncation tolerance during each sketching step and thus reflect the intrinsic complexity of the accumulated bias. The rank initially increases as the complexity of the bias potential grows; once all minima are explored, the rank decreases, and the computational cost per window drops. This gradual drop in rank can be used as a heuristic for sampling convergence. This behavior is illustrated in Fig. 9. 
+
+Figure 9: Evolution of the TT rank (max, average) vs simulation time (every 10 ns) for trialanine (left) and ditryptophan (right). 
+
+## 3.3 Helical peptide AIB 9
+
+We tested TT-Metadynamics’s ability to sample higher dimensional PMFs using AIB 9. This system is representative of many biomolecular and materials systems in that it has many local minima separating its main metastable states (left- and right-handed helices). 53–58 We ran two TT-Metadynamics calculations: one with a 10D bias potential that was a function of the ϕ and ψ dihedral angles of residues 3 through 7 and another with a 14D bias potential that was a function of the ϕ and ψ dihedral angles of residues 2 through 8. These dimensions prohibit comparison with standard metadynamics. 1D PMFs as functions of selected dihedral angles indicate that the simulation is better converged with the 14D bias potential than with the 10D bias potential within 1 μs (Figs. 10 and 11). The ranks at the end of the simulations are lower than those at the halfway point, 25 mirroring the behavior in Fig. 9. Interestingly, although the 14D simulation was more costly due to the linear scaling of the TT evaluations with dimension, the TT ranks are consistently smaller in the 14D case than in the 10D case. For example, at the halfway points (ends) of the simulations, the maximum ranks of the TTs for the simulations with the 10D and 14D bias potentials are 26 and 18 (23 and 16), respectively. One possible explanation is that the simulation with the 14D bias potential, unlike that with the 10D bias potential, is able to anneal artifacts and, in turn, decrease the complexity of the bias potential. 
+
+# 4 Conclusions 
+
+We have shown that TT-Metadynamics provides a scalable adaptive biasing scheme for molecular systems that outperforms standard metadynamics 8 for bias potentials in 6D and beyond. Simulations with compressed representations of the bias potential consistently out-performed those with storage of the full sum over kernels. For 2D bias potentials, grid representations are preferred because they require minimal overhead. However, as the di-mension of the bias potential increases, grid storage quickly becomes infeasible, and TTs are effective alternatives. Key elements of our implementation are the use of an efficient 
+
+sketching procedure and smoothing of the TT bias potential with a Gaussian kernel. We find that the TT rank initially increases as modes are discovered, and then decreases as artifacts are annealed; its stabilization can be used as a heuristic for convergence. Owing to the overhead associated with the TT, we expect TT-Metadynamics to be more competitive for systems with computationally costly force evaluations (e.g. systems larger than those considered here and/or simulations based on machine-learned interatomic potentials and/or quantum chemical calculations). One can imagine various extensions to our approach. It would be worth considering other tensor decompositions 35 and approaches that combine TT-Metadynamics with other tech-niques. An example of the latter would be to seed the bias potential for TT-Metadynamics 26 △△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△
+
+□□□
+
+□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□△□△△
+
+△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△ 
+
+□□
+
+□
+
+□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□
+
+△
+
+□△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△ 
+
+□□
+
+□
+
+□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□
+
+△
+
+□△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△△ 
+
+□□□
+
+□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□□
+
+△
+
+□Figure 10: Left: 1D free energy convergence for AIB 9. Results shown are for selected dihedral angles ( ϕ2, ϕ4, ϕ6, and ϕ8) after 1 μs simulations. The first 200 ns of samples are omitted from potential of mean force (PMF) estimates for both the 10D and the 14D cases. Right: Root mean square deviations (RMSDs) of the indicated 1D free energy profiles from replica exchange results. The data points shown are the results of free energies obtained at simulation snapshots separated by 10 ns. 27 100 ns 
+
+# 300 ns 
+
+# 1 μs
+
+Figure 11: 2D free energy convergence for AIB 9. Results shown are for selected pairs of dihedral angles (ϕ(k), ψ (k)) for k = 4 , 8 at various snapshots of the 1 μs-long 14D-biased simulation involving AIB 9, showcasing the gradual progress of the conformational space exploration. Top: 100 ns; middle: 300 ns; bottom: 1 μs. No samples were omitted for these potential of mean force (PMF) estimates. 28 with that obtained from bias-exchange metadynamics. 14,15 It may also be possible to use TTs to estimate other quantities, such as the coefficient c(t) of the Tiwary–Parrinello ap-proach. 52 Another way to incorporate robust reweighting would be to develop a TT variant of on-the-fly probability enhanced sampling (OPES), which differs from metadynamics in that the bias potential is built from probability densities obtained from weighted kernel den-sity estimation. 66 Overall, TT-Metadynamics offers a practical and scalable framework for high-dimensional enhanced sampling. 
+
+# Acknowledgement 
+
+We thank Miles Stoudenmire, Michael Lindsey, and Jonathan Weare for insightful discus-sions, as well as Pratyush Tiwary and Shams Mehdi for providing starting structures and simulation files for AIB 9. This work was supported by the National Institutes of Health award R35 GM136381 and was completed with computational resources administered by the University of Chicago Research Computing Center. N.S. was also partially supported by NSF DMS-2111563. Y.K. was partially funded by NSF DMS-2339439, DOE DE-SC0022232, and a Sloan fellowship. 
+
+# References 
+
+(1) Shaw, D. E.; Maragakis, P.; Lindorff-Larsen, K.; Piana, S.; Dror, R. O.; East-wood, M. P.; Bank, J. A.; Jumper, J. M.; Salmon, J. K.; Shan, Y.; Wriggers, W. Atomic-Level characterization of the structural dynamics of proteins. Science 2010 ,
+
+330 , 341–346. (2) Lindorff-Larsen, K.; Piana, S.; Dror, R. O.; Shaw, D. E. How fast-folding proteins fold. 
+
+Science 2011 , 334 , 517–520. 29 (3) Piana, S.; Lindorff-Larsen, K.; Shaw, D. E. Atomic-level description of ubiquitin folding. 
+
+Proc. Natl. Acad. Sci. USA 2013 , 110 , 5915–5920. (4) Jensen, M. Ø.; Jogini, V.; Borhani, D. W.; Leffler, A. E.; Dror, R. O.; Shaw, D. E. Mechanism of voltage gating in potassium channels. Science 2012 , 336 , 229–233. (5) Guo, S. C.; Shen, R.; Roux, B.; Dinner, A. R. Dynamics of activation in the voltage-sensing domain of Ciona intestinalis phosphatase Ci-VSP. Nat. Commun. 2024 , 15 ,1408. (6) Shan, Y.; Kim, E. T.; Eastwood, M. P.; Dror, R. O.; Seeliger, M. A.; Shaw, D. E. How does a drug molecule find its target binding site? J. Am. Chem. Soc. 2011 , 133 ,9181–9183. (7) Hénin, J.; Lelièvre, T.; Shirts, M. R.; Valsson, O.; Delemotte, L. Enhanced sampling methods for molecular dynamics simulations. Comp. Mol. Sci. 2022 , 4, 1583. (8) Laio, A.; Parrinello, M. Escaping free-energy minima. Proc. Natl. Acad. Sci. USA 2002 ,
+
+99 , 12562–12566. (9) Barducci, A.; Bussi, G.; Parrinello, M. Well-tempered metadynamics: A smoothly converging and tunable free-energy method. Phys. Rev. Lett. 2008 , 100 , 020603. (10) Dama, J. F.; Parrinello, M.; Voth, G. A. Well-tempered metadynamics converges asymptotically. Phys. Rev. Lett. 2014 , 112 , 240602. (11) Qiu, L.; Pabit, S. A.; Roitberg, A. E.; Hagen, S. J. Smaller and faster: The 20-residue Trp-cage protein folds in 4 s. J. Am. Chem. Soc. 2002 , 124 , 12952–12953. (12) Juraszek, J.; Bolhuis, P. G. Sampling the multiple folding mechanisms of Trp-cage in explicit solvent. Proc. Natl. Acad. Sci. USA 2006 , 103 , 15859–15864. (13) Juraszek, J.; Bolhuis, P. G. Rate constant and reaction coordinate of Trp-cage folding in explicit water. Biophys. J. 2008 , 95 , 4246–4257. 30 (14) Piana, S.; Laio, A. A bias-exchange approach to protein folding. J. Phys. Chem. B 
+
+2007 , 111 , 4553–4559. (15) Marinelli, F.; Pietrucci, F.; Laio, A.; Piana, S. A kinetic model of Trp-cage folding from multiple biased molecular dynamics simulations. PLoS Comput. Biol. 2009 , 5,e1000452. (16) Sidky, H.; Chen, W.; Ferguson, A. L. High-resolution Markov state models for the dynamics of Trp-cage miniprotein constructed over slow folding modes identified by state-free reversible VAMPnet. J. Phys. Chem. B 2019 , 123 , 7999–8009. (17) Strahan, J.; Antoszewski, A.; Lorpaiboon, C.; Vani, B. P.; Weare, J.; Dinner, A. R. Long-time-scale predictions from short-trajectory data: A benchmark analysis of the Trp-cage miniprotein. J. Chem. Theory Comput. 2021 , 17 , 2948–2963. (18) Bussi, G.; Laio, A. Using metadynamics to explore complex free-energy landscapes. 
+
+Nature Reviews Physics 2020 , 2, 200–212. (19) Pearson, K. On lines and planes of closest fit to systems of points in space. J. Sci. 1901 ,
+
+2, 559–572. (20) Coifman, R. R.; Lafon, S.; Lee, A. B.; Maggioni, M.; Nadler, B.; Warner, F.; Zucker, S. W. Geometric diffusions as a tool for harmonic analysis and structure defi-nition of data: Diffusion maps. Proc. Natl. Acad. Sci. USA 2005 , 102 , 7426–7431. (21) Bank, D.; Koenigstein, N.; Giryes, R. Autoencoders ; Springer, 2023; Vol. 1. (22) Chen, W.; Tan, A. R.; Ferguson, A. L. Collective variable discovery and enhanced sampling using autoencoders: Innovations in network architecture and error function design. J. Chem. Phys. 2018 , 149 , 072312. 31 (23) Chen, W.; Ferguson, A. L. Molecular enhanced sampling with autoencoders: On-the-fly collective variable discovery and accelerated free energy landscape exploration. J. Comput. Chem. 2018 , 39 , 2079–2102. (24) Chen, H.; Chipot, C. Chasing collective variables using temporal data-driven strategies. 
+
+QRB Discov. 2023 , 4, e2. (25) Amadei, A.; Linssen, A. B. M.; Berendsen, H. J. C. Essential dynamics of proteins. 
+
+Proteins: Struct., Funct., Genet. 1993 , 17 , 412–425. (26) Molgedey, L.; Schuster, H. G. Separation of a mixture of independent signals using time delayed correlations. Phys. Rev. Lett. 1994 , 72 , 3634–3637. (27) Molgedey, L.; Schuster, H. G. Slow dynamics of a protein backbone in molecular dy-namics simulation revealed by time-structure based independent component analysis. 
+
+J. Chem. Phys. 2013 , 139 , 215102. (28) Noé, F.; Nüske, F. A variational approach to modeling slow processes in stochastic dynamical systems. Multiscale Model Sim. 2013 , 11 , 635–655. (29) Nüske, F.; Keller, B. G.; Pérez-Hernández, G.; Mey, A. S.; No, F. Variational approach to molecular kinetics. J. Chem. Theory Comput. 2014 , 10 , 1739–1752. (30) Pérez-Hernández, G.; Paul, F.; De Fabritiis, G.; Noé, F. Identification of slow molecular order parameters for Markov model construction. J. Chem. Phys. 2013 , 139 , 015102. (31) Lorpaiboon, C.; Thiede, E. H.; Webber, R. J.; Weare, J.; Dinner, A. R. Integrated variational approach to conformational dynamics: A robust strategy for identifying eigenfunctions of dynamical operators. J. Phys. Chem. B 2020 , 142 , 9354–9364. (32) Galvelis, R.; Sugita, Y. Neural network and nearest neighbor algorithms for enhancing sampling of molecular dynamics. J. Chem. Theory Comput. 2017 , 13 , 2489–2500. 32 (33) Zhang, L.; Wang, H.; E, W. Reinforced dynamics for enhanced sampling in large atomic and molecular systems. J. Chem. Phys. 2018 , 148 , 124113. (34) Oseledets, I. V. Tensor-train decomposition. SIAM J. Sci. Comput. 2011 , 33 , 2295– 2317. (35) Ehrlacher, V.; Lelièvre, T.; Monmarché, P. Adaptive force biasing algorithms: new convergence results and tensor approximations of the bias. Annals of Applied Probability 
+
+2022 , 32 , 3850—-3888. (36) Alrachid, H.; Lelièvre, T. Long-time convergence of an adaptive biasing force method: Variance reduction by Helmholtz projection. SIAM J. Comput. 2015 , 1, 55–82. (37) Schollwöck, U. The density-matrix renormalization group in the age of matrix product states. Ann. Phys. 2011 , 326 , 96–192. (38) White, S. R. Density-matrix algorithms for quantum renormalization groups. Physical review b 1993 , 48 , 10345. (39) Yu, Z.; Zhang, S.; Khoo, Y. Re-anchoring Quantum Monte Carlo with Tensor-Train Sketching. arXiv preprint arXiv:2411.07194 2024 ,(40) Liu, J.; Musialski, P.; Wonka, P.; Ye, J. Tensor completion for estimating missing values in visual data. IEEE transactions on pattern analysis and machine intelligence 2012 ,
+
+35 , 208–220. (41) Oseledets, I.; Tyrtyshnikov, E. TT-cross approximation for multidimensional arrays. 
+
+Linear Algebra and its Applications 2010 , 432 , 70–88. (42) Novikov, G. S.; Panov, M. E.; Oseledets, I. V. Tensor-train density estimation. Uncer-tainty in artificial intelligence. 2021; pp 1321–1331. (43) Chen, Y.; Khoo, Y. Combining Monte Carlo and tensor-network methods for partial differential equations via sketching. arXiv:2305.17884 2023 ,33 (44) Dolgov, S.; Khoromskij, B.; Oseledets, I. Fast solution of parabolic problems in the tensor train/quantized tensor train format with initial application to the Fokker–Planck equation. SIAM Journal on Scientific Computing 2012 , 34 , A3016–A3038. (45) Cao, S.; Nüske, F.; Liu, B.; Soley, M. B.; Huang, X. AMUSET-TICA: A tensor-based approach for identifying slow collective variables in biomolecular dynamics. J. Chem. Theory Comput. 2025 , 21 , 4855––4866. (46) The PLUMED consortium. Promoting transparency and reproducibility in enhanced molecular simulations. Nat. Methods 2019 , 16 , 670–673. (47) Hur, Y.; Hoskins, J. G.; Lindsey, M.; Stoudenmire, E. M.; Khoo, Y. Generative mod-eling via tensor train sketching. Appl. Comput. Harmon. Anal. 2023 , 67 , 101575. (48) Peng, Y.; Yang, S.; Khoo, Y.; Wang, D. Tensor density estimator by convolution-deconvolution. arXiv:2412.18964 2024 ,(49) Halko, N.; Martinsson, P.-G.; Tropp, J. A. Finding structure with randomness: Prob-abilistic algorithms for constructing approximate matrix decompositions. SIAM review 
+
+2011 , 53 , 217–288. (50) Huber, B.; Schneider, R.; Wolf, S. A randomized tensor train singular value decom-position. Compressed Sensing and its Applications: Second International MATHEON Conference 2015. 2017; pp 261–290. (51) Kressner, D.; Vandereycken, B.; Voorhaar, R. Streaming tensor train approximation. 
+
+SIAM Journal on Scientific Computing 2023 , 45 , A2610–A2631. (52) Tiwary, P.; Parrinello, M. A time-independent free energy estimator for metadynamics. 
+
+J. Phys. Chem. B 2015 , 119 , 736–742. 34 (53) Buchenberg, S.; Schaudinnus, N.; Stock, G. Hierarchical biomolecular dynamics: pi-cosecond hydrogen bonding regulates microsecond conformational transitions. J. Chem. Theory Comput. 2015 , 11 , 1330–1336. (54) Sittel, F.; Filk, T.; Stock, G. Principal component analysis on a torus: Theory and application to protein dynamics. J. Chem. Phys. 2017 , 147 , 244101. (55) Biswas, M.; Lickert, B.; Stock, G. Metadynamics enhanced Markov modeling of protein dynamics. J. Phys. Chem. B 2018 , 122 , 5508–5514. (56) Mehdi, S.; Wang, D.; Pant, S.; Tiwary, P. Accelerating all-atom simulations and gaining mechanistic understanding of biophysical systems through state predictive information bottleneck. J. Chem. Theory Comput. 2018 , 18 , 3231–3238. (57) Wang, Y.; Herron, L.; Tiwary, P. From data to noise to data for mixing physics across temperatures with generative artificial intelligence. Proc. Natl. Acad. Sci. USA 2022 ,
+
+119 , e2203656119. (58) Strahan, J.; Guo, S. C.; Lorpaiboon, C.; Dinner, A. R.; Weare, J. Inexact iterative numerical linear algebra for neural network-based spectral estimation and rare-event prediction. J. Chem. Phys. 2023 , 159 , 014110. (59) Abraham, M. J.; Murtola, T.; Schulz, R.; Páll; Smith, J. C.; Hess, B.; Lindahl, E. GROMACS: High performance molecular simulations through multi-level parallelism from laptops to supercomputers. SoftwareX 2015 , 1, 19–25. (60) Hornak, V.; Abel, R.; Okur, A.; Strockbine, B.; Roitberg, A.; Simmerling, C. Compar-ison of multiple AMBER force fields and development of improved protein backbone parameters. Proteins 2006 , 15 , 712–725. (61) Huang, J.; Rauscher, S.; Nawrocki, G.; Ran, T.; Feig, M.; de Groot, B.; Grubmüller, H.; 35 MacKerell Jr, A. D. CHARMM36m: an improved force field for folded and intrinsically disordered proteins. Nat. Methods 2017 , 14 , 71–73. (62) Fishman, M.; White, S. R.; Stoudenmire, E. M. The ITensor software library for tensor network calculations. arXiv:2007.14822 2020 ,(63) Raiteri, P.; Laio, A.; Gervasio, F. L.; Micheletti, C.; Parrinello, M. Efficient reconstruc-tion of complex free energy landscapes by multiple walkers metadynamics. J. Phys. Chem. B 2005 , 110 , 3533—-3539. (64) Patriksson, A.; van der Spoel, D. A temperature predictor for parallel tempering sim-ulations. Phys. Chem. Chem. Phys. 2008 , 10 , 2073–2077. (65) Shirts, M. R.; Chodera, J. D. Statistically optimal analysis of samples from multiple equilibrium states. J. Chem. Phys. 2008 , 129 , 124105. (66) Invernizzi, M.; Parrinello, M. Rethinking metadynamics: From bias potentials to prob-ability distributions. J. Phys. Chem. Lett. 2020 , 11 , 2731–2736. 36 Table S1: Simulation times and TT-Metadynamics parameters for all systems studied. System tsim (ns) γ σ (radians) h0 (kJ/mol) ρ (radians) Alanine dipeptide 50 8 0.25 1 0Trialanine 500 8 0.3 1 0.05 Ditryptophan 500 8 0.35 1 0.05 AIB 9 (10D) 10 3 6 0.4 1 0.05 AIB 9 (14D) 10 3 6 0.4 0.6 0.05 Table S2: Temperatures (in K) used for temperature replica exchange molecular dynamics (REMD) simulations. Alanine dipeptide Trialanine Ditryptophan AIB 9
+
+300 300 300 300 357 341 334 323 424 387 372 348 503 439 414 373 596 498 460 401 697 564 511 430 798 639 567 462 899 723 629 497 1000 818 698 534 919 774 574 1000 858 617 900 663 712 764 820 880 944 1000 37 (a) G1-determining equation (b) G2-determining equation 
+
+(c) G3-determining equation (d) G4-determining equation 
+
+Figure S1: Tensor diagrams illustrating the core-determining equations for D = 4 . The four equations can be solved in parallel using least squares optimization, except the first core G1
+
+can be directly assigned as shown in (a). The total cost for solving these equations is linear in D with suitable choices of sketch matrices Sk and Tk.
+
+Figure S2: Tensor diagram illustrating the trimming step for D = 4 . ¯G1, . . . , ¯GD form the final TT estimation for the coefficient Pbias in the ansatz given by Eq. (3) for bias potential. i1:k
+
+Sk𝛼 k =
+
+> i1
+> H1
+> 𝛼 1
+> i2
+> 𝛼 2
+> ik
+> 𝛼 k×1
+
+# −H2 Hk
+
+> 𝛼 k
+
+(a) Left sketch matrix ik+1:D
+
+Tk =
+
+> ik+1
+> Hk+1
+> γk+1
+> ik+2
+> γk+2
+> iD
+> γD−1
+
+# ΦHk+2 HD 
+
+> γkγk
+
+(b) Right sketch matrix 
+
+Figure S3: Tensor diagrams illustrating the left and right sketch tensors used in TT-compression. Each sketch tensor contracts with a subset of the TT cores. The horizontal legs correspond to auxiliary indices βk and αk, while the thicker vertical legs represent com-posite indices formed by grouping the physical indices i1, . . . , i k (left sketch) or ik+1 , . . . , i D
+
+(right sketch). Although depicted schematically as “matrices,” the objects are technically higher-order tensors with multiple legs, and the term “sketch matrix” refers to their linear action on vectorized TT cores. Each tensor Hk contains i.i.d. entries drawn from a standard normal distribution. 38 (a) Final expression of Ak in Gk-determining equation 
+
+(b) Iterative computation of Eik (c) Iterative computation of F ik
+
+Figure S4: Tensor diagrams illustrating the final form of Ak in the Gk-determining equation and its efficient computation. By substituting the expressions of the sketch tensors Sk, T k
+
+from Fig. S3 and the bias tensor PMetaD bias from Fig. 2, the matrix Ak can be written in the form P 
+
+> i
+
+hi Eik(F ik)T , as shown in (a), where the scalar weights hi are omitted in the tensor diagram for simplicity. The column vectors Eik and F ik are computed recursively from Eik−1
+
+and F ik+1 , respectively, as illustrated in (b) and (c). With this iterative procedure, for each fixed i, all vectors Eik and F ik for k = 1 , . . . , D can be obtained with O(D) computational cost. Consequently, including all indices i, the overall computational and memory complexity scale as O(DN ).39

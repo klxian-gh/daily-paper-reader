@@ -1,0 +1,490 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-18T16:43:38.782057+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 11,
+    "quick_skim_target": 11,
+    "quick_selected": 11
+  },
+  "deep_dive": [
+    {
+      "id": "2603.16061v1",
+      "title": "PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations",
+      "abstract": "Universal machine-learning interatomic potentials (uMLIPs) enable reactive molecular simulations with near-DFT accuracy, yet applying them efficiently to large, realistic condensed-phase systems remains computationally demanding. Here we present PFP/MM, a hybrid approach that combines a uMLIP, PreFerred Potential (PFP), with molecular mechanics (MM) to enable both large-scale and long-time simulations that are challenging for uMLIP-only calculations. Using an alanine dipeptide in explicit water, we achieve multi-ns/day enhanced sampling and obtain a Ramachandran plot consistent with established basins. For an intramolecular nucleophilic addition reaction in a polar solvent environment, we reproduce the expected solvent-induced stabilization in the free-energy profile. We further apply the approach to a cytochrome P450 Compound I hydroxylation reaction and obtain a free-energy landscape consistent with the accepted reaction mechanism. These results demonstrate that uMLIP-based reactive simulations can be applied to diverse condensed-phase processes in large, realistic environments.",
+      "authors": [
+        "Yu Miyazaki",
+        "Atsuhiro Tomita",
+        "Akihide Hayashi",
+        "So Takemoto",
+        "Mizuki Takemoto",
+        "Hodaka Mori"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "cond-mat.soft",
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-17T02:10:23+00:00",
+      "link": "https://arxiv.org/pdf/2603.16061v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Hybrid MLIP/MM approach for reactive simulations",
+      "llm_evidence_cn": "用于反应模拟的混合 MLIP/MM 方法",
+      "llm_evidence": "用于反应模拟的混合 MLIP/MM 方法",
+      "canonical_evidence": "用于反应模拟的混合 MLIP/MM 方法",
+      "llm_tldr_en": "PFP/MM combines neural network potentials with classical force fields for large-scale reactive MD.",
+      "llm_tldr_cn": "PFP/MM 将神经网络势与经典力场结合，用于大规模反应分子动力学模拟。",
+      "llm_tldr": "PFP/MM 将神经网络势与经典力场结合，用于大规模反应分子动力学模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2602.20320v1",
+      "title": "Environment-Induced Exciton Renormalization in the Photosystem II Reaction Center",
+      "abstract": "Protein electrostatics tune excitation energies in the Photosystem II reaction center (PSII-RC), yet a fully quantum-mechanical many-body description of how the surrounding protein environment renormalizes excitons has remained computationally inaccessible. The Bethe-Salpeter equation (BSE) within many-body perturbation theory accurately describes excitonic physics through an explicit electron-hole interaction, but is prohibitively expensive for systems containing thousands of valence electrons. Here, we show that for sufficiently large systems the BSE becomes simpler to solve when treated with modern stochastic sampling techniques, as atomistic interactions self-average. In this regime, the effective electron-hole interaction mediated by the environment is governed by collective $k$-dependent polarization. These insights enable an ab initio study of the PSII-RC in which all six chlorins forming the hexameric dye core are treated explicitly together with a roughly seven Angstrom local protein environment. We directly compare the low-lying optical excitations of the isolated chromophore hexamer (1276 valence electrons) and the protein-dye cluster (3238 valence electrons). For $Q_y$ excitations near 680 nm, inclusion of the protein environment induces polarization-dependent energy shifts, redistributes spectral weight, and alters exciton delocalization and pigment character. Lateral and transverse asymmetries in the low-lying excited states are captured at the BSE level of theory. These results establish that we now have the tools for many-body calculations of biological nanostructures.",
+      "authors": [
+        "Tucker Allen",
+        "Barry Y. Li",
+        "Nadine C. Bradbury",
+        "Daniel Neuhauser"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-02-23T20:10:28+00:00",
+      "link": "https://arxiv.org/pdf/2602.20320v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "quantum-mechanical description of protein environment effects",
+      "llm_evidence_cn": "蛋白质环境效应的量子力学描述",
+      "llm_evidence": "蛋白质环境效应的量子力学描述",
+      "canonical_evidence": "蛋白质环境效应的量子力学描述",
+      "llm_tldr_en": "Stochastic many-body perturbation theory for describing how protein environments renormalize excitons.",
+      "llm_tldr_cn": "描述蛋白质环境如何重整化激子的随机多体微扰理论。",
+      "llm_tldr": "描述蛋白质环境如何重整化激子的随机多体微扰理论。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2602.16634v1",
+      "title": "Enhanced Diffusion Sampling: Efficient Rare Event Sampling and Free Energy Calculation with Diffusion Models",
+      "abstract": "The rare-event sampling problem has long been the central limiting factor in molecular dynamics (MD), especially in biomolecular simulation. Recently, diffusion models such as BioEmu have emerged as powerful equilibrium samplers that generate independent samples from complex molecular distributions, eliminating the cost of sampling rare transition events. However, a sampling problem remains when computing observables that rely on states which are rare in equilibrium, for example folding free energies. Here, we introduce enhanced diffusion sampling, enabling efficient exploration of rare-event regions while preserving unbiased thermodynamic estimators. The key idea is to perform quantitatively accurate steering protocols to generate biased ensembles and subsequently recover equilibrium statistics via exact reweighting. We instantiate our framework in three algorithms: UmbrellaDiff (umbrella sampling with diffusion models), $Δ$G-Diff (free-energy differences via tilted ensembles), and MetaDiff (a batchwise analogue for metadynamics). Across toy systems, protein folding landscapes and folding free energies, our methods achieve fast, accurate, and scalable estimation of equilibrium properties within GPU-minutes to hours per system -- closing the rare-event sampling gap that remained after the advent of diffusion-model equilibrium samplers.",
+      "authors": [
+        "Yu Xie",
+        "Ludwig Winkler",
+        "Lixin Sun",
+        "Sarah Lewis",
+        "Adam E. Foster",
+        "José Jiménez Luna",
+        "Tim Hempel",
+        "Michael Gastegger",
+        "Yaoyi Chen",
+        "Iryna Zaporozhets",
+        "Cecilia Clementi",
+        "Christopher M. Bishop",
+        "Frank Noé"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.AI",
+        "cs.LG",
+        "physics.bio-ph",
+        "physics.chem-ph"
+      ],
+      "published": "2026-02-18T17:26:15+00:00",
+      "link": "https://arxiv.org/pdf/2602.16634v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Rare event sampling in biomolecular simulation",
+      "llm_evidence_cn": "生物分子模拟中的稀有事件采样",
+      "llm_evidence": "生物分子模拟中的稀有事件采样",
+      "canonical_evidence": "生物分子模拟中的稀有事件采样",
+      "llm_tldr_en": "Introduces enhanced diffusion sampling for efficient rare-event exploration in MD.",
+      "llm_tldr_cn": "引入增强扩散采样，以提高分子动力学中稀有事件的采样效率。",
+      "llm_tldr": "引入增强扩散采样，以提高分子动力学中稀有事件的采样效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.11061v1",
+      "title": "Hybrid Quantum-Classical Encoding for Accurate Residue-Level pKa Prediction",
+      "abstract": "Accurate prediction of residue-level pKa values is essential for understanding protein function, stability, and reactivity. While existing resources such as DeepKaDB and CpHMD-derived datasets provide valuable training data, their descriptors remain primarily classical and often struggle to generalize across diverse biochemical environments. We introduce a reproducible hybrid quantum-classical framework that enriches residue-level representations with a Gaussian kernel-based quantum-inspired feature mapping. These quantum-enhanced descriptors are combined with normalized structural features to form a unified hybrid encoding processed by a Deep Quantum Neural Network (DQNN). This architecture captures nonlinear relationships in residue microenvironments that are not accessible to classical models. Benchmarking across multiple curated descriptor sets demonstrates that the DQNN achieves improved cross-context generalization relative to classical baselines. External evaluation on the PKAD-R experimental benchmark and an A$β$40 case study further highlights the robustness and transferability of the quantum-inspired representation. By integrating quantum-inspired feature transformations with classical biochemical descriptors, this work establishes a scalable and experimentally transferable approach for residue-level pKa prediction and broader applications in protein electrostatics.",
+      "authors": [
+        "Van Le",
+        "Tan Le"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.AI",
+        "cs.NE"
+      ],
+      "published": "2026-03-09T06:48:01+00:00",
+      "link": "https://arxiv.org/pdf/2603.11061v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Hybrid quantum-classical framework for residue-level reactivity",
+      "llm_evidence_cn": "残基水平反应性的量子-经典混合框架",
+      "llm_evidence": "残基水平反应性的量子-经典混合框架",
+      "canonical_evidence": "残基水平反应性的量子-经典混合框架",
+      "llm_tldr_en": "Combines quantum-inspired features with neural networks for accurate residue-level pKa prediction.",
+      "llm_tldr_cn": "将量子启发特征与神经网络结合，用于准确的残基水平pKa预测。",
+      "llm_tldr": "将量子启发特征与神经网络结合，用于准确的残基水平pKa预测。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2602.22390v1",
+      "title": "A Reduced Order Model approach for First-Principles Molecular Dynamics Computations",
+      "abstract": "To leverage the redundancy between the electronic structure computed at each step of first-principles molecular dynamics, we present a data-driven modeling framework for Kohn-Sham Density Functional Theory that bypasses the explicit optimization of electronic wavefunctions. We sample a priori representative atomic configurations and construct a low-dimensional basis that efficiently approximates the electronic structure subspace. Subsequently, we employ this reduced basis in a direct solver for the electronic single particle density matrix, thereby enabling the efficient determination of ground state without iterative wavefunction optimization. We demonstrate the efficacy of our approach in a Born-Oppenheimer molecular dynamics of a water molecule, showing that the resulting simulations accurately reproduce key structural properties, such as bond lengths and bond angle, obtained from full first-principles molecular dynamics. This work highlights the potential of data-driven approaches to develop efficient electronic structure solvers for first-principles simulations.",
+      "authors": [
+        "Siu Wun Cheung",
+        "Youngsoo Choi",
+        "Jean-Luc Fattebert",
+        "Jonas Kaufman",
+        "Daniel Osei-Kuffuor"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA",
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph"
+      ],
+      "published": "2026-02-25T20:36:41+00:00",
+      "link": "https://arxiv.org/pdf/2602.22390v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reduced order model for first-principles molecular dynamics",
+      "llm_evidence_cn": "第一性原理分子动力学的降阶模型",
+      "llm_evidence": "第一性原理分子动力学的降阶模型",
+      "canonical_evidence": "第一性原理分子动力学的降阶模型",
+      "llm_tldr_en": "A data-driven framework to accelerate first-principles molecular dynamics by bypassing wavefunction optimization.",
+      "llm_tldr_cn": "一种通过绕过波函数优化来加速第一性原理分子动力学的数据驱动框架。",
+      "llm_tldr": "一种通过绕过波函数优化来加速第一性原理分子动力学的数据驱动框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.11924v1",
+      "title": "Chem4DLLM: 4D Multimodal LLMs for Chemical Dynamics Understanding",
+      "abstract": "Existing chemical understanding tasks primarily rely on static molecular representations, limiting their ability to model inherently dynamic phenomena such as bond breaking or conformational changes, which are essential for a chemist to understand chemical reactions. To address this gap, we introduce Chemical Dynamics Understanding (ChemDU), a new task that translates 4D molecular trajectories into interpretable natural-language explanations. ChemDU focuses on fundamental dynamic scenarios, including gas-phase and catalytic reactions, and requires models to reason about key events along molecular trajectories, such as bond formation and dissociation, and to generate coherent, mechanistically grounded narratives. To benchmark this capability, we construct Chem4DBench, the first dataset pairing 4D molecular trajectories with expert-authored explanations across these settings. We further propose Chem4DLLM, a unified model that integrates an equivariant graph encoder with a pretrained large language model to explicitly capture molecular geometry and rotational dynamics. We hope that ChemDU, together with Chem4DBench and Chem4DLLM, will stimulate further research in dynamic chemical understanding and multimodal scientific reasoning.",
+      "authors": [
+        "Xinyu Li",
+        "Zhen Zhang",
+        "Qi Chen",
+        "Anton van den Hengel",
+        "Lina Yao",
+        "Javen Qinfeng Shi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.CL"
+      ],
+      "published": "2026-03-12T13:36:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.11924v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "modeling catalytic reactions and bond breaking in molecular trajectories",
+      "llm_evidence_cn": "分子轨迹中催化反应和化学键断裂的建模",
+      "llm_evidence": "分子轨迹中催化反应和化学键断裂的建模",
+      "canonical_evidence": "分子轨迹中催化反应和化学键断裂的建模",
+      "llm_tldr_en": "Introduces a multimodal LLM for understanding chemical dynamics, including catalytic reactions.",
+      "llm_tldr_cn": "引入了一种多模态大语言模型，用于理解包括催化反应在内的化学动力学。",
+      "llm_tldr": "引入了一种多模态大语言模型，用于理解包括催化反应在内的化学动力学。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.04092v1",
+      "title": "Characterizing Machine Learning Force Fields as Emerging Molecular Dynamics Workloads on Graphics Processing Units",
+      "abstract": "Molecular dynamics (MD) simulates the time evolution of atomic systems governed by interatomic forces, and the fidelity of these simulations depends critically on the underlying force model. Classical force fields (CFFs) rely on fixed functional forms fitted to experimental or theoretical data, offering computational efficiency and broad applicability but limited accuracy in chemically diverse or reactive environments. In contrast, machine learning force fields (MLFFs) deliver near quantum chemical accuracy at molecular-mechanics cost by learning interatomic interactions directly from high level electronic structure data. While MLFFs offer improved accuracy at a fraction of the cost of quantum methods, they introduce significant computational overhead, particularly in descriptor evaluation and neural network inference. These operations pose challenges for parallel hardware due to irregular memory access, minimum data reuse and inefficient kernel execution. This work investigates the hardware performance of such models using poly alanine chains, a novel benchmark molecule system(s) with controllable input size, which used as performance evaluation test cases highlighting the computational bottlenecks of the graphical processor units when scaling out MLFF simulations. The analysis identifies key bottlenecks in descriptor and force computation, memory handling, highlighting the opportunities for improvements in the emerging area of MLFF based MD in drug discovery, that has received limited attention from a computer architecture perspective.",
+      "authors": [
+        "Udari De Alwis",
+        "Benjamin E. Mayer",
+        "Tom J. Ashby",
+        "Maria Barrera",
+        "Timon Evenblij",
+        "Joyjit Kundu"
+      ],
+      "primary_category": "cs.PF",
+      "categories": [
+        "cs.PF"
+      ],
+      "published": "2026-03-04T14:02:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.04092v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "MLFFs provide quantum accuracy at molecular mechanics cost for reactive environments",
+      "llm_evidence_cn": "机器学习力场在反应环境中以分子力学成本提供量子化学精度",
+      "llm_evidence": "机器学习力场在反应环境中以分子力学成本提供量子化学精度",
+      "canonical_evidence": "机器学习力场在反应环境中以分子力学成本提供量子化学精度",
+      "llm_tldr_en": "Evaluates ML force fields as efficient alternatives to QM for accurate molecular dynamics in reactive systems.",
+      "llm_tldr_cn": "评估机器学习力场作为反应系统中精确分子动力学模拟的高效替代方案。",
+      "llm_tldr": "评估机器学习力场作为反应系统中精确分子动力学模拟的高效替代方案。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.14466v1",
+      "title": "Explicit, Machine-Learned Two-Body Potentials for Molecular Simulations",
+      "abstract": "A new pairwise hybrid machine-learning/molecular mechanics (ML/MM) potential is introduced that is conceived for application to large, heterogeneous condensed-phase systems. The PhysNet ML method describes monomers and short-range dimer interactions, while a classical MM force field describes pairwise interactions beyond a defined switching distance. Models are fitted to MP2 dimer and pairwise cluster energies, and the quality of each model is assessed at different switching distances and using MM approaches with and without detailed distributed charge electrostatics. The applicability of the approach to molecular dynamics simulations is demonstrated for a basic implementation applied to a small model system. Dichloromethane and acetone are used as test systems to demonstrate the accuracy of the approach in describing pairwise reference data, and also to highlight the limitations of the pairwise approach for systems that exhibit significant many-body effects in condensed phase, paving the way for the addition of a general many-body correction in future work.",
+      "authors": [
+        "Kham Lek Chaton",
+        "Eric D. Boittier",
+        "Mike Devereux",
+        "Markus Meuwly"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-15T16:15:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.14466v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Hybrid ML/MM potential for large condensed-phase systems",
+      "llm_evidence_cn": "用于大型凝聚态系统的混合ML/MM势能",
+      "llm_evidence": "用于大型凝聚态系统的混合ML/MM势能",
+      "canonical_evidence": "用于大型凝聚态系统的混合ML/MM势能",
+      "llm_tldr_en": "Introduces a hybrid ML/MM potential for molecular simulations of large heterogeneous systems.",
+      "llm_tldr_cn": "引入了一种用于大型异质系统分子模拟的混合ML/MM势能。",
+      "llm_tldr": "引入了一种用于大型异质系统分子模拟的混合ML/MM势能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.12845v1",
+      "title": "Multimodal Protein Language Models for Enzyme Kinetic Parameters: From Substrate Recognition to Conformational Adaptation",
+      "abstract": "Predicting enzyme kinetic parameters quantifies how efficiently an enzyme catalyzes a specific substrate under defined biochemical conditions. Canonical parameters such as the turnover number ($k_\\text{cat}$), Michaelis constant ($K_\\text{m}$), and inhibition constant ($K_\\text{i}$) depend jointly on the enzyme sequence, the substrate chemistry, and the conformational adaptation of the active site during binding. Many learning pipelines simplify this process to a static compatibility problem between the enzyme and substrate, fusing their representations through shallow operations and regressing a single value. Such formulations overlook the staged nature of catalysis, which involves both substrate recognition and conformational adaptation. In this regard, we reformulate kinetic prediction as a staged multimodal conditional modeling problem and introduce the Enzyme-Reaction Bridging Adapter (ERBA), which injects cross-modal information via fine-tuning into Protein Language Models (PLMs) while preserving their biochemical priors. ERBA performs conditioning in two stages: Molecular Recognition Cross-Attention (MRCA) first injects substrate information into the enzyme representation to capture specificity; Geometry-aware Mixture-of-Experts (G-MoE) then integrates active-site structure and routes samples to pocket-specialized experts to reflect induced fit. To maintain semantic fidelity, Enzyme-Substrate Distribution Alignment (ESDA) enforces distributional consistency within the PLM manifold in a reproducing kernel Hilbert space. Experiments across three kinetic endpoints and multiple PLM backbones, ERBA delivers consistent gains and stronger out-of-distribution performance compared with sequence-only and shallow-fusion baselines, offering a biologically grounded route to scalable kinetic prediction and a foundation for adding cofactors, mutations, and time-resolved structural cues.",
+      "authors": [
+        "Fei Wang",
+        "Xinye Zheng",
+        "Kun Li",
+        "Yanyan Wei",
+        "Yuxin Liu",
+        "Ganpeng Hu",
+        "Tong Bao",
+        "Jingwen Yang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-03-13T09:45:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.12845v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multimodal models for enzyme kinetic parameters and catalysis",
+      "llm_evidence_cn": "酶动力学参数与催化的多模态模型",
+      "llm_evidence": "酶动力学参数与催化的多模态模型",
+      "canonical_evidence": "酶动力学参数与催化的多模态模型",
+      "llm_tldr_en": "Predicts enzyme kinetics by considering substrate recognition and active site conformational adaptation.",
+      "llm_tldr_cn": "通过考虑底物识别和活性位点构象适应来预测酶动力学。",
+      "llm_tldr": "通过考虑底物识别和活性位点构象适应来预测酶动力学。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.13549v1",
+      "title": "Adaptive tensor train metadynamics for high-dimensional free energy exploration",
+      "abstract": "A key challenge for molecular dynamics simulations is efficient exploration of free energy landscapes over relevant collective variables (CV). Common methods for enhancing sampling become prohibitively inefficient beyond only a few CVs; in the case of the widely-used metadynamics method, the computational cost of evaluating and storing the bias potential grows exponentially with the number of dimensions. Here, we introduce TT-Metadynamics, in which the accumulated sum of Gaussian functions in the original metadynamics method is periodically compressed into a low-rank tensor train (TT) representation. The TT enables efficient memory use and prevents the computational cost of evaluating the bias potential from increasing with simulation time. We present a \"sketching\" algorithm that allows us to construct the TT with linear scaling in the number of CVs. Applied to benchmark systems with up to 14 CVs, the accuracy of TT-Metadynamics matches or exceeds that of standard metadynamics in long simulations, particularly in systems with high barriers. These results establish TT-Metadynamics as a scalable and effective method for computing free energies that are functions of several CVs.",
+      "authors": [
+        "Nils E. Strand",
+        "Siyao Yang",
+        "Yuehaw Khoo",
+        "Aaron R. Dinner"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.stat-mech",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-13T19:38:06+00:00",
+      "link": "https://arxiv.org/pdf/2603.13549v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Enhanced sampling for free energy landscapes in molecular dynamics",
+      "llm_evidence_cn": "分子动力学中自由能地形图的增强采样",
+      "llm_evidence": "分子动力学中自由能地形图的增强采样",
+      "canonical_evidence": "分子动力学中自由能地形图的增强采样",
+      "llm_tldr_en": "Introduces TT-Metadynamics to efficiently explore high-dimensional free energy landscapes using tensor trains.",
+      "llm_tldr_cn": "引入TT-Metadynamics，利用张量训练高效探索高维自由能地形图。",
+      "llm_tldr": "引入TT-Metadynamics，利用张量训练高效探索高维自由能地形图。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.15846v1",
+      "title": "Transfer Learning Meets Embedded Correlated Wavefunction Theory for Chemically Accurate Molecular Simulations: Application to Calcium Carbonate Ion-Pairing",
+      "abstract": "Achieving chemical accuracy for molecular simulations remains a central challenge in computational chemistry. Here, we present an embedded correlated wavefunction transfer learning (ECW-TL) framework for accurately simulating molecular dynamics in the condensed phase. ECW-TL incorporates high-level electron exchange and correlation effects in ECW theory while preserving training and computational efficiency of machine learned interatomic potentials. We demonstrate the framework on Ca2+-CO32- ion pairing in aqueous solution, a key process underlying CO2 mineralization in seawater. As proof of principle, we first show that finetuning a DFT-revPBE-D3(BJ) baseline model with embedded-DFT-SCAN data reproduces the DFT-SCAN free-energy surface within 1 kcal/mol across all solvation states. Extending the framework to embedded MP2 and localized natural-orbital CCSD(T) further refines the free-energy profile, revealing the crucial role of exact electron exchange and correlation in determining ion-pair stability and structure. ECW-TL thus provides a general, data-efficient route for transferring CW accuracy to large-scale simulations of complex aqueous and interfacial chemical processes.",
+      "authors": [
+        "Xuezhi Bian",
+        "Emily A. Carter"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-16T19:27:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.15846v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "embedded correlated wavefunction theory for condensed phase molecular simulations",
+      "llm_evidence_cn": "用于凝聚相分子模拟的嵌入式相关波函数理论",
+      "llm_evidence": "用于凝聚相分子模拟的嵌入式相关波函数理论",
+      "canonical_evidence": "用于凝聚相分子模拟的嵌入式相关波函数理论",
+      "llm_tldr_en": "Presents a framework for chemically accurate molecular simulations using embedded wavefunction theory.",
+      "llm_tldr_cn": "提出了一种利用嵌入式波函数理论进行化学精确分子模拟的框架。",
+      "llm_tldr": "提出了一种利用嵌入式波函数理论进行化学精确分子模拟的框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16770v1",
+      "title": "Training a force field for proteins and small molecules from scratch",
+      "abstract": "Force fields for molecular dynamics are usually developed manually, limiting their transferability and making systematic exploration of functional forms challenging. We developed a graph neural network that assigns all force field parameters for diverse molecules using continuous atom typing. The freely-available model, called Garnet, was trained on quantum mechanical, condensed phase and protein nuclear magnetic resonance data without the use of existing parameters. The resulting force field shows comparable performance to current force fields on small molecules, folded proteins, protein complexes and disordered proteins. It shows similar results to popular approaches for relative binding free energy predictions across a range of targets. Assessing different functional forms shows that the double exponential potential is a flexible and accurate alternative to the Lennard-Jones potential. Garnet provides a platform for automated, reproducible force field discovery that brings the benefits of machine learning to classical force fields.",
+      "authors": [
+        "Alexandre Blanco-González",
+        "Thea K Schulze",
+        "Evianne Rovers",
+        "Joe G Greener"
+      ],
+      "primary_category": "q-bio.BM",
+      "categories": [
+        "q-bio.BM"
+      ],
+      "published": "2026-03-17T16:47:28+00:00",
+      "link": "https://arxiv.org/pdf/2603.16770v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "force field trained on quantum mechanical data for proteins",
+      "llm_evidence_cn": "基于蛋白质量子力学数据训练的力场",
+      "llm_evidence": "基于蛋白质量子力学数据训练的力场",
+      "canonical_evidence": "基于蛋白质量子力学数据训练的力场",
+      "llm_tldr_en": "Garnet is a GNN-based force field trained on QM and NMR data for diverse molecular simulations.",
+      "llm_tldr_cn": "Garnet是一个基于GNN的力场，利用量子力学和核磁共振数据训练，用于多样化的分子模拟。",
+      "llm_tldr": "Garnet是一个基于GNN的力场，利用量子力学和核磁共振数据训练，用于多样化的分子模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM multiscale modeling of enzyme catalysis",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,847 @@
+Title: Multimodal Protein Language Models for Enzyme Kinetic Parameters: From Substrate Recognition to Conformational Adaptation
+
+URL Source: https://arxiv.org/pdf/2603.12845v1
+
+Published Time: Mon, 16 Mar 2026 00:47:43 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Multimodal Protein Language Models for Enzyme Kinetic Parameters: From Substrate Recognition to Conformational Adaptation 
+
+## Fei Wang 1,2, Xinye Zheng 1, Kun Li 3, Yanyan Wei 1,4,*, Yuxin Liu 2, Ganpeng Hu 5,Tong Bao 5, Jingwen Yang 5 
+
+> 1
+
+School of Computer Science and Information Engineering, Hefei University of Technology  
+
+> 2
+
+Institute of Artificial Intelligence, Hefei Comprehensive National Science Center  
+
+> 3
+
+CVLab, College of Information Technology, United Arab Emirates University  
+
+> 4
+
+Intelligent Interconnected Systems Laboratory of Anhui Province  
+
+> 5
+
+School of Food Biological Engineering, Hefei University of Technology ① Substrate Recognition               
+
+> Active-site Motif: L20-S117-…
+> M
+> T
+> ESP
+> …VLG
+> Q
+> R
+> S117
+> L20
+> Mutation Tuning
+> Specificity Specificity
+> Output :Candidate Substrate Affinity .
+> Substrate  Enzyme Sequence
+> ②Conformational Adaptation
+> Induced Fit:
+> EE* ( Active Conformation)
+> Output : Stabilized E*-S Complex.
+> E
+> E*
+> Stabilized E*-S Complex
+> Substrate  Enzyme Structure
+> ③Reaction & Product
+> Enzyme
+> Substrate 1 Substrate 2
+> Output : Target (Enzyme Kinetic Params.)
+> Target Product:
+> cat
+
+k mK iK       
+
+> M
+> T
+> ESP
+> …
+> VL
+> G
+> Q
+> R
+> Sequence Substrate Structure
+> Transformer-Encoder-Only PLMs
+> Molecular Recognition
+> Cross-Attention (MRCA)
+> Geometry-aware MoE (G-MoE)
+> PLMs Backbone
+> Enzyme Kinetic Params.
+> ①
+> ②
+> ③
+> Mutant Enzyme Reaction Mechanism Enzyme-Reaction Bridging Adapter
+
+Figure 1. Overview of the Mutant Enzyme Reaction Mechanism and the proposed Enzyme-Reaction Bridging Adapter . Catalysis proceeds through three stages: (1) Substrate recognition, tuning enzyme-substrate specificity; (2) Conformational adaptation, forming a stabilized E∗-S complex; and (3) Reaction and product formation, yielding kinetic parameters ( kcat , Km, Ki). ERBA mirrors this process through Molecular Recognition Cross-Attention (MRCA) for sequence-substrate conditioning and Geometry-aware Mixture-of-Experts (G-MoE) for structural adaptation, enabling biologically grounded enzyme kinetics prediction. 
+
+## Abstract 
+
+Predicting enzyme kinetic parameters quantifies how effi-ciently an enzyme catalyzes a specific substrate under de-fined biochemical conditions. Canonical parameters such as the turnover number ( kcat ), Michaelis constant ( Km), and inhibition constant ( Ki) depend jointly on the enzyme sequence, the substrate chemistry, and the conformational adaptation of the active site during binding. Many learn-ing pipelines simplify this process to a static compatibility problem between the enzyme and substrate, fusing their rep-resentations through shallow operations and regressing a single value. Such formulations overlook the staged nature of catalysis, which involves both substrate recognition and conformational adaptation. In this regard, we reformulate kinetic prediction as a staged multimodal conditional mod-eling problem and introduce the Enzyme-Reaction Bridg-ing Adapter (ERBA), which injects cross-modal informa-tion via fine-tuning into Protein Language Models (PLMs) while preserving their biochemical priors. ERBA performs conditioning in two stages: Molecular Recognition Cross-Attention (MRCA) first injects substrate information into the enzyme representation to capture specificity; Geometry-aware Mixture-of-Experts (G-MoE) then integrates active-site structure and routes samples to pocket-specialized ex-perts to reflect induced fit. To maintain semantic fidelity, Enzyme-Substrate Distribution Alignment (ESDA) enforces distributional consistency within the PLM manifold in a re-producing kernel Hilbert space. Experiments across three kinetic endpoints and multiple PLM backbones, ERBA de-livers consistent gains and stronger out-of-distribution per-formance compared with sequence-only and shallow-fusion baselines, offering a biologically grounded route to scal-able kinetic prediction and a foundation for adding cofac-tors, mutations, and time-resolved structural cues. 
+
+> arXiv:2603.12845v1 [cs.CV] 13 Mar 2026
+
+## 1. Introduction 
+
+High-throughput protein design and synthetic biology [6– 8, 23, 25, 35, 55] increasingly depend on in silico estimates of the efficiency with which an enzyme converts a given substrate under realistic biochemical conditions. Turning this promise into practice requires accurate prediction of canonical kinetic constants [28, 39, 61], e.g ., kcat , Km, and 
+
+Ki, directly from molecular inputs, so that large candidate libraries can be screened before any wet-lab investment. Yet current machine learning pipelines [5, 43, 50, 53] still struggle to move beyond dataset-specific correlations to-ward mechanism-aware generalization. A central difficulty lies in how catalysis actually un-folds [6, 7, 25, 31, 35, 56], as “ Mutant Enzyme Reac-tion Mechanism ” in Figure 1. Early studies regressed kinetic constants from sequence alone [3, 36]. Subse-quent multimodal systems encoded both the enzyme and the small-molecule substrate, typically via Protein Lan-guage Model (PLM) [17, 30, 37, 40] or CNN features for the sequence and SMILES/graph fingerprints for the sub-strate, and trained joint regressors [5, 28, 53, 61]. Exam-ples include DLKcat [28] for kcat from paired representa-tions, UniKP [61] for multi-endpoint prediction with envi-ronmental covariates, and CataPro [53]/CatPred [5] that add stronger PLM features and uncertainty reporting. Despite progress, most pipelines [43, 53, 67] fuse the two branches with shallow operations ( e.g ., concatenation and a single cross-attention layer) and then regress a score, implicitly treating catalysis as static compatibility. In reality, enzymes 
+
+first recognize and position the substrate, then adapt pocket geometry [10, 27, 29, 33] to stabilize the transition state; both phases jointly determine kcat , Km, and Ki.Transformer-based PLMs offer a principled prior for mechanism-aware modeling. Large-scale self-supervision yields embeddings that reflect evolutionary constraints, fold regularities, long-range contacts, and conserved cat-alytic motifs [2, 11, 12, 17, 30, 37, 44]. ESM fami-lies [17, 30, 37, 40] show that masked-token training cap-tures structure-aware signals transferable to function tasks; ProtTrans/ProtT5 [11, 44] extend coverage with encoder-decoder modeling; Ankh/Ankh3 [2, 12] introduce protein-specific multi-task objectives that strengthen residue-level priors. These improved kinetic prediction when used as fixed inputs or lightly tuned backbones, and recent evidence supports careful fine-tuning [41]. Two gaps remain: PLMs are used passively rather than being explicitly conditioned on the concrete substrate, and naively injecting 3D evidence can dominate training and erode the biochemical semantics learned during pretraining [5, 43, 49, 53, 58, 68]. It moti-vates a formulation that conditions the PLM on substrate semantics and pocket geometry in a staged, mechanism-aligned manner while preserving its sequence-derived prior. In light of this, we address these gaps by framing en-zyme kinetics as staged conditioning aligned with enzymol-ogy: substrate recognition, then conformational adaptation (as shown in Figure 1). The proposed Enzyme-Reaction 
+
+Bridging Adapter (ERBA) adapts to the PLM task in two phases. Stage 1, Molecular Recognition Cross-Attention 
+
+(MRCA), conditions the protein representation on the spe-cific substrate to model selectivity and binding specificity. Stage 2, a Geometry-aware Mixture-of-Experts (G-MoE), fuses the MRCA output with an active-site geometry en-coder and routes each sample to pocket-specialized experts, capturing induced fit and conformational adaptation where catalysis occurs. To maintain adaptation stability, we in-troduce Enzyme-Substrate Distribution Alignment (ESDA), which defines stability as distributional alignment in a re-producing kernel Hilbert space [65, 66] via an RBF-kernel maximum mean discrepancy. ESDA aligns the distribu-tions of sequence-only, sequence-substrate, and sequence-substrate-structure representations to the PLM manifold, preserving biochemical semantics while allowing new sub-strate and geometry information to be expressed. Mean-while, a heteroscedastic Gaussian [24] prediction head trained in log 10 space models the positivity of kinetic con-stants and their multiplicative noise. In addition, we evaluate across three kinetic endpoints and multiple PLM backbones under consistent protocols. Extensive results demonstrate that shallow fusion underuses PLM priors and fails to capitalize on geometry, whereas ERBA’s staged conditioning yields consistent gains. Im-provements hold across backbones of different scales, and cross-dataset tests indicate stronger out-of-distribution gen-eralization, highlighting the benefit of conditioning the PLM first on substrate semantics and then on pocket ge-ometry in a manner faithful to the catalytic mechanism. In summary, our principal contributions are as follows: • We propose a mechanism-aligned formulation of enzyme kinetics as staged conditioning from substrate recognition to pocket-level adaptation. • We introduce an ERBA that combines MRCA for sequence-substrate fusion with a G-MoE that performs pocket-localized adaptation via sparse expert routing. • We design an ESDA that aligns the sequence, substrate, and structure at the distribution level, preserving PLM biochemical semantics during multimodal fine-tuning. • Evaluated across three kinetic endpoints and multiple PLM backbones, ERBA delivers consistent gains, offer-ing a general interface for adding new modalities and im-proving out-of-distribution generalization. 
+
+## 2. Related Work 
+
+2.1. Enzyme Kinetic Parameter Prediction 
+
+Data-driven prediction of enzyme kinetics has progressed from sequence-only models to multimodal pipelines. Early efforts such as DLKcat [28] coupled CNN/GNN encoders for protein sequences and substrate SMILES. Subsequent systems improved generalization by introducing PLM fea-tures [26, 43, 48, 53, 61]: TurNup [26] pairs ESM-1b [40] with reaction fingerprints in a boosted regressor; UniKP [61], MPEK [48], and CataPro [53] use ProtT5 [11] with SMILES to predict multiple endpoints; EITLEM [43] adopts ESM-1v [37] and residue-level attention for mutants. Despite these gains, most pipelines still operate on 1D se-quence and 2D chemistry, leaving out the 3D pocket context that strongly influences kcat , Km, and Ki [29, 33, 50]. 
+
+2.2. Transformer-based Protein Language Models 
+
+Transformer-based PLMs learn contextual protein represen-tations from large sequence corpora [2, 11, 12, 17, 30, 37, 44, 47]. ESM models [30, 40] show that masked-token pretraining captures fold regularities, long-range contacts, and mutation sensitivity that transfer to structure and func-tion tasks. ProtTrans/ProtT5 [11, 18] introduces encoder-decoder training and larger vocabularies, improving ro-bustness for remote homologs. Ankh/Ankh3 [2, 12] adds protein-specific multitask objectives, strengthening residue-level priors. Scaling further enriches implicit structural knowledge, as in ESM-3 [17]. Such representations are now standard for kinetics because they encode evolutionary con-straints, catalytic motifs, and physically plausible contacts. 
+
+2.3. Multimodal Integration for Enzyme Modeling 
+
+Catalysis reflects coupled effects of sequence, substrate chemistry, and conformational geometry. Recent integra-tions extend PLMs with structural or chemical modali-ties [20, 38, 51, 57, 68]. Examples include multimodal at-tention for active-site labeling [51], cross-modal regression with environmental factors [20], and combinations of cryo-EM or structure-derived features with PLM embeddings for molecular property prediction [9, 57, 62, 68]. Most works [5, 43, 48, 53], however, fuse modalities shallowly, which undercuts the mechanistic sequence of recognition 
+
+then adaptation and risks destabilizing pretrained biochem-ical priors during fine-tuning. A staged, mechanism-aligned conditioning that injects substrate semantics first and pocket geometry second, while regularizing distributions to remain compatible with PLM space [4, 13], is thus warranted. 
+
+## 3. Methodology 
+
+3.1. Preliminaries 
+
+Problem Definition. The task of predicting enzyme ki-netic parameters can be formulated as a conditional re-gression problem. Given an enzyme E with amino acid sequence Se = {si}i=1 ,...,L e , a substrate molecule Sm
+
+(SMILES [19]) and their structural context Sg , the goal is to predict quantitative kinetic parameters ˆy = {kcat , K m, K i}.Formally, we aim to learn a multimodal regression function 
+
+fθ (·) parameterized by θ:
+
+ˆy = fθ (Se, Sm, Sg ), ˆy ∈ R. (1) 
+
+Existing Formulation. Most existing methods [5, 43, 48, 53] approximate fθ by independently encoding the enzyme and substrate, followed by a shallow fusion and regression head to approximate: 
+
+ˆy = ψ(Se ⊕ Sm ⊕ Sg ), (2) where ⊕ denotes concatenation and ψ(·) maps the fused representation to kinetic outputs. While straightforward, this performs only coarse feature aggregation and lacks fine-grained semantic alignment between molecular modal-ities. It implicitly treats catalysis as a static compatibil-ity problem, ignoring the dynamic and hierarchical nature of enzymatic turnover-comprising (i) substrate recognition 
+
+and (ii) conformational adaptation within the active site. 
+
+Mechanism-Aligned Formulation. We instead model en-zymatic catalysis as a staged conditional process , in which kinetic behavior emerges from successive molecular inter-actions. Given that substrate binding determines selectivity and structural adaptation governs efficiency, we reformulate the prediction function as 
+
+ˆy = fθ (Se | Sm, Sg ) = f (2) 
+
+> θ
+
+ f (1)  
+
+> θ
+
+(Se, Sm), Sg
+
+. (3) Here, f (1)  
+
+> θ
+
+captures substrate-conditioned molecular recognition, and f (2)  
+
+> θ
+
+refines the representation through geometry-aware conformational adaptation. To realize this staged conditioning, we introduce the Enzyme-Reaction Bridging Adapter (ERBA) A(·), which augments pre-trained PLMs through hierarchical multimodal fusion. ERBA integrates two key modules: (i) the Molecular Recognition Cross-Attention (MRCA) M(·) that in-jects substrate semantics into enzyme representations to model recognition specificity, and (ii) the Geometry-aware Mixture-of-Experts (G-MoE) G(·) that incorporates three-dimensional structural cues to capture adaptive catalytic configurations. Formally, the PLM-based ERBA reformu-lates the staged conditioning in Eq. 3 as: 
+
+ˆy = A Se | Sm, Sg
+
+ = G(2)   M(1) (Se, Sm)
+
+| {z }
+
+> (i) Substrate Recognition
+
+, Sg
+
+| {z }
+
+> (ii) Conformational Adaptation
+
+, (4) where M(1) performs substrate-conditioned fusion within the PLM latent space to align enzyme and substrate seman-tics, while G(2) leverages local structural geometry to guide conformation-aware refinement. This hierarchical fusion mechanism enables biologically grounded and semantically aligned prediction of enzyme kinetic parameters, while pre-serving the biochemical priors inherent in pretrained PLMs. …  
+
+> M
+> T
+> ES
+> P
+> …
+> VL
+> G
+> Q
+> R
+
+Transformer-Encoder-Only PLMs Backbone 
+
+> Kinetics
+> Prediction Head
+> Multi-Head Attention
+> Feed Forward
+> Add & Norm
+> Add & Norm
+> Transformer
+> Encoder Layer
+> Projector
+> Structural Encoder
+> Shallow Embedding
+> Update
+> V
+> Cross Attention
+> Add & Norm
+> K
+> Projector
+> G-Gating & Router
+> ....
+> Weighted Fusion
+> Transformer
+> Encoder Layer
+> cat
+
+k
+
+> m
+
+K
+
+> i
+
+K
+
+MRCA  G-MoE 
+
+> Molecular Fingerprint
+> Transformer Encoder Layer
+
+Sequence-Only PLM Backbone  
+
+> Enzyme S equence
+> Substrate
+> SMILES
+> 3D Structure Graph Modelling
+> Query
+
+Enzyme-Reaction Bridging Adapter 
+
+(ERBA) 
+
+> Update
+> <Input>
+> <Output>
+> task
+
+
+
+> ESDA
+
+
+
+> e
+
+S
+
+> (0)
+> e
+
+=H H
+
+> m
+
+S
+
+> m
+
+H
+
+> g
+
+H
+
+> g
+
+S
+
+> (1)
+
+H ESDA 
+
+> (2)
+
+H
+
+> (2)
+
+H
+
+> Expert 1
+> Expert 2
+> Expert 3
+> Expert 4
+> Expert N
+> ....
+> G-MoE
+
+Figure 2. Architecture of the proposed ERBA. It augments a sequence-only PLM with multimodal conditioning on substrate chemistry and pocket geometry. MRCA injects substrate fingerprints into enzyme embeddings to capture recognition specificity, and G-MoE inte-grates local 3D pocket structure to model conformational adaptation. Update and query paths couple both modules to the backbone, while ESDA aligns representations with the prior PLM, enabling accurate prediction of enzyme kinetic parameters. 
+
+3.2. Molecular Recognition Cross-Attention 
+
+Catalysis begins with molecular recognition: substrate iden-tity constrains selectivity and sets the context for subse-quent conformational change. Let the enzyme sequence be 
+
+Se ∈ RLe and the substrate string be Sm ∈ RLm . Shallow Transformer layers of the pretrained PLM act as an encoder that maps Se to residue embeddings He ∈ RLe×D , pre-serving local biochemical cues while remaining amenable to multimodal conditioning. And the substrate tokens are embedded by MPNN encoder [60] guided by SMILES fin-gerprint priors [5], yielding Hm ∈ RLm×D . Recognition is cast as the proposed Molecular Recognition Cross-Attention 
+
+(MRCA) module, which injects substrate semantics into the enzyme environment based on a single-layer cross-attention mechanism. With trainable projections WQ, WK , WV ∈
+
+RD×dk , we compute 
+
+Aem = Softmax 
+
+ (HeWQ)( HmWK )⊤
+
+> √dk
+
+
+
+,
+
+Zem =Aem (HmWV ),
+
+(5) where Aem ∈ RLe×Lm aligns enzyme tokens to substrate tokens and aggregates substrate-conditioned evidence. The resulting update Zem ∈ RLe×D is fused back to the en-zyme stream with a residual connection and layer nor-malization, producing the substrate-aware representation 
+
+H(1) ∈ RLe×D . This recognition-level summary highlights substrate-relevant residues and is passed to the next stage. 
+
+3.3. Geometry-aware Mixture-of-Experts 
+
+The second stage conditions recognition features on three-dimensional pocket geometry to model conformational adaptation at the catalytic site. Since pocket topology and residue packing induce heterogeneous geometric regimes that a shared adapter cannot capture [5], we introduce a 
+
+Geometry-aware Mixture-of-Experts (G-MoE), whose rout-ing depends jointly on recognition features and pocket structure in Figure 3. Let H(1) ∈ RLe×D denote the MRCA output and P ⊂ 1, . . . , L e the pocket index set. Active-site tokens are encoded by an E-GNN [15] to yield geometry de-scriptors Hg ∈ RLg ×D . We construct a joint routing vector 
+
+vemg via the G-Gating & Router module as: 
+
+vemg =
+
+h
+
+Pool  H(1) [P] ⊕ Pool( Hg )
+
+i
+
+∈ R2D , (6) where Pool( ·) is tokenwise mean and [P] selects the pocket rows. Routing logits α and sparse gates eα are then 
+
+α = softmax( Wgate vemg + bgate ) ∈ Rn,
+
+eα = Top- k(α, k ) ∈ Rn, (7) Expert 1  Expert 2  Expert 4 Expert 3    
+
+> G-Gating & Router
+> Top-kSoftmax
+> MLP
+> αlogits = 0.75
+> αlogits = 0.67
+> Sequence
+> SMILES
+> Structure
+> Seq-Smiles Structure
+> g
+
+H(1)  
+
+> H
+> Concat & Pool emg
+
+v
+
+> (2)
+> H
+> Aggregated
+
+Figure 3. G-Gating & Router pools sequence-substrate and struc-tural cues to produce gating logits, activate the top-k geometry-relevant experts, and suppress others. Selected experts transform structure-conditioned features, and an MLP fuses them into a geometry-adaptive representation for kinetic regression. 
+
+where only the k geometry-relevant experts are activated. In the model composed of n experts, each expert En per-forms a pocket-local , geometry-modulated low-rank adap-tation by a geometry summary Γ( Hg ) = Pool( Hg ) ∈ RD :
+
+En(H(1) , Hg ) = H(1) +Vnσ
+
+
+
+UnH(1) [P] + BnΓ( Hg )
+
+
+
+,
+
+(8) with Un ∈ Rr×D, Vn ∈ RD×r, and Bn ∈ Rr×D are learn-able weight matrices, GELU nonlinearity σ, and r ≪ D is the rank of the adapter. Geometry thus conditions chan-nel excitation within the pocket while leaving non-pocket residues unchanged, thereby aligning the learned adaptation with the structural determinants of the transition state. Selected experts are aggregated to obtain the geometry-conditioned state used for kinetic regression as: 
+
+H(2) = MLP 
+
+ X 
+
+> n∈Top k
+
+eα E n(H(1) , Hg )
+
+
+
+∈ RD . (9) To prevent expert collapse while keeping geometry-driven sparsity, we add a light balancing term LG-MoE that nudges the average gate mass toward uniform importance and the usage rate toward the expected Top-k proportion: 
+
+LG-MoE = ¯α − 1 
+
+> n
+
+1 22 + ¯n − kn 1 22, (10) where ¯α ∈ Rn is the per-expert average of eα over the cur-rent mini-batch, ¯u ∈ Rn is the per-expert average of the indicator 1[ eα > 0] over the current mini-batch, 1 ∈ Rn de-notes the all-ones vector, and ∥ · ∥ 2 is the Euclidean norm. This regularizer is lightweight and does not dilute geom-etry guidance. In combination, geometry-driven routing, pocket-local adaptation, and sparse aggregation yield H(2) 
+
+that preserves global PLM priors, incorporates structural evidence at the catalytic site, and improves predictive fi-delity for enzyme kinetics. 
+
+3.4. Enzyme-Substrate Distribution Alignment 
+
+Staged conditioning should absorb substrate and geometry signals while remaining compatible with the biochemical prior encoded by the pretrained PLM. To keep both stages anchored to this prior, let H(0) = He is the sequence em-bedding, H(1) the substrate-conditioned embedding from MRCA, and H(2) the geometry-conditioned representation from G-MoE. We introduce the Enzyme-Substrate Distri-bution Alignment (ESDA), inspired by kernel-based two-sample tests and distribution alignment techniques in sta-tistical learning and transfer adaptation [16, 34, 52]. ESDA formalizes stability as distributional alignment in a repro-ducing kernel Hilbert space [65, 66], ensuring that recog-nition and adaptation evolve within the semantic domain of the PLM, rather than drifting into a new manifold. For this alignment, each stage’s global representation is summarized by averaging the embeddings across residues: 
+
+Z(t) = 1
+
+LeLeX
+
+> i=1
+
+H(t)[i], t ∈ { 0, 1, 2}. (11) For any indices a, b ∈ t, using an RBF kernel 
+
+κ(Za, Zb) = exp   − ∥Z a − Z b∥22/(2 σ2) with bandwidth 
+
+σ set by the median heuristic [22], we adopt a diagonal-free, normalized mini-batch Maximum Mean Discrepancy (MMD) estimator [59] for any two sets Za, Zb of sizes 
+
+Na, N b:
+
+\MMD 2
+
+(Za, Zb) = 1
+
+N 2
+
+> a
+
+X
+
+> p,q p̸=q
+
+κ(Zap , Zaq ) + 1
+
+N 2
+
+> b
+
+X
+
+> p,q p̸=q
+
+κ(Zbp, Zbq )
+
+− 2
+
+NaNb
+
+X
+
+> p,q
+
+κ(Zap , Zbq ).
+
+(12) In summary, ESDA anchors both stages to the PLM man-ifold and encourages a smooth progression from recogni-tion to adaptation: 
+
+LESDA = \MMD 2 Z(1) , Z(0)  + \MMD 2 Z(2) , Z(0) .
+
+(13) By aligning distributions rather than individual features, ESDA suppresses feature flooding from high-capacity geo-metric channels and mitigates forgetting of PLM biochem-ical semantics, while retaining information introduced by substrate identity and pocket geometry. Method Venue Modality Kinetic Endpoint: kcat Kinetic Endpoint: Km Kinetic Endpoint: Ki
+
+Se Sm Sg R2↑ PCC ↑ RMSE ↓ MAE ↓ R2↑ PCC ↑ RMSE ↓ MAE ↓ R2↑ PCC ↑ RMSE ↓ MAE ↓
+
+Exp I: Existing SOTA Models 
+
+DLKcat [28] Nat.Catal 2022 ✓ ✓ - 0.01 0.37 1.78 1.30 - - - - - - - -TurNup [26] Nat.C 2023 ✓ ✓ - 0.39 0.65 1.60 1.19 - - - - - - - -UniKP [61] Nat.C 2023 ✓ ✓ - 0.13 0.42 1.56 1.14 0.36 0.63 1.02 0.78 - - - -MPEK [48] Brief.Bio 2024 ✓ ✓ - 0.33 0.59 1.34 1.05 0.30 0.56 1.40 1.09 - - - -EITLEM [43] Chem.Catal 2024 ✓ ✓ - 0.34 0.63 1.35 0.80 0.30 0.59 1.06 0.82 0.38 0.70 1.33 0.97 CataPro [53] Nat.C 2025 ✓ ✓ - 0.41 0.66 1.33 0.80 0.41 0.63 1.01 0.75 - - - -CatPred [5] Nat.C 2025 ✓ ✓ ✓ 0.40 0.67 1.30 0.79 0.49 0.65 0.93 0.71 0.45 0.60 1.35 1.09 
+
+Ours ‡ - ✓ ✓ ✓ 0.54 0.74 1.13 0.74 0.61 0.79 0.70 0.61 0.61 0.78 1.26 0.91 
+
+Exp II: Fine-tuning PLM Backbones 
+
+Ankh3-1.8B [2] Arxiv 2025 ✓ - - 0.41 0.65 1.28 0.92 0.40 0.64 0.97 0.74 0.41 0.64 1.54 1.22 
+
+w/ ERBA - ✓ ✓ ✓ 0.50 0.72 1.17 0.80 0.51 0.72 0.88 0.66 0.52 0.73 1.39 1.06 Ankh3-5.7B [2] Arxiv 2025 ✓ - - 0.43 0.67 1.24 0.88 0.42 0.65 0.98 0.74 0.46 0.68 1.47 1.15 
+
+w/ ERBA - ✓ ✓ ✓ 0.52 0.74 1.12 0.77 0.53 0.73 0.88 0.65 0.57 0.76 1.32 1.00 ProtT5-3B [18] TPAMI 2021 ✓ - - 0.39 0.65 1.30 0.91 0.39 0.63 0.98 0.74 0.43 0.66 1.50 1.14 
+
+w/ ERBA - ✓ ✓ ✓ 0.47 0.71 1.22 0.85 0.54 0.74 0.88 0.65 0.58 0.76 1.31 0.97 ESM2-8M [30] Science 2023 ✓ - - 0.19 0.43 1.49 1.11 0.26 0.51 1.08 0.84 0.15 0.39 1.82 1.46 
+
+w/ ERBA - ✓ ✓ ✓ 0.27 0.52 1.41 1.05 0.35 0.60 1.04 0.80 0.31 0.56 1.64 1.30 ESM2-35M [30] Science 2023 ✓ - - 0.26 0.52 1.42 1.04 0.30 0.55 1.07 0.84 0.17 0.42 1.51 1.12 
+
+w/ ERBA - ✓ ✓ ✓ 0.38 0.62 1.31 0.96 0.38 0.62 1.01 0.78 0.34 0.59 1.60 1.26 ESM2-150M [30] Science 2023 ✓ - - 0.30 0.55 1.38 1.01 0.33 0.58 1.04 0.80 0.33 0.58 1.62 1.29 
+
+w/ ERBA - ✓ ✓ ✓ 0.38 0.62 1.31 0.95 0.54 0.73 0.88 0.65 0.53 0.73 1.36 1.02 ESM2-650M [30] Science 2023 ✓ - - 0.35 0.59 1.33 0.98 0.39 0.63 0.97 0.75 0.36 0.60 1.58 1.27 
+
+w/ ERBA - ✓ ✓ ✓ 0.44 0.66 1.25 0.91 0.55 0.74 0.81 0.64 0.53 0.74 1.35 0.99 ESM2-3B [30] Science 2023 ✓ - - 0.41 0.65 1.27 0.92 0.43 0.66 0.94 0.72 0.49 0.71 1.38 1.05 
+
+w/ ERBA (Ours) - ✓ ✓ ✓ 0.54 0.74 1.13 0.74 0.61 0.79 0.70 0.61 0.61 0.78 1.26 0.91 
+
+Table 1. Performance comparison of existing SOTA methods and fine-tuned PLM backbones on enzyme kinetic prediction tasks. 
+
+Results are presented for three kinetic parameters: turnover number ( kcat ), Michaelis constant ( Km), and inhibition constant ( Ki). The performance metrics include R 2↑, PCC ↑, RMSE ↓, and MAE ↓. ERBA consistently outperforms the baselines across all metrics. Notably, the best value in each column is highlighted in red , and the second best in blue . ‡ indicates that the backbone of the PLMs is fine-tuned. 
+
+3.5. Enzyme Reaction Optimization 
+
+Kinetic constants are positive and affected by multiplicative noise, so we follow [5] to regress in log 10 space using a het-eroscedastic Gaussian negative log-likelihood (NLL) [14]. For a target y > 0, let z = log 10 y. The prediction head out-puts a mean μ and a log-variance s = log σ2 for z, yielding the per-sample NLL: 
+
+Ltask = 12 e−s (z − μ)2 + 12 s.  (14) Therefore, the full objective L aggregates the likelihood through hyperparameter ( λ1, λ 2) modulation of task regu-larization Ltask , geometry-aware specialization LG-MoE , and distributional alignment LESDA :
+
+L = Ltask + λ1 LG-MoE + λ2 LESDA . (15) 
+
+## 4. Experiments 
+
+4.1. Experimental Setup 
+
+Datasets. Following prior works [5, 43], we evaluate on three standard kinetic parameter prediction tasks: kcat ,
+
+Km, and Ki, using data from BRENDA [42] and SABIO-RK [54]. The datasets contain 23 ,197 records for kcat ,
+
+41 ,174 for Km, and 11 ,929 for Ki. Each entry includes a UniProt-validated enzyme sequence, substrate SMILES string, experimentally measured kinetic value, and associ-ated 3D structure annotation. Compared to datasets used in DLKcat [28] and UniKP [61], we extend sequence and EC coverage, standardize molecular representations, and reduce integration biases, enabling controlled multimodal evaluation. Notably, in Section 4.2, we use the kcat and 
+
+Km test sets from [43] for out-of-distribution generalization testing, where 3D structures are generated by OpenFold [1] or ESMFold [30]. Details are given in the Appendix. 
+
+Evaluation Metrics. We evaluate using mean absolute er-ror (MAE) [28, 45], root mean square error (RMSE) [46, 53], Pearson correlation coefficient (PCC) [5], and coef-ficient of determination (R 2) [5, 28, 43]. All metrics are computed on log 10 transformed targets for kcat , Km, and 
+
+Ki to stabilize scale and variance. Lower MAE and RMSE and higher PCC and R 2 indicate better performance. Un-less noted otherwise, results are averaged over repeated runs with fixed data splits and identical preprocessing. 
+
+Implementation Details. The enzyme-encoding process employs a PLM with a latent dimension of D = 1024 and a fixed tokenization scheme. Sequences are truncated or padded to a maximum length Le = 1024 . The substrate is encoded from a canonical SMILES and mapped to dimen-Index Class Name Kinetic Endpoint: kcat Kinetic Endpoint: Km Kinetic Endpoint: Ki                                                                                                              
+
+> Count R2↑PCC ↑RMSE ↓MAE ↓Count R2↑PCC ↑RMSE ↓MAE ↓Count R2↑PCC ↑RMSE ↓MAE ↓
+> EC-1 Oxidoreductases 679 0.37 0.62 1.32 0.95 1,382 0.55 0.74 0.90 0.69 282 0.58 0.77 1.19 0.92 EC-2 Transferases 334 0.46 0.69 1.22 0.87 1,000 0.53 0.73 0.81 0.61 270 0.38 0.65 1.37 0.99 EC-3 Hydrolases 682 0.43 0.68 1.18 0.88 1,145 0.51 0.72 0.90 0.65 408 0.48 0.71 1.50 1.10 EC-4 Lyases 131 0.50 0.71 1.27 0.92 293 0.56 0.75 0.81 0.61 157 0.65 0.81 1.19 0.84 EC-5 Isomerases 72 0.46 0.73 1.39 0.94 123 0.61 0.78 0.84 0.64 42 0.67 0.83 1.20 0.95 EC-6 Ligases 48 0.53 0.77 0.96 0.71 135 0.34 0.59 1.02 0.76 21 0.34 0.62 1.39 1.03
+
+Table 2. Enzyme category analysis across kinetic prediction tasks. The table provides a breakdown of enzyme categories in the datasets for kcat , Km, and Ki prediction tasks. It includes the distribution of each enzyme class, the number of samples per category, and performance metrics for each class. Notably, the best value in each column is highlighted in red , and the second best in blue .                                                                          
+
+> Method OOD Test @EITLEM-kcat OOD Test @EITLEM-Km
+> R2↑PCC ↑RMSE ↓MAE ↓R2↑PCC ↑RMSE ↓MAE ↓
+> DLKcat [28] 0.01 0.15 3.87 3.05 ----TurNup [26] 0.21 0.38 2.46 2.11 ----UniKP [61] 0.08 0.20 1.76 1.24 0.14 0.32 1.54 1.08 MPEK [48] 0.17 0.41 1.65 1.18 0.12 0.35 1.71 1.32 EITLEM [43] 0.27 0.50 1.43 0.95 0.23 0.43 1.31 1.03 CataPro [53] 0.25 0.47 1.59 1.08 0.27 0.41 1.23 0.96 CatPred [5] 0.25 0.46 1.50 1.03 0.30 0.45 1.11 0.87
+> Ours ‡0.50 0.70 1.21 0.81 0.55 0.69 0.79 0.69
+
+Table 3. Comparison with existing SOTA models on OOD tests. 
+
+kcat and Km using the EITLEM [43] test sets. 
+
+sion D via a linear layer; pocket geometry is computed from active-site residues, and its channels are projected to D via another linear layer. G-MoE employs n = 4 experts with top k = 2 routing. We evaluate ProtT5 [18], ESM2 [30], and Ankh3 [2] backbones to verify robustness across PLMs. For parameter-efficient adaptation, LoRA [21] is applied to the top PLM layers with a rank of 8, a scaling factor of 16 ,and a dropout rate of 0.1. Training uses AdamW [32] with learning rate 1 × 10 −4. In full objective L, the hyperparam-eters are set to λ1 = 0 .01 and λ2 = 0 .1.
+
+4.2. Performance Analysis 
+
+We benchmark ours (ESM2-3B w/ ERBA) against recent methods on kcat , Km, and Ki, reimplementing all baselines with the same ESM2-3B enzyme encoder for fairness. 
+
+Performance Comparison. As shown in Exp I of Table 1, our method outperforms existing SOTA models across all three kinetic parameters. For kcat , we achieve an R2 of 0.54, a notable improvement over CatPro’s 0.41, along with su-perior PCC (0.74 vs. 0.67) and lower RMSE (0.79 vs. 1.30). For Km, our model leads with an R 2 of 0.61, compared to CatPro’s 0.49, and a lower RMSE of 0.70. Similarly, for 
+
+Ki, we achieve a PCC of 0.78 and reduce RMSE to 1.26, outperforming CatPro’s 0.60 and 1.35, respectively. These results underscore the effectiveness of our approach, which combines sequence and substrate information via ERBA to enable accurate modeling of enzyme-substrate interactions. 
+
+Backbone Scaling and the Effect of ERBA. We next ex-amine whether ERBA’s gains persist across PLM scales and families in Exp II of Table 1. Across ESM2 (8 M →
+
+3 B), ProtT5-3B, and Ankh3 (1.8 B /5.7 B), attaching ERBA to the same backbone consistently improves all three end-points. On ESM2-3B, kcat rises from R 2=0 .41 to 0.54 with higher PCC (0.74) and lower RMSE (0.79); Km climbs from R 2=0 .43 to 0.61 with RMSE dropping to 0.70 ; Ki
+
+sees PCC improve from 0.71 to 0.78 while RMSE falls from 1.38 to 1.26. Similar trends hold at smaller scales (8 M /35 M /150 M /650 M) and on non-ESM backbones (ProtT5-3B, Ankh3), indicating that ERBA provides or-thogonal benefits to model size and pretraining recipe. Scal-ing the backbone alone yields moderate gains, but adding ERBA produces larger, more uniform improvements, espe-cially on Km and Ki where structural context matters most. 
+
+Performance Representation of Enzyme Distribution. 
+
+Table 2 presents the performance across six enzyme classes for the kinetic parameters kcat , Km, and Ki. Our model performs best for EC-4 (Lyases), achieving high R 2 and PCC values, particularly for Ki and kcat . EC-6 (Ligases) shows lower performance, particularly in Km and Ki. These results demonstrate the model’s overall robustness while highlighting challenges in predicting certain kinetic param-eters for specific enzyme classes. 
+
+Error Distribution Analysis. Figure 4 shows the log-scaled experimental vs. predicted values for kcat , Km, and 
+
+Ki, with 1-Radio AE indicating the percentage of predic-tions with absolute errors ≤1. The dashed red line repre-sents perfect predictions. Overall, the model demonstrates good performance, with 1-RadioAE values of 67.67% for 
+
+kcat, 62.28% for Ki, and 79.53% for Km. Km predictions are more concentrated around the perfect prediction line, while kcat shows more variation. These results highlight the model’s robustness and suggest that further improvement is needed, particularly for kcat and Ki.
+
+Out-of-Distribution Generalization. To evaluate OOD generalization, we compare our method with SOTA mod-els on kcat and Km using the EITLEM test sets [43]. Our model consistently outperforms all other methods. For kcat ,we achieve the highest R 2 (0.50) and PCC (0.70), outper-forming EITLEM (R 2 = 0.27, PCC = 0.50) and others. For 
+
+Km, we achieve R 2 of 0.55 and PCC of 0.69, surpassing ≤1 -Radio AE  : 67.67%  ≤1 -Radio AE  : 62.28 %≤1 -Radio AE  : 79.53 %Figure 4. Log-scaled experimental versus predicted values for the kinetic parameters kcat , Km, and Ki. Each plot shows the absolute error less than or equal to 1 as a percentage, denoted as 1-Radio AE . The dashed red line represents perfect predictions. 
+
+Figure 5. Ablation studies on fusion order and manner. Com-parison of different fusion strategies: Se→Sg →Sm, Concat & MLP, and the proposed Se→Sm→Sg /ERBA. Percentage im-provements across metrics are highlighted in red. 
+
+SOTA models by a clear margin. These results show that leveraging PLMs as dynamic backbones, rather than fixed priors, enables superior generalization. Our ERBA adapts the PLM’s pre-trained knowledge to specific substrate and structural contexts, providing enhanced flexibility. This ap-proach improves the model’s ability to generalize across unseen enzyme-substrate pairs, giving it a clear advantage over models that use PLMs passively. 
+
+4.3. Ablation Study 
+
+Do the Modules Add Gains? We assess the contribution of each module by progressively adding MRCA, G-MoE, and ESDA to the PLM baseline. In Table 4, MRCA improves R2 from 0.49 to 0.51 and PCC from 0.71 to 0.73, enhancing substrate recognition. Adding G-MoE further refines the model, increasing R 2 to 0.54 and PCC to 0.74. Finally, the complete ESDA framework achieves the best performance with R 2 of 0.61 and PCC of 0.78, demonstrating the value of distribution alignment for preserving PLM semantics while incorporating substrate and geometry. 
+
+Does Fusion Order Matter? The results show that the fusion order significantly impacts model performance. Specifically, the Se → Sm → Sg /ERBA fusion consistently Method Modality Kinetic Endpoint: Ki                                  
+
+> SeSmSgR2↑PCC ↑RMSE ↓MAE ↓
+> PLM Baseline ✓--0.49 0.71 1.38 1.05
+> w/ MRCA ✓✓-0.51 0.73 1.32 0.98
+> w/ G-MoE ✓✓✓0.54 0.74 1.27 0.94
+> w/ ESDA (Ours) ✓✓✓0.61 0.78 1.26 0.91
+
+Table 4. Ablation study on the effect of different modules. Per-formance comparison for Ki prediction with various configura-tions: PLM baseline, MRCA, G-MoE, and our ESDA framework. 
+
+outperforms the Se → Sg → Sm configuration across all metrics. This demonstrates that first aligning the enzyme sequence with substrate information before incorporating structural context leads to better model generalization. The observed improvement in R 2 (37.8%) and a reduction in RMSE (20%) highlight the importance of this fusion order for accurate enzyme kinetic predictions. 
+
+Is ESBA Better than Concatenation? The compari-son between our ESBA and simple concatenation with MLP [63, 64] highlights the advantage of incorporating dis-tributional alignment. ESBA improves model performance, yielding a 20% increase in PCC and a 14% reduction in MAE compared to concatenation. It demonstrates ESBA by aligning the representations at the distribution level, pre-serving the pretrained biochemical priors while effectively integrating the substrate and structural information. 
+
+## 5. Conclusion 
+
+We frame enzyme kinetics as mechanism-aligned staged conditioning, not static compatibility, and propose ERBA, which fine-tunes PLMs with MRCA for substrate-conditioned representations and G-MoE for pocket-aware fusion with geometry. ESDA enforces distributional align-ment among sequence, sequence-substrate, and sequence-substrate-structure so that new modalities refine rather than overwrite its prior, yielding consistent gains and stronger out-of-distribution generalization, and offering a compact recipe for future multimodal PLMs that tightly couple se-quence, molecular graphs, and geometry. 6. Acknowledgments 
+
+This research was supported by the Natural Sci-ence Foundation of Anhui Province (2408085MC051, 2408085MF159), the Key Science & Technology Project of Anhui Province (202304a05020068, 202423l10050064), the National Natural Science Foundation of China (U24A20331), and the Fundamental Research Funds for the Central Universities of China (PA2025IISL0109, JZ2023HGQA0472). Yanyan Wei is the corresponding au-thor. 
+
+## References 
+
+[1] Gustaf Ahdritz, Nazim Bouatta, Christina Floristean, Sachin Kadyan, Qinghui Xia, William Gerecke, Timothy J O’Donnell, Daniel Berenberg, Ian Fisk, Niccol` o Zanichelli, et al. Openfold: Retraining alphafold2 yields new insights into its learning mechanisms and capacity for generalization. 
+
+Nature methods , 21(8):1514–1524, 2024. 6, 14 [2] Hazem Alsamkary, Mohamed Elshaffei, Mohamed Elker-dawy, and Ahmed Elnaggar. Ankh3: Multi-task pretraining with sequence denoising and completion enhances protein representations. arXiv preprint arXiv:2505.20052 , 2025. 2, 3, 6, 7, 14, 15, 16 [3] Shiran Barber-Zucker, Vladimir Mindel, Eva Garcia-Ruiz, Jonathan J Weinstein, Miguel Alcalde, and Sarel J Fleish-man. Stable and functionally diverse versatile peroxidases designed directly from sequences. Journal of the American Chemical Society , 144(8):3564–3571, 2022. 2 [4] Manojit Bhattacharya, Soumen Pal, Srijan Chatterjee, Sang-Soo Lee, and Chiranjib Chakraborty. Large language model to multimodal large language model: A journey to shape the biological macromolecules to biological sciences and medicine. Molecular Therapy Nucleic Acids , 35(3), 2024. 3[5] Veda Sheersh Boorla and Costas D Maranas. Catpred: acomprehensive framework for deep learning in vitro enzyme kinetic parameters. Nature communications , 16(1):2072, 2025. 2, 3, 4, 6, 7, 12, 13 [6] R Buller, S Lutz, RJ Kazlauskas, R Snajdrova, JC Moore, and UT Bornscheuer. From nature to industry: Harness-ing enzymes for biocatalysis. Science , 382(6673):eadh8615, 2023. 2 [7] Yanchun Chen, Jinyuan Sun, Kelun Shi, Tong Zhu, Ruifeng Li, Ruiqiao Li, Xiaomeng Liu, Xinying Xie, Chao Ding, Wen-Chao Geng, et al. Glycolysis-compatible urethanases for polyurethane recycling. Science , 390(6772):503–509, 2025. 2 [8] Gregory B Craven, Dominic P Affron, Charlotte E Allen, Stefan Matthies, Joe G Greener, Rhodri ML Morgan, Ed-ward W Tate, Alan Armstrong, and David J Mann. High-throughput kinetic analysis for target-directed covalent lig-and discovery. Angewandte Chemie International Edition ,57(19):5257–5261, 2018. 2 [9] Yifan Deng, Spencer S Ericksen, and Anthony Gitter. Chem-ical language model linker: blending text and molecules with modular adapters. Journal of Chemical Information and Modeling , 65(17):8944–8956, 2025. 3 [10] Mengze Du, Fei Wang, Yu Wang, Kun Li, Wenhui Hou, Lu Liu, Yong He, and Yuwei Wang. Improving long-tailed pest classification using diffusion model-based data augmenta-tion. Computers and Electronics in Agriculture , 234:110244, 2025. 2 [11] Ahmed Elnaggar, Michael Heinzinger, Christian Dallago, Ghalia Rehawi, Yu Wang, Llion Jones, Tom Gibbs, Tamas Feher, Christoph Angerer, Martin Steinegger, et al. Prot-trans: Toward understanding the language of life through self-supervised learning. IEEE transactions on pattern anal-ysis and machine intelligence , 44(10):7112–7127, 2021. 2, 3, 15, 16 [12] Ahmed Elnaggar, Hazem Essam, Wafaa Salah-Eldin, Walid Moustafa, Mohamed Elkerdawy, Charlotte Rochereau, and Burkhard Rost. Ankh: Optimized protein language model unlocks general-purpose modelling. arXiv preprint arXiv:2301.06568 , 2023. 2, 3 [13] Sam Gelman, Bryce Johnson, Chase R Freschlin, Arnav Sharma, Sameer D’Costa, John Peters, Anthony Gitter, and Philip A Romero. Biophysics-based protein language mod-els for protein engineering. Nature Methods , pages 1–12, 2025. 3 [14] Pascal Germain, Francis Bach, Alexandre Lacoste, and Si-mon Lacoste-Julien. Pac-bayesian theory meets bayesian in-ference. Advances in Neural Information Processing Sys-tems , 29, 2016. 6 [15] Joe G Greener and Kiarash Jamali. Fast protein structure searching using structure graph embeddings. Bioinformatics Advances , 5(1):vbaf042, 2025. 4 [16] Lan-Zhe Guo, Zhi Zhou, Yu-Feng Li, and Zhi-Hua Zhou. Identifying useful learnwares for heterogeneous label spaces. In International Conference on Machine Learning , pages 12122–12131, 2023. 5 [17] Thomas Hayes, Roshan Rao, Halil Akin, Nicholas JSofroniew, Deniz Oktay, Zeming Lin, Robert Verkuil, Vin-cent Q Tran, Jonathan Deaton, Marius Wiggert, et al. Simu-lating 500 million years of evolution with a language model. 
+
+Science , 387(6736):850–858, 2025. 2, 3 [18] Michael Heinzinger, Konstantin Weissenow, Joaquin Gomez Sanchez, Adrian Henkel, Milot Mirdita, Martin Steinegger, and Burkhard Rost. Bilingual language model for protein sequence and structure. NAR Genomics and Bioinformatics ,6(4):lqae150, 2024. 3, 6, 7, 14 [19] Shion Honda, Shoi Shi, and Hiroki R Ueda. Smiles trans-former: Pre-trained molecular fingerprint for low data drug discovery. arXiv preprint arXiv:1911.04738 , 2019. 3 [20] Bozhen Hu, Cheng Tan, Siyuan Li, Jiangbin Zheng, Sizhe Qiu, Jun Xia, and Stan Z Li. Multimodal regression for enzyme turnover rates prediction. arXiv preprint arXiv:2509.11782 , 2025. 3 [21] Edward J Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen, et al. Lora: Low-rank adaptation of large language models. ICLR ,1(2):3, 2022. 7 [22] Sadeep Jayasumana, Richard Hartley, Mathieu Salzmann, Hongdong Li, and Mehrtash Harandi. Kernel methods on riemannian manifolds with gaussian rbf kernels. IEEE trans-actions on pattern analysis and machine intelligence , 37(12): 2464–2477, 2015. 5 [23] ET Kaiser and DS Lawrence. Chemical mutation of enzyme active sites. Science , 226(4674):505–511, 1984. 2 [24] Kristian Kersting, Christian Plagemann, Patrick Pfaff, and Wolfram Burgard. Most likely heteroscedastic gaussian pro-cess regression. In Proceedings of the 24th international conference on Machine learning , pages 393–400, 2007. 2 [25] Daniel A Kraut, Kate S Carroll, and Daniel Herschlag. Chal-lenges in enzyme mechanism and energetics. Annual review of biochemistry , 72(1):517–571, 2003. 2 [26] Alexander Kroll, Yvan Rousset, Xiao-Pan Hu, Nina A Liebrand, and Martin J Lercher. Turnover number predic-tions for kinetically uncharacterized enzymes using machine and deep learning. Nature communications , 14(1):4139, 2023. 3, 6, 7, 12 [27] Nelson J Leonard. Dimensional probes of enzyme-coenzyme binding sites. Accounts of Chemical Research , 15(5):128– 135, 1982. 2 [28] Feiran Li, Le Yuan, Hongzhong Lu, Gang Li, Yu Chen, Martin KM Engqvist, Eduard J Kerkhoven, and Jens Nielsen. Deep learning-based kcat prediction enables im-proved enzyme-constrained model reconstruction. Nature Catalysis , 5(8):662–672, 2022. 2, 3, 6, 7, 12 [29] Yang Li, Yixin Wang, Xueying Zheng, Jinjiang Guo, and Ru-min Zhang. Dcbk: A fragment-based hybrid simulation and machine learning framework for predicting ligand dissocia-tion kinetics. bioRxiv , pages 2025–11, 2025. 2, 3 [30] Zeming Lin, Halil Akin, Roshan Rao, Brian Hie, Zhongkai Zhu, Wenting Lu, Nikita Smetanin, Robert Verkuil, Ori Ka-beli, Yaniv Shmueli, et al. Evolutionary-scale prediction of atomic-level protein structure with a language model. Sci-ence , 379(6637):1123–1130, 2023. 2, 3, 6, 7, 12, 14, 15, 16 [31] Tiantao Liu, Silong Zhai, Xinke Zhan, and Shirley WI Siu. Data-driven revolution of enzyme catalysis from the perspec-tive of reactions, pathways, and enzymes. Cell Reports Phys-ical Science , 6(3), 2025. 2 [32] Ilya Loshchilov and Frank Hutter. Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101 , 2017. 7 [33] Ding Luo, Xiaoyang Qu, and Binju Wang. Catalytic pocket-informed augmentation of enzyme kinetic parameters pre-diction via hierarchical graph learning. bioRxiv , pages 2025– 05, 2025. 2, 3 [34] Shaogao Lv and Heng Lian. Debiased distributed learning for sparse partial linear models in high dimensions. Journal of Machine Learning Research , 23(2):1–32, 2022. 5 [35] Craig James Markin, Daniel Alexander Mokhtari, F Sunden, MJ Appel, E Akiva, SA Longwell, C Sabatti, D Herschlag, and PM Fordyce. Revealing enzyme functional architecture via high-throughput microfluidic enzyme kinetics. Science ,373(6553):eabf8761, 2021. 2 [36] Stanislav Mazurenko, Zbynek Prokop, and Jiri Damborsky. Machine learning in enzyme engineering. ACS catalysis , 10 (2):1210–1223, 2019. 2 [37] Joshua Meier, Roshan Rao, Robert Verkuil, Jason Liu, Tom Sercu, and Alex Rives. Language models enable zero-shot prediction of the effects of mutations on protein func-tion. Advances in neural information processing systems ,34:29287–29303, 2021. 2, 3 [38] Song Ouyang, Huiyu Cai, Yong Luo, Kehua Su, Lefei Zhang, and Bo Du. Mmsite: A multi-modal framework for the identification of active sites in proteins. Advances in Neu-ral Information Processing Systems , 37:45819–45849, 2024. 3[39] Ruijie Quan, Wenguan Wang, Fan Ma, Hehe Fan, and Yi Yang. Clustering for protein representation learning. In Pro-ceedings of the IEEE/CVF conference on computer vision and pattern recognition , pages 319–329, 2024. 2 [40] Alexander Rives, Joshua Meier, Tom Sercu, Siddharth Goyal, Zeming Lin, Jason Liu, Demi Guo, Myle Ott, C Lawrence Zitnick, Jerry Ma, et al. Biological structure and function emerge from scaling unsupervised learning to 250 million protein sequences. Proceedings of the National Academy of Sciences , 118(15):e2016239118, 2021. 2, 3 [41] Robert Schmirler, Michael Heinzinger, and Burkhard Rost. Fine-tuning protein language models boosts predictions across diverse tasks. Nature Communications , 15(1):7407, 2024. 2 [42] Ida Schomburg, Antje Chang, Christian Ebeling, Marion Gremse, Christian Heldt, Gregor Huhn, and Dietmar Schom-burg. Brenda, the enzyme database: updates and major new developments. Nucleic acids research , 32(suppl 1):D431– D433, 2004. 6, 12 [43] Xiaowei Shen, Ziheng Cui, Jianyu Long, Shiding Zhang, Biqiang Chen, and Tianwei Tan. Eitlem-kinetics: A deep-learning framework for kinetic parameter prediction of mu-tant enzymes. Chem Catalysis , 4(9), 2024. 2, 3, 6, 7, 12, 13, 14 [44] Timothy Truong Jr and Tristan Bepler. Poet: A genera-tive model of protein families as sequences-of-sequences. 
+
+Advances in Neural Information Processing Systems , 36: 77379–77415, 2023. 2, 3 [45] Fei Wang, Dan Guo, Kun Li, and Meng Wang. Eulermormer: Robust eulerian motion magnification via dynamic filtering within transformer. In Proceedings of the AAAI Conference on Artificial Intelligence , pages 5345–5353, 2024. 6 [46] Fei Wang, Dan Guo, Kun Li, Zhun Zhong, and Meng Wang. Frequency decoupling for motion magnification via multi-level isomorphic architecture. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 18984–18994, 2024. 6 [47] Fei Wang, Kun Li, Yiqi Nie, Zhangling Duan, Peng Zou, Zhiliang Wu, Yuwei Wang, and Yanyan Wei. Exploiting en-semble learning for cross-view isolated sign language recog-nition. In Companion Proceedings of the ACM on Web Con-ference 2025 , pages 2453–2457, 2025. 3 [48] Jingjing Wang, Zhijiang Yang, Chang Chen, Ge Yao, Xiukun Wan, Shaoheng Bao, Junjie Ding, Liangliang Wang, and Hui Jiang. Mpek: a multitask deep learning framework based on pretrained language models for enzymatic reaction kinetic parameters prediction. Briefings in Bioinformatics , 25(5): bbae387, 2024. 3, 6, 7 [49] Mengyu Wang, Zhenyu Liu, Kun Li, Yu Wang, Yuwei Wang, Yanyan Wei, and Fei Wang. Task-generalized adaptive cross-domain learning for multimodal image fusion. IEEE Trans-actions on Multimedia , 2026. 2 [50] Weijia Wang, Fei Wang, Zhongzhen Wang, Xianyang Shi, and Chunyan Xu. Robust s3former deep learning model for the direct diagnosis and prediction of natural organic matter (nom) from three-dimensional excitation-emission-matrix (3d-eem) data. Water Research , 284:123994, 2025. 2, 3 [51] Xiaorui Wang, Xiaodan Yin, Dejun Jiang, Huifeng Zhao, Zhenxing Wu, Odin Zhang, Jike Wang, Yuquan Li, Yafeng Deng, Huanxiang Liu, et al. Multi-modal deep learning en-ables efficient and accurate annotation of enzymatic active sites. Nature Communications , 15(1):7348, 2024. 3 [52] Yuhao Wang, Junwei Pan, Pengyue Jia, Wanyu Wang, Maolin Wang, Zhixiang Feng, Xiaotian Li, Jie Jiang, and Xiangyu Zhao. Pre-train, align, and disentangle: Empower-ing sequential recommendation with large language models. In Proceedings of the 48th International ACM SIGIR Confer-ence on Research and Development in Information Retrieval ,pages 1455–1465, 2025. 5 [53] Zechen Wang, Dongqi Xie, Dong Wu, Xiaozhou Luo, Sheng Wang, Yangyang Li, Yanmei Yang, Weifeng Li, and Liangzhen Zheng. Robust enzyme discovery and engineer-ing with deep learning using catapro. Nature communica-tions , 16(1):2736, 2025. 2, 3, 6, 7 [54] Ulrike Wittig, Renate Kania, Martin Golebiewski, Maja Rey, Lei Shi, Lenneke Jong, Enkhjargal Algaa, Andreas Weide-mann, Heidrun Sauer-Danzwith, Saqib Mir, et al. Sabio-rk—database for biochemical reaction kinetics. Nucleic acids research , 40(D1):D790–D796, 2012. 6, 12 [55] Richard Wolfenden and Mark J Snider. The depth of chemi-cal time and the power of enzymes as catalysts. Accounts of chemical research , 34(12):938–945, 2001. 2 [56] Tao Wu, Yinmiao Wang, Ningxin Zhang, Dejing Yin, Yan Xu, Yao Nie, and Xiaoqing Mu. Reshaping substrate-binding pocket of leucine dehydrogenase for bidirectionally access-ing structurally diverse substrates. ACS Catalysis , 13(1): 158–168, 2022. 2 [57] Hongwang Xiao, Wenjun Lin, Xi Chen, Hui Wang, Kai Chen, Jiashan Li, Yuancheng Sun, Sicheng Dai, Boya Wu, and Qiwei Ye. Stella: Towards protein function prediction with multimodal llms integrating sequence-structure repre-sentations. arXiv preprint arXiv:2506.03800 , 2025. 3 [58] Yang Xue, Zijing Liu, Xiaomin Fang, and Fan Wang. Mul-timodal pre-training model for sequence-based prediction of protein-protein interaction. In Machine Learning in Compu-tational Biology , pages 34–46, 2022. 2 [59] Hongliang Yan, Yukang Ding, Peihua Li, Qilong Wang, Yong Xu, and Wangmeng Zuo. Mind the class weight bias: Weighted maximum mean discrepancy for unsupervised do-main adaptation. In Proceedings of the IEEE conference on computer vision and pattern recognition , pages 2272–2281, 2017. 5 [60] Kevin Yang, Kyle Swanson, Wengong Jin, Connor Coley, Philipp Eiden, Hua Gao, Angel Guzman-Perez, Timothy Hopper, Brian Kelley, Miriam Mathea, et al. Analyzing learned molecular representations for property prediction. 
+
+Journal of chemical information and modeling , 59(8):3370– 3388, 2019. 4 [61] Han Yu, Huaxiang Deng, Jiahui He, Jay D Keasling, and Xi-aozhou Luo. Unikp: a unified framework for the prediction of enzyme kinetic parameters. Nature communications , 14 (1):8211, 2023. 2, 3, 6, 7 [62] Qianmu Yuan, Chong Tian, Yidong Song, Peihua Ou, Ming-ming Zhu, Huiying Zhao, and Yuedong Yang. Gpsfun: geometry-aware protein sequence function predictions with language models. Nucleic Acids Research , 52(W1):W248– W255, 2024. 3 [63] Renrui Zhang, Jiaming Han, Chris Liu, Aojun Zhou, Pan Lu, Yu Qiao, Hongsheng Li, and Peng Gao. Llama-adapter: Efficient fine-tuning of large language models with zero-initialized attention. In The Twelfth International Conference on Learning Representations , 2024. 8 [64] Tianren Zhang and Dai-Bei Yang. Multimodal machine learning with large language embedding model for polymer property prediction. Chemistry of Materials , 37(18):7002– 7013, 2025. 8 [65] Zhen Zhang, Mianzhi Wang, Yan Huang, and Arye Nehorai. Aligning infinite-dimensional covariance matrices in repro-ducing kernel hilbert spaces for domain adaptation. In Pro-ceedings of the IEEE Conference on Computer Vision and Pattern Recognition , pages 3437–3445, 2018. 2, 5 [66] Zhen Zhang, Mianzhi Wang, and Arye Nehorai. Optimal transport in reproducing kernel hilbert spaces: Theory and applications. IEEE transactions on pattern analysis and ma-chine intelligence , 42(7):1741–1754, 2019. 2, 5 [67] Jiaqi Zhao, Fei Wang, Kun Li, Yanyan Wei, Shengeng Tang, Shu Zhao, and Xiao Sun. Temporal-frequency state space duality: An efficient paradigm for speech emotion recogni-tion. In ICASSP 2025-2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , pages 1–5, 2025. 2 [68] Hanjing Zhou, Mingze Yin, Wei Wu, Mingyang Li, Kun Fu, Jintai Chen, Jian Wu, and Zheng Wang. Protclip: Function-informed protein multi-modal learning. In Proceedings of the AAAI Conference on Artificial Intelligence , pages 22937– 22945, 2025. 2, 3 
+
+## Overview 
+
+The supplementary materials provide additional details and elaborations on the datasets used, quantitative analysis experiments, and ablation studies presented in the main manuscript. These topics are organized as follows: 
+
+## Contents 
+
+1. Introduction 22. Related Work 2
+
+2.1. Enzyme Kinetic Parameter Prediction . . . . 22.2. Transformer-based Protein Language Models 32.3. Multimodal Integration for Enzyme Modeling 3
+
+3. Methodology 3
+
+3.1. Preliminaries . . . . . . . . . . . . . . . . . 33.2. Molecular Recognition Cross-Attention . . . 43.3. Geometry-aware Mixture-of-Experts . . . . 43.4. Enzyme-Substrate Distribution Alignment . . 53.5. Enzyme Reaction Optimization . . . . . . . 6
+
+4. Experiments 6
+
+4.1. Experimental Setup . . . . . . . . . . . . . . 64.2. Performance Analysis . . . . . . . . . . . . 74.3. Ablation Study . . . . . . . . . . . . . . . . 8
+
+5. Conclusion 86. Acknowledgments 97. Enzyme Kinetic Parameter Dataset 12 
+
+7.1. Details Dataset from [5] . . . . . . . . . . . 12 7.2. Details OOD Dataset from [43] . . . . . . . 12 
+
+8. Enzyme Commission Distribution 14 
+
+8.1. Overview of EC Class Distributions . . . . . 14 8.2. Effect of Different Model Architectures Across EC Classes . . . . . . . . . . . . . 14 8.3. Impact of Model Size within the ESM Archi-tecture . . . . . . . . . . . . . . . . . . . . 14 8.4. Conclusion . . . . . . . . . . . . . . . . . . 14 
+
+9. Error Distribution Analysis 14 
+
+9.1. Overview of Error Distributions . . . . . . . 14 9.2. Performance of Ankh3-5.7B and Its Unique Behavior on Km . . . . . . . . . . . . . . . 14 9.3. ESM2-3B: Best Overall Performance with ERBA . . . . . . . . . . . . . . . . . . . . 15 9.4. Comparison with Smaller ESM2 Variants . . 15 
+
+10 . Explainable Analysis 15 11 . Additional Ablation Studies 17 
+
+11.1 . Stage 1: Does MRCA Help Recognition? . . 17 11.2 . Stage 2: Is Geometry-aware MoE Necessary? 17 11.3 . Does ESDA Stabilize Fine-tuning? . . . . . 17 11.4 . Overall . . . . . . . . . . . . . . . . . . . . 17 
+
+## 7. Enzyme Kinetic Parameter Dataset 
+
+7.1. Details Dataset from [5] 
+
+In the main experiments of our manuscript, we employ three specially curated kinetic endpoint datasets, as shown in Ta-ble 5, to construct and evaluate learning-based models for predicting enzyme kinetic parameters. The raw data un-derlying the three endpoint datasets were curated from two authoritative biochemical databases: BRENDA [42] release 2022 2 and SABIO-RK [54] as of November 2023. This construction aims to provide an expanded and standardized resource for the field of enzyme kinetic parameter predic-tion, thereby promoting the systematic development and fair benchmarking of enzyme kinetic prediction models. The datasets focus on three primary enzyme kinetic pa-rameters: the turnover number ( kcat ), Michaelis constant (Km), and inhibition constant ( Ki), based on in vitro mea-surements of wild-type enzymes. Specifically, the datasets include: • 23,151 entries for Kinetic Parameter kcat ;• 41,174 entries for Kinetic Parameter Km;• 11,929 entries for Kinetic Parameter Ki.The construction of these datasets introduces several im-provements: 
+
+❶ Data Selection and Standardization: When multiple experimental measurements exist for the same enzyme-substrate pair, the highest value is retained for kcat to capture optimal reaction conditions. For Km and Ki, the geometric mean is used, reflecting better consistency and stability for binding affinity measurements. 
+
+❷ Diversity of Enzyme Sequences: These datasets sig-nificantly expand enzyme sequence diversity compared to previous datasets. They cover a broader range of enzyme families, particularly at the first Enzyme Commission (EC) level, without overrepresenting any specific categories. This is an important step towards fair and comprehensive bench-marking. 
+
+❸ Link to Structural Data: Each entry is linked to a predicted three-dimensional structure of the corresponding enzyme. In cases where structures are not available in AlphaFold-2.0 [ ? ], ESMFold [30] is used to generate these models. This ensures that structural context is available for all entries, further enriching the dataset for model training. 
+
+❹ Supporting Fair Benchmarking: By standardizing and expanding the sequence and structure coverage, the dataset offers a more representative resource for enzyme kinetic pa-rameter prediction. This makes it well-suited for developing and fairly evaluating learning-based models in the field. Overall, this expanded dataset not only enhances the di-versity of enzyme sequences but also ensures consistency and stability in model training by using a representative value for each enzyme-substrate pair. Compared to prior works like DLKcat [28] and TurNup [26], our dataset cov-ers a broader range of enzyme families and provides a more comprehensive foundation for large-scale enzyme kinetic predictions. 
+
+7.2. Details OOD Dataset from [43] 
+
+To evaluate the out-of-distribution (OOD) generalization performance of our model, we utilize two enzyme ki-netic datasets focused on kcat and Km, compiled from the Class Kinetic Dataset Total Details 
+
+kcat Km Ki
+
+Dataset I (Main Test): kcat , K m and Ki from [5] 
+
+Entries 23,151 41,174 11,929 76,254 EC 1 Oxidoreductases 7,756 13,931 2,744 24,431 Oxidoreductases catalyze diverse redox reactions by transferring electrons between molecules and substrates, and represent the largest EC class with broad kinetic and functional diversity. EC 2 Transferases 4,155 10,182 2,706 17,043 Transferases catalyze the transfer of functional groups between diverse substrates, en-abling the formation of new chemical bonds and the rapid and efficient interconversion of molecules. EC 3 Hydrolases 8,065 11,025 4,083 23,173 Hydrolases catalyze the hydrolysis of diverse chemical bonds in biological molecules. They efficiently cleave covalent linkages in various substrates with variable enzyme kinetic parameters. EC 4 Lyases 1,620 2,962 1,525 6107 Lyases catalyze the cleavage of chemical bonds without hydrolysis or oxidation. They form double bonds or ring structures in substrates. EC 5 Isomerases 928 1,311 434 2,673 Isomerases catalyze the conversion of molecules into their isomeric forms by reorga-nizing atomic connectivity within the same substrate. EC 6 Ligases 590 1,363 254 2,207 Ligases catalyze the formation of covalent bonds between two different molecules using chemical energy from nucleotide triphosphates. EC 7 Translocases 16 98 23 137 Translocases catalyze the active transport of ions or molecules across biological mem-branes, efficiently coupled with chemical reaction energy. Unclassified/Invalid 21 302 160 483 Entries that are unclassified or contain format errors, excluded from standard EC cat-egorization. Unique Sequences 7,183 12,355 2,829 22,367 Unique EC Classes 2,657 3,550 1,306 7,513 Unique Organisms 1,685 2,419 652 4,756 
+
+Dataset II (OOD Test): kcat and Km from [43] 
+
+Entries 35,147 29,321 - 64,468 -EC 1 Oxidoreductases 12,197 9,770 - 21,967 Oxidoreductases catalyze diverse redox reactions by transferring electrons between molecules and substrates, and represent the largest EC class with broad kinetic and functional diversity. EC 2 Transferases 8,148 7,820 - 15,968 Transferases catalyze the transfer of functional groups between diverse substrates, en-abling the formation of new chemical bonds and the rapid and efficient interconversion of molecules. EC 3 Hydrolases 8,372 6,537 - 14,909 Hydrolases catalyze the hydrolysis of diverse chemical bonds in biological molecules. They efficiently cleave covalent linkages in various substrates with variable enzyme kinetic parameters. EC 4 Lyases 3,264 2,510 - 5,774 Lyases catalyze the cleavage of chemical bonds without hydrolysis or oxidation. They form double bonds or ring structures in substrates. EC 5 Isomerases 1,854 1,367 - 3,221 Isomerases catalyze the conversion of molecules into their isomeric forms by reorga-nizing atomic connectivity within the same substrate. EC 6 Ligases 1,252 1,187 - 2,439 Ligases catalyze the formation of covalent bonds between two different molecules using chemical energy from nucleotide triphosphates. EC 7 Translocases 60 130 - 190 Translocases catalyze the active transport of ions or molecules across biological mem-branes, efficiently coupled with chemical reaction energy. 
+
+Table 5. Detailed breakdown of the enzyme kinetic datasets from [5, 43] used for training and out-of-distribution (OOD) testing. We provide the number of entries, unique sequences, EC classes, organisms, and additional information for each enzyme class in the main and OOD test datasets. 
+
+BRENDA and SABIO-RK databases as collected by [43] in Table 5. Each data entry contains enzyme sequences, substrate information, and experimentally measured kinetic parameters. 
+
+❶ Data Curation and Filtering: The initial collections contained 143,473 entries for kcat and 75,149 entries for 
+
+Km. To ensure biological relevance, every protein sequence was mapped to a unique UniProt ID, and sequences lacking a valid or unambiguous ID were excluded. Substrate names were cross-referenced with KEGG [ ? ] and PubChem [ ? ]to obtain standardized 2D molecular structures. These sub-strates were then converted into canonical SMILES using RDKit [ ? ]. Any substrates with ambiguous or unresolvable identities were discarded to maintain chemical consistency. 
+
+❷ Inclusion of Mutant Enzymes: Mutant enzyme vari-ants were retained in the dataset. While Km showed min-imal differences between wild-type and mutant enzymes, 
+
+kcat distributions revealed that mutant enzymes typically ex-hibit significantly reduced catalytic activity and efficiency compared to wild-type counterparts. 
+
+❸ Final dataset composition: After rigorous screening, the final dataset comprised 35,147 kcat records and 29,321 
+
+Km records, with one-tenth allocated as a test set for evalu-ation. 
+
+❹ 3D Structure Generation for OOD Testing: No-tably, we use the kcat and Km test sets from [43] for out-of-distribution generalization testing. The corresponding 3D structures for the enzymes are generated using Open-Fold [1] or ESMFold [30], ensuring that the structural data is consistent with the latest advancements in protein struc-ture prediction. 
+
+## 8. Enzyme Commission Distribution 
+
+This section explores the performance of various models across different Enzyme Commission (EC) classes, focus-ing on the influence of model architecture and the impact of our ERBA (Enzyme-Reaction Bridging Adapter) in im-proving predictions for enzyme kinetic parameters. 
+
+8.1. Overview of EC Class Distributions 
+
+Enzyme Commission (EC) classes group enzymes based on their catalytic functions, and understanding the distribution of these enzymes across various EC classes is crucial for predicting their kinetic parameters accurately. The datasets used in this experiment cover a wide range of EC classes, from EC 1 (Oxidoreductases) to EC 6 (Ligases), and include kinetic data for kcat , Km, and Ki. Each class includes differ-ent numbers of entries, with EC 3 (Hydrolases) containing the most data, and EC 6 (Ligases) containing fewer. The purpose of this analysis is to evaluate how different model backbones and ERBA impact the prediction performance across these classes. It is notable that EC 7 (Translocases) is excluded from the analysis due to insufficient data. 
+
+8.2. Effect of Different Model Architectures Across EC Classes 
+
+Table 6 presents a comparison of various models across six EC classes, with a focus on the performance metrics R 2,PCC, RMSE, and MAE for kcat , Km, and Ki. We observe that larger backbone models, such as Ankh3-5.7B [2] and ProtT5-3B [18], outperform smaller models, like ESM2-650M, across all EC classes, suggesting that larger models are better equipped to handle the complexities of enzyme-substrate interactions. In EC 1 (Oxidoreductases), Ankh3-5.7B achieves a higher R 2 score for kcat (0.52) compared to ESM2-650M (R 2 = 0.45). This indicates that larger back-bone models are better at capturing the intricate relation-ships between enzyme sequences and substrate properties. 
+
+8.3. Impact of Model Size within the ESM Archi-tecture 
+
+Focusing specifically on the ESM2 architecture, we exam-ine how different model sizes affect performance. As shown in (c) and (d), increasing the model size from ESM2-650M to ESM2-3B leads to noticeable improvements in perfor-mance across EC classes. For instance, in EC 5 (Iso-merases), the R 2 score for kcat improves from 0.48 with ESM2-650M to 0.50 with ESM2-3B. This performance increase reflects the enhanced capacity of larger models to process more complex enzyme-substrate interactions, which are particularly important in enzyme families with diverse substrates like EC 5 and EC 6. 
+
+8.4. Conclusion 
+
+The results demonstrate that larger backbone models, such as Ankh3-5.7B and ProtT5-3B, perform better across di-verse EC classes, highlighting the importance of model size in capturing complex enzymatic processes. In the case of ESM2, increasing the model size from ESM2-650M to ESM2-3B significantly enhances performance, especially in EC classes with diverse substrates, such as EC 5 (Iso-merases). Furthermore, the introduction of ERBA pro-vides a substantial boost to model performance by incorpo-rating both substrate recognition and structural adaptation. This underscores the effectiveness of staged conditioning in improving enzyme kinetic predictions and enhancing the model’s generalization capabilities. 
+
+## 9. Error Distribution Analysis 
+
+9.1. Overview of Error Distributions 
+
+The error distributions across different models (Ankh3-5.7B, ProtT5-3B, ESM2-650M, and ESM2-3B) and their corresponding performance with ERBA are analyzed in terms of absolute prediction error. As shown in Figure 6, all models show an overall improvement when enhanced with ERBA, particularly in terms of 1-Radio AE values, which represent the percentage of predictions with an absolute er-ror smaller than 1. 
+
+9.2. Performance of Ankh3-5.7B and Its Unique Be-havior on Km
+
+Notably, the Ankh3-5.7B model, while showing lower over-all performance compared to ESM2-3B (as observed in the manuscript), performs significantly better in terms of Km
+
+predictions. Specifically, the Ankh3-5.7B model achieves a high 1-Radio AE value of 78.82% for Km predictions, indi-cating a higher proportion of predictions with small errors despite having lower overall R 2 and PCC scores. This sug-gests that Ankh3-5.7B may be better at making precise pre-dictions within a narrower range of Km values, while other Index Class Name Kinetic Endpoint: kcat Kinetic Endpoint: Km Kinetic Endpoint: Ki
+
+R2↑ PCC ↑ RMSE ↓ MAE ↓ R2↑ PCC ↑ RMSE ↓ MAE ↓ R2↑ PCC ↑ RMSE ↓ MAE ↓
+
+(a) Ankh3-5.7B [2] w/ ERBA 
+
+EC-1 Oxidoreductases 0.39 0.68 1.25 0.89 0.51 0.78 0.83 0.61 0.53 0.73 1.29 0.96 EC-2 Transferases 0.44 0.65 1.23 0.87 0.55 0.74 0.78 0.58 0.39 0.65 1.27 0.97 EC-3 Hydrolases 0.45 0.70 1.13 0.85 0.53 0.73 0.85 0.60 0.29 0.60 1.72 1.27 EC-4 Lyases 0.52 0.73 1.20 0.91 0.60 0.79 0.73 0.55 0.54 0.74 1.36 0.99 EC-5 Isomerases 0.42 0.62 1.41 0.95 0.60 0.76 0.85 0.67 0.65 0.82 1.15 0.91 EC-6 Ligases 0.50 0.71 1.01 0.79 0.30 0.55 1.12 0.83 0.27 0.51 1.38 1.08 
+
+(b) ProtT5-3B [11] w/ ERBA 
+
+EC-1 Oxidoreductases 0.40 0.71 1.44 0.99 0.60 0.79 0.77 0.58 0.55 0.73 1.25 0.98 EC-2 Transferases 0.48 0.73 1.25 0.90 0.51 0.69 0.79 0.58 0.42 0.69 1.39 1.03 EC-3 Hydrolases 0.42 0.69 1.20 0.89 0.50 0.71 0.94 0.69 0.46 0.68 1.41 1.04 EC-4 Lyases 0.48 0.70 1.21 0.85 0.53 0.71 0.87 0.65 0.69 0.83 1.07 0.77 EC-5 Isomerases 0.46 0.70 1.29 0.90 0.63 0.80 0.80 0.61 0.65 0.81 1.10 0.89 EC-6 Ligases 0.54 0.79 0.92 0.67 0.40 0.65 0.97 0.71 0.41 0.65 1.30 0.97 
+
+(c) ESM2-650M [30] w/ ERBA 
+
+EC-1 Oxidoreductases 0.35 0.62 1.37 1.05 0.43 0.67 1.01 0.77 0.51 0.72 1.28 0.98 EC-2 Transferases 0.39 0.66 1.34 1.02 0.34 0.62 0.96 0.74 0.35 0.60 1.39 1.05 EC-3 Hydrolases 0.40 0.65 1.32 1.01 0.33 0.60 1.05 0.80 0.31 0.65 1.71 1.29 EC-4 Lyases 0.44 0.69 1.28 0.98 0.31 0.58 1.00 0.77 0.46 0.74 1.47 1.10 EC-5 Isomerases 0.43 0.65 1.32 0.99 0.53 0.77 0.90 0.81 0.71 0.87 1.12 0.88 EC-6 Ligases 0.50 0.71 0.99 0.79 0.33 0.57 1.09 0.85 0.32 0.60 1.41 1.08 
+
+(d) Ours (ESM2-3B [30] w/ ERBA) 
+
+EC-1 Oxidoreductases 0.37 0.62 1.32 0.95 0.55 0.74 0.90 0.69 0.58 0.77 1.19 0.92 EC-2 Transferases 0.46 0.69 1.22 0.87 0.53 0.73 0.81 0.61 0.38 0.65 1.37 0.99 EC-3 Hydrolases 0.43 0.68 1.18 0.88 0.51 0.72 0.90 0.65 0.48 0.71 1.50 1.10 EC-4 Lyases 0.50 0.71 1.27 0.92 0.56 0.75 0.81 0.61 0.65 0.81 1.19 0.84 EC-5 Isomerases 0.46 0.73 1.39 0.94 0.61 0.78 0.84 0.64 0.67 0.83 1.20 0.95 EC-6 Ligases 0.53 0.77 0.96 0.71 0.34 0.59 1.02 0.76 0.34 0.62 1.39 1.03 
+
+Table 6. Performance Comparison Across Enzyme Commission Classes. The table compares the performance of different backbone models and the impact of ERBA on kinetic parameter prediction for six EC classes: EC 1 (Oxidoreductases), EC 2 (Transferases), EC 3 (Hydrolases), EC 4 (Lyases), EC 5 (Isomerases), and EC 6 (Ligases). Metrics include R 2, PCC, RMSE, and MAE for kcat , Km, and Ki,showcasing the effect of model size and architecture on the predictive accuracy across enzyme classes. 
+
+models may struggle with broader generalization across the 
+
+Km space. 
+
+9.3. ESM2-3B: Best Overall Performance with ERBA 
+
+The ESM2-3B model consistently outperforms all other backbones, particularly for kcat and Km. The error distri-butions show that the ESM2-3B with ERBA achieves the highest 1-RadioAE values (67.67% for kcat , 79.53% for Km,and 62.28% for Ki), demonstrating its robust performance across all three kinetic endpoints. This confirms the effec-tiveness of the ESM2-3B backbone combined with ERBA for enzyme kinetic parameter prediction. 
+
+9.4. Comparison with Smaller ESM2 Variants 
+
+Interestingly, while the larger models like ESM2-3B excel overall, the smaller versions (such as ESM2-650M) show a reduction in the percentage of predictions with smaller errors, especially for Km. This highlights the trade-off be-tween model size and accuracy for out-of-distribution gen-eralization. Larger models tend to perform better overall but may exhibit more variability in specific kinetic parame-ter predictions, particularly in smaller enzyme classes or in scenarios with less data. 
+
+## 10. Explainable Analysis 
+
+We further analyze the interpretability of our method through the visualization of module behaviors. We further analyze the interpretability of our method through the visu-alization of module behaviors. In Figure 7, MRCA pro-duces highly localized attention regions on the sequence and assigns the highest scores to chemically functional groups on the substrate. In Figure 8, the gating distribution is sparse and dynamically relies on enzyme characteristics, while 3D saliency map shows that top-1 expert responses cluster around the adaptive binding pocket. ≤1 -Radio AE : 82.18%  ≤1 -Radio AE : 57.67% ≤1 -RadioAE :  66.53% 
+
+(a) Error Distribution  of  Ankh3-5.7B w/ ERBA 
+
+≤1 -Radio AE : 78.82%  ≤1 -Radio AE : 59.43% ≤1 -Radio AE : 66.23% 
+
+(b) Error Distribution  of  ProtT5-3B w/ ERBA 
+
+≤1 -Radio AE : 59.33%  ≤1 -Radio AE : 55.56% ≤1 -Radio AE : 71.49% 
+
+(c) Error Distribution  of  ESM2-650M w/ ERBA 
+
+≤1 -Radio AE : 67.67%  ≤1 -Radio AE : 62.28% ≤1 -Radio AE : 79.53% 
+
+(d) Ours (Error Distribution  of  ESM2-3B w/ ERBA) Figure 6. Error Distribution Comparison Across Different Backbone Models and ESM Sizes. It shows the error distribution of predicted versus experimental values for three kinetic parameters ( kcat , Km, and Ki) across four backbone models: (a) Ankh3-5.7B [2], (b) ProtT5-3B [11], (c) ESM2-650M [30], and (d) ESM2-3B [30], each augmented with ERBA. The plots show the proportion of predictions with absolute error less than or equal to 1, denoted as 1-Radio AE .E-S Recognition  Site 
+
+MRCA Attention Map         
+
+> Substractive Atoms
+> Enzyme Sequence Visualisation on Substrate Molecule
+> The depth of color indicates the intensity of the interaction between the atom and sequence.
+
+Figure 7. Visualization of MRCA. EC-3 Activated Experts         
+
+> EC-5 Activated Experts
+> Num Expert =8
+> kTop-k =2
+> gH
+> 3D Saliency Map Input 3D Map
+> G-MoE WgH→
+> Top-1Expert Saliency Score
+> 0
+> 1
+> Binding Pocket
+
+Figure 8. Visualization of G-MoE.                
+
+> Method Kinetic Endpoint: Ki
+> R2↑PCC ↑RMSE ↓MAE ↓
+> Stage 1 w/ Concat & Self-Atention [ ?]0.47 0.69 1.44 1.10
+> w/ MRCA (Ours) 0.61 0.78 1.26 0.91
+
+Table 7. Stage 1 (Recognition) ablation on Ki: Replacing Concat & Self-Attention with our MRCA markedly improves R2 and PCC while reducing RMSE/MAE under identical settings. 
+
+Method Kinetic Endpoint: Ki
+
+R2↑ PCC ↑ RMSE ↓ MAE ↓
+
+Stage 2 w/ MoE [ ? ] 0.50 0.71 1.39 1.05 
+
+w/ G-MoE (Ours) 0.61 0.78 1.26 0.91 
+
+Table 8. Stage 2 (Adaptation) ablation on Ki: standard MoE vs. 
+
+our G-MoE that routes by pocket geometry; geometry-aware ex-perts yield consistent gains across all metrics. 
+
+Method Kinetic Endpoint: Ki
+
+R2↑ PCC ↑ RMSE ↓ MAE ↓
+
+Optimization w/ L2 Loss [ ? ] 0.48 0.69 1.42 1.08 
+
+w/ ESDA (Ours) 0.61 0.78 1.26 0.91 
+
+Table 9. Objective ablation on Ki: plain L2 vs. ESDA -regularized objective. Distribution alignment in RKHS stabilizes fine-tuning and improves R 2/PCC while lowering RMSE/MAE. 
+
+## 11. Additional Ablation Studies 
+
+To isolate the contribution of each component, we ablate on 
+
+Ki prediction under identical preprocessing, backbone, and training schedule. Across all studies, each module provides measurable gains and the full model is consistently best. 
+
+11.1. Stage 1: Does MRCA Help Recognition? 
+
+We replace the common Concat & Self-Attention [? ] fu-sion with our MRCA , as shown in Table 7, which explicitly conditions enzyme tokens on substrate tokens in the PLM latent space before any structural input. MRCA improves 
+
+R2 from 0.47 to 0.61 (+0.14 / ↑29.8%), PCC from 0.69 to 
+
+0.78 (+0.09 / ↑13.0%), and reduces RMSE from 1.44 to 1.26 
+
+(↓12.5%) and MAE from 1.10 to 0.91 (↓17.3%). Results in-dicate that conditioning the PLM on substrate identity early yields a cleaner recognition signal than shallow concatena-tion, which underuses PLM priors. 
+
+11.2. Stage 2: Is Geometry-aware MoE Necessary? 
+
+As shown in Table 8, we compare a standard MoE [?
+
+] against our G-MoE , which routes by pocket geome-try and applies pocket-local, low-rank adaptation. G-MoE raises R2 0.50 →0.61 (+0.11 / ↑22.0%) and PCC 0.71 →0.78 
+
+(+0.07 / ↑9.9%), while lowering RMSE 1.39 →1.26 (↓9.4%) and MAE 1.05 →0.91 (↓13.3%). This validates that the geometry-routed experts specialize to distinct conforma-tional regimes (pocket size/shape/flexibility), outperform-ing a single shared adaptation rule. 
+
+11.3. Does ESDA Stabilize Fine-tuning? 
+
+We replace the plain L2 regression with our ESDA ob-jective, reported in Table 9, which aligns the distribu-tions of H(0) (sequence), H(1) (seq+substrate), and H(2) 
+
+(seq+substrate+structure) to the PLM manifold via RKHS MMD. ESDA improves R2 0.48 →0.61 (+0.13 / ↑27.1%) and PCC 0.69 →0.78 (+0.09 / ↑13.0%), and reduces RMSE 1.42 →1.26 (↓11.3%) and MAE 1.08 →0.91 (↓15.7%). Thus, the distribution alignment curbs feature flooding from strong structural cues and preserves pretrained biochemical semantics during adaptation. 
+
+11.4. Overall 
+
+Gains accumulate across stages: MRCA supplies substrate-aware recognition, G-MoE injects pocket-specific adapta-tion, and ESDA keeps both anchored to the PLM’s semantic space, yielding the best accuracy and lowest errors on Ki.

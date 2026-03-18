@@ -1,0 +1,852 @@
+Title: A Reduced Order Model approach for First-Principles Molecular Dynamics Computations
+
+URL Source: https://arxiv.org/pdf/2602.22390v1
+
+Published Time: Fri, 27 Feb 2026 01:13:11 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# A Reduced Order Model approach for First-Principles Molecular Dynamics Computations 
+
+Siu Wun Cheung a, ∗, Youngsoo Choi a, Jean-Luc Fattebert b, Jonas Kaufman c, Daniel Osei-Kuffuor a
+
+> aCenter for Applied Scientific Computing, Lawrence Livermore National Laboratory, Livermore, 94550, CA, USA
+> bComputational Sciences and Engineering Division, Oak Ridge National Laboratory, Oak Ridge, 37830, TN, USA
+> cMaterials Science Division, Lawrence Livermore National Laboratory, Livermore, 94550, CA, USA
+
+Abstract 
+
+To leverage the redundancy between the electronic structure computed at each step of first-principles molecular dynamics, we present a data-driven modeling framework for Kohn-Sham Density Functional Theory that bypasses the explicit optimization of electronic wave-functions. We sample a priori representative atomic configurations and construct a low-dimensional basis that efficiently approximates the electronic structure subspace. Subse-quently, we employ this reduced basis in a direct solver for the electronic single particle density matrix, thereby enabling the efficient determination of ground state without iter-ative wavefunction optimization. We demonstrate the efficacy of our approach in a Born-Oppenheimer molecular dynamics of a water molecule, showing that the resulting simulations accurately reproduce key structural properties, such as bond lengths and bond angle, ob-tained from full first-principles molecular dynamics. This work highlights the potential of data-driven approaches to develop efficient electronic structure solvers for first-principles simulations. 
+
+Keywords: Density functional theory, Quantum molecular dynamics, Reduced order modeling 
+
+1. Introduction 
+
+Molecular dynamics (MD) [1] is a crucial tool in modern science for understanding the behavior of atoms and molecules over time, providing insights into material properties, chem-ical reactions, and biological processes. However, these simulations often rely on empirical         
+
+> ∗Corresponding author
+> Email addresses: cheung26@llnl.gov (Siu Wun Cheung), choi15@llnl.gov (Youngsoo Choi),
+> fattebertj@ornl.gov (Jean-Luc Fattebert), kaufman22@llnl.gov (Jonas Kaufman),
+> oseikuffuor1@llnl.gov (Daniel Osei-Kuffuor)
+> arXiv:2602.22390v1 [math.NA] 25 Feb 2026
+
+potentials, which limit their predictive power and transferability. A more fundamental ap-proach, known as first-principles molecular dynamics (FPMD) or quantum molecular dy-namics (QMD) [2], models interatomic forces directly from quantum mechanics. A central component of FPMD is Kohn-Sham (KS) Density Functional Theory (DFT) [3, 4], which reformulates the many-body electronic problem into a system of effective single-particle equations which can be solved for physical systems composed of over 100 atoms. The core computational bottleneck of FPMD lies in the need to solve a complex, nonlinear electronic structure eigenvalue KS problem at every simulation timestep. This computational expense limits the scale and duration of FPMD simulations, hindering its application to many impor-tant scientific problems where long timescales or large systems are crucial. Solving the KS equations requires first their discretization in a finite basis set or on a mesh. While Linear Combinations of Localized Orbitals (LCAO) is a popular approach in the chemistry com-munity, here we focus primarily on systematically improvable discretizations. Among those the Plane Waves (PW) approach, a pseudo-spectral approach, is certainly the most used in the condensed matter community. Here we focus on real-space finite difference discretiza-tions, an alternative approach which allows more flexible boundary conditions and provides some advantages for parallel distributed implementations [5, 6]. Solving the discretized KS equations typically relies on iterative solvers given the sparse and large scale nature of the matrices involved. The non-linearity of the KS operator is often dealt with by updating the Hamiltonian in an outer self-consistent (SC) loop, and updating the solution using an iterative solver in an inner loop for a frozen linear Hamiltonian. Various solutions have been proposed to solve approximately the eigenvalue problem in the inner loop, including the Davidson method [7], the Residual Minimization Method with Direct Inversion in the Iterative Subspace (RMM-DIIS) [8], the Conjugate Gradient [9] and the Chebyshev-filtered subspace iteration [10]. In addition, and specially relevant to the methodology described in this paper, direct solvers which treat and solve the KS equations directly with a nonlinear solver have been proposed [11, 12]. As an alternative to these O(N 3) complexity solvers, and to reduce the cost of large scale simulations, O(N ) complexity approaches have been proposed [13]. Even though very large problems can be tackled with these techniques, the prefactor in the computational cost remains high from a FPMD perspective [14]. This inherent computational bottleneck has motivated extensive research into more effi-cient methodologies for electronic structure calculations within the MD framework. In MD, long time simulations are needed to properly sample the phase-space of the physical system of interest. During these long simulations, many similar atomic configurations are expected to be visited, at least when considering a local environment around a specific atom. This raises the possibility of reusing data from other configurations to accelerate the calculation of the physical properties for a given configuration using modern Machine Learning (ML) techniques. These considerations have led to the very active field of Machine Learning In-teratomic Potentials (MLIP) [15]. To build a MLIP, a learning phase involving a series of DFT simulations for a set of appropriate atomic configurations is carried out to build the model. After that, MD simulations can be run out at a much lower computational cost using the ML model and a fingerprint of the local environment for each atom [16]. While MLIPs 2have been highly successful in achieving significant speed-ups, their primary limitation lies in their reliance on fitting a potential energy surface (PES). The forces derived from MLIPs do not necessarily originate from a direct minimization of a fundamental quantum mechan-ical energy functional at each step. This can compromise their scientific consistency and transferability, particularly when extrapolating to novel chemical environments or extreme conditions not well-represented in their training data. In this paper, we explore a data-driven ROM approach at the electronic structure level. We develop and evaluate a technique to reuse the electronic structure precomputed at a series of sampling points and facilitate the computation of the electronic structure for previously unseen atomic configurations, with the application of projection-based reduced-order mod-els (ROMs). These techniques provide efficient and accurate approximations of large-scale systems by utilizing low-dimensional representations of the solution manifold, thus signif-icantly reducing the dimensionality of the problem. Such low-dimensional representations can be constructed by compressing high-fidelity snapshot data through linear techniques like proper orthogonal decomposition (POD) [17], balanced truncation [18], and the reduced basis method [19]. More recently, nonlinear approaches such as autoencoders (AE) [20, 21, 22] have also emerged. Reduced systems are typically obtained by projecting the original large-scale systems onto these low-dimensional structures. Projection-based ROM techniques directly incorporate the reduced solution representations into the governing equations and numerical discretization frameworks, ensuring that the ROMs honor the physical principles underlying the original problem. This enhances their reliability and accuracy while potentially requiring less data. Additionally, hyper-reduction techniques can be employed to further reduce the computational complexity associated with evaluating the nonlinear terms in the governing equations [23, 24, 25]. These ROMs have demonstrated success across a wide range of time-dependent nonlinear problems, including wave equations [26, 27, 28], the Burgers equation [29, 30, 31], the Euler equations [32, 33], porous media flow [34, 35], and Boltzmann transport problems [36]. Detailed surveys on classical projection-based ROM techniques are available in [37, 38]. While projection-based ROMs are widely used for time-dependent nonlinear problems across various scientific and engineering fields, our particular focus here is on the distinct challenge of eigenvalue problems, which arise naturally in electronic structure calculations. A foundational contribution in this area is the work of Cancés et al. [39], which demonstrated the feasibility and competitiveness of a reduced basis approach for rapid electronic structure calculations in quantum chemistry. This work proved that the solution manifold of the non-linear Kohn-Sham equations could be efficiently captured by a low-dimensional RB space. Earlier efforts in this specific area include methods like the reduced-basis output bound ap-proach for symmetric eigenvalue problems [40, 41]. While effective for the first eigenpair, these approaches can be restrictive in applications where multiple eigenpairs are of interest, particularly when dealing with non-simple eigenvalues (eigenvalues with an algebraic mul-tiplicity greater than one). More recently, the use of subspace methods for approximating eigenvalue problems has gained significant traction. Notable advancements include address-ing the efficient min-max characterization of the k-th eigenvalue over a parametric domain 3[42], the development of certified greedy strategies for smallest eigenvalue approximation [43], reduced basis approximation with a posteriori error estimates for parametrized ellip-tic eigenvalue problems [44], and more recently, with general a priori error estimates for parametrized symmetric eigenvalue problems [45]. Challenges posed by eigenvalue clusters and intersections in parametric problems have also been tackled [46]. Further explorations include coupling reduced basis methods with perturbation theory for eigenvalue problems [47], uniform approximation of smallest eigenvalues and singular values over continuum para-metric domains [48], and applications in pseudospectra computation [49] and quantum spin systems [50, 51]. For non-symmetric cases, reduced basis methods have been explored for neutron diffusion equations [52]. Additionally, the extension of the reduced basis method to affinely parameterized elliptic eigenvalue problems, aiming to approximate several of the smallest eigenvalues simultaneously with a posteriori error estimators, has been developed [53]. Recent work has also considered reduced-order methods for approximating eigenfunc-tions of the Laplace problem using time continuation and proper orthogonal decomposition [54]. This paper introduces a novel data-driven ROM approach that specifically addresses the computational intensity of the electronic structure problem in FPMD. We focus on wavefunction-based discretizations of the KS equations, that is numerical approaches which rely on representing the electronic wavefunctions in a systematically improvable numerical basis such plane waves (pseudo-spectral) or finite elements, or rely on representing these wavefunctions on a real-space mesh (finite differences), as opposed to using Linear Combi-nation of Atomic Orbitals (LCAO). Unlike traditional approaches that explicitly optimize electronic wavefunctions in a high-dimensional search space, our method leverages an offline-computed, low-dimensional basis derived from snapshots of representative electronic wave-functions. Crucially, in the subsequent online stage, we employ this reduced basis to develop a direct solver for the electronic density matrix, thereby enabling the efficient determination of the ground state energy and the forces acting on the ions without iterative wavefunction optimization. Each iteration involves solve an eigenvalue problem projected to a reduced sub-space as studied in [45]. From the solution of that iterative solver, physical observables can be evaluated. In particular, atomic forces can be computed and used to propagate the atoms treated as classical particles in the Born-Oppenheimer approximation. We demonstrate the efficacy of this ROM strategy through a detailed example of a water molecule, showcasing its ability to accurately reproduce molecular trajectories and structural properties obtained from full first-principles simulations. The rest of the paper is organized as follows. In Section 2, we describe the FPMD, including the electronic structure calculation by KS DFT and the ionic dynamics. Next, we introduce the reduced order modeling molecular dynamics (ROM-MD) framework which utilizes a ROM subspace approximation for KS DFT in Section 3. We provide numerical results on an empirical example of pinned water molecular using the ROM approach in Section 4. Finally, a conclusion is given. 42. First-Principles Molecular Dynamics 
+
+In this section, we outline the fundamental framework of FPMD. We begin by detailing the core electronic structure theory used to determine the ground state energy and electronic density, which subsequently yields the forces acting on the ions. Following this, we describe how these forces are used in molecular dynamics to propagate the ions through time as classical particles in the Born-Oppenheimer approximation. 
+
+2.1. Electronic structure calculation 
+
+KS DFT [3] is a widely used first-principles model in electronic structure calculations. In practice, the electronic ground state of a physical system can be described by a system of one-particle electronic wavefunctions that minimize the KS total energy. In this work, to simplify the treatment of the core electrons, which are assumed to be tightly bound and chemically inert, we adopt the frozen core approximation. This approach replaces the singular Coulomb potential of the nuclei and the core electrons with smooth pseudopotentials that act on the valence electrons. Consequently, the electronic structure calculation problem is effectively reduced to the computation of the valence electrons. Second, we consider closed-shell systems, and assume each spatial orbital ϕi can accommodate two valence electrons of opposite spin, spin up and spin down. As a result, the number of occupied orbitals N0 is half the number of valence electrons. Let N be the dimension of the search trial subspace of the electronic wavefunctions, where N0 ≤ N , which is spanned by N linearly independent real-valued wavefunctions. Here we adopt a general formulation that expresses the solution of the KS equations as a general set of wavefunctions that are not necessarily eigenfunctions of the KS Hamiltonian. The electronic density is defined as 
+
+ρ(r) = 2 
+
+> N
+
+X
+
+> i,j =1
+
+Xij ϕi(r)ϕj (r),
+
+where X = ( Xij )Ni,j =1 ∈ Sym N (R) is the single particle density matrix (DM) which describes the occupation of the electronic wavefunctions, subject to to constraints T r (X) = N0, and all its eigenvalues are in the interval [0 , 1] . Note that in the case where the electronic wavefunctions ϕi are eigenfunctions of the DFT Hamiltonian, X is a diagonal matrix with the occupation numbers {fi}Ni=1 as diagonal elements. The motivation for using a general non-diagonal matrix X will become clearer later on in Section 3.2 For a molecule composed of NI atoms located in positions {RI }NI 
+
+> I=1
+
+in a computational domain Ω, the KS energy functional EKS , depends on the wavefunctions {ϕi}Ni=1 and the density matrix X, is given by (in atomic units) 
+
+EKS [{ϕi}Ni=1 , X; {RI }NI
+
+> I=1
+
+] = Ts[{ϕi}Ni=1 , X] + EH [{ϕi}Ni=1 , X]+ 
+
+Exc [{ϕi}Ni=1 , X] + Eps [{ϕi}Ni=1 , X; {RI }NI
+
+> I=1
+
+]. (1) 5The first term is the kinetic energy of the non-interacting electrons, defined as 
+
+Ts[{ϕi}Ni=1 , X] = 2 
+
+> N
+
+X
+
+> i,j =1
+
+Xij 
+
+Z
+
+> Ω
+
+ϕi(r)
+
+
+
+−12∇2
+
+
+
+ϕj (r)dr.
+
+The second term is the Hartree energy, defined as 
+
+EH [{ϕi}Ni=1 , X] = 12
+
+Z
+
+> Ω
+
+Z
+
+> Ω
+
+ρ(r)ρ(r′)
+
+|r − r′| drdr′,
+
+which accounts for the classical electrostatic repulsion between the electrons. The third term is the exchange-correlation energy, defined as 
+
+Exc [{ϕi}Ni=1 , X] = 2 
+
+> N
+
+X
+
+> i,j =1
+
+Xij 
+
+Z
+
+> Ω
+
+ϕi(r)Vxc (r)ϕj (r)dr,
+
+which accounts for the many-body effects of electron-electron interactions that are not cap-tured by the simple electrostatic (Hartree) energy in the non-interacting Kohn-Sham system. It includes the effects of the Pauli Exclusion Principle (exchange) and the dynamic correla-tion between electrons due to their instantaneous Coulomb repulsion, as well as a correction to the kinetic energy of the non-interacting system. Common exchange-correlation models include the local density approximation (LDA) and the generalized gradient approximation (GGA). Among GGA functionals, the Perdew–Burke–Ernzerhof (PBE) formulation [55] is widely used due to its favorable accuracy and compatibility with grid-based methods. The last term is the energy of the electrons due to the potential created by the ionic cores located at positions {RI }NI
+
+> I=1
+
+, defined as 
+
+Eps [{ϕi}Ni=1 , X; {RI }NI
+
+> I=1
+
+] = 2 
+
+> N
+
+X
+
+> i,j =1
+
+Xij 
+
+Z
+
+> Ω
+
+ϕi(r)Vps (r; {RI }NI
+
+> I=1
+
+)ϕj (r)dr,
+
+which represents the attractive electrostatic interaction between the valence electrons and the positively charged ion cores. These ionic cores include the nucleus and core electrons, but in a smoother form that simplifies the treatment of the chemically active valence electrons. The Euler-Lagrange equations associated with the minimization of EKS under an or-thornomation constraint for the wavefunctions {ϕi}Ni=1 lead to an eigenvalue problem 
+
+HKS ψi = ϵiψi, i = 1 , . . . , N 
+
+Not that each eigenfunctions ψi can be expressed as a linear combination of the general function ϕi, i = 1 , . . . , N introduced earlier. The Hamiltonian operator H takes the form 
+
+HKS [ρ; {RI }NI
+
+> I=1
+
+] = −12∇2 + vH [ρ] + μxc [ρ] + Vps [{RI }NI
+
+> I=1
+
+].
+
+Here vH is the Hartree potential which represents the Coulomb potential due to the electronic charge density ρ, and μxc = δE xc /δρ is the exchange-correlation potential. We remark that 6the Hartree potential is part of the the total electrostatic potential and can be computed by solving a Poisson equation. We can define a neutral total charge density the sum of the electronic density ρ and the core charge density ρs , which is defined as the sum over all ions [56] 
+
+ρs(r) = 
+
+> NI
+
+X
+
+> I=1
+
+−ZI
+
+(√πr Ic )3 exp 
+
+
+
+−|r − RI |2
+
+(rIc )2
+
+
+
+.
+
+The Coulomb potential due to the ionic core charge density is given by 
+
+vs(r) = 
+
+> NI
+
+X
+
+> I=1
+
+−ZI
+
+|r − RI |erf 
+
+
+
+−|r − RI |2
+
+rIc
+
+
+
+.
+
+Together, vH + vs is the solution of the Poisson equation with total neutral source charge 
+
+ρ + ρs
+
+−∇ 2(vH (r) + vs(r)) = 4 π(ρ(r) + ρs(r)) .
+
+2.2. Electronic structure solver 
+
+In this article, we consider a finite difference discretizations of the Kohn-Sham equations. Using spatial discretization of the wavefunction with M spatial degrees of freedom, we denote the set of discretized trial wavefunctions {ϕi}Ni=1 as a matrix Φ ∈ St (M, N ) and the discrete Hamiltonian matrix by H ∈ Sym M (R). A direct solver for the electronic structure calculation would involve two loops, where the outer loop updates the wavefunctions {ϕi}Ni=1 , and the inner loop solves for the density matrix X [11, 57, 58]. However, when solving a problem with a wide gap between the eigenvalue associated with the highest occupied state and the eigenvalue associated with the lowest unoccupied state, simpler and computationally cheaper solvers can be used that involve only the fully occupied wavefunctions. In that case N = N0
+
+and we can use a iterative optimization procedure with gradient-based corrections 
+
+D = K(HΦ − Φ(Φ⊤HΦ )) ,
+
+where K ∈ RM ×M is a given preconditioner. Note that in practice, neither the Hamiltonian 
+
+H nor the preconditioner K will be stored as matrices. Instead, only the action of these discrete operators on vectors will be implemented. We remark that, as an alternative to updating the wavefunctions in an additive fashion, one could extend the search subspace spanned by [Φ, D] and optimize X in that subspace [57, 58]. For the FOM, we will use the Accelerated Block Preconditioned Gradient (ABPG) proposed in [12]. This algorithm is formulated for a set of non-orthogonal wavefunctions to facilitate the use of the Anderson extrapolation scheme. In that case, the Gram matrix S = Φ⊤Φ is to be computed, and its inverse inserted into our mathematical formulation in the role of the DM X, while the electronic density can be written as 
+
+ρ(r) = 2 
+
+> N
+
+X
+
+> i,j =1
+
+(S−1)ij ϕi(r)ϕj (r). (2) 7The preconditioned gradient of the KS functional becomes 
+
+P = K(HΦ − ΦS −1(Φ⊤HΦ )) ,
+
+A simplified version of the ABPG algorithm, where the Anderson extrapolation uses only one previous step to improve convergence, is summarized in Algorithm 1. A two-levels multigrid V-cycle is used as preconditioner [56]. The readers are referred to [12] for details and handling of special cases. 
+
+Algorithm 1 Gradient-based optimization for electronic structure calculation  
+
+> 1:
+
+Input: maximum number of iterations KES , convergence tolerance δES , and initial guess for wavefunction matrix Φ0 ∈ St (M, N ) 
+
+> 2:
+
+for k = 0 , 1, . . . , do  
+
+> 3:
+
+if k = KES then  
+
+> 4:
+
+break  
+
+> 5:
+
+end if  
+
+> 6:
+
+Evaluate electronic density ρk according to (2)  
+
+> 7:
+
+Update Hamiltonian matrix operator Hk = H(ρk) ∈ Sym M (R) 
+
+> 8:
+
+Compute the overlap matrix Sk = Φ⊤ 
+
+> k
+
+Φk 
+
+> 9:
+
+Compute the gradient Rk = HkΦk − ΦkS−1 
+
+> k
+
+(Φ⊤ 
+
+> k
+
+HkΦk) 
+
+> 10:
+
+if ∥Rk∥2 < δ ES then  
+
+> 11:
+
+break  
+
+> 12:
+
+end if  
+
+> 13:
+
+Compute the preconditioned gradient-based corrections Pk = KR k 
+
+> 14:
+
+if k = 0 then  
+
+> 15:
+
+Update wavefunction matrix Φk+1 = Φk − Pk 
+
+> 16:
+
+else  
+
+> 17:
+
+Compute the Anderson extrapolation coefficient 
+
+θk = (Pk − Pk−1)⊤Pk
+
+∥Pk − Pk−1∥22 
+
+> 18:
+
+Update wavefunction matrix Φk+1 = Φk + θk(Φk−1 − Φk) + ( Pk + θk(Pk−1 − Pk))  
+
+> 19:
+
+end if  
+
+> 20:
+
+end for  
+
+> 21:
+
+Output: final wavefunction matrix Φk ∈ St (M, N )
+
+2.3. Ionic Forces and Dynamics 
+
+The dynamics of ions are governed by the forces derived from the total energy functional. After the minimization of the energy functional, the forces on the ions can be evaluated and subsequently used to propagate ionic trajectories in time via Born-Oppenheimer molecular dynamics. By the Hellmann–Feynman theorem, given the wavefunctions {ϕi}Ni=1 and density 8matrix X, the total force acting on the ion I located at position RI and with core charge ZI
+
+is obtained as the negative partial derivative of the free energy functional with respect to the ionic coordinates. The only explicit dependence of the energy on the atomic positions arises from the pseudopotential and ion-ion electrostatic terms. This yields the force expression [56] 
+
+FI = −2
+
+> N
+
+X
+
+> i,j =1
+
+Xij 
+
+Z
+
+> Ω
+
+ϕi(r)∇RI Vps (r; RI )ϕj (r)dr − X 
+
+> J̸=I
+
+ZI ZJ
+
+|RI − RJ |3 (RI − RJ ). (3) The Born-Oppenheimer molecular dynamics assumes the ions evolve like classical parti-cles surrounded by quantum electrons. Let ∆t be the the step size, and KMD be the number of timesteps in the molecular dynamics simulation. Given the ionic positions {RI (tk)}NI 
+
+> I=1
+
+at time tk = k∆t, for k = 0 , 1, . . . , K MD − 1, the electronic structure calculation problem is set up using the current ionic positions and solved for the wavefunctions {ϕi}Ni=1 as described in Algorithm 1. For the ion I, the ionic force is computed using (3) and its position is then updated by the Verlet algorithm 
+
+RI (tk+1 ) = 
+
+
+
+RI (t0) + ∆ tVI (t0) + ∆t2
+
+2MI
+
+FI (t0) if k = 0 ,
+
+2RI (tk) − RI (tk−1) + ∆t2
+
+2MI
+
+FI (tk) if 1 ≤ k ≤ KMD − 1,
+
+(4) where MI is its mass. The complete time integration scheme is summarized in Algorithm 2. 
+
+Algorithm 2 Born-Oppenheimer molecular dynamics  
+
+> 1:
+
+Given: initial ionic positions {RI (t0)}NI 
+
+> I=1
+
+and velocities {VI (t0)}NI 
+
+> I=1
+> 2:
+
+for k = 0 , 1, . . . , K MD − 1 do  
+
+> 3:
+
+Use Algorithm 1 to solve for the wavefunction matrix Φ ∈ St (M, N ) 
+
+> 4:
+
+Compute ionic forces {FI (tk)}NI 
+
+> I=1
+
+using (3)  
+
+> 5:
+
+Evolve ionic positions {RI (tk+1 )}NI 
+
+> I=1
+
+by (4)  
+
+> 6:
+
+end for 3. Reduced Order Model Molecular Dynamics 
+
+In this section, we present the framework for our ROM-MD approach. We exploit the inherent equivariance of the electronic structure with respect to rigid body motions (trans-lations and rotations) of the atomic system for an efficient compression and representation of the underlying wavefunctions. We begin by describing the offline stage, where we strate-gically sample the relevant configuration space and construct a low-dimensional basis that efficiently captures the electronic structure variations. Subsequently, we describe how elec-tronic structure calculations are performed within this reduced basis to obtain the ground state energy and electronic density. Finally, we explain how the resulting forces on the ions are computed within the ROM-MD approach and integrated over time enabling first-principles molecular dynamics, which provides a trajectory of ionic positions { eRI }NI 
+
+> I=1
+
+as an approximation of the groundtruth {RI }NI
+
+> I=1
+
+.93.1. Sampling and subspace construction 
+
+We assume that the ionic positions in the laboratory frame { eRI }NI 
+
+> I=1
+
+can be transformed by a rigid body transformation T : Ω ⊂ R3 → bΩ ⊂ R3, into a reference frame { bRI }NI 
+
+> I=1
+
+=
+
+{T ( eRI )) }NI 
+
+> I=1
+
+which can be efficiently parametrized by a vector ν belonging to a domain D ⊆
+
+Rnν . To construct a reduced basis that efficiently captures the electronic structure across this domain, we employ a sampling strategy. We select a set of Ktrain representative parameter vectors from the domain D, denoted as Dtrain = {νi}Ktrain  
+
+> i=1
+
+. For each sampled configuration νi,the corresponding ionic positions { bRI (νi)}NI 
+
+> I=1
+
+define a specific atomic system in the refernce frame. We then minimize the Kohn-Sham energy (1) using the electronic structure solver in Algorithm 1 to obtain the corresponding wavefunction matrix Φ(νi) ∈ St (M, N ).To construct a global reduced basis that can approximate the wavefunction for any ν ∈ D,we assemble a snapshot matrix Y by concatenating the wavefunction matrices obtained for each training configuration: 
+
+Y = [ Φ(ν1), Φ(ν2), · · · , Φ(νKtrain )] ∈ RM ×Ksnapshot ,
+
+where Ksnapshot = N0Ktrain ≪ M is the total number of snapshot vectors. This snapshot matrix Y contains a collection of representative wavefunctions from our training set. To extract the most important features from these snapshots and construct a low-dimensional basis, we perform a singular value decomposition (SVD) of Y, which yields 
+
+Y = UΣV ⊤,
+
+where U ∈ St (M, K snapshot ) and V ∈ O(Ksnapshot ) are orthogonal matrices consisting of the left and right singular vectors, and Σ is a diagonal matrix containing the Ksnapshot non-negative singular values in descending order. The left singular vectors form an orthonormal basis for the column space of Y. To obtain a reduced basis of size r ≪ M , we truncate the SVD and select the first r left singular vectors corresponding to the largest singular values. The choice of the truncation parameter r is crucial and is often guided by an energy fraction criterion. This criterion aims to capture a certain percentage of the total “energy” represented by the singular values. Specifically, we determine the smallest integer r ≥ N0
+
+such that rX
+
+> j=1
+
+σ2 
+
+> j
+
+≥ (1 − δEF )
+
+> Ksnapshot
+
+X
+
+> j=1
+
+σ2 
+
+> j
+
+,
+
+where δEF is a small tolerance for the energy fraction. The resulting basis matrix is as-sembled by the first r left singular vectors, i.e., Q = U [e1, e2, · · · , er] ∈ St (M, r ), which forms an orthonormal basis for a low-dimensional subspace that effectively approximates the space spanned by the training wavefunctions, and can be used to efficiently approximate the electronic wavefunctions for unseen configurations ν ∈ D without the need of gradient-based corrections. 10 3.2. Electronic structure calculation 
+
+Having constructed a reduced basis Q ∈ St (M, r ), which represents the reduce basis of discretized wavefunctions {qi}ri=1 that efficiently spans the space of relevant electronic wavefunctions, we can now formulate a ROM solver for electronic structure calculations of the wavefunctions given new atomic configurations { bRI (ν)}NI 
+
+> I=1
+
+in the reference frame parametrized by ν ∈ D. The core idea is to use the span of the bilinear products of the reduced basis {qi}ri=1 to define the electronic density 
+
+bρ(br) = 2 
+
+> r
+
+X
+
+> i,j =1
+
+bXij qi(br)qj (br), (5) with respect to the density matrix bX = ( bXij )ri,j =1 ∈ Sym r(R).Instead of the KS energy, we work with the Mermin free energy functional at finite electronic temperature T [59]. The reduced basis {qi}ri=1 is used to define the free energy objective functional solely in bX, i.e., 
+
+Ar[ bX] = EKS [{qi}ri=1 , bX] − T S r[ bX]. (6) where the entropy term Sr is given by 
+
+Sr[ bX] = −2kBrX
+
+> i=1
+
+[fi ln( fi) + (1 − fi) ln(1 − fi)] ,
+
+Note that for the ground state solution that minimizes (6), the occupation numbers, fi, i =1, . . . , N , follow a Fermi-Dirac thermal distribution fi = fT (ϵi − μ), where 
+
+fT (ϵ) = 1
+
+eϵ/k B T + 1 , (7) 
+
+ϵi is the i-th eigenvalue of H, kB is the Boltzmann constant, and μ is the chemical potential chosen to satisfy P 
+
+> i
+
+fi = N0, Therefore, in the minimization process, we have only the den-sity matrix bX to optimize, avoiding the computationally expensive iterative optimization of electronic wavefunctions in the full space. In [11], Marzari et al. introduced a direct opti-mization strategy for the Mermin free energy (6). We adapt this approach by reformulating the problem to be solved within a fixed, low-dimensional search subspace spanned by the reduced basis vectors {qi}ri=1 . In that case, it becomes equivalent to the Optimal Damping Algorithm (ODA) proposed by Cancès [60], albeit in a different basis. Algorithm 3 outlines an iterative procedure for obtaining the electronic density matrix within this reduced basis. In practice, to reduce the computational cost, we fix the mixing parameter β. For problems with a large band gap like the one considered later in this article, it shows a similar con-vergence rate without the cost associated with the extra evaluation of the electronic density and energy needed for the line minimization. 11 Algorithm 3 Density matrix optimization in a r-dimensional search subspace, with r ≥ N0 
+
+> 1:
+
+Input: orthogonal basis matrix Q ∈ St (M, r ), maximum number of iterations KDM ,convergence tolerance δDM , mixing parameter β, and initial guess of density matrix 
+
+bX0 ∈ Sym r(R) 
+
+> 2:
+
+for k = 0 , 1, . . . do  
+
+> 3:
+
+Evaluate electronic density bρk according to (5)  
+
+> 4:
+
+Projected Hamiltonian matrix bHk = Q⊤H(bρk)Q ∈ Sym r(R) 
+
+> 5:
+
+Solve the symmetric eigenvalue problem bHk bVk = bVk bEk 
+
+> 6:
+
+Form the occupation matrix bFk = fT (bEk − νI) computed entry-wise on the diagonal according to (7)  
+
+> 7:
+
+Update the density matrix bXk+1 = (1 − β) bXk + β bVk bFk bV⊤ 
+
+> k
+> 8:
+
+if k + 1 = KMD or |Ar( bXk) − Ar( bXk+1 )| < δ DM then  
+
+> 9:
+
+break  
+
+> 10:
+
+end if  
+
+> 11:
+
+end for  
+
+> 12:
+
+Output: final density matrix bXk+1 ∈ Sym r(R)
+
+3.3. Ionic Forces and Dynamics 
+
+Given the density matrix bX, we compute the force acting on each atom in the reference frame using an analogue to the Hellmann–Feynman force expression (3), i.e., 
+
+bFI = −
+
+> r
+
+X
+
+> i,j =1
+
+bXij 
+
+Z
+
+> Ω
+
+qi(bbr)∇ bRI Vps (br; bRI )qj (br)dbr − X 
+
+> J̸=I
+
+ZI ZJ
+
+| bRI − bRJ |3 ( bRI − bRJ ). (8) The ROM-MD simulation begins with the initial ionic positions set as eRI (0) = RI (0) for all ions 1 ≤ I ≤ NI . Subsequently, given the ionic positions { eRI (tk)}NI 
+
+> I=1
+
+at time tk = k∆t,for k = 0 , 1, . . . , K MD − 1, we first identify the rigid body transformation T (tk) that aligns the system to the domain bΩ. Following this transformation, we transform the coordinate system into the reference frame via bRI (tk) = T (tk) eRI (tk), set up and solve the electronic structure problem, obtain the density matrix bX as detailed in Algorithm 3. For each ion I,the ionic force bFI (tk) in the reference frame is computed using (8), transformed back to the laboratory frame via eFI (tk) = [ T (tk)] −1 bRI (tk), and update the ionic positions { eRI (tk+1 )}
+
+using the same Verlet algorithm as (4) in Section 2.3. The complete time integration scheme for the ROM-MD is summarized in Algorithm 4. 
+
+4. Empirical example: pinned water molecule 
+
+In this section, we consider an empirical example with a single water molecule, where the Oxygen atom is considered “pinned”, meaning its position is fixed throughout the simulation. This can be physically imagined as the oxygen atom having an infinitely large mass and remaining immobile under the influence of forces. Consequently, we focus on the forces and 12 Algorithm 4 Reduced Born-Oppenheimer molecular dynamics  
+
+> 1:
+
+Given: wavefunction basis matrix Q ∈ St (M, r ) in reference frame, initial ionic positions 
+
+{ eRI (t0)}NI 
+
+> I=1
+
+and velocities { eVI (t0)}NI 
+
+> I=1
+
+in the laboratory frame  
+
+> 2:
+
+for k = 0 , 1, . . . , K MD − 1 do  
+
+> 3:
+
+Identify rigid body transformation T (tk) from laboratory frame to reference frame  
+
+> 4:
+
+Transform atomic coordinate into reference frame bRI (tk) = T (tk) eRI (tk) for 1 ≤ I ≤
+
+NI 
+
+> 5:
+
+Use Algorithm 3 solve for the density matrix bX ∈ Sym r(R) 
+
+> 6:
+
+Compute ionic forces in reference frame {bFI (tk)}NI 
+
+> I=1
+
+using (8)  
+
+> 7:
+
+Transform ionic force into laboratory frame eFI (tk) = T −1(tk)bFI (tk) for 1 ≤ I ≤ NI 
+
+> 8:
+
+Evolve ionic positions { eRI (tk+1 )}NI 
+
+> I=1
+
+by (4)  
+
+> 9:
+
+end for 
+
+dynamics of the two hydrogen atoms relative to the fixed oxygen. The computation domain is a cube Ω = [ −6, 6] 3 of side length 12.0 Bohr, discretized by a 64 ×64 ×64 uniform grid. For electronic structure calculation, we consider the valence electrons to determine its chemical properties. Oxygen has 6 valence electrons and 2 core electrons, while each hydrogen atom contributes 1 valence electron. Applying the frozen core approximation, we treat the 2 core electrons of oxygen implicitly through a pseudopotential, focusing solely on the valence electrons. Furthermore, we ignore the spin degrees of freedom of the electrons. This implies that the N0 number of occupied orbitals in our electronic structure calculations is half the total number of valence electrons, which is (6 + 1 + 1) /2 = 4 . Kohn-Sham energy is defined with the PBE exchange-correlation functional [55] and norm-conserving pseudopotentials of the SG15 family for the core electrons [61, 62]. The electronic wavefunctions were discretized on a uniform real-space grid using a a fourth-order accuracy finite difference scheme. As a preconditioner K, we use the multigrid preconditioner described in [56]. For all the FOM solve by Algorithm 1, the convergence tolerance is set to δES = 10 −8.
+
+4.1. Sampling and subspace construction 
+
+Next, we describe the data sampling strategy for constructing our reduced basis. To define a unique atomic system with rotational invariance, we assume the sampled molecule lies in the plane z = 0 , the first hydrogen atom H 1 lies in the first quadrant, the second hydrogen atom H 2 lies in the fourth quadrant, the bond length between the oxygen O and the first hydrogen atom H 1 is not shorter than that between O and H 2, and the bondangle is equally split into half by the positive x-axis. Under these assumptions, we can parametrize the molecular geometry by ν = ( L1, L 2, θ ) using only nν = 3 parameters: the bond length 
+
+L1 between oxygen O and H 1 , the bond length L2 between oxygen O and H 2, and the bond angle θ between the two O – H bonds. We consider limited ranges for these parameters around the equilibrium geometry of the water molecule. Specifically, we define the following parametric domains: 
+
+• Bond length L1 = 1 .83 s1 Bohr, where s1 is sampled uniformly from the interval 
+
+[0 .95 , 1.05] with a step size of ∆L = (1 .05 − 0.95) /K L.13 • Bond length L2 = 1 .83 s2 Bohr, where s2 is sampled uniformly from the interval [0 .95 , s 1]
+
+with the same step size ∆L. This ensures that L2 is always less than or equal to L1,reflecting our initial setup where H 1 has a slightly longer bond length. 
+
+• Bond angle θ = 104 .5◦ + sθ, where sθ is sampled uniformly from the interval [−5◦, 5◦]
+
+with a step size of ∆θ = (5 − (−5)) /K θ.Here, KL and Kθ are the number of sampling intervals for the bond lengths and the bond angle, respectively. The uniform sampling in the parametric domain allows us to systemat-ically explore a relevant portion of the configuration space. The number of sampled pairs 
+
+(s1, s 2) is (KL + 1)( KL + 2) /2, while the number of sampled angles is Kθ + 1 . There-fore, the number of unique atomic systems generated by this sampling strategy is therefore given by Ktrain = ( KL + 1)( KL + 2)( Kθ + 1) /2. Figure 1 depicts several configurations of the water molecule parametrized by bond lengths and bond angle in their corresponding ranges. Since we have N0 = 4 occupied wavefunctions for each atomic system, the total number of wavefunction snapshots collected for the construction of the reduced basis is 
+
+Ksnapshot = 2( KL + 1)( KL + 2)( Kθ + 1) .   
+
+> Figure 1: Configurations of the water molecule parametrized by two bond lengths (L1, L 2)and one bond angle θ.
+
+Table 1 presents the required dimension r of the reduced basis to achieve a specific energy fraction tolerance δEF for different sampling frequencies, characterized by the number of intervals KL and Kθ. The bottom row, corresponding to δEF = 0 , represents the full rank of the snapshot matrix, which is equal to Ksnapshot . As expected, achieving a smaller energy fraction residual requires a larger reduced basis dimension r. Furthermore, increasing the sampling frequency generally leads to a slightly higher required reduced basis dimension for a given target accuracy tolerance δEF . This indicates that a more comprehensive sampling 14 of the configuration space captures a wider range of electronic states, thus requiring a larger basis to represent them effectively. 
+
+δEF 
+
+(KL, K θ)(2 , 2) (2 , 5) (5 , 2) (5 , 5) 10 −2 8 7 8 7
+
+10 −3 18 18 18 18 
+
+10 −4 34 35 36 36 
+
+0 72 144 252 504               
+
+> Table 1: Reduced basis dimension rrequired to achieve a target energy fraction residual δEF for different sampling frequencies KLand Kθ. The last row with δEF = 0 has the dimension r=Ksnapshot .
+
+4.2. Accuracy in forces 
+
+To determine suitable sampling densities KL and Kθ and energy fraction tolerance δEF 
+
+for accurate ROM-MD simulations, we consider a force difference of 5 × 10 −4 Hartree/Bohr as a negligible error tolerance. We start by evaluating the performance of our reduced basis on a single, unseen molecular configuration defined by s1 = 1 .02 , s2 = 0 .98 , and sθ = 2 .0.This testing configuration lies within the parametric domain but was not included in the training set. Table 2 shows the distance between this testing configuration and the closest atomic system in the training set in the parametric space for different sampling densities. The distances for s1 and s2 are calculated as the absolute difference between the testing value and the nearest sampled s value, multiplied by the scaling factor 1.83 Bohr. The distance for sθ is the absolute difference in degrees. Parameter (KL, K θ)(2 , 2) (2 , 5) (5 , 2) (5 , 5) 
+
+L1 0.0366 0.0366 0.0183 0.0183 
+
+L2 0.0366 0.0366 0.0183 0.0183 
+
+θ 2.0 1.0 2.0 1.0     
+
+> Table 2: Distance to the closest training atomic system in parametric space for the testing configuration (s1= 1 .02 , s 2= 0 .98 , s θ= 2 .0).
+
+Tables 3 and 4 present the magnitude of the force difference on hydrogen atom H 1 and H2, respectively, between the full first-principles calculation and the data-driven ROM for the unseen testing configuration. These force differences are evaluated for different sampling densities and energy fraction tolerance δEF . The results indicate that increasing the sampling density and decreasing the energy fraction tolerance δEF generally leads to a smaller force difference, as expected from the increased accuracy of the reduced basis. Notably, for the lowest sampling frequency KL = Kθ = 2 and energy fraction residual δEF = 10 −4, the force differences on both hydrogen atoms are consistently below our chosen tolerance of 5 × 10 −4
+
+15 δEF 
+
+(KL, K θ)(2 , 2) (2 , 5) (5 , 2) (5 , 5) 10 −2 7.3 × 10 −4 2.6 × 10 −2 2.1 × 10 −2 2.1 × 10 −2
+
+10 −3 2.0 × 10 −4 1.8 × 10 −4 1.5 × 10 −4 1.4 × 10 −4
+
+10 −4 2.4 × 10 −5 3.1 × 10 −5 2.4 × 10 −5 2.3 × 10 −5 
+
+> Table 3: Magnitude of the difference in force on hydrogen atom H 1(in Hartree/Bohr) between FPMD and ROM-MD for the testing configuration.
+
+δEF 
+
+(KL, K θ)(2 , 2) (2 , 5) (5 , 2) (5 , 5) 10 −2 4.8 × 10 −4 9.6 × 10 −3 2.1 × 10 −2 2.1 × 10 −2
+
+10 −3 1.0 × 10 −4 7.2 × 10 −5 5.2 × 10 −5 7.0 × 10 −5
+
+10 −4 4.3 × 10 −5 4.6 × 10 −5 3.9 × 10 −5 3.8 × 10 −5 
+
+> Table 4: Magnitude of the difference in force on hydrogen atom H 2(in Hartree/Bohr) between FPMD and ROM-MD for the testing configuration.
+
+Hartree/Bohr. For the remaining studies, we will use the subspace of dimension r = 34 
+
+generated from this combination of sampling frequency and energy fraction residual. Following the single-point validation, we further assessed the performance of our ROM-MD approach by evaluating the force differences on the hydrogen atoms (H 1 and H 2) over a larger set of Ktest = 726 atomic configurations. These configurations were generated by uniformly sampling the parametric space with a finer grid with KL = Kθ = 10 , ensuring a diverse set of molecular geometries within our defined domain. Among these tested configu-rations, 18 are reproductive cases which coincided exactly with configurations present in our training set, while the remaining 708 were unseen predictive configurations. The histograms in Figure 2 reveal the distribution of the magnitude of force differences for both hydrogen atoms across the reproductive and predictive test sets. For the 18 reproductive configu-rations (left column), the mean force difference is 2.9520 × 10 −5 Hartree/Bohr for H 1 and 
+
+3.3766 ×10 −5 Hartree/Bohr for H 2, and the maximum difference is 6.767 ×10 −5 Hartree/Bohr for H 1 and 6.612 × 10 −5 Hartree/Bohr for H 2. For the 708 unseen predictive configurations (right column), the distribution of force differences exhibits a right-skewed shape with some outliers. The mean force difference for H 1 in the predictive set is 3.950 × 10 −5 Hartree/Bohr, and for H 2, the mean is 6.734 × 10 −5 Hartree/Bohr. Importantly, despite the skewed distri-bution and the presence of outliers, the maximum force difference 1.670 × 10 −4 Hartree/Bohr for H 1 and 1.521 × 10 −4 Hartree/Bohr for H 2 in the predictive set remains below our de-fined negligible force difference threshold of 5 × 10 −4 Hartree/Bohr. This suggests that our ROM-MD approach exhibits good predictive capability for unseen configurations within the sampled parametric domain, maintaining force accuracy within an acceptable tolerance. 
+
+4.3. Accuracy in atomic trajectories 
+
+To empirically validate our ROM-MD framework proposed in Section 3, we present an example simulation of a water molecule. The initial geometry of the water molecule is 16 Figure 2: Histogram of the magnitude of the difference in force (in Hartree/Bohr) between FPMD and ROM-MD for hydrogen atoms H 1 (top row) and H 2 (bottom row). The left column shows results for the 18 reproductive cases, and the right column shows results for the 708 predictive unseen configurations. The mean force difference is reported in each panel. 
+
+provided in Table 5. Atom x y z
+
+O 0.00 0.00 0.00 H1 -0.45 1.57 -1.07 H2 -0.45 -1.48 -0.97 
+
+> Table 5: Initial geometry of the water molecule in Bohr.
+
+The molecular dynamics simulation was run for KMD = 500 time steps with a time step of 40.0 atomic units (approximately 0.967 femtoseconds). No thermostat was used for this simulation, allowing us to check for energy conservation. Given the small problem size, large temperature fluctuations are expected. We remark that the initial atomic system, with the given coordinates, does not lie exactly within our previously defined parametric domain. 17 This choice was made to test the extrapolative capabilities of our ROM-MD approach beyond the configurations explicitly included in the training data. By slightly perturbing the initial positions away from the equilibrium configuration, we initiate a dynamic trajectory where the temperature will naturally evolve. The temperature remains within a range of 0 to 400 Kelvin during the simulation avoiding excessive extrapolation beyond the training data’s energy landscape. Figure 3 illustrates the procedure of reduced Born-Oppenheimer molecular dynamics in Algorithm 4 in the example of water molecule. 
+
+> Figure 3: Schematic diagram for the procedure of reduced Born-Oppenheimer molecular dynamics in Algo-rithm 4 in the example of water molecule.
+
+The performance of the ROM-MD method is significantly affected by the choice of the convergence tolerance δDM in Algorithm 3. Therefore, a systematic study of the relative speed-up as a function of these parameters is necessary. With a mixing parameter β = 0 .8,the relative speed-up of the ROM-MD simulation compared to the FPMD simulation is presented in Table 6. The speed-up is defined as the ratio of the total wall-clock time of the FPMD simulation to that of the ROM-MD simulation. From the table, we observe that for less stringent tolerances, such as δDM = 10 −4, the ROM-MD method achieves a significant speed-up of over 4 times. However, as the tolerance is tightened to δDM = 10 −8, the speed-up decreases. This is because the evaluation of the nonlinear terms is a significant overhead, and this overhead increases with a tighter tolerance. The results presented in the rest of the paper will use the parameters of β = 0 .8 and δDM = 10 −6, which represent a balance between computational efficiency and accuracy. Figure 4 shows the evolution of key geometric variables of the water molecule during the 500 time steps of the molecular dynamics simulation, comparing the FPMD simulation 18 δDM 10 −4 10 −6 10 −8
+
+Factor 4.17 2.05 1.39   
+
+> Table 6: Relative speed-up of ROM-MD with different choices of convergence tolerance δDM in Algorithm 3.
+
+in Section 2 and the ROM-MD simulation in Section 3. The left column shows the length 
+
+L1 of the bond O – H 1 (left panel), L2 of the bond O – H 2 (middle panel), and the bond angle θ formed by the two O – H bonds (right panel). In each of these top panels, the results obtained from the FPMD simulation and the ROM-MD simulation are shown in blue and red respectively. The plots reveal that the ROM-MD simulation resemble the FPMD simulation extremely well and capture the oscillatory and periodic nature of the hydrogen atoms’ motion relative to the fixed oxygen. The red curves from the ROM-MD simulation closely follow the blue curves from the FPMD simulation for all three geometric properties. The right column, illustrating the differences between the two methods, shows that the deviations remain relatively small throughout the simulation, indicating a good agreement between the FPMD approach and ROM-MD approach in predicting the molecular geometry over time. Figure 5 illustrates the evolution of total energy of the system during the 500 time steps of the molecular dynamics simulation, comparing the FPMD simulation in Section 2 and the ROM-MD simulation in Section 3. Both the FPMD and ROM-MD methods successfully conserve the total energy of the system. The total energy plots for both methods fluctu-ate within a very narrow range centered around -17.165 Hartree. This small fluctuation demonstrates that the simulations are stable and accurately maintain energy conservation throughout the 500 time steps. The trajectory of the difference further confirms the high de-gree of similarity between the two methods by plotting the difference in their total energies. This difference remains extremely small, on the order of 10 −4, which indicates that ROM-MD simulation has a comparable total energy to the full-scale FPMD simulation throughout 500 time steps. 
+
+5. Conclusion 
+
+In this work, we have presented a ROM-MD framework based on learning a reduced representation of the electronic wavefunctions. Through a systematic sampling of the config-uration space of atomic coordinates and the construction of a low-dimensional basis for the electronic wavefunctions using snapshot singular value decomposition, we have shown the feasibility of approximating interatomic forces with reasonable accuracy for a pinned water molecule. This reduction successfully captured the essential physics of the electronic wave function space with a significantly smaller basis. When applied to ROM-MD, the atomic forces approximated using this reduced represen-tation closely reproduced the bond lengths and bond angle obtained from full first-principles calculations. The accuracy of these predicted molecular properties serves as a powerful validation of the quality of the learned reduced electronic space. While our initial implementation had not produced significant computational speed-ups, primarily due to the direct evaluation of nonlinear terms, the accuracy of the predicted 19 Figure 4: Evolution of bond lengths L1 and L2 and bond angle θ during the 500 time steps of molecular dynamics. Left column: Comparison between FPMD (blue) and ROM-MD (red). Right column: Difference between FPMD and ROM-MD results. 
+
+molecular properties underscores the potential of this approach. An interesting direction is the use of data-driven surrogates to update effective Hamiltonian, which is crucial for 20 Figure 5: Evolution of total energy during the 500 time steps of molecular dynamics. Left column: Compar-ison between FPMD (blue) and ROM-MD (red). Right column: Difference between FPMD and ROM-MD results. 
+
+achieving substantial acceleration and enabling the simulation of larger and more complex systems. An example is hyper-reduction techniques [23, 63, 64, 24, 25] to efficiently compute these nonlinear components within the reduced basis of electronic density. Another direction for further study, which we begin exploring and report preliminary results in Appendix A, is the use of nonlinear compression techniques to obtain even lower-dimensional, highly-accurate representations of wavefunction solutions. This shift investi-gates a more general, nonlinear reduction of the electronic manifold, which is the key goal of advanced ROM for electronic structure. This study provides a foundational step towards developing nonlinear ROM for FPMD simulations. 
+
+Acknowledgement 
+
+This work was supported by Laboratory Directed Research and Development (LDRD) Program by the U.S. Department of Energy (24-ERD-035). Lawrence Livermore National Laboratory is operated by Lawrence Livermore National Security, LLC, for the U.S. De-partment of Energy, National Nuclear Security Administration under Contract DE-AC52-07NA27344. IM release number: LLNL-JRNL-2013760. This manuscript has been co-authored by UT-Battelle, LLC, under contract DE-AC05–00OR22725 with the US Depart-ment of Energy (DOE). 
+
+Appendix A. Nonlinear compression 
+
+To explore the lowest-dimensional structures that may accurately represent electronic wavefunctions, we turn to nonlinear compression. Here, we test an autoencoder (AE) ap-proach for the same pinned water molecule example considered in Section 4. Taking ad-vantage of the fact that linear compression already performs quite well for this problem, we employ a learnable weighted hybrid AE that combines a (linear) POD-based AE with 21 a (nonlinear) convolutional AE [65]. Each AE A consists of an encoder E that maps an input vector x ∈ RM to a lower-dimensional latent vector z ∈ Rr and a decoder D that maps the latent vector to ˜x ∈ RM , such that ˜x = A (x) = D (E (x)) is the reconstruction of the compressed input. In the POD case, EPOD (x) = Q⊤x and DPOD (z) = Qz , where 
+
+Q ∈ St (M, r ) is the ROM basis matrix of rank r defined in Section 3.1. The hybrid AE combines these with a corresponding convolutional neural network-based encoder ECNN and decoder DCNN :
+
+Ehybrid (x) = ( 1 − a) ⊙ EPOD (x) + a ⊙ ECNN (x) ,
+
+Dhybrid (z) = ( 1 − b) ⊙ DPOD (z) + b ⊙ DCNN (z) .
+
+a ∈ Rr and b ∈ RM here are learnable weight vectors, while ⊙ denotes element-wise multi-plication. In this case, we use a reduce dimension of r = 18 in the bottleneck layer of the AE. The convolutional encoder ECNN consists of four 3D convolution layers with decreasing spatial dimension (32 to 16 to 8 to 4) and increasing channels (32 to 64 to 128 to 256) in their outputs, followed by a single fully-connected layer that reduces the total dimension from 16384 to 18. The convolutional decoder DCNN mirrors the encoder, with one fully-connected layer followed by four 3D transposed convolution layers. ReLU activation functions are applied to the output of each layer except for the final layer of the decoder, for which we use the hyperbolic tangent function. As in [65], we choose to initialize the weights a and b to zero, such that Ahybrid is initially equivalent to APOD . For training, we use the same sampling frequency of molecular configurations ( KL = Kθ = 2 ) and divide the 72 wavefunctions into four batches of 18. The hybrid AE is implemented and trained using PyTorch [66]. We use the Adam optimizer [67] with a fixed learning rate of 5 × 10 −4 and ϵ = 1 × 10 −12 and train for 200000 epochs. Table A.7 lists the resulting relative error |Y− eY|F 
+
+> |Y|F
+
+in the snapshot matrix Y for the POD-based and hybrid AEs (where eY is the AE-reconstructed snapshot matrix). Note that due to the properties of the Frobenius norm, this error is equivalent to δEF in the POD case. The hybrid approach reduces the error by a factor of more than 12 relative to POD alone, such that it is below 10 −4. Reaching this target energy fraction residual requires r = 34 in the linear ROM case (Table 1) but is achieved here with r = 18 .To assess how compression of the wavefunctions translates into errors in forces, we cal-culate the approximate forces eF from the AE-reconstructed wavefunctions for the 18 repro-ductive configurations and 708 predictive configurations. Distributions of the corresponding magnitudes of force differences for both hydrogen atoms are shown in Figures A.6 and A.7 for the POD-based and hybrid AEs, respectively, and summarized in Table A.7. The mean force difference is consistently lower for the hybrid AE compared to POD, although the reduction is not as dramatic as that of the error in the snapshot matrix. While the mean force differ-ence for POD is generally higher than our chosen error tolerance of 5 × 10 −4 Hartree/Bohr (except for H2 in the predictive configurations, where it is 4.773 × 10 −4), the mean force 22 difference for the hybrid AE is consistently below this threshold, even for the predictive cases. However, the maximum force difference for the hybrid AE exceeds the tolerance for both hydrogen atoms in both the reproductive and predictive cases. Method |Y− eY|F
+
+> |Y|F
+
+Reproductive Predictive 
+
+|F1 − eF1|2 |F2 − eF2|2 |F1 − eF1|2 |F2 − eF2|2
+
+Mean Max. Mean Max. Mean Max. Mean Max. POD 6.462 8.042 18.160 6.632 16.512 6.119 22.151 4.773 21.096 Hybrid 0.518 1.311 6.152 1.780 6.722 3.011 7.032 2.752 11.788 Factor 12.470 6.135 2.952 3.726 2.456 2.032 3.150 1.735 1.790      
+
+> Table A.7: Relative training error in the snapshot matrix Y(×10 −4) and mean/maximum magnitude of difference in force (in ×10 −4Hartree/Bohr) from DFT for hydrogen atoms in the reproductive and predictive cases for the POD-based and hybrid AEs. The reduction factor is the ratio of the POD-based AE error to the hybrid AE error.
+
+Note that this approach to wavefunction compression and force calculation is funda-mentally different from our ROM approach, in that we must solve the FOM and then com-press/uncompress the wavefunctions rather than directly solving for the wavefunctions in the lower-dimensional ROM subspace. It is less clear how to efficiently utilize this type of non-linear compression within a DFT solver, but our results nonetheless illustrate the potential compressive power of nonlinear AE techniques for FPMD applications. 
+
+References 
+
+[1] D. Frenkel, B. Smit, Understanding molecular simulation: from algorithms to applica-tions, Elsevier, 2023. [2] D. Marx, J. Hutter, Ab initio molecular dynamics: basic theory and advanced methods, Cambridge University Press, 2009. [3] W. Kohn, L. J. Sham, Self-consistent equations including exchange and correlation effects, Phys. Rev. 140 (1965) A1133–A1138. doi:10.1103/PhysRev.140.A1133 .[4] E. Cancès, G. Friesecke, Density Functional Theory, Springer, 2023. [5] E. L. Briggs, D. J. Sullivan, J. Bernholc, Large-scale electronic-structure calculations with multigrid acceleration, Phys. Rev. B 52 (1995) R5471–R5474. doi:10.1103/ PhysRevB.52.R5471 .[6] S. Ghosh, P. Suryanarayana, SPARC: Accurate and efficient finite-difference formulation and parallel implementation of density functional theory: Isolated clusters, Computer Physics Communications 212 (2017) 189–204. doi:https://doi.org/10.1016/j.cpc. 2016.09.020 .23 Figure A.6: Histogram of the magnitude of the difference in force (in Hartree/Bohr) between FPMD and POD-based AE compression for hydrogen atoms H 1 (top row) and H 2 (bottom row). The left column shows results for the 18 reproductive cases, and the right column shows results for the 708 predictive unseen configurations. The mean force difference is reported in each panel. 
+
+[7] E. R. Davidson, The iterative calculation of a few of the lowest eigenvalues and cor-responding eigenvectors of large real-symmetric matrices, Journal of Computational Physics 17 (1975) 87–94. [8] G. Kresse, J. Furthmüller, Efficiency of ab-initio total energy calculations for metals and semiconductors using a plane-wave basis set, Computational Materials Science 6 (1) (1996) 15–50. doi:https://doi.org/10.1016/0927-0256(96)00008-0 .[9] M. C. Payne, M. P. Teter, D. C. Allan, T. A. Arias, a. J. D. Joannopoulos, Iterative minimization techniques for ab initio total-energy calculations: molecular dynamics and conjugate gradients, Reviews of modern physics 64 (4) (1992) 1045. [10] Y. Zhou, Y. Saad, M. L. Tiago, J. R. Chelikowsky, Self-consistent-field calculations 24 Figure A.7: Histogram of the magnitude of the difference in force (in Hartree/Bohr) between FPMD and hybrid AE compression for hydrogen atoms H 1 (top row) and H 2 (bottom row). The left column shows results for the 18 reproductive cases, and the right column shows results for the 708 predictive unseen configurations. The mean force difference is reported in each panel. 
+
+using Chebyshev-filtered subspace iteration, Journal of Computational Physics 219 (1) (2006) 172–184. doi:https://doi.org/10.1016/j.jcp.2006.03.017 .[11] N. Marzari, D. Vanderbilt, M. C. Payne, Ensemble density-functional theory for ab initio molecular dynamics of metals and finite-temperature insulators, Physical review letters 79 (7) (1997) 1337. [12] J.-L. Fattebert, Accelerated block preconditioned gradient method for large scale wave functions calculations in density functional theory, Journal of Computational Physics 229 (2) (2010) 441–452. doi:https://doi.org/10.1016/j.jcp.2009.09.035 .[13] D. R. Bowler, T. Miyazaki, O(N) methods in electronic structure calculations, Reports on Progress in Physics 75 (3) (2012). 25 [14] J.-L. Fattebert, D. Osei-Kuffuor, E. W. Draeger, T. Ogitsu, W. D. Krauss, Modeling di-lute solutions using first-principles molecular dynamics: Computing more than a million atoms with over a million cores, in: SC ’16: Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis, 2016, pp. 12–22. 
+
+doi:10.1109/SC.2016.88 .[15] V. L. Deringer, M. A. Caro, G. Csányi, Machine learning interatomic potentials as emerging tools for materials science, Advanced Materials 31 (46) (2019) 1902765. doi: 10.1002/adma.201902765 .[16] J. Behler, M. Parrinello, Generalized neural-network representation of high-dimensional potential-energy surfaces, Phys. Rev. Lett. 98 (2007) 146401. doi:10.1103/ PhysRevLett.98.146401 .[17] G. Berkooz, P. Holmes, J. L. Lumley, The proper orthogonal decomposition in the analysis of turbulent flows, Annual review of fluid mechanics 25 (1) (1993) 539–575. 
+
+doi:10.1146/annurev.fl.25.010193.002543 .[18] M. G. Safonov, R. Chiang, A Schur method for balanced-truncation model reduction, IEEE Transactions on Automatic Control 34 (7) (1989) 729–733. doi:10.1109/9. 29399 .[19] G. Rozza, D. B. P. Huynh, A. T. Patera, Reduced basis approximation and a posteriori error estimation for affinely parametrized elliptic coercive partial differential equations: application to transport and continuum mechanics, Archives of Computational Methods in Engineering 15 (3) (2008) 229. doi:10.1007/s11831-008-9019-9 .[20] K. Lee, K. T. Carlberg, Model reduction of dynamical systems on nonlinear manifolds using deep convolutional autoencoders, Journal of Computational Physics 404 (2020) 108973. doi:10.1016/j.jcp.2019.108973 .[21] R. Maulik, B. Lusch, P. Balaprakash, Reduced-order modeling of advection-dominated systems with recurrent neural networks and convolutional autoencoders, Physics of Flu-ids 33 (3) (2021) 037106. doi:10.1063/5.0039986 .[22] Y. Kim, Y. Choi, D. Widemann, T. Zohdi, A fast and accurate physics-informed neural network reduced order model with shallow masked autoencoder, Journal of Computa-tional Physics 451 (2022) 110841. doi:10.1016/j.jcp.2021.110841 .[23] S. Chaturantabut, D. C. Sorensen, Nonlinear model reduction via discrete empirical interpolation, SIAM Journal on Scientific Computing 32 (5) (2010) 2737–2764. [24] Z. Drmac, A. K. Saibaba, The discrete empirical interpolation method: Canonical struc-ture and formulation in weighted inner product spaces, SIAM Journal on Matrix Anal-ysis and Applications 39 (3) (2018) 1152–1180. 26 [25] J. T. Lauzon, S. W. Cheung, Y. Shin, Y. Choi, D. M. Copeland, K. Huynh, S-opt: A points selection algorithm for hyper-reduction in reduced order models, SIAM Journal on Scientific Computing 46 (4) (2024) B474–B501. [26] M. Fares, J. S. Hesthaven, Y. Maday, B. Stamm, The reduced basis method for the electric field integral equation, Journal of Computational Physics 230 (14) (2011) 5532– 5555. doi:10.1016/j.jcp.2011.03.023 .[27] M.-C. Cheng, A reduced-order representation of the Schrödinger equation, AIP Ad-vances 6 (9) (2016) 095121. doi:10.1063/1.4963835 .[28] S. W. Cheung, E. T. Chung, Y. Efendiev, W. T. Leung, Explicit and energy-conserving constraint energy minimizing generalized multiscale discontinuous galerkin method for wave propagation in heterogeneous media, Multiscale Modeling & Simulation 19 (4) (2021) 1736–1759. doi:10.1137/20M1363832 .[29] Y. Choi, K. Carlberg, Space–time least-squares Petrov–Galerkin projection for nonlinear model reduction, SIAM Journal on Scientific Computing 41 (1) (2019) A26–A58. doi: 10.1137/17M1120531 .[30] Y. Choi, D. Coombs, R. Anderson, SNS: a solution-based nonlinear subspace method for time-dependent model order reduction, SIAM Journal on Scientific Computing 42 (2) (2020) A1116–A1146. doi:10.1137/19M1242963 .[31] K. Carlberg, Y. Choi, S. Sargsyan, Conservative model reduction for finite-volume mod-els, Journal of Computational Physics 371 (2018) 280–314. doi:10.1016/j.jcp.2018. 05.019 .[32] D. M. Copeland, S. W. Cheung, K. Huynh, Y. Choi, Reduced order models for la-grangian hydrodynamics, Computer Methods in Applied Mechanics and Engineering 388 (2022) 114259. doi:10.1016/j.cma.2021.114259 .[33] S. W. Cheung, Y. Choi, D. M. Copeland, K. Huynh, Local Lagrangian reduced-order modeling for Rayleigh–Taylor instability by solution manifold decomposition, Journal of Computational Physics 472 (2023) 111655. doi:10.1016/j.jcp.2022.111655 .[34] M. Ghasemi, E. Gildin, Localized model reduction in porous media flow, IFAC-PapersOnLine 48 (6) (2015) 242–247. doi:j.ifacol.2015.08.038 .[35] S. W. Cheung, E. T. Chung, Y. Efendiev, W. T. Leung, M. Vasilyeva, Constraint energy minimizing generalized multiscale finite element method for dual continuum model, Communications in Mathematical Sciences 18 (3) (2020) 663–685. doi:10.4310/CMS. 2020.v18.n3.a4 .[36] Y. Choi, P. Brown, B. Arrighi, R. Anderson, K. Huynh, Space-time reduced order model for large-scale linear dynamical systems with application to Boltzmann transport 27 problems, Journal of Computational Physics 424 (2021) 109845. doi:10.1016/j.jcp. 2020.109845 .[37] S. Gugercin, A. C. Antoulas, A survey of model reduction by balanced truncation and some new results, International Journal of Control 77 (8) (2004) 748–766. doi:10. 1080/00207170410001713448 .[38] P. Benner, S. Gugercin, K. Willcox, A survey of projection-based model reduction methods for parametric dynamical systems, SIAM review 57 (4) (2015) 483–531. 
+
+doi:10.1137/130932715 .[39] E. Cances, C. Le Bris, N. Nguyen, Y. Maday, A. T. Patera, G. S. H. Pau, Feasibility and competitiveness of a reduced basis approach for rapid electronic structure calculations in quantum chemistry, in: Proceedings of the workshop for high-dimensional partial differential equations in science and engineering (Montreal), Vol. 41, 2007, pp. 15–57. [40] Y. Maday, A. T. Patera, J. Peraire, A general formulation for a posteriori bounds for output functionals of partial differential equations; application to the eigenvalue problem, Comptes Rendus de l’Académie des Sciences-Series I-Mathematics 328 (9) (1999) 823–828. [41] L. Machiels, Y. Maday, I. B. Oliveira, A. T. Patera, D. V. Rovas, Output bounds for reduced-basis approximations of symmetric positive definite eigenvalue problems, Comptes Rendus de l’Academie des Sciences-Series I-Mathematics 331 (2) (2000) 153– 158. [42] F. Kangal, K. Meerbergen, E. Mengi, W. Michiels, A subspace method for large-scale eigenvalue optimization, SIAM Journal on Matrix Analysis and Applications 39 (1) (2018) 48–82. [43] P. Sirkovic, D. Kressner, Subspace acceleration for large-scale parameter-dependent hermitian eigenproblems, SIAM Journal on Matrix Analysis and Applications 37 (2) (2016) 695–718. [44] I. Fumagalli, A. Manzoni, N. Parolini, M. Verani, Reduced basis approximation and a posteriori error estimates for parametrized elliptic eigenvalue problems, ESAIM: Math-ematical Modelling and Numerical Analysis 50 (6) (2016) 1857–1885. [45] S. W. Cheung, Y. Choi, S. W. Chung, J.-L. Fattebert, C. Kendrick, D. Osei-Kuffuor, Theory and numerics of subspace approximation of eigenvalue problems, Applied Math-ematics and Computation 511 (2026) 129722. [46] D. Boffi, A. Halim, G. Priyadarshi, Reduced basis approximation of parametric eigen-value problems in presence of clusters and intersections, Computational and Applied Mathematics 43 (8) (2024) 443. 28 [47] L. Garrigue, B. Stamm, On reduced basis methods for eigenvalue problems, and on its coupling with perturbation theory, arXiv preprint arXiv:2408.11924 (2024). [48] M. Manucci, E. Mengi, N. Guglielmi, Uniform approximation of eigenproblems of a large-scale parameter-dependent hermitian matrix, arXiv preprint arXiv:2409.05791 (2024). [49] P. Sirković, A reduced basis approach to large-scale pseudospectra computation, Nu-merical Linear Algebra with Applications 26 (2) (2019) e2222. [50] M. F. Herbst, B. Stamm, S. Wessel, M. Rizzi, Surrogate models for quantum spin systems based on reduced-order modeling, Physical Review E 105 (4) (2022) 045303. [51] P. Brehmer, M. F. Herbst, S. Wessel, M. Rizzi, B. Stamm, Reduced basis surrogates for quantum spin systems based on tensor networks, Physical Review E 108 (2) (2023) 025306. [52] Y. C. Taumhas, G. Dusson, V. Ehrlacher, T. Lelièvre, F. Madiot, Reduced basis method for non-symmetric eigenvalue problems: application to the multigroup neutron diffusion equations, ESAIM: Mathematical Modelling and Numerical Analysis 58 (5) (2024) 1959– 1987. [53] T. Horger, B. Wohlmuth, T. Dickopf, Simultaneous reduced basis approximation of parameterized elliptic eigenvalue problems, ESAIM: Mathematical Modelling and Nu-merical Analysis 51 (2) (2017) 443–465. [54] F. Bertrand, D. Boffi, A. Halim, A reduced order model for the finite element approxima-tion of eigenvalue problems, Computer Methods in Applied Mechanics and Engineering 404 (2023) 115696. [55] J. P. Perdew, K. Burke, M. Ernzerhof, Generalized gradient approximation made simple, Physical review letters 77 (18) (1996) 3865. [56] J.-L. Fattebert, M. B. Nardelli, Finite difference methods for ab initio electronic struc-ture and quantum transport calculations of nanostructures, in: Special Volume, Com-putational Chemistry, Vol. 10 of Handbook of Numerical Analysis, Elsevier, 2003, pp. 571–612. doi:https://doi.org/10.1016/S1570-8659(03)10009-9 .[57] C. Yang, J. C. Meza, L.-W. Wang, A constrained optimization algorithm for total energy minimization in electronic structure calculations, Journal of Computational Physics 217 (2) (2006) 709–721. doi:https://doi.org/10.1016/j.jcp.2006.01.030 .[58] J.-L. Fattebert, A robust solver for wavefunction-based density functional theory calcu-lations, Electronic Structure 4 (1) (2022) 015002. [59] N. D. Mermin, Thermal properties of the inhomogeneous electron gas, Phys. Rev. 137 (1965) A1441–A1443. doi:10.1103/PhysRev.137.A1441 .29 [60] E. Cancès, Self-consistent field algorithms for Kohn–Sham models with fractional oc-cupation numbers, The Journal of Chemical Physics 114 (24) (2001) 10616–10622. 
+
+doi:10.1063/1.1373430 .[61] D. R. Hamann, Optimized norm-conserving vanderbilt pseudopotentials, Phys. Rev. B 88 (2013) 085117. doi:10.1103/PhysRevB.88.085117 .[62] M. Schlipf, F. Gygi, Optimization algorithm for the generation of oncv pseudopoten-tials, Computer Physics Communications 196 (2015) 36–44. doi:https://doi.org/ 10.1016/j.cpc.2015.05.011 .[63] K. Carlberg, C. Farhat, J. Cortial, D. Amsallem, The GNAT method for nonlinear model reduction: Effective implementation and application to computational fluid dynamics and turbulent flows, Journal of Computational Physics 242 (2013) 623–647. [64] Z. Drmac, S. Gugercin, A new selection operator for the discrete empirical interpolation method—improved a priori error bound and extensions, SIAM Journal on Scientific Computing 38 (2) (2016) A631–A648. [65] N. Somasekharan, S. Pan, Beyond the kolmogorov barrier: a learnable weighted hybrid autoencoder for model order reduction, Proceedings of the Royal Society A 481 (2320) (2025) 20250159. [66] A. Paszke, S. Gross, F. Massa, A. Lerer, J. Bradbury, G. Chanan, T. Killeen, Z. Lin, N. Gimelshein, L. Antiga, et al., Pytorch: An imperative style, high-performance deep learning library, Advances in neural information processing systems 32 (2019). [67] D. P. Kingma, J. Ba, Adam: A method for stochastic optimization (2017). arXiv: 1412.6980 .URL https://arxiv.org/abs/1412.6980 
+
+30

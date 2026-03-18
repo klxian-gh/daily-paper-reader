@@ -1,0 +1,270 @@
+Title: PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations
+
+URL Source: https://arxiv.org/pdf/2603.16061v1
+
+Published Time: Wed, 18 Mar 2026 00:37:11 GMT
+
+Number of Pages: 36
+
+Markdown Content:
+# PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations 
+
+## Yu Miyazaki, ∗ Atsuhiro Tomita, Akihide Hayashi, So Takemoto, Mizuki Takemoto, and Hodaka Mori 
+
+Preferred Networks, Inc., 100-0004, 1-6-1 Otemachi, Chiyoda-ku, Tokyo, Japan. 
+
+E-mail: yumiyazaki@preferred.jp 
+
+Abstract 
+
+Universal machine-learning interatomic potentials (uMLIPs) enable reactive molec-ular simulations with near-DFT accuracy, yet applying them efficiently to large, real-istic condensed-phase systems remains computationally demanding. Here we present PFP/MM, a hybrid approach that combines a uMLIP, PreFerred Potential (PFP), with molecular mechanics (MM) to enable both large-scale and long-time simulations that are challenging for uMLIP-only calculations. Using an alanine dipeptide in explicit water, we achieve multi-ns/day enhanced sampling and obtain a Ramachandran plot consistent with established basins. For an intramolecular nucleophilic addition reaction in a polar solvent environment, we reproduce the expected solvent-induced stabiliza-tion in the free-energy profile. We further apply the approach to a cytochrome P450 Compound I hydroxylation reaction and obtain a free-energy landscape consistent with 
+
+1
+
+> arXiv:2603.16061v1 [cond-mat.mtrl-sci] 17 Mar 2026 the accepted reaction mechanism. These results demonstrate that uMLIP-based reac-tive simulations can be applied to diverse condensed-phase processes in large, realistic environments.
+
+# Introduction 
+
+One practically important challenge in molecular simulation is to model chemical reactions in condensed-phase environments such as solutions, interfaces, and enzymes, which often requires reaction-path calculations and rare-event sampling. 1 Detailed atomistic simulations of such processes can provide mechanistic insight and help guide the design of new chemical transformations. While conventional fixed-topology molecular mechanics (MM) force fields are highly efficient for long-timescale sampling in large systems, they are not inherently designed to describe bond breaking and bond forming or changes in electronic structure, for example charge redistribution or changes in oxidation state at metal centers. 2 Therefore, quantum mechanical (QM) or quantum chemical methods are often required. However, first-principles approaches such as Kohn-Sham density functional theory (DFT) 3,4 exhibit steep computational scaling, and reactions strongly coupled to environmental fluctuations typically demand extensive conformational sampling. 5,6 As a result, routine applications to large condensed-phase systems remain challenging. To reduce the computational cost, multiresolution approaches such as QM/MM, 7–9 where a QM Hamiltonian is applied to the region of interest such as the reactive center and an MM force field describing the surrounding environment, have long been proposed. Even in QM/MM, however, long-time sampling for rare events is often limited by the cost of the QM region, and the overall expense can remain prohibitive. 10–12 Recently, rapid progress in machine-learning interatomic potentials (MLIPs), 13–15 which provide surrogate models for QM energies and forces, has motivated ML/MM (or NNP/MM) approaches 11,12,16–20 that replace the QM component in QM/MM with an MLIP. Many existing ML/MM frameworks, however, rely on neural network potentials trained primarily for small organic molecules. 2For example, the ML/MM framework by Galvelis and co-workers 17 employs ANI-2x 21 and TorchMD-NET 22 potentials, and explicitly notes that ANI-2x is limited to H, C, N, O, F, S, and Cl. Such element restrictions hinder direct application, without additional MLIP retraining, to catalysis and metalloenzyme chemistry where inorganic elements and metal-centered reactivity are common. Recent developments have begun to enable universal MLIPs (uMLIPs) 23–26 aimed at covering broad chemical space, reducing the need to construct or fine-tune a bespoke potential for each new target system. PreFerred Potential (PFP) 26 is one such uMLIP trained on diverse DFT datasets, with an extended coverage up to 96 elements. 27,28 This broad coverage provides a basis for treating a wide range of systems, including organic molecules, inorganic solids, and organic and inorganic hybrid materials, for polymers, 29–31 interfaces, 32,33 and metal–organic frameworks. 34,35 
+
+In this work, we propose PFP/MM, a region-partitioned hybrid framework that com-bines the broad chemical coverage of the uMLIP, PFP with the efficiency of classical MM. In PFP/MM, only the chemically active region, optionally including a local portion of the surrounding environment when necessary, is described by PFP, while the remaining major-ity of atoms are treated with MM. This strategy enables large-scale reactive simulations and related computational tasks that are impractical with full-system uMLIP calculations. PFP/MM is implemented using OpenMM 36 as the MD engine, allowing GPU-accelerated evaluation of the MM region and making large hybrid simulations computationally practical. We first benchmark the speed and scalability of PFP/MM and demonstrate long-timescale simulations of alanine dipeptide in explicit solvent. Next, we show that the framework cap-tures solvent-dependent stabilization in an intramolecular nucleophilic addition reaction in solution. Finally, we apply PFP/MM to a metalloenzyme reaction, the hydroxylation reac-tion mediated by cytochrome P450 Compound I, to demonstrate the feasibility of reactive simulations in a large, realistic biomolecular environment while leveraging the 96-element coverage of PFP. This example highlights the practical advantage of uMLIP chemical cov-3erage for metal-centered reactivity in biomolecular environments, which can be difficult to address using ML/MM approaches with limited element sets. 
+
+# Method 
+
+PFP/MM follows the standard additive hybrid scheme used in QM/MM (or ML/MM) approaches. 17,37 Let the potential energy of the MLIP region be UML (rML ), that of the MM region be UMM (rMM ), and the interaction between the MLIP and MM regions be 
+
+UML −MM (rML , rMM ). The total hybrid potential is given by 
+
+UML /MM (rML , rMM ) = UML (rML ) + UMM (rMM ) + UML −MM (rML , rMM ). (1) We adopt mechanical embedding for the interfacial coupling, where the MLIP–MM in-teraction is described by classical nonbonded interactions: 
+
+UML −MM (rML , rMM ) = X
+
+> i∈ML
+
+X
+
+> j∈MM
+
+"
+
+qiqj
+
+|ri − rj | + 4 ϵij 
+
+( σij 
+
+|ri − rj |
+
+12 
+
+−
+
+ σij 
+
+|ri − rj |
+
+6)# 
+
+,
+
+where qi is the partial charge of atom i, and ϵij and σij are the Lennard–Jones parameters between atoms i and j.When a covalent bond crosses the boundary between the MLIP (PFP) and MM regions, naively truncating the system creates dangling bonds in the MLIP region, which can deteri-orate the accuracy of the MLIP inference. To mitigate this issue, the ML/MM scheme caps each dangling bond in the MLIP region with a virtual hydrogen atom (a link atom) during the MLIP evaluation. 8 See Supporting Information for the detailed definition, including the force redistribution procedure. In the implementation of PFP/MM, PFP was used as the MLIP (i. e. UML (rML ) ≡
+
+UPFP (rML , ZML ), where ZML is the atomic numbers in the MLIP region). The architec-ture of PFP is based on TeaNet, 38 which incorporates a second-order Euclidean tensor 4into the graph neural network and maintains the necessary equivariances. All PFP cal-culations in this paper used PFP v6.0.0 . In this work, we used two modes of PFP 
+
+v6.0.0 , CRYSTAL_U0_PLUS_D3 and MOLECULE . The CRYSTAL_U0_PLUS_D3 mode is trained on a wide range of structures across 96 elements using the Perdew–Burke–Ernzerhof (PBE) functional 39 with the projector-augmented wave (PAW) method 40 and plane-wave basis, in-cluding Grimme’s D3 dispersion correction. 41 The MOLECULE mode is trained on small organic molecules using the ωB97X-D functional 42 with the 6-31G(d) basis set. 43 In addition to an NVIDIA GPU implementation, PFP is also available with a backend for MN-Core 2, 44,45 an in-house AI accelerator developed by Preferred Networks, Inc. that is optimized for dense matrix-multiplication workload. The implementation of PFP/MM is based on OpenMM, 36 a widely used GPU-accelerated MD engine. PFP/MM consists of two main components: (i) a routine that constructs an OpenMM System object from the full system parameterized with a classical force field, in which the terms assigned to the PFP region are removed; and (ii) a routine that creates an OpenMM Force object that evaluates the potential energy (and forces) of the subsystem selected as the PFP region. By adding the Force generated in (ii) to the System constructed in (i), we realize the additive ML/MM formulation in Eq. 1. 
+
+# Results and Discussion 
+
+## Benchmark of Alanine Dipeptide in Water 
+
+To assess the performance of PFP/MM relative to PFP-only, we carried out benchmarks on an alanine dipeptide-in-water system. Figure 1 shows the inference time per MD step as a function of the total number of atoms. In PFP/MM, the solute (one alanine dipeptide molecule; 22 atoms) defines the PFP region, whereas all water molecules are treated in the MM region. All MM calculations were performed on an NVIDIA Tesla V100 GPU, while inference for the PFP region was executed either on a V100 or on the MN-Core 2 accelerator. 5In the PFP-only setup, all atoms were treated by PFP and the simulation was performed on a V100. Under the present settings, the largest system that could be simulated with PFP-only contained 7,975 atoms, whereas PFP/MM can, in principle, handle systems exceeding one million atoms. For the 7,975-atom system, PFP/MM was 17.8-fold faster on a V100 and 56.5-fold faster on MN-Core 2 than PFP-only. When the PFP region is sufficiently small, MN-Core 2 provides an additional speedup over V100 for the PFP inference. For systems with fewer than 10 4 MM atoms, the overall runtime is dominated by the PFP region and is nearly insensitive to the system size; above 10 4 MM atoms, the MM cost becomes non-negligible and the runtime increases with the number of atoms, reducing the performance gap between V100 and MN-Core 2. For a 1,000,002-atom system, PFP/MM achieved 0.161 s /step (V100) and 0.114 s /step (MN-Core 2), corresponding to 1.07 ns /day 
+
+and 1.51 ns /day , respectively, with a time step of ∆t = 2 fs .To evaluate the practical impact on enhanced sampling, we performed one-day well-tempered metadynamics simulations 47 and computed the Ramachandran FES of alanine dipeptide in water (Figure 2). The simulation conditions were identical to those used in the speed benchmark (7,975 atoms in total; 22 PFP atoms for PFP/MM). Figure 2a summarizes the major conformational basins reported for alanine dipeptide in water. 48 Because PFP-only reached 0.180 ns /day , the resulting sampling was insufficient to converge the FES, and the region with ϕ > 0◦ was scarcely visited (Figure 2b). In contrast, PFP/MM enabled 
+
+3.506 ns /day on a V100 (Figure 2c) and 11 .916 ns /day on MN-Core 2 (Figure 2d), allowing nanosecond-scale sampling within a single day. Both PFP/MM runs reproduced the reported conformational basins, and the longer MN-Core 2 trajectory provided a more detailed FES. 
+
+## Intramolecular Nucleophilic Addition of an Amine to a Carbonyl: Solvent Effects 
+
+In the present PFP/MM implementation, interactions across the PFP/MM boundary are treated via mechanical embedding; 49 therefore, the PFP region experiences only classical 6electrostatic interactions from the MM region. As a consequence, reactions in which solvent polarity and hydrogen bonding play a decisive role may require that not only the solute, but also nearby solvent molecules, be included in the PFP region. 11,50 To incorporate such local solvent effects while minimizing perturbations to ensemble averages, we employed FIRES (Flexible Inner Region Ensemble Separator), which applies a flexible restraint to molecules in the vicinity of the solute. 50 
+
+We investigated an intramolecular nucleophilic addition in a molecule containing a car-bonyl and an amine group (hereafter denoted NCO; Figure 3a). In polar solvents, the approach of the amine N toward the carbonyl C can lead to a ring-closed, zwitterion-like structure. 51,52 Using PFP/MM with FIRES, we computed the free-energy surface of NCO in water via metadynamics. As collective variables (CVs), we used (i) the distance d be-tween the carbonyl C and the amine N and (ii) a torsional measure of the five-membered ring defined as Θ = pΘ21 + Θ 22 as shown in Figure 3a following ref. 51. We ran 1.2 ns of well-tempered metadynamics. Figure 3b shows representative snapshots of the PFP region in the open and cyclized states, respectively. In the cyclized state, a water molecule forms a hydrogen bond to the carbonyl oxygen, which is expected to contribute to stabilization of the zwitterion-like structure. Figure S1 in the Supporting Information shows the rela-tionship between the C–N distance d and the carbonyl C–O distance, along with Bader charges inferred by PFP. In the cyclized state (small d), the carbonyl double bond becomes more single-bond-like; correspondingly, the oxygen becomes more negatively charged and the nitrogen becomes more positively charged, consistent with the zwitterion-like character depicted in Figure 3a. Figure 3c compares free-energy profiles (projected onto d) for NCO in water and in vacuum. In water, the cyclized state is stabilized, whereas it is unstable in vac-uum, highlighting the essential role of solvation. Boereboom and co-workers evaluated the free energies of reactant, transition state, and product for the same reaction using QM/MM combined with Difference-based Adaptive Solvation (DAS). 51 Our observation that the cy-clized state is stabilized in polar solvent is consistent with that work, although quantitative 7free-energy values differ. Possible origins include the substantially longer simulation time used here ( 1.2 ns vs 125 ps ) as well as methodological differences between DAS and FIRES. 
+
+## P450-Cpd-I-Mediated Hydroxylation Reaction 
+
+As an example that leverages the universality of PFP, we studied a substrate hydroxylation reaction catalyzed by the metalloenzyme P450 Compound I (Cpd-I) shown in Figure 4a. The proposed mechanism (Figure 4b) involves hydrogen atom abstraction (HAA) by the oxo ligand of Cpd-I, followed by rebound of the hydroxyl group to complete hydroxylation. 53–55 
+
+The PFP region comprised the substrate, the porphyrin, and the cysteine ligand coordinating the Fe center, whereas the remainder of the protein and the aqueous solvent were treated in the MM region. The covalent boundary was handled using the link-atom approach (see the Supporting Information). We first performed pre-metadynamics to obtain a qualitative free-energy surface and representative structures (i), (ii), and (iii) (see Figure. S2 in Supporting Information). As collective variables, we used dOHC = dCH − dOH , which expresses whether the hydrogen atom is closer to the substrate C or to the oxo O, and dCOFe = dFeO − dCO , which distinguishes O bound to Fe from O inserted into the substrate C (Figure 4c). To obtain a more quantitative landscape, we carried out umbrella sampling over 147 windows around the reactive region identified by metadynamics. Each window was equilibrated for 100 ps and sampled for 
+
+100 ps , for a total of 29 .4 ns . The FES was reconstructed using MBAR, 56 and the minimum free-energy path was estimated using the string method (Figure 4d). The resulting FES indicates that HAA is the dominant free-energy barrier. Along the minimum free-energy path, the system proceeds directly to (iii); even when the trajectory passes through (ii), the hydroxyl group rapidly migrates to yield (iii) without an additional barrier. This behavior is consistent with previous QM/MM PES scans. 53 Figure 4e shows the free-energy profile along the reaction coordinate, from which we estimate an activation free energy of ∼ 12 kcal /mol 
+
+for HAA and an overall free-energy difference of ∼ 48 kcal /mol between the initial and final 8states. It is possible to train a dedicated MLIP for a specific metal center, 19,20 but such ap-proaches often require system- and element-specific model development, which limits their transferability across chemically diverse targets. Moreover, stable simulations frequently de-mand large QM training datasets, and the cost of generating the corresponding reference data can be substantial. 
+
+# Conclusion 
+
+We presented PFP/MM, a hybrid approach that combines the universal MLIP PreFerred Po-tential (PFP) with classical molecular mechanics (MM) by treating chemically active regions with PFP and the remaining majority of atoms with a fast MM description. This domain decomposition enables a favorable balance between accuracy and computational efficiency while retaining the broad transferability of a uMLIP. Benchmarks on alanine dipeptide in water demonstrated substantial speedups over PFP-only (17.8-fold on V100 and 56.5-fold on MN-Core 2 for a 7,975-atom system) and confirmed that nanosecond-per-day throughput remains feasible even at the million-atom scale. In one-day well-tempered metadynamics, PFP/MM achieved nanosecond-scale sampling and produced a stable Ramachandran free-energy surface reproducing the reported conformational basins, whereas PFP-only suffered from insufficient sampling. Recognizing that mechanical embedding limits the ability of the MM environment to polarize the PFP region, we showed that solvent polarity and hydrogen bonding effects can be incorporated by explicitly including nearby solvent molecules in the PFP region with FIRES. For an intramolecular nucleophilic addition, this strategy repro-duced solvent-dependent stabilization of a zwitterion-like cyclized state in water relative to vacuum. Finally, we applied PFP/MM to a metalloenzyme reaction (P450-Cpd-I-mediated hydroxylation) and obtained a free-energy landscape consistent with the accepted mech-anism, in which hydrogen atom abstraction constitutes the primary barrier and hydroxyl 9rebound proceeds without an additional barrier. Overall, PFP/MM provides a practical framework for large-scale, long-time reactive simulations that would be difficult to access with uMLIPs alone under realistic computational budgets. 
+
+# Acknowledgement 
+
+We thank Mr. Ryosuke Kuwabara (MITSUI & CO., LTD.), Dr. Kunio Sannohe (IBLC Co., Ltd.), Prof. Masayoshi Takayanagi (Shiga University), Dr. Masataka Yamauchi (Matlantis Corporation), Mr. Shunsuke Tonogai (Preferred Networks, Inc.), and Mr. Takahiro Okawara (Preferred Networks, Inc.) for helpful discussions. We also thank Dr. Kaoru Hisama (Pre-ferred Networks, Inc.) for pointing us to relevant literature. We also thank Mr. Tomokazu Higuchi (Preferred Networks, Inc.) and Mr. Hiroya Kaneko (Preferred Networks, Inc.) for valuable comments about MN-Core 2. 
+
+# References 
+
+(1) Piccini, G.; Lee, M.-S.; Yuk, S. F.; Zhang, D.; Collinge, G.; Kollias, L.; Nguyen, M.-T.; Glezakou, V.-A.; Rousseau, R. Ab initio molecular dynamics with enhanced sampling in heterogeneous catalysis. Catal. Sci. Technol. 2022 , 12 , 12–37. (2) Senftle, T. P.; Hong, S.; Islam, M. M.; Kylasa, S. B.; Zheng, Y.; Shin, Y. K.; Junker-meier, C.; Engel-Herbert, R.; Janik, M. J.; Aktulga, H. M.; Verstraelen, T.; Grama, A.; van Duin, A. C. T. The ReaxFF reactive force-field: development, applications and future directions. npj Comput. Mater. 2016 , 2, 15011. (3) Hohenberg, P.; Kohn, W. Inhomogeneous Electron Gas. Phys. Rev. 1964 , 136 , B864– B871. (4) Kohn, W.; Sham, L. J. Self-Consistent Equations Including Exchange and Correlation Effects. Phys. Rev. 1965 , 140 , A1133–A1138. 10 (5) Bowler, D.; Miyazaki, T. O(N) methods in electronic structure calculations. Rep. Prog. Phys. 2012 , 75 , 036503. (6) Lin, L.; Lu, J.; Ying, L. Numerical methods for Kohn–Sham density functional theory. 
+
+Acta Numerica 2019 , 28 , 405–539. (7) Warshel, A.; Levitt, M. Theoretical studies of enzymic reactions: dielectric, electrostatic and steric stabilization of the carbonium ion in the reaction of lysozyme. J. Mol. Biol. 
+
+1976 , 103 , 227–249. (8) Singh, U. C.; Kollman, P. A. A combined ab initio quantum mechanical and molecular mechanical method for carrying out simulations on complex molecular systems: Appli-cations to the CH 3Cl + Cl − exchange reaction and gas phase protonation of polyethers. 
+
+J. Comput. Chem. 1986 , 7, 718–730. (9) Field, M. J.; Bash, P. A.; Karplus, M. A combined quantum mechanical and molecular mechanical potential for molecular dynamics simulations. J. Comput. Chem. 1990 , 11 ,700–733. (10) Vennelakanti, V.; Nazemi, A.; Mehmood, R.; Steeves, A. H.; Kulik, H. J. Harder, better, faster, stronger: Large-scale QM and QM/MM for predictive modeling in enzymes and proteins. Curr. Opin. Struct. Biol. 2022 , 72 , 9–17. (11) Gopal, V.; Kirkvold, C.; Gordon, A.; Goodpaster, J.; Sarupria, S. Solvent-inclusive ML/MM simulations: Assessments of structural, dynamical, and thermodynamic ac-curacy. J. Chem. Inf. Model. 2026 , 66 , 110–121. (12) Pultar, F.; Thürlemann, M.; Gordiy, I.; Doloszeski, E.; Riniker, S. Neural network potential with multiresolution approach enables accurate prediction of reaction free energies in solution. J. Am. Chem. Soc. 2025 , 147 , 6835–6856. 11 (13) Behler, J.; Parrinello, M. Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces. Phys. Rev. Lett. 2007 , 98 , 146401. (14) Bartók, A. P.; Payne, M. C.; Kondor, R.; Csányi, G. Gaussian Approximation Poten-tials: The Accuracy of Quantum Mechanics, without the Electrons. Phys. Rev. Lett. 
+
+2010 , 104 , 136403. (15) Thompson, A.; Swiler, L.; Trott, C.; Foiles, S.; Tucker, G. Spectral neighbor analy-sis method for automated generation of quantum-accurate interatomic potentials. J. Comput. Phys. 2015 , 285 , 316–330. (16) Grassano, J. S.; Pickering, I.; Roitberg, A. E.; Estrin, D. A.; Semelak, J. A. From QM/MM to ML/MM: A new era in multiscale modeling. Chem. Phys. Rev. 2025 , 6 .(17) Galvelis, R.; Varela-Rial, A.; Doerr, S.; Fino, R.; Eastman, P.; Markland, T. E.; Chodera, J. D.; De Fabritiis, G. NNP/MM: Accelerating Molecular Dynamics Sim-ulations with Machine Learning Potentials and Molecular Mechanics. J. Chem. Inf. Model. 2023 , 63 , 5701–5708. (18) Karwounopoulos, J.; Bieniek, M.; Wu, Z.; Baskerville, A. L.; König, G.; Cossins, B. P.; Wood, G. P. F. Evaluation of machine learning/molecular mechanics end-state cor-rections with mechanical embedding to calculate relative protein-ligand binding free energies. J. Chem. Theory Comput. 2025 , 21 , 967–977. (19) Ding, Y.; Huang, J. DP/MM: A hybrid model for zinc-protein interactions in molecular dynamics. J. Phys. Chem. Lett. 2024 , 15 , 616–627. (20) Xu, M.; Zhu, T.; Zhang, J. Z. H. Automatically constructed neural network potentials for molecular dynamics simulation of zinc proteins. Front. Chem. 2021 , 9, 692200. (21) Devereux, C.; Smith, J. S.; Huddleston, K. K.; Barros, K.; Zubatyuk, R.; Isayev, O.; 12 Roitberg, A. E. Extending the applicability of the ANI deep learning molecular potential to sulfur and halogens. J. Chem. Theory Comput. 2020 , 16 , 4192–4202. (22) Pelaez, R. P.; Simeon, G.; Galvelis, R.; Mirarchi, A.; Eastman, P.; Doerr, S.; Thölke, P.; Markland, T. E.; De Fabritiis, G. TorchMD-net 2.0: Fast neural network potentials for molecular simulations. J. Chem. Theory Comput. 2024 , 20 , 4076–4087. (23) Batatia, I. et al. A foundation model for atomistic materials chemistry. J. Chem. Phys. 
+
+2025 , 163 , 184110. (24) Chen, C.; Ong, S. P. A universal graph deep learning interatomic potential for the periodic table. Nat. Comput. Sci. 2022 , 2, 718–728. (25) Deng, B.; Zhong, P.; Jun, K.; Riebesell, J.; Han, K.; Bartel, C. J.; Ceder, G. CHGNet as a pretrained universal neural network potential for charge-informed atomistic modelling. 
+
+Nat. Mach. Intell. 2023 , 5, 1031–1041. (26) Takamoto, S. et al. Towards universal neural network potential for material discovery applicable to arbitrary combination of 45 elements. Nat. Commun. 2022 , 13 , 2991. (27) Shinagawa, C.; Takamoto, S.; Shintani, D.; Zhuang, Y.-B.; Tsuboi, Y.; Nishimra, K.; Shinohara, K.; Iwase, S.; Tanaka, Y.; Li, J. Matlantis-PFP v8: Universal Machine Learning Interatomic Potential with Better Experimental Agreements via r2SCAN Functional. 2026; https://arxiv.org/abs/2603.11063 .(28) Jacobs, R. et al. A practical guide to machine learning interatomic potentials – Status and future. Curr. Opin. Solid State Mater. Sci. 2025 , 35 , 101214. (29) Mori, H.; Tonogai, S.; Miyazaki, Y.; Hayashi, A.; Takayanagi, M. Ready-to-Use Poly-merization Simulations Combining Universal Machine Learning Interatomic Poten-tial with Time-Dependent Bond Boosting for Polymer and Interface Design. 2025; 
+
+https://arxiv.org/abs/2511.22874 .13 (30) Taborosi, A.; Aoki, K.; Zettsu, N.; Koyama, M.; Nagao, Y. Molecular Dynamics Simu-lation of Polymer Electrolyte Membrane for Understanding Structure and Proton Con-ductivity at Various Hydration Levels Using Neural Network Potential. Macromolecules 
+
+2025 , 58 , 3720–3727. (31) Mieda, S. Comparison of computational methods for simulating depolymerization re-action. ACS Omega 2025 , 10 , 5973–5980. (32) Joutsuka, T.; Itagaki, Y. Computational Evaluation of Molecular Binding on Metal Surfaces in Temperature Programmed Desorption: Accuracy of DFT Functionals and Neural Network Potentials. J. Comput. Chem. 2025 , 46 , e70279. (33) Hu, Y.; Turlo, V. Hydroxylation-driven surface reconstruction at the origin of compressive-to-tensile stress transition in MgO nanoparticles. Scr. Mater. 2025 , 268 ,116841. (34) Shimada, T.; Usov, P. M.; Wada, Y.; Ohtsu, H.; Watanabe, T.; Adachi, K.; Hashizume, D.; Matsumoto, T.; Kawano, M. Long Time CO 2 Storage Under Ambi-ent Conditions in Isolated Voids of a Porous Coordination Network Facilitated by the “Magic Door” Mechanism. Adv. Sci. (Weinh.) 2024 , 11 , e2307417. (35) Koh, J.; Kwon, C.; Kim, H.; Lee, E.; Machida, A.; Nakahira, Y.; Hwang, Y. J.; Sakaki, K.; Kim, S.; Cho, E. S. Defect-Driven Evolution of Oxo-Coordinated Cobalt Active Sites with Rapid Structural Transformation for Efficient Water Oxidation. ACS Nano 2024 , 18 , 28986–28998. (36) Eastman, P. et al. OpenMM 8: Molecular Dynamics Simulation with Machine Learning Potentials. J. Phys. Chem. B 2024 , 128 , 109–116. (37) Senn, H. M.; Thiel, W. QM/MM Methods for Biomolecular Systems. Angew. Chem., Int. Ed. 2009 , 48 , 1198–1229. 14 (38) Takamoto, S.; Izumi, S.; Li, J. TeaNet: Universal neural network interatomic potential inspired by iterative electronic relaxations. Comput. Mater. Sci. 2022 , 207 , 111280. (39) Perdew, J. P.; Burke, K.; Ernzerhof, M. Generalized Gradient Approximation Made Simple. Phys. Rev. Lett. 1996 , 77 , 3865–3868. (40) Blöchl, P. E. Projector augmented-wave method. Phys. Rev. B 1994 , 50 , 17953–17979. (41) Grimme, S.; Antony, J.; Ehrlich, S.; Krieg, H. A consistent and accurate ab initio parametrization of density functional dispersion correction (DFT-D) for the 94 elements H-Pu. J. Chem. Phys. 2010 , 132 , 154104. (42) Chai, J.-D.; Head-Gordon, M. Long-range corrected hybrid density functionals with damped atom–atom dispersion corrections. Phys. Chem. Chem. Phys. 2008 , 10 , 6615– 6620. (43) Ditchfield, R.; Hehre, W. J.; Pople, J. A. Self-Consistent Molecular-Orbital Meth-ods. IX. An Extended Gaussian-Type Basis for Molecular-Orbital Studies of Organic Molecules. J. Chem. Phys. 1971 , 54 , 724–728. (44) Namura, K. et al. MN-Core - A Highly Efficient and Scalable Approach to Deep Learn-ing. 2021 Symposium on VLSI Circuits. 2021; pp 1–2. (45) Preferred Networks, Inc. MN-Core 2 White Paper (English). 2023; https://projects. preferred.jp/mn-core/assets/MN-Core_2_whitepaper_en.pdf , Document date: 2023-11-12. (46) Feig, M. Is alanine dipeptide a good model for representing the torsional preferences of protein backbones? J. Chem. Theory Comput. 2008 , 4, 1555–1564. (47) Barducci, A.; Bussi, G.; Parrinello, M. Well-Tempered Metadynamics: A Smoothly Converging and Tunable Free-Energy Method. Phys. Rev. Lett. 2008 , 100 , 020603. 15 (48) Vymětal, J.; Vondrášek, J. The DF-LCCSD(T0) correction of the ϕ/ψ force field dihe-dral parameters significantly influences the free energy profile of the alanine dipeptide. 
+
+Chem. Phys. Lett. 2011 , 503 , 301–304. (49) Lin, H.; Truhlar, D. G. QM/MM: what have we learned, where are we, and where do we go from here? Theor. Chem. Acc. 2007 , 117 , 185–199. (50) Rowley, C. N.; Roux, B. The solvation structure of Na(+) and K(+) in liquid water determined from High Level ab initio molecular dynamics simulations. J. Chem. Theory Comput. 2012 , 8, 3526–3535. (51) Boereboom, J. M.; Fleurat-Lessard, P.; Bulo, R. E. Explicit solvation matters: Perfor-mance of QM/MM solvation models in nucleophilic addition. J. Chem. Theory Comput. 
+
+2018 , 14 , 1841–1852. (52) Pilmé, J.; Berthoumieux, H.; Robert, V.; Fleurat-Lessard, P. Unusual Bond Formation in Aspartic Protease Inhibitors: A Theoretical Study. Chem. Eur. J. 2007 , 13 , 5388– 5393. (53) Wang, C.; Wu, P.; Wang, Z.; Wang, B. The molecular mechanism of P450-catalyzed am-ination of the pyrrolidine derivative of lidocaine: insights from multiscale simulations. 
+
+RSC Adv. 2021 , 11 , 27674–27680. (54) Prier, C. K.; Zhang, R. K.; Buller, A. R.; Brinkmann-Chen, S.; Arnold, F. H. Enantios-elective, intermolecular benzylic C-H amination catalysed by an engineered iron-haem enzyme. Nat. Chem. 2017 , 9, 629–634. (55) Ren, X.; O’Hanlon, J. A.; Morris, M.; Robertson, J.; Wong, L. L. Synthesis of imidazolidin-4-ones via a cytochrome P450-catalyzed intramolecular C–H amination. 
+
+ACS Catal. 2016 , 6, 6833–6837. 16 (56) Shirts, M. R.; Chodera, J. D. Statistically optimal analysis of samples from multiple equilibrium states. J. Chem. Phys. 2008 , 129 , 124105. 17 Figure 1: Speed benchmark in alanine dipeptide in water system. In PFP/MM, the 22 atoms of the alanine dipeptide molecule are treated as the PFP region, and all remaining water molecules are treated as the MM region. In PFP-only, all atoms are treated within PFP. Error bars represent standard errors over 5 runs. 18 Figure 2: (a) Schematic overview of major conformational basins of the alanine dipeptide in water. Inset shows the definition of the backbone dihedral angles ϕ and ψ. Adapted from the original work of Feig. 46 (b–d) Free energy surfaces from one-day simulations: (b) PFP-only, (c) PFP/MM with V100, and (d) PFP/MM with MN-Core 2. 19 Figure 3: (a) Skeletal formulas of the open and cyclized NCO molecules. (b) Snapshots of the PFP region in the open and cyclized conformations. (c) Free-energy profiles of NCO in water (using FIRES) and in vacuum. Regions around the lines indicates standard error estimated by block averaging of 5 blocks. 20 Figure 4: (a) Structure of the P450-Cpd-I enzyme-ligand model used in the PFP/MM sim-ulation. The PFP region is shown in color, while the MM region is shown in gray. (b) Hydroxylation reaction mechanism of P450-Cpd-I proposed in ref. 53. (c) Collective vari-ables used in the metadynamics and umbrella sampling simulations. (d) Free energy surface obtained from umbrella sampling and the minimum free energy path. (e) Free energy profile along the reaction coordinate. 21 Supporting Information PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations 
+
+## Yu Miyazaki, ∗ Atsuhiro Tomita, Akihide Hayashi, So Takemoto, Mizuki Takemoto, and Hodaka Mori 
+
+Preferred Networks, Inc., 100-0004, 1-6-1 Otemachi, Chiyoda-ku, Tokyo, Japan. 
+
+E-mail: yumiyazaki@preferred.jp 
+
+# Link Atom Treatment 
+
+In PFP/MM, the system is partitioned into a PFP region and an MM region. If a covalent bond crosses the boundary, a naive partitioning leaves a dangling bond on the PFP side, which can destabilize the electronic structure and the resulting energy/forces. To mitigate this, we employ the link atom method, 1 where the severed bond on the PFP side is capped by a dummy atom (typically H) during the PFP calculation. Because the PFP calculation is performed for a fictitious system consisting of the PFP region plus link atoms, PFP/MM must specify (i) how link atoms are placed and (ii) how the forces acting on them are handled. 1Placement of Link Atoms 
+
+Consider a boundary bond between a PFP atom Q and an MM atom M, and denote the link atom by L. With position vectors rQ, rM, rL, L is placed on the line segment QM as 
+
+rL = (1 − CL)rQ + CLrM. (1) Two choices are commonly used for determining CL: (i) fixing the Q–L distance |rL − rQ|,or (ii) fixing the internal division ratio CL itself. 2 PFP/MM supports both schemes. In this work, the link atom position was defined by fixing the C–H bond length to 1.09 Å. 
+
+## Redistribution of Link-atom Forces 
+
+A PFP calculation returns forces for the fictitious PFP+link-atom system, including eFQ and the force on the link atom eFL. Since L does not exist in the physical PFP/MM system, simply discarding eFL breaks translational and rotational invariance, leading to violations of conservation laws in molecular dynamics. Therefore, in PFP/MM we redistribute eFL onto the real atoms Q ( eFQ) and M ( eFM). Let the unit vector along the Q–M bond be 
+
+ˆeb = rM − rQ
+
+|rM − rQ|.
+
+Then the redistributed contributions F′ 
+
+> Q
+
+and F′ 
+
+> M
+
+are given by 
+
+F′ 
+
+> Q
+
+= (1 − CL)eFL + CL
+
+eFL ·ˆeb
+
+
+
+ˆeb, (2) 
+
+F′ 
+
+> M
+
+= CL eFL − CL
+
+eFL ·ˆeb
+
+
+
+ˆeb. (3) This construction (i) satisfies translational invariance through F′ 
+
+> Q
+
++ F′ 
+
+> M
+
+= eFL, and (ii) satisfies rotational invariance through (rL − rQ)×eFL = ( rM − rQ)×F′
+
+> M
+
+. In addition, since the 2Q–M bond potential is governed by the MM force field, we impose that (iii) the PFP+link-atom contribution does not drive bond stretching along ˆeb. That is 
+
+h 
+
+F′ 
+
+> Q
+
++ eFQ
+
+
+
+− F′
+
+> M
+
+i
+
+·ˆeb =0. These three conditions uniquely give the above form. 
+
+# Computational Details 
+
+Unless otherwise noted, electrostatic interactions were evaluated using the particle mesh Ewald (PME) method 3 with a 1 nm real-space cutoff and an error tolerance of 5 × 10 −4.Temperature was controlled at 300 K with a Langevin thermostat, and pressure was main-tained at 1 bar using a Monte Carlo barostat. Well-tempered metadynamics and umbrella sampling simulations were performed using the PLUMED 2.8 4,5 plugin. 
+
+## Alanine Dipeptide in Water 
+
+The MM region was described with the AMBER ff14SB force field. 6 All bonds involving hydrogen atoms were constrained. PFP calculations employed the CRYSTAL_U0_PLUS_D3 
+
+mode. Parameters of Langevin thermostat were a timestep of ∆t = 2 fs and a friction coefficient of 1 ps −1. After geometry optimization using the L-BFGS algorithm (energy tolerance: 10 kJ mol −1 ≃ 2.4 kcal /mol ), we performed a 20 ps MD run for equilibration, and the resulting structure was used as the initial configuration for the subsequent well-tempered metadynamics simulation. This optimization and equilibration procedure was not included in the reported computational time. A well-tempered metadynamics bias was applied to the CVs (ϕ, ψ ) with a deposition stride of 100 MD steps, a Gaussian height of 
+
+0.05 eV ≃ 1.2 kcal /mol , Gaussian widths σϕ = 0 .2 rad , σ ψ = 0 .2 rad , and a bias factor of 
+
+γ = 10 .0.3Intramolecular Nucleophilic Addition of an Amine to a Carbonyl 
+
+The MM region was modeled with OpenFF 2.1.0, 7 and partial charges were assigned using AM1-BCC. 8,9 The PFP region included eight water molecules surrounding the carbonyl oxy-gen and three water molecules near the amine nitrogen. For these selected water molecules, FIRES restraints were applied to the oxygen atoms. PFP calculations used the MOLECULE 
+
+mode. Parameters of Langevin thermostat were a timestep of ∆t = 0 .5 fs and a friction coef-ficient of 2 ps −1. After geometry optimization using the L-BFGS algorithm (energy tolerance: 
+
+10 kJ mol −1 ≃ 2.4 kcal /mol ), we performed a 5 ps MD run for equilibration, and the resulting structure was used as the initial configuration for the subsequent well-tempered metadynam-ics simulation. A well-tempered metadynamics bias was applied to the CVs (d, Θ) with a deposition stride of 100 MD steps, a Gaussian height of 0.05 eV ≃ 1.2 kcal /mol , Gaussian widths σd = 0 .1 Å, σ Θ = 0 .1π rad , and a bias factor of γ = 20 .0.
+
+## P450-Cpd-I-Mediated Hydroxylation Reaction 
+
+Standard amino-acid residues were described with the AMBER ff19SB force field, 10 while the remaining regions were parameterized in the GAFF2 format. 11 Parameters for nonstandard residues were derived using the MCPB.py tool 12 in AmberTools23, 13 based on Gaussian 16 14 
+
+calculations at the B3LYP/6-31G(d) level, and RESP 15 charges were adopted. PFP calcu-lations employed the CRYSTAL_U0_PLUS_D3 mode. After geometry optimization using the L-BFGS algorithm (energy tolerance: 10 kJ mol −1), we performed a 5 ps MD run for equi-libration, and the resulting structure was used as the initial configuration for subsequent simulations. Parameters of Langevin thermostat were a timestep of ∆t = 0 .5 fs and a friction coefficient of 1 ps −1. The initial configuration of the enzyme-substrate complex was prepared on the basis of the determined X-ray structure in Ref. 5 (PDB code: 7TP6) by manually placing the substrate. We performed a 3 ns MD run for equilibration, and the resulting struc-ture was used as the initial configuration for the subsequent well-tempered metadynamics simulation. A well-tempered metadynamics bias was applied to the CVs (dOHC , d COFe ) with 4a deposition stride of 500 MD steps, a Gaussian height of 0.2 eV ≃ 4.6 kcal /mol , Gaussian widths σdOHC = 0 .25 Å and σdCOFe = 0 .25 Å, and a bias factor of γ = 50 .0. The initial configurations for umbrella sampling were selected from the preceding metadynamics trajec-tory by choosing the structures closest to the target reaction coordinates. Subsequently, a 100 ps MD simulation was performed for equilibration. The umbrella sampling windows are summarized in Table S1. 5Table S1: Umbrella sampling window parameters. k is the force constant of the harmonic restraint. Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-000 -1.7000 -1.3500 10.0000 US-001 -1.4800 -1.2400 10.0000 US-002 -1.2600 -1.1300 10.0000 US-003 -1.0400 -1.0200 10.0000 US-004 -0.8200 -0.9100 10.0000 US-005 -0.6000 -0.8000 10.0000 US-006 -0.3800 -0.6900 10.0000 US-007 -0.1600 -0.5800 10.0000 US-008 0.0600 -0.4700 10.0000 US-009 0.2800 -0.3600 10.0000 US-010 0.5000 -0.2500 10.0000 US-011 0.5000 -0.0750 10.0000 US-012 0.5000 0.1000 10.0000 US-013 0.5000 0.2750 10.0000 US-014 0.5000 0.4500 10.0000 US-015 0.5000 0.6250 10.0000 US-016 0.5000 0.8000 10.0000 US-017 0.5000 0.9750 10.0000 US-018 0.5000 1.1500 10.0000 US-019 0.5000 1.3250 10.0000 US-020 0.5000 1.5000 10.0000 US-021 0.2800 -0.3600 20.0000 US-022 0.3900 -0.3050 20.0000 US-023 0.5000 -0.2500 20.0000 6Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-024 0.5000 -0.1625 20.0000 US-025 0.5000 -0.0750 20.0000 US-026 0.5000 -0.5000 20.0000 US-027 0.5000 -0.4000 20.0000 US-028 0.5000 -0.3000 20.0000 US-029 0.5000 -0.2000 20.0000 US-030 0.5000 -0.1000 20.0000 US-031 0.5000 0.0000 20.0000 US-032 0.5000 0.1000 20.0000 US-033 0.5000 0.2000 20.0000 US-034 0.5000 0.3000 20.0000 US-035 0.5000 0.4000 20.0000 US-036 0.5000 0.5000 20.0000 US-037 0.6000 -0.5000 20.0000 US-038 0.6000 -0.4000 20.0000 US-039 0.6000 -0.3000 20.0000 US-040 0.6000 -0.2000 20.0000 US-041 0.6000 -0.1000 20.0000 US-042 0.6000 0.0000 20.0000 US-043 0.6000 0.1000 20.0000 US-044 0.6000 0.2000 20.0000 US-045 0.6000 0.3000 20.0000 US-046 0.6000 0.4000 20.0000 US-047 0.6000 0.5000 20.0000 US-048 0.7000 -0.5000 20.0000 US-049 0.7000 -0.4000 20.0000 7Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-050 0.7000 -0.3000 20.0000 US-051 0.7000 -0.2000 20.0000 US-052 0.7000 -0.1000 20.0000 US-053 0.7000 0.0000 20.0000 US-054 0.7000 0.1000 20.0000 US-055 0.7000 0.2000 20.0000 US-056 0.7000 0.3000 20.0000 US-057 0.7000 0.4000 20.0000 US-058 0.7000 0.5000 20.0000 US-059 0.8000 -0.5000 20.0000 US-060 0.8000 -0.4000 20.0000 US-061 0.8000 -0.3000 20.0000 US-062 0.8000 -0.2000 20.0000 US-063 0.8000 -0.1000 20.0000 US-064 0.8000 0.0000 20.0000 US-065 0.8000 0.1000 20.0000 US-066 0.8000 0.2000 20.0000 US-067 0.8000 0.3000 20.0000 US-068 0.8000 0.4000 20.0000 US-069 0.8000 0.5000 20.0000 US-070 0.9000 -0.5000 20.0000 US-071 0.9000 -0.4000 20.0000 US-072 0.9000 -0.3000 20.0000 US-073 0.9000 -0.2000 20.0000 US-074 0.9000 -0.1000 20.0000 US-075 0.9000 0.0000 20.0000 8Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-076 0.9000 0.1000 20.0000 US-077 0.9000 0.2000 20.0000 US-078 0.9000 0.3000 20.0000 US-079 0.9000 0.4000 20.0000 US-080 0.9000 0.5000 20.0000 US-081 1.0000 -0.5000 20.0000 US-082 1.0000 -0.4000 20.0000 US-083 1.0000 -0.3000 20.0000 US-084 1.0000 -0.2000 20.0000 US-085 1.0000 -0.1000 20.0000 US-086 1.0000 0.0000 20.0000 US-087 1.0000 0.1000 20.0000 US-088 1.0000 0.2000 20.0000 US-089 1.0000 0.3000 20.0000 US-090 1.0000 0.4000 20.0000 US-091 1.0000 0.5000 20.0000 US-092 1.1000 -0.5000 20.0000 US-093 1.1000 -0.4000 20.0000 US-094 1.1000 -0.3000 20.0000 US-095 1.1000 -0.2000 20.0000 US-096 1.1000 -0.1000 20.0000 US-097 1.1000 0.0000 20.0000 US-098 1.1000 0.1000 20.0000 US-099 1.1000 0.2000 20.0000 US-100 1.1000 0.3000 20.0000 US-101 1.1000 0.4000 20.0000 9Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-102 1.1000 0.5000 20.0000 US-103 1.2000 -0.5000 20.0000 US-104 1.2000 -0.4000 20.0000 US-105 1.2000 -0.3000 20.0000 US-106 1.2000 -0.2000 20.0000 US-107 1.2000 -0.1000 20.0000 US-108 1.2000 0.0000 20.0000 US-109 1.2000 0.1000 20.0000 US-110 1.2000 0.2000 20.0000 US-111 1.2000 0.3000 20.0000 US-112 1.2000 0.4000 20.0000 US-113 1.2000 0.5000 20.0000 US-114 1.3000 -0.5000 20.0000 US-115 1.3000 -0.4000 20.0000 US-116 1.3000 -0.3000 20.0000 US-117 1.3000 -0.2000 20.0000 US-118 1.3000 -0.1000 20.0000 US-119 1.3000 0.0000 20.0000 US-120 1.3000 0.1000 20.0000 US-121 1.3000 0.2000 20.0000 US-122 1.3000 0.3000 20.0000 US-123 1.3000 0.4000 20.0000 US-124 1.3000 0.5000 20.0000 US-125 1.4000 -0.5000 20.0000 US-126 1.4000 -0.4000 20.0000 US-127 1.4000 -0.3000 20.0000 10 Window ID dOHC (Å) dCOFe (Å) k (eV Å−2)
+
+US-128 1.4000 -0.2000 20.0000 US-129 1.4000 -0.1000 20.0000 US-130 1.4000 0.0000 20.0000 US-131 1.4000 0.1000 20.0000 US-132 1.4000 0.2000 20.0000 US-133 1.4000 0.3000 20.0000 US-134 1.4000 0.4000 20.0000 US-135 1.4000 0.5000 20.0000 US-136 1.5000 -0.5000 20.0000 US-137 1.5000 -0.4000 20.0000 US-138 1.5000 -0.3000 20.0000 US-139 1.5000 -0.2000 20.0000 US-140 1.5000 -0.1000 20.0000 US-141 1.5000 0.0000 20.0000 US-142 1.5000 0.1000 20.0000 US-143 1.5000 0.2000 20.0000 US-144 1.5000 0.3000 20.0000 US-145 1.5000 0.4000 20.0000 US-146 1.5000 0.5000 20.0000 
+
+# References 
+
+(1) Singh, U. C.; Kollman, P. A. A combined ab initio quantum mechanical and molecular mechanical method for carrying out simulations on complex molecular systems: Appli-cations to the CH 3Cl + Cl − exchange reaction and gas phase protonation of polyethers. 
+
+J. Comput. Chem. 1986 , 7, 718–730. 11 (2) Melo, M. C. R.; Bernardi, R. C.; Rudack, T.; Scheurer, M.; Riplinger, C.; Phillips, J. C.; Maia, J. D. C.; Rocha, G. B.; Ribeiro, J. V.; Stone, J. E.; Neese, F.; Schulten, K.; Luthey-Schulten, Z. NAMD goes quantum: an integrative suite for hybrid simulations. 
+
+Nat. Methods 2018 , 15 , 351–354. (3) Darden, T.; York, D.; Pedersen, L. Particle mesh Ewald: An N ·log(N) method for Ewald sums in large systems. J. Chem. Phys. 1993 , 98 , 10089–10092. (4) Tribello, G. A.; Bonomi, M.; Branduardi, D.; Camilloni, C.; Bussi, G. PLUMED 2: New feathers for an old bird. Comput. Phys. Commun. 2014 , 185 , 604–613. (5) Podgorski, M. N.; Coleman, T.; Churchman, L. R.; Bruning, J. B.; De Voss, J. J.; Bell, S. G. Investigating the Active Oxidants Involved in Cytochrome P450 Catalyzed Sulfoxidation Reactions. Chemistry – A European Journal 2022 , 28 , e202202428. (6) Maier, J. A.; Martinez, C.; Kasavajhala, K.; Wickstrom, L.; Hauser, K. E.; Simmer-ling, C. ff14SB: Improving the Accuracy of Protein Side Chain and Backbone Parame-ters from ff99SB. Journal of Chemical Theory and Computation 2015 , 11 , 3696–3713, PMID: 26574453. (7) Boothroyd, S. et al. Development and benchmarking of Open Force Field 2.0.0: The Sage small molecule force field. J. Chem. Theory Comput. 2023 , 19 , 3251–3275. (8) Jakalian, A.; Bush, B. L.; Jack, D. B.; Bayly, C. I. Fast, efficient generation of high-quality atomic charges. AM1-BCC model: I. Method. J. Comput. Chem. 2000 , 21 ,132–146. (9) Jakalian, A.; Jack, D. B.; Bayly, C. I. Fast, efficient generation of high-quality atomic charges. AM1-BCC model: II. Parameterization and validation. J. Comput. Chem. 
+
+2002 , 23 , 1623–1641. 12 (10) Tian, C.; Kasavajhala, K.; Belfon, K. A. A.; Raguette, L.; Huang, H.; Migues, A. N.; Bickel, J.; Wang, Y.; Pincay, J.; Wu, Q.; Simmerling, C. Ff19SB: Amino-acid-specific protein backbone parameters trained against quantum mechanics energy surfaces in solution. J. Chem. Theory Comput. 2020 , 16 , 528–552. (11) Wang, J.; Wolf, R. M.; Caldwell, J. W.; Kollman, P. A.; Case, D. A. Development and testing of a general amber force field. J. Comput. Chem. 2004 , 25 , 1157–1174. (12) Case, D. A. et al. AmberTools. J. Chem. Inf. Model. 2023 , 63 , 6183–6191. (13) Li, P.; Merz, K. M., Jr MCPB.Py: A python based metal center parameter builder. J. Chem. Inf. Model. 2016 , 56 , 599–604. (14) Frisch, M. J. et al. Gaussian 16 Revision C.01. 2016; https://gaussian.com/ citation/ , Gaussian Inc. Wallingford CT. (15) Bayly, C. I.; Cieplak, P.; Cornell, W.; Kollman, P. A. A well-behaved electrostatic potential based method using charge restraints for deriving atomic charges: the RESP model. J. Phys. Chem. 1993 , 97 , 10269–10280. 13 Figure S1: Scatter plots of the C–O distance (top) and Bader charge of N, C, and O atoms (bottom) as a function of the C–N distance obtained from metadynamics of NCO-water system. 14 Figure S2: (a) Free energy surface obtained from pre-metadynamics and (b) the representa-tive structures of (i), (ii), and (iii) shown in (a). 15

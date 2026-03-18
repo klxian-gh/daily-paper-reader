@@ -1,0 +1,402 @@
+Title: Hybrid Quantum-Classical Encoding for Accurate Residue-Level pKa Prediction
+
+URL Source: https://arxiv.org/pdf/2603.11061v1
+
+Published Time: Fri, 13 Mar 2026 00:00:46 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+> 1
+
+# Hybrid Quantum–Classical Encoding for Accurate Residue-Level pKa Prediction 
+
+Van Le and Tan Le, Member, IEEE 
+
+Abstract —Accurate prediction of residue-level pKa values is essential for understanding protein function, stability, and reac-tivity. While existing resources such as DeepKaDB and CpHMD-derived datasets provide valuable training data, their descriptors remain primarily classical and often struggle to generalize across diverse biochemical environments. We introduce a reproducible hybrid quantum–classical framework that enriches residue-level representations with a Gaussian kernel–based quantum-inspired feature mapping. These quantum-enhanced descriptors are com-bined with normalized structural features to form a unified hybrid encoding processed by a Deep Quantum Neural Network (DQNN). This architecture captures nonlinear relationships in residue microenvironments that are not accessible to classical models. Benchmarking across multiple curated descriptor sets demonstrates that the DQNN achieves improved cross-context generalization relative to classical baselines. External evaluation on the PKAD-R experimental benchmark and an A β40 case study further highlights the robustness and transferability of the quantum-inspired representation. By integrating quantum-inspired feature transformations with classical biochemical de-scriptors, this work establishes a scalable and experimentally transferable approach for residue-level pKa prediction and broader applications in protein electrostatics. 
+
+Index Terms —Quantum Computing, Deep Neural Networks, pKa Prediction, Quantum Encoding, NextG Material Informat-ics, Efficient AI Algorithms. 
+
+I. I NTRODUCTION 
+
+Residue-level pKa values govern protonation equilibria, enzymatic activity, and electrostatic interactions in proteins, shaping structural dynamics and biochemical function [1], [2]. Accurate prediction of these values is essential for understand-ing catalytic mechanisms, drug binding, and pH-dependent conformational changes. Traditional approaches—including empirical heuristics and continuum electrostatics—often strug-gle to generalize across protein families and are sensitive to structural perturbations and solvent effects [3], [4]. Recent efforts have advanced residue-level pKa prediction along two major directions. The DeepKa database provides curated residue-level measurements and four descriptor sets—Protein–Neighbor (PN), Protein–Protein (PP), Protein–Ligand (PL-revised), and Protein–Ligand (PL-other)—designed to capture complementary structural and physicochemical information for benchmarking classical machine learning models. While DeepKaDB offers a
+
+V. Le is with the Virginia Polytechnic Institute and State University, Blacksburg, VA 24061, USA. Email: vanl@vt.edu. T. Le is with the School of Engineering, Architecture and Aviation, Hampton University, Hampton, VA 23669, USA. Emails: tan.le@hamptonu.edu. 
+
+valuable resource, its reliance on classical descriptors limits generalization across diverse biochemical contexts and constrains mechanistic interpretability. In parallel, constant-pH molecular dynamics (CpHMD) simulations have expanded the PHMD279 dataset to PHMD549, covering 26,552 residues across 549 proteins with improved sampling and convergence guarantees [5]. Although PHMD549 increases coverage of buried residues and large pKa shifts, its GPU-accelerated simulations are computationally intensive and difficult to integrate into descriptor-driven learning pipelines. Emerging strategies in machine learning and quantum chem-istry offer new opportunities to overcome these limitations. Graph-based neural networks capture topological and elec-tronic context [6], while quantum-inspired descriptors approx-imate charge distributions and orbital interactions relevant to proton transfer [7], [8]. Hybrid quantum–classical models have shown promise in predicting molecular properties such as solubility, reactivity, and acidity [9], [10]. However, several challenges remain:  
+
+> •
+
+Residue-level alignment of quantum descriptors: 
+
+Quantum observables are typically computed at the atomic or molecular level, making consistent residue-level mapping nontrivial across diverse protein structures.  
+
+> •
+
+Interpretability of hybrid models: Integrating classical and quantum features can obscure the contribution of individual descriptors, limiting mechanistic insight.  
+
+> •
+
+Cross-dataset generalization: Models trained on cu-rated descriptor datasets (e.g. DeepKaDB) or simulation-derived datasets (e.g. PHMD549) often fail to generalize across biochemical contexts with varying structural diver-sity and protonation dynamics.  
+
+> •
+
+Reproducible benchmarking: Lack of standardized pipelines and descriptor formatting complicates compari-son across studies, especially when quantum observables are simulated or approximated. In this work, we introduce a modular and reproducible quantum–classical framework for residue-level pKa prediction. Our approach integrates categorical encodings, residue-specific scaling, and entanglement-aware quantum feature transfor-mations within a deep quantum neural network (DQNN) architecture. Cross-dataset benchmarking across the PN, PP, PL-revised, and PL-other descriptor sets demonstrates im-proved generalization and reduced variance relative to classical baselines. Evaluation on the PKAD-R experimental benchmark further shows that the DQNN achieves the strongest gener-
+
+> arXiv:2603.11061v1 [physics.chem-ph] 9 Mar 2026 2
+
+alization among all tested models. Finally, a residue-specific case study on A β40 reveals that the quantum-enhanced encod-ing captures microenvironmental differences between adjacent histidines with improved stability and interpretability. By bridging descriptor-driven resources such as DeepKaDB with simulation-derived baselines such as PHMD549, our framework establishes a foundation for scalable, interpretable, and experimentally transferable quantum–classical learning in molecular biophysics, reaction modeling, and enzyme design. 
+
+A. Our Contributions 
+
+This study advances residue-level pKa prediction beyond classical residue-level models (e.g. DeepKa) and simulation-dependent baselines (e.g. CpHMD-derived datasets) by intro-ducing a quantum–classical learning framework with improved accuracy, robustness, and interpretability. Our key contribu-tions are:  
+
+> •
+
+Entanglement-aware quantum feature encoding: We develop a hybrid descriptor pipeline that integrates sim-ulated quantum observables with classical biochemical features. This encoding captures nonlocal geometric and electronic correlations that are inaccessible to traditional residue-level embeddings.  
+
+> •
+
+Cross-dataset alignment and curation: We harmonize the Protein–Neighbor (PN), Protein–Protein (PP), Pro-tein–Ligand (PL-revised), and Protein–Ligand (PL-other) descriptor sets using consistent residue-level scaling and quantum descriptor formatting. This enables stable learn-ing across structurally diverse environments and supports generalization to the PKAD-R experimental benchmark.  
+
+> •
+
+Robust quantum-inspired learning architecture: We design and evaluate the DQNN that leverages the entanglement-aware feature space more effectively than classical baselines. The DQNN achieves the strongest generalization on PKAD-R and demonstrates residue-specific robustness in the A β40 case study. II. S YSTEM MODEL AND OVERVIEW 
+
+This section provides a high-level description of the hy-brid quantum–classical pipeline used for residue-level pKa
+
+prediction. The framework integrates (i) normalized structural and biochemical descriptors, (ii) a quantum-inspired Gaussian kernel feature mapping, and (iii) a lightweight DQNN that operates on the resulting hybrid representation. Together, these components define the conceptual flow of the model—how residue features are constructed, transformed, and ultimately used for prediction—before the detailed methodological com-ponents are presented in the subsequent Methods section. At its core, the system model processes curated residue-level descriptors that encode residue identity, structural context, and experimentally measured pKa values. These descriptors are transformed through the quantum-inspired feature map and passed to the DQNN, which produces the final residue-level 
+
+pKa predictions.                    
+
+> Fig. 1. Schematic overview contrasting dataset origins and methodological in-novations in residue-level pKaprediction. (Left) DeepKaDB: descriptor-driven resource derived from soluble proteins in PDBbind, providing curated feature sets for classical machine learning models. (Center) PHMD549: simulation-driven dataset generated via GPU-accelerated CpHMD, expanding PHMD279 to 26,552 residues across 549 proteins. (Right) DQNN framework: hybrid quantum–classical pipeline that integrates curated descriptors with quantum-inspired feature transformations.
+
+A. Feature Encoding 
+
+Each residue is represented by a hybrid feature vector composed of:  
+
+> •
+
+Classical features: Categorical encodings of residue type, residue index, solvent accessibility, and secondary structure, normalized into a classical feature matrix 
+
+Xclassical . 
+
+> •
+
+Quantum-inspired descriptors: A Gaussian kernel transformation applied to the normalized classical fea-tures. For each residue vector x and anchor point aj ,
+
+Xquantum = exp 
+
+
+
+− ∥x − aj ∥22
+
+2σ2
+
+
+
+,
+
+yielding a quantum-inspired embedding that is concate-nated with the classical descriptors to form Xhybrid . 
+
+> •
+
+Residue-specific scaling: Quantum descriptors are scaled according to residue type to emphasize protonation-relevant environments: scale (r) = 
+
+
+
+1.2 Asp 
+
+1.1 Glu 
+
+0.9 His 
+
+1.3 Lys 
+
+1.0 otherwise yielding a scaled quantum matrix Xqm . 
+
+> •
+
+Hybrid matrix: The final model input is the concatenated matrix 
+
+Xhybrid = [ Xclassical , X qm ].3
+
+B. Model Architecture 
+
+We implement a feedforward DQNN, a lightweight feed-forward network, that processes the hybrid feature matrix using two ReLU-activated hidden layers and a single-neuron regression output. 
+
+C. Training and Evaluation 
+
+The dataset is split using an 80/20 train–test partition. Model performance is evaluated using:  
+
+> •
+
+Mean Absolute Error (MAE),  
+
+> •
+
+Root Mean Squared Error (RMSE),  
+
+> •
+
+Pearson correlation coefficient ( R). These metrics quantify accuracy, variance, and linear agree-ment with experimental pKa values. III. M ETHODS 
+
+We now provide the formal methodological details under-lying the hybrid quantum–classical framework introduced in Section II. Whereas Section II outlined the conceptual flow of the pipeline, this section specifies the exact feature con-struction, quantum-inspired encoding, model architecture, and training procedures used in our experiments. All mathematical definitions, implementation choices, and evaluation protocols are presented here to ensure reproducibility and clarity. 
+
+A. Hybrid Feature Matrix Construction 
+
+Each residue is represented using a unified hybrid fea-ture vector that integrates classical biophysical descriptors with quantum-inspired features. Classical descriptors include solvent-accessible surface area (SASA), secondary structure code (SecCode), residue identity (ResidueCode), complex membership (ComplexCode), and sequence position. These features capture structural and environmental context relevant to protonation equilibria. Quantum-derived descriptors, when available, summarize local electronic-structure variability obtained from upstream quantum-chemical analysis. All descriptors are normalized and concatenated to form the classical feature matrix Xclassical .
+
+B. Quantum-Inspired Feature Encoding 
+
+We apply a Gaussian kernel–based quantum-inspired em-bedding to introduce nonlinear structure into the residue representation. Each normalized residue vector x is compared to a fixed set of anchor points {aj } sampled from the training distribution, producing features 
+
+ϕj (x) = exp 
+
+
+
+− ∥x − aj ∥22
+
+2σ2
+
+
+
+.
+
+The resulting vector ϕ(x) is normalized and concatenated with the classical descriptors to form the hybrid input matrix 
+
+Xhybrid .
+
+C. Classical Machine Learning Models 
+
+To establish a performance baseline, we evaluate three classical regressors on the hybrid feature matrix: Gradient Boosting (GB), Gaussian Process Regression with squared-exponential kernel (GPR SE), and k-Nearest Neighbors (kNN) [11]. All models are trained using identical train–test splits and hyperparameter settings chosen to balance predictive performance and computational efficiency. 
+
+D. DQNN Architecture 
+
+The DQNN operates directly on the hybrid feature matrix 
+
+Xhybrid . The model is implemented as a lightweight feedfor-ward network consisting of:  
+
+> •
+
+an input layer receiving Xhybrid , 
+
+> •
+
+two fully connected hidden layers with 32 and 16 units, each using ReLU activation,  
+
+> •
+
+a single-neuron regression output layer,  
+
+> •
+
+mean squared error loss optimized with Adam (100 epochs, batch size 32). This architecture provides sufficient capacity to model non-linear interactions introduced by the quantum-inspired em-bedding while remaining computationally efficient and fully differentiable. 
+
+E. Training and Evaluation 
+
+Models are trained using a consistent 80/20 train–test split on the hybrid feature matrix. Evaluation follows the same protocol outlined in the System Model section, using standard regression metrics to assess predictive accuracy and agreement with experimental pKa values. 
+
+F. A β40 Case Study Workflow 
+
+To assess generalization beyond curated datasets, all trained models are applied to the A β40 peptide, which contains three experimentally characterized titratable histidines. The A β40 hybrid feature matrix is constructed using the same encoding pipeline as PKAD-R, ensuring strict consistency between training and inference. Model predictions are compared against experimental pKa values to evaluate residue-specific accuracy and robustness. IV. Q UANTUM -I NSPIRED FEATURE MAPPING FOR 
+
+RESIDUE -L EVEL pKA PREDICTION 
+
+Building on the hybrid feature construction described in the previous section, we now formalize the quantum-inspired mapping that enriches residue-level descriptors with nonlinear structure prior to learning. This mapping provides the founda-tion for the DQNN evaluated in the Results section. 4
+
+A. Residue-level preprocessing 
+
+For each residue i, we assemble a descriptor vector 
+
+xi ∈ Rd,
+
+containing continuous features (e.g., solvent accessibility, sec-ondary structure codes, sequence position) and numerical en-codings of categorical variables (e.g., residue identity, complex membership). Each feature dimension k is standardized using the dataset mean μk and standard deviation σk:
+
+˜xik = xik − μk
+
+σk + ϵ ,
+
+where ϵ is a small stability constant. The normalized descriptor is denoted 
+
+zi = ˜ xi ∈ Rd.
+
+B. Quantum-inspired feature mapping 
+
+To approximate the expressive capacity of quantum feature maps without requiring a quantum device, we apply a radial-basis kernel embedding. Let {aj }Aj=1 be a fixed set of anchor vectors sampled from the normalized training distribution, and let σ denote the kernel bandwidth. For each residue i and anchor j, we define 
+
+ϕj (zi) = exp 
+
+
+
+− ∥zi − aj ∥22
+
+2σ2
+
+
+
+,
+
+yielding the quantum-inspired feature vector 
+
+ϕ(zi) =  ϕ1(zi), . . . , ϕ A(zi)⊤.
+
+This embedding approximates the Gaussian kernel 
+
+K(zi, zℓ) ≈ exp 
+
+
+
+− ∥zi − zℓ∥22
+
+2σ2
+
+
+
+,
+
+which can be interpreted as a surrogate for quantum state overlap. For numerical stability, we apply ℓ2 normalization using a small constant δ:
+
+ˆϕ(zi) = ϕ(zi)
+
+∥ϕ(zi)∥2 + δ .
+
+C. Hybrid feature vector 
+
+The final residue-level representation is obtained by con-catenating the normalized classical descriptors and the quantum-inspired features: 
+
+hi = [ zi ∥ ˆϕ(zi) ] .
+
+D. DQNN architecture 
+
+The DQNN processes hi through a shallow feedforward architecture with ReLU activations: 
+
+u(1)  
+
+> i
+
+= σ(W1hi + b1),
+
+u(2)  
+
+> i
+
+= σ(W2u(1)  
+
+> i
+
++ b2),
+
+ˆyi = w⊤u(2)  
+
+> i
+
++ c, 
+
+where W1, W2 and b1, b2 are trainable parameters, and ˆyi is the predicted residue-level pKa.
+
+E. Training objective and evaluation 
+
+The model is trained by minimizing a regularized mean squared error loss: 
+
+L = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+(ˆ yi − yi)2 + λwd 
+
+X
+
+> ℓ
+
+∥Wℓ∥2 
+
+> F
+
+,
+
+where yi denotes the experimental pKa, λwd is a weight decay coefficient, and the sum runs over all weight matrices. Predictive performance is quantified using: 
+
+RMSE =
+
+s
+
+> 1
+> N
+
+X
+
+> i
+
+(ˆ yi − yi)2, (1) 
+
+MAE = 1
+
+> N
+
+X
+
+> i
+
+|ˆyi − yi|, (2) 
+
+R2 = 1 −
+
+P
+
+> i
+
+(ˆ yi − yi)2
+
+P
+
+> i
+
+(yi − ¯y)2 . (3) These metrics assess accuracy and agreement with experimen-tal residue-level pKa values. Together, these components define the quantum–classical learning framework evaluated in the following section, where we benchmark the DQNN against classical models across multiple descriptor sets and assess its generalization to PKAD-R and A β40. V. R ESULTS 
+
+To evaluate the robustness and generalization capability of the entanglement-aware quantum feature encoding, we bench-mark all models on the newly curated PKAD-R experimental dataset [12]. PKAD-R introduces substantial structural diver-sity and realistic measurement variability, providing a stringent test of whether quantum-enhanced representations can transfer beyond the training distribution. By training classical and quantum-inspired models on the same quantum feature space, we directly assess how effectively each architecture leverages the proposed encoding for residue-level pKa prediction. The PKAD-R dataset spans a wide range of protein envi-ronments and experimentally measured pKa values, enabling evaluation of both predictive accuracy and the stability of the quantum-enhanced feature space under experimental condi-tions. Our analysis proceeds from global regression perfor-mance to model-specific generalization behavior, culminating in a comparison of how different learning paradigms exploit the entanglement-aware representation. 
+
+A. Prediction Results Enabled by Entanglement-Aware Quan-tum Feature Mapping 
+
+Table I reports the performance of four representative mod-els—DQNN, GradientBoosting, GPR SE, and kNN—across RMSE, MAE, maximum absolute error, Pearson correlation (R), and regression slope ( m). Lower RMSE, MAE, and Max-Err values indicate higher predictive accuracy, while higher R5
+
+and slopes closer to 1 reflect stronger linear agreement with experimental measurements. Bold entries denote the best test-set performance. Among all evaluated models, the DQNN achieves the strongest generalization on PKAD-R, obtaining the lowest test RMSE (0.886), lowest test MAE (0.645), and lowest maximum absolute error (6.384). These results indicate that the DQNN not only minimizes average prediction error but also avoids large outliers, demonstrating that the entanglement-aware quantum feature mapping provides a stable and expres-sive representation of residue environments. The DQNN also maintains strong linear agreement with experiment ( Rtest =0.886 ), further supporting its robustness. GradientBoosting achieves near-zero training error (RMSE = 0.001, MAE = 0.001) but exhibits substantially degraded test performance (RMSE = 1.288, MAE = 0.964), reflecting severe overfitting to the quantum feature–encoded training distribution. The boosting process aggressively fits residuals in the high-dimensional feature space, capturing noise rather than transferable structure–function relationships. The GPR SE and kNN models show moderate performance, with higher test errors and weaker correlations relative to DQNN. Their behavior reflects the limitations of distance-based and classical kernel-based learners when operating in a quantum-enhanced feature space: although the entanglement-aware mapping captures rich nonlinear interactions, these models lack the architectural flexibility to fully exploit the high-dimensional structure, resulting in reduced generalization to experimental measurements. Overall, these results demonstrate that the quantum feature encoding provides a powerful and information-rich representa-tion for residue-level pKa prediction, but robust generalization depends critically on the learning architecture. The DQNN leverages the entanglement-aware feature space most effec-tively, achieving the best balance of accuracy, stability, and linear agreement with experiment. Ensemble-based models such as GradientBoosting benefit from the expressive feature mapping but require stronger regularization to avoid overfit-ting. Continued refinement of quantum feature construction and hybrid model designs will further enhance the potential of quantum-enhanced learning for experimentally transferable 
+
+pKa prediction. 
+
+B. A β40 Case Study Results 
+
+While the PKAD-R benchmark evaluates global model generalization across a structurally diverse collection of pro-teins, it does not isolate residue-specific behavior within a single biologically relevant system. To complement the broad statistical assessment provided by PKAD-R, we further examine model performance on the A β40 peptide, a well-studied system with experimentally resolved pKa values for three histidine residues. This case study enables a fine-grained analysis of how the hybrid quantum–classical encoding be-haves in a controlled molecular context, where microenviron-mental differences between adjacent residues can be directly compared. By transitioning from global benchmarking to a targeted biochemical system, we assess whether the advantages observed for the DQNN on PKAD-R translate to residue-level interpretability and stability in a real peptide environment. The performance trends observed in the A β40 histidine predictions are closely linked to the characteristics of the curated PN, PP, PL-refined, and PL-other datasets used for model training. These datasets were constructed to balance residue types, reduce redundancy, and ensure consistent feature distributions across protonation states. Such preparation is particularly important for the hybrid quantum–classical encod-ing, which relies on structurally diverse and well-normalized samples to learn stable correlation patterns. Residues em-bedded in heterogeneous microenvironments, such as His13 and His14, are well represented in the PL-refined and PP subsets, enabling the DQNN to leverage quantum anchor features effectively. In contrast, residues occupying highly flexible or sparsely represented structural regimes—such as the solvent-exposed N-terminal His6—are less prevalent in the training distribution, which influences model generalization in predictable ways.  
+
+> Fig. 2. Comparison of A β40 histidine pKa predictions using experimental measurements, DeepKa, and the proposed DQNN model. Error bars indicate reported standard deviations for DeepKa and replicate variability for DQNN.
+
+Figure 2 compares the predicted pKa values of the three titratable histidines in the A β40 peptide (His6, His13, His14). Experimental measurements serve as reference values, while DeepKa and the proposed DQNN provide computational pre-dictions with associated uncertainty estimates. For His13 and His14, the DQNN achieves substantially lower absolute error than DeepKa, reducing prediction error by 0.53 and 0.40 pKa units, respectively. These improvements highlight the advantage of hybrid quantum–classical encoding in capturing subtle electronic and geometric interactions that arise from residue packing, hydrogen bonding, and local sol-vation. The quantum-inspired kernel features provide a richer representation of nonlocal correlations, enabling the DQNN to better resolve the microenvironmental differences between 6                                                           
+
+> TABLE I PERFORMANCE COMPARISON ACROSS MODELS USING RMSE, MAE, M AX ERR , P EARSON CORRELATION (R), AND REGRESSION SLOPE (M)FOR BOTH TRAINING AND TESTING SETS . B EST TEST -SET VALUES ARE HIGHLIGHTED IN BOLD .
+> Model RMSE MAE MaxErr RSlope (m)
+> Train Test Train Test Train Test Train Test Train Test DQNN 0.393 0.886 0.270 0.645 2.582 6.384 0.973 0.886 0.911 0.799 GradientBoosting 0.001 1.288 0.001 0.964 0.011 6.356 1.000 0.807 1.000 0.935
+> GPR SE 0.923 1.856 0.507 1.253 7.870 7.208 0.839 0.385 0.718 0.139 kNN k5 1.116 1.941 0.319 1.276 9.440 8.440 0.799 0.443 0.802 0.366
+
+adjacent histidines. The DQNN exhibits consistently lower variance across replicates, as reflected in the narrower error bars. This robust-ness arises from the anchor-based quantum encoding, which smooths high-frequency noise in the feature space and reduces sensitivity to small perturbations in atomic coordinates. In contrast, DeepKa relies on residue-level embeddings that can amplify structural noise, particularly in flexible or partially disordered regions. For His6, DeepKa slightly outperforms DQNN, with the quantum-enhanced model showing a modest overprediction. This deviation is consistent with the unique structural context of His6, which resides in a highly dynamic N-terminal region with limited tertiary contacts. Because quantum kernel features emphasize geometric and electronic correlations, residues with weak or transient interactions contribute less discriminative signal to the quantum feature space. This suggests that His6 may benefit from additional local descriptors, such as solvent-accessible surface area or backbone dihedral statistics, which can be readily incorporated into the hybrid encoding frame-work. Importantly, the His6 result does not contradict the ad-vantages of quantum encoding; rather, it highlights a known limitation of correlation-based kernels when structural context is minimal. The strong performance on His13 and His14, combined with the reduced variance across all residues, demonstrates that the hybrid quantum–classical approach pro-vides a more stable and expressive representation for residue-level pKa prediction, particularly in regions where electronic coupling and microenvironmental heterogeneity play dominant roles. In addition to its distinct structural context, His6 likely reflects limitations in the available training distribution and label quality. N-terminal histidines in highly flexible, solvent-exposed environments are underrepresented in the training data, which reduces the ability of the model to generalize reliably to this regime. Moreover, experimental pKa values for such residues often exhibit higher uncertainty due to confor-mational heterogeneity and multiple protonation microstates, amplifying the apparent discrepancy between prediction and measurement. These factors, combined with the current em-phasis on correlation-based quantum features over purely local descriptors, help explain the modest overprediction observed for His6 without contradicting the overall advantages of the hybrid quantum–classical encoding. Table II provides a quantitative comparison of DeepKa [5] and the proposed DQNN model across the three titratable histidines in A β40. For His13 and His14, the DQNN achieves substantial error reductions of 0.53 and 0.40 pKa units, re-spectively. These improvements highlight the ability of the hybrid quantum–classical encoding to represent long-range geometric correlations and subtle electronic interactions that are not captured by residue-level embeddings alone. Beyond mean accuracy, the standard deviations offer addi-tional insight into model robustness. Across all three residues, the DQNN exhibits consistently lower variance than DeepKa, indicating greater stability and reduced sensitivity to coordi-nate perturbations. This effect is most pronounced for His6, where DeepKa shows a threefold increase in variability (SD = 0.30) relative to DQNN (SD = 0.104). The high variance suggests that DeepKa’s apparent advantage in mean error for His6 is fragile and highly dependent on small structural fluctuations. In contrast, the DQNN produces more consistent outputs, reflecting the smoothing and regularizing effects of the quantum anchor features. The modest overprediction of His6 by the DQNN is ex-plainable and does not contradict the advantages of quantum encoding. His6 resides in a highly flexible, solvent-exposed N-terminal region that is underrepresented in the training distribution, limiting the discriminative power of correlation-based quantum features. Additionally, experimental pKa val-ues for N-terminal residues often carry higher uncertainty due to multiple protonation microstates and conformational heterogeneity, increasing the apparent discrepancy between prediction and measurement. Finally, because the current hy-brid encoding emphasizes nonlocal correlations, residues with weak tertiary contacts provide limited signal for the quantum kernel. Incorporating additional local descriptors—such as solvent accessibility, backbone dihedral statistics, or disorder metrics—would likely mitigate this effect and further improve performance. Despite this single-residue deviation, the overall perfor-mance strongly favors the DQNN. Across all three histidines, the DQNN achieves lower mean absolute error (MAE = 0.17 vs. 0.43) and root mean square error (RMSE = 0.20 vs. 0.50), demonstrating improved accuracy and consistency. The quantum descriptors also enhance interpretability by revealing how shifts in electronic environment influence predicted pKa values. The resulting error distributions are narrower and more structured, underscoring the robustness of the hybrid encoding 7                                         
+
+> TABLE II SUMMARY OF Aβ40 HISTIDINE P KA PREDICTIONS COMPARING DEEP KA AND DQNN AGAINST EXPERIMENTAL VALUES . E RRORS ARE REPORTED AS ABSOLUTE DEVIATIONS FROM EXPERIMENT ,AND ERROR REDUCTION IS DEFINED AS THE DIFFERENCE BETWEEN DEEP KA AND DQNN ERRORS .Residue Experiment DeepKa mean DeepKa SD DQN N mean DQN N SD DeepKa Error DQN N Error Error Reduction His13 6.7 6.0 0.10 6.527 0.069 0.700 0.173 0.527 His14 6.4 5.9 0.10 6.501 0.061 0.500 0.101 0.399 His6 6.7 6.8 0.30 6.479 0.104 0.100 0.221 -0.121
+
+strategy. Collectively, these results show that the DQNN pipeline pro-vides a more expressive and stable representation for residue-level pKa prediction, particularly in regions where electronic coupling and microenvironmental heterogeneity dominate. The A β40 case study highlights the potential of quantum-augmented biochemical modeling and establishes the hybrid quantum–classical approach as a promising direction for next-generation peptide informatics. VI. C ONCLUSION 
+
+We present a hybrid quantum–classical framework for residue-level pKa prediction that integrates normalized struc-tural descriptors with a quantum-inspired kernel embedding processed by our proposed DQNN. This unified representation captures nonlinear relationships in residue microenvironments that are not accessible to classical encodings alone. Across multiple descriptor sets and external evaluation on PKAD-R and A β40, the hybrid model demonstrates improved ro-bustness and cross-context generalization relative to classical baselines. In addition to predictive gains, the lightweight archi-tecture and kernel-based quantum-inspired encoding provide an efficient AI solution that balances accuracy with computa-tional scalability, enabling practical deployment in large-scale biochemical modeling workflows. 
+
+Future Directions. Looking ahead, several research direc-tions may further expand the capabilities of quantum–classical learning for biomolecular modeling: 1) Entanglement-aware representations. Extending the current kernel-based mapping to incorporate explicit 
+
+intra-residue and inter-residue entanglement would en-able tensor-product interactions among descriptor chan-nels and long-range coupling across protein contact graphs. These mechanisms align naturally with graph neural networks (GNNs) and graph attention networks (GATs), where attention-driven message passing cap-tures context-dependent interactions. Recent advances in attention-based graph learning [13] suggest that in-tegrating entanglement-aware feature construction with GNN/GAT layers may enhance generalization and phys-ical fidelity. 2) Quantum-enhanced geometric modeling. Protein elec-trostatics are inherently shaped by three-dimensional geometry. Embedding geometric features—such as local curvature, solvent exposure fields, or learned geometric embeddings—into quantum-inspired feature maps may provide richer representations of residue environments. Combining geometric deep learning with quantum ker-nels could yield models that better capture spatially mediated protonation effects [11], [14]–[16]. 3) Efficient AI for large-scale biochemical modeling. As protein datasets continue to grow, there is increasing need for models that balance accuracy with computa-tional efficiency. Techniques such as low-rank kernel ap-proximations, sparse attention, model compression, and energy-aware inference could enable quantum-inspired models to scale to proteome-level prediction tasks [11], [15], [17]–[19]. Embedding efficiency principles directly into quantum–classical architectures may also support deployment on edge devices and high-throughput simu-lation pipelines. 4) Hybrid quantum simulation and learning loops. 
+
+As quantum hardware matures, hybrid workflows that couple quantum simulations (e.g. variational quantum eigensolvers or quantum-enhanced electrostatic solvers) with classical learning pipelines [11], [14]–[16] may enable more physically grounded descriptors. Such sim-ulation–learning loops could provide quantum-derived priors for pKa prediction and extend the framework to broader tasks in reaction modeling and enzyme design. Together, these directions outline a path toward next-generation quantum–classical models that integrate entangle-ment, geometry, efficiency, and quantum simulation to advance predictive modeling in molecular biophysics. REFERENCES [1] M. Korshunova, B. Ginsburg, A. Tropsha, and O. Isayev, “Openchem: a deep learning toolkit for computational chemistry and drug design,”          
+
+> Journal of Chemical Information and Modeling , vol. 61, no. 1, pp. 7–13, 2021. [2] F. Vascon, M. Gasparotto, M. Giacomello, L. Cendron, E. Bergantino, F. Filippini, and I. Righetto, “Protein electrostatics: From computa-tional and structural analysis to discovery of functional fingerprints and biotechnological design,” Computational and Structural Biotechnology Journal , vol. 18, pp. 1774–1789, 2020. [3] H. Li, A. D. Robertson, and J. H. Jensen, “Very fast empirical prediction and rationalization of protein pka values,” Proteins: Structure, Function, and Bioinformatics , vol. 61, no. 4, pp. 704–721, 2005. [4] L. Li, C. Li, S. Sarkar, J. Zhang, S. Witham, Z. Zhang, L. Wang, N. Smith, M. Petukh, and E. Alexov, “Delphi: a comprehensive suite for delphi software and associated resources,” BMC biophysics , vol. 5, no. 1, p. 9, 2012. [5] X. Lu, J. Sun, F. Luo, Z. Cai, S. Su, and Y. Huang, “Deepka protein pka database: Identifying ph dependency in protein data bank,” 2025. [6] R. Miao, D. Liu, L. Mao, X. Chen, L. Zhang, Z. Yuan, S. Shi, H. Li, and S. Li, “Gr-p k a: a message-passing neural network with retention mechanism for p k a prediction,” Briefings in Bioinformatics , vol. 25, no. 5, p. bbae408, 2024. 8
+
+[7] P. Hunt, L. Hosseini-Gerami, T. Chrien, J. Plante, D. J. Ponting, and M. Segall, “Predicting pka using a combination of quantum mechanical and machine learning methods,” Journal of Chemical Information and Modeling , vol. 60, pp. 2989–2997, 2020. [8] O. D. Abarbanel and G. R. Hutchison, “Qupkake: Integrating machine learning and quantum chemistry for micro-pka predictions,” Journal of Chemical Theory and Computation , 2024. [9] S. Barua and colleagues, “Quxai: Explainers for hybrid quantum machine learning models,” arXiv preprint , 2025. [Online]. Available: https://arxiv.org/abs/2505.10167 [10] P. Schwaller, D. Probst, A. C. Vaucher, V. H. Nair, D. Kreutter, T. Laino, and J.-L. Reymond, “Mapping the space of chemical reactions using attention-based neural networks,” Nature machine intelligence , vol. 3, no. 2, pp. 144–152, 2021. [11] T. Le, M. Reisslein, and S. Shetty, “Multi-timescale actor-critic learning for computing resource management with semi-markov renewal process mobility,” IEEE Transactions on Intelligent Transportation Systems ,vol. 25, no. 1, pp. 452–461, 2024. [12] A. Y. Chen, S. K. Panday, K. Ri, E. Alexov, B. R. Brooks, and A. Damjanovic, “Pkad-r: curated, redesigned and expanded database of experimental pka values in proteins,” Journal of computational biophysics and chemistry , vol. 24, no. 9, p. 1189, 2025. [13] T. Le and V. Le, “Dpfaga-dynamic power flow analysis and fault characteristics: A graph attention neural network,” in International Conference on the AI Revolution . Springer, 2025, pp. 420–435. [14] L. T. Tan, R. Q. Hu, and L. Hanzo, “Twin-timescale artificial intelli-gence aided mobility-aware edge caching and computing in vehicular networks,” IEEE Trans. Veh. Technol. , vol. 68, no. 4, pp. 3086–3099, 2019. [15] L. T. Tan and R. Q. Hu, “Mobility-aware edge caching and computing in vehicle networks: A deep reinforcement learning,” IEEE Trans. Veh. Technol. , vol. 67, no. 11, pp. 10 190–10 203, 2018. [16] Q. Wang, L. T. Tan, R. Q. Hu, and Y. Qian, “Hierarchical energy-efficient mobile-edge computing in iot networks,” IEEE Internet of Things Journal , vol. 7, no. 12, pp. 11 626–11 639, 2020. [17] V. Le and T. Le, “Spooftrackbench: Interpretable ai for spoof-aware uav tracking and benchmarking,” in The 2025 International Conference on Computational Science and Computational Intelligence (CSCI’25) ,2025. [18] L. T. Tan and L. B. Le, “Compressed sensing based data processing and mac protocol design for smartgrids,” in 2015 IEEE Wireless Communi-cations and Networking Conference (WCNC) , 2015, pp. 2138–2143. [19] ——, “Joint data compression and mac protocol design for smartgrids with renewable energy,” Wireless Communications and Mobile Comput-ing , vol. 16, no. 16, pp. 2590–2604, 2016.
