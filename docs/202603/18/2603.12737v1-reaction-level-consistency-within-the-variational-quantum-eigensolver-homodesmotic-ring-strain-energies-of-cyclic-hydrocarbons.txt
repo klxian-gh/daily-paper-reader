@@ -1,0 +1,315 @@
+Title: Reaction-Level Consistency within the Variational Quantum Eigensolver: Homodesmotic Ring Strain Energies of Cyclic Hydrocarbons
+
+URL Source: https://arxiv.org/pdf/2603.12737v1
+
+Published Time: Mon, 16 Mar 2026 00:48:04 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+Reaction-Level Consistency within the Variational Quantum Eigensolver: Homodesmotic Ring Strain Energies of Cyclic Hydrocarbons 
+
+Lisa Roy, 1 Maitreyee Sarkar, 1 Mitali Tewari, 1 Atul Kumar, 1, a) and Manikandan Paranjothy 2, b) 1) Quantum Information and Computation Lab, Department of Chemistry, Indian Institute of Technology Jodhpur, Rajasthan, India, 342030 
+
+> 2)
+
+Chemical Dynamics Research Group, Department of Chemistry, Indian Institute of Technology Jodhpur, Rajasthan, India, 342030 
+
+1
+
+> arXiv:2603.12737v1 [physics.chem-ph] 13 Mar 2026
+
+Simulation of chemical reactions on quantum computing platforms using quan-tum–classical hybrid algorithms such as the Variational Quantum Eigensolver (VQE) is challenged by the need for a reaction-consistent treatment of electron correla-tion in reaction energy evaluations. In this work, we employ a previously reported symmetry-guided active space selection protocol to compute ring strain energies of cyclic hydrocarbons using homodesmotic reaction schemes. The protocol enforces symmetry consistency across all reactants and products by selecting active spaces that yield identical symmetry-matched fraction (SMF) values, thereby ensuring bal-anced correlation treatment at the reaction level. When multiple active spaces satisfy this criterion for a given molecule, larger active spaces often provide improved corre-lation treatment; however, smaller symmetry-consistent active spaces can also yield comparable agreement due to favorable error cancellation within the homodesmotic framework. Using this framework, ring strain energies were evaluated for a series of saturated and unsaturated cyclic hydrocarbons, ranging from cyclopropane to the structurally complex adamantane. The resulting energies achieve chemical accu-racy relative to density functional theory (DFT) and remain in close agreement with coupled-cluster singles and doubles (CCSD) benchmarks. The systematic perfor-mance across increasing molecular complexity highlights the effectiveness of combin-ing homodesmotic reaction design with symmetry-consistent VQE calculations. This approach, which enforces physically grounded consistency across reaction species, demonstrates clear potential for extending reaction-based quantum simulations to larger molecular systems and broader classes of chemical reactions. 
+
+> a) Electronic mail: atulk@iitj.ac.in
+> b) Electronic mail: pmanikandan@iitj.ac.in
+
+2I. Introduction 
+
+Due to the growing potential of quantum computers to simulate molecular systems with improved accuracy and more favorable scaling, quantum chemistry has emerged as a natural and important application of quantum computing. 1–8 On conventional computing platforms, the representation of the molecular wavefunction becomes exponentially complex as the number of particles increases, 9 severely restricting the predictive capabilities of established electronic-structure methods for large molecular systems. Quantum computers are expected to naturally encode quantum states, enabling more efficient representations that can scale polynomially in the fault-tolerant regime. 10,11 
+
+In computational chemistry, coupled cluster singles and doubles (CCSD) is a post Hartree–Fock method that systematically accounts for electronic correlation by incorpo-rating single and double excitations from a reference Hartree–Fock state, and it is widely regarded as the “gold standard” for small to medium-sized molecular systems. However, its computational cost scales steeply with system size, making it challenging to apply to larger molecules. The integration of quantum algorithms with electronic-structure methods such as CCSD holds the potential to overcome these scaling limitations, opening pathways for ac-curate and scalable quantum simulations in chemistry. Among various quantum algorithms, the Variational Quantum Eigensolver (VQE) 12 has emerged as one of the most practical approaches in the noisy intermediate-scale quantum (NISQ) era. 13 VQE, a hybrid quan-tum–classical algorithm, uses parameterized quantum circuits (PQCs) 14–17 to approximate the ground-state energy (GSE) 3 of molecular systems, effectively combining the expressive power of quantum hardware with the robustness of classical numerical optimization. In understanding reactivity trends and the driving forces behind chemical reactions, strain concepts have played a central role in mechanistic organic chemistry. 18–20 The original strain concept originates from von Baeyer’s strain theory, 18 which proposed that the stability of cyclic organic molecules, particularly cycloalkanes, is governed by deviations of internal bond angles from the ideal tetrahedral angle of 109 .5◦. This concept was subsequently extended to include contributions from bond-length distortions, torsional strain, and non-bonded interactions 18 (Fig. 1). Accurate determination of molecular thermochemistry is therefore essential for quantifying such strain effects in cyclic systems. Experimentally, ring strain energies (RSEs) for cyclopropane and cyclobutane were determined by evaluating 3heats of formation derived from combustion data. 18,21 In general, the excess energy obtained by comparing a cyclic molecule with an appropriate strain-free reference defines its ring strain energy. 18,22 
+
+For many chemical systems, however, accurate thermochemical data are difficult to ob-tain, necessitating the use of theoretically motivated reaction schemes 22–24 . While high-level ab initio methods provide reliable results, their computational cost becomes prohibitive for larger hydrocarbons. To address this challenge, systematic error-canceling hypothetical re-action schemes, such as isodesmic, homodesmotic, and hyperhomodesmotic reactions, have been developed. These schemes balance bond types, hybridization, and stereo-electronic effects, allowing chemically meaningful estimates of thermochemical quantities at modest levels of theory. Among these, homodesmotic reactions 25 have proven particularly effective for hydrocarbons, often achieving near chemical accuracy and offering valuable insight into stability trends. Homodesmotic reaction schemes, when combined with quantum chemical calculations, provide a powerful and computationally efficient framework for probing virtual properties such as ring strain energies, resonance energies, aromatic stabilization energies, and hyperconjugative effects in hydrocarbons. Such approaches enhance our understanding of the fundamental structural and energetic principles governing organic molecules. In the present work, we integrate the Variational Quantum Eigensolver with homod-esmotic reaction schemes to predict the ring strain energies of several cyclic hydrocarbons. By applying VQE to compute the enthalpies of reactants and products within carefully con-structed homodesmotic reactions, reaction-level error cancellation can be maximized while employing quantum algorithms for electronic structure calculations. A key challenge in this context is the consistent selection of active spaces across all reaction species. To address this, we employ a previously introduced symmetry-guided active space selection strategy based on group-theoretical analysis, 26 ensuring a balanced and reaction-consistent treatment of electron correlation. The generality of this framework is demonstrated across both satu-rated and unsaturated cyclic hydrocarbons, including structurally complex systems, while also providing physical insight into the role of intrinsic molecular symmetry in reaction-consistent quantum simulations. This synergy between VQE, symmetry considerations, and homodesmotic reactions provides a systematic framework for evaluating ring strain energies and exploring virtual thermodynamic properties of hydrocarbons within a quantum com-putational paradigm. To the best of our knowledge, this work represents the first system-4atic application of the Variational Quantum Eigensolver to homodesmotic reaction schemes for evaluating ring strain energies of cyclic hydrocarbons, including structurally complex molecules, within a symmetry-consistent active space framework. 
+
+FIG. 1: Illustration of ring strain in cyclic hydrocarbons. The top panel shows the bent-bond geometry in cyclopropane, highlighting the deviation from the ideal tetrahedral bond angle and the associated angular strain. The remaining panels depict the representative equi-librium conformations of cyclopropane, cyclobutane (butterfly), cyclopentane (envelope), cyclohexane (chair), and adamantane. 5II. Theoretical Overview A. Variational Quantum Eigensolver Algorithm 
+
+VQE is a hybrid quantum-classical algorithm for estimating molecular ground-state en-ergies (GSEs), based on the variational principle. 
+
+E(⃗θ) = ⟨ψ(⃗θ)|H|ψ(⃗ θ)⟩ ≥ E0 (1) Where H is the molecular Hamiltonian and |ψ(⃗θ)⟩ is the parameterized trial wavefunction, and E0 is the exact GSE 27 . The Hamiltonian is expressed in qubit form (via first and second quantization, and Jordan-Wigner or Bravyi-Kitaev transformation) as a linear combination of Pauli operators. 
+
+H = X
+
+> i
+
+hiPi, Pi ∈ { I, X, Y, Z }⊗n (2) So the expectation value is measured as, 
+
+E(⃗θ) = X
+
+> i
+
+hi⟨ψ(⃗θ)|Pi|ψ(⃗θ)⟩ (3) The choice of ansatz is central to the success of VQE, because it determines how well the wavefunction can approximate the true ground state. A too-simple ansatz might fail to capture essential electronic correlation, while an overly complex one might introduce excessive parameters and circuit depth that are impractical on NISQ devices. This ansatz serves as the bridge between quantum hardware limitations and the accuracy of molecular simulations. Chemistry-inspired ansatz, such as Unitary coupled cluster (UCC Ansatz) 28 , are impor-tant because they incorporate known physical structure (excitations from a Hartree-Fock reference), ensuring the trial wavefunction explores a meaningful subspace. The mathemat-ical form of the UCCSD ansatz is as follows, encoding T (⃗ θ) as the excitation operator on a reference Hartree-Fock state. 
+
+|ψ(⃗θ)⟩ = eT (⃗ θ)−T †(⃗θ)|ϕHF ⟩ (4) The parameters are optimized by a classical optimizer 29 :⃗θ∗ = arg min ⃗θ
+
+E(⃗θ) (5) 6The final minimized value E(⃗θ∗) is taken as the best approximation of the ground state. 
+
+B. Homodesmotic Reaction 
+
+Error-balanced hypothetical reaction schemes have long played a central role in com-putational chemistry for obtaining reliable thermochemical quantities through systematic cancellation of correlation and basis-set errors 25,30–32 . Such approaches remain particularly valuable for properties such as ring strain energies, where direct computation of absolute energies can be challenging even with advanced electronic structure methods. Among these schemes, isodesmic reactions were introduced to ensure conservation of bond types between reactants and products, thereby reducing sensitivity to the level of electronic structure the-ory employed 32 . Bond separation reactions, a special subclass of isodesmic reactions, further refine this idea by decomposing molecules into fragments with matched bond environments, enabling enhanced error cancellation in thermochemical predictions 25 . Building on these concepts, homodesmotic reactions were formulated to achieve an even higher degree of bal-ance by simultaneously conserving bond types, hybridization patterns, and the local bonding environments of atoms in both reactants and products 25,33 . As a result, homodesmotic re-actions provide a more consistent treatment of electron correlation effects and have proven especially effective for hydrocarbons. Homodesmotic reaction schemes have been successfully employed to evaluate ring strain energies and stabilization energies in cyclic hydrocarbons, yielding results that often ap-proach chemical accuracy when combined with quantum chemical calculations 25,33,34 . By carefully balancing the bonding environments on both sides of the reaction, these schemes minimize systematic errors and isolate the energetic contribution associated with molecular strain. In the present work, homodesmotic reactions were considered for evaluating ring strain energies within a quantum computational framework. By computing the enthalpies of re-actants and products using the Variational Quantum Eigensolver, the reaction-based for-mulation maximizes error cancellation while mitigating limitations arising from finite active spaces and circuit depth. This synergy is particularly advantageous for near-term quan-tum simulations, where absolute energy calculations remain resource intensive. Based on two well-established sets of homodesmotic reaction schemes proposed by Khoury et al. 22 and 7Wheeler 25 , we evaluate the ring strain energies of five cyclic hydrocarbons - cyclopropane, cyclobutane, cyclopentane, cyclohexane, and adamantane - using VQE-based quantum sim-ulations. Additionally, few cyclic alkenes were also considered as shown below. The cor-responding reaction schemes and expressions for ring strain energy (RSE) are summarized below. Set I 
+
+This set of Homodesmotic reactions has been obtained from the work done by Khoury and his coworkers 22 , and the ring strain energy is represented by: 
+
+Similarly, we can calculate the RSE for other rings by following their respective reac-tion schemes. 8Set II 
+
+This set of Homodesmotic reactions has been obtained from the paper done by Wheeler 25 , and the ring strain energy is represented by. 
+
+Similarly, we can calculate the RSE for other rings by following their respective reac-tion schemes. 
+
+III. Computational Methodology A. Computational Chemistry 
+
+Quantum chemical calculations for all reactants and products were performed using the NWChem software package. Geometry optimizations and ground-state energy calculations were carried out within density functional theory using the B3LYP exchange–correlation functional in conjunction with the 6-31G* basis set. These optimized geometries and cor-responding electronic energies were used to evaluate the ring strain energies for each cyclic 9hydrocarbon through the homodesmotic reaction schemes described in Section II. In addition to density functional theory, coupled-cluster calculations with single and double excitations (CCSD) were performed to obtain reference ring strain energies for comparison. CCSD energies were computed using single point calculations using the density functional theory optimized geometries. All quantum chemical calculations were carried out on conventional computing platforms. For the symmetry-guided active space selection, NWChem package was employed to determine the irreducible representations of the molecular orbitals by exploiting the highest applicable abelian point group symmetry for each reactant and product involved in the homodesmotic reactions. The highest applicable abelian point group was employed to ensure unambiguous orbital symmetry labeling and consistent symmetry matching across reactants and products, which is essential for constructing reaction-consistent active spaces. These symmetry labels form the basis for constructing symmetry-consistent active spaces across reaction species, as described in the following subsection. 
+
+B. Quantum Computing and Group theory 
+
+The accuracy of Variational Quantum Eigensolver (VQE) calculations is strongly influ-enced by the choice of active space used to represent the molecular electronic structure. In reaction energy calculations, this choice becomes particularly critical, as an imbalanced treatment of electron correlation between reactants and products can lead to significant sys-tematic errors. To ensure a consistent and symmetry-balanced description across all species involved in a reaction, we employ a group-theoretic strategy for active space selection, fol-lowing and extending our previously developed framework for reaction energy prediction. For each molecular species, multiple candidate active spaces were constructed, ranging from a minimal (2, 2) active space to larger active spaces up to (10, 10). Each active space defines a truncated Hilbert space within which the VQE calculation is performed. For a given active space, the Hartree–Fock reference state is expressed as a single Slater determinant, 
+
+|Ψ0⟩ = |ϕ1 ¯ϕ1 ϕ2 ¯ϕ2 · · · ϕn ¯ϕn⟩ (6) where |ϕ⟩ and | ¯ϕ⟩i denote spin-up and spin-down molecular orbitals, respectively. The irreducible representation of each molecular orbital was determined using density functional 10 theory calculations in NWChem, employing the highest applicable abelian point group sym-metry for each molecule. While the use of non-Abelian point-group symmetry would be desirable in principle, current quantum algorithms and fermion-to-qubit mappings predom-inantly exploit Abelian symmetries, making Abelian symmetry adaptation the practical choice in VQE implementations. Accordingly, all symmetry analyses in this work are carried out within the highest-order Abelian point group compatible with each molecular structure. 
+
+FIG. 2: Illustration of symmetry classification of excitations for cyclopropane in a (2, 2) active space under C2v point group symmetry. (a) Cyclopropane structure with sym. elements indicated. (b) Ground-state electronic config., transforming as the A1 irrep. (c) Possible single excitations relative to the ground state: (i) and (ii) excitations transform-ing as B2, and (iii) excitation transforming as A1.For every candidate active space, all possible single and double excited configurations relative to the Hartree–Fock reference state were enumerated. Each excited configuration 11 was assigned an irreducible representation of the molecular point group, obtained from the direct product of the irreps of the molecular orbitals involved in the excitation. Based on this classification, we previously have introduced in one of our works a quantitative metric, termed the Symmetry Matched Fraction (SMF) 26 , defined as the fraction of excited config-urations that transform according to the same irreducible representation as the reference state, 
+
+SMF = Nexcitation with same irrep with the ref. state 
+
+Ntotal excitations 
+
+× 100 The SMF provides a measure of how effectively a given active space preserves symmetry compatibility between the reference state and its associated excited configurations, thereby serving as a proxy for the extent to which symmetry-allowed correlation effects are retained within the truncated Hilbert space. As an illustrative example, Fig. 2 shows the symmetry classification of excitations for cyclopropane in a (2, 2) active space under C2v symmetry. The Hartree–Fock reference configuration transforms as the a1 irreducible representation. Within this active space, three excited configurations are possible, comprising two single excitations transforming as b2 and one double excitation transforming as a1. Since only one of the three excited configurations shares the ground-state symmetry, the SMF for this active space is 33.3%. For reaction energy calculations, including ring strain energy evaluation, symmetry con-sistency across all reactants and products is essential. Accordingly, active spaces were se-lected such that the SMF values of the reactants and products matched exactly. In cases where multiple active spaces yielded the same SMF value for a given molecule, we observed that larger active spaces often provide improved correlation treatment. However, smaller symmetry-consistent active spaces can in several instances yield comparable or marginally improved agreement due to favorable error cancellation within the homodesmotic frame-work. This indicates that symmetry consistency is the primary requirement, while active space size provides additional flexibility rather than a strictly monotonic improvement in accuracy. Ground-state energy calculations were performed using the VQE algorithm with the unitary coupled-cluster singles and doubles (UCCSD) ansatz as implemented in Qiskit (version 1.0.0). The molecular electronic Hamiltonians were mapped to qubits using the par-ity mapping with symmetry-based tapering to reduce the qubit count. Optimization of the variational parameters was carried out using the simultaneous perturbation stochastic ap-12 proximation (SPSA) algorithm. All VQE simulations were performed using the statevector simulator backend. 
+
+IV. Result and discussion 
+
+Using the symmetry-guided active space selection strategy described above, we computed the ring strain energies (RSEs) of five cyclic hydrocarbons following two distinct sets of ho-modesmotic reaction schemes. In total, ten homodesmotic reactions were examined, and internally consistent trends were obtained for all systems considered, ranging from cyclo-propane to the structurally more complex adamantane. As outlined in the Computational Methodology, for each reactant and product we eval-uated the symmetry-matched fraction (SMF) associated with multiple candidate active spaces. We found that more than one active space can yield identical SMF values (SI, Table 2-18). In such cases, the final choice of active space was guided by a balance between system size and chemical considerations. For smaller rings such as cyclopropane and cyclobutane, relatively compact active spaces were sufficient to capture the dominant correlation effects while maintaining chemical accuracy and minimal computational overhead. In contrast, for moderately sized and structurally complex systems, expansion of the active space often im-proved quantitative agreement, although in several cases smaller symmetry-consistent active spaces were already sufficient to achieve chemical accuracy. The VQE-computed RSE values were bench marked against DFT and CCSD results, as shown in Figs. 3–7. In each bar plot, the third bar corresponds to RSE values obtained using a uniform minimal active space of (2, 2) for all reaction species, without enforcing any symmetry-based selection criteria. The subsequent bars represent results obtained using the symmetry-guided protocol, where common SMF values of 33.33 % or 50 % were employed to select symmetry consistent active spaces across all reactants and products. For a deeper assessment of the robustness and the transferability of the symmetry-guided active space selection protocol, we further extended our analysis of ring strain energy (RSE) determination for unsaturated cyclic hydrocarbon systems. Involvement of π-electron cor-relation and symmetry sensitive electronic structure effects in these unsaturated cyclic hy-drocarbons provide a more stringent evaluation of the SMF-based active space selection strategy within the Homodesmotic reaction schemes. 13 (a) (b)  
+
+> (c) (d)
+
+FIG. 3: Bar plots comparing ring strain energies (RSEs) of cyclopropane obtained from VQE calculations using different active space selection strategies for Set I and Set II homodesmotic reaction schemes. Panels (a) and (b) correspond to Set I and Set II reactions, respectively, using the smallest symmetry-consistent active spaces, while panels (c) and (d) show results obtained with larger symmetry-consistent active spaces. In each panel, bars (from left to right) represent density functional theory (DFT), coupled-cluster singles and doubles (CCSD), VQE with a uniform (2, 2) active space without symmetry guidance, and VQE with the symmetry-guided active space selection protocol employing a matched SMF value of 33.33 % across all reactants and products. 14 (a) (b)  
+
+> (c) (d)
+
+FIG. 4: Bar plots for cyclobutane 
+
+A. Saturated Cyclic Hydrocarbons 
+
+1. Cyclopropane 
+
+The bar plots for cyclopropane are shown in Fig. 3. For this smallest ring system, the uniform (2, 2) active space and the symmetry-guided selection with an SMF match of 33.33 % yield identical RSE values, as both approaches effectively correspond to the same active spaces for all reaction species in both Set I and Set II homodesmotic reactions. The resulting RSE values are within 0.3–0.5 kcal/mol of the DFT reference and within 1.5–1.8 kcal/mol of the CCSD values [Figs. 3(a,b)]. Upon increasing the active space size while maintaining the same SMF value, a modest improvement is observed for the Set II reaction scheme, with 15 (a) (b)  
+
+> (c) (d)
+
+FIG. 5: Bar plots for cyclopentane deviations reduced to approximately 0.1 kcal/mol relative to DFT and 1.3 kcal/mol relative to CCSD [Fig. 3(d)], whereas no significant change is seen for the Set I scheme [Fig. 3(c)]. 
+
+2. Cyclobutane 
+
+Cyclobutane exhibits trends closely analogous to those observed for cyclopropane (Fig. 4). Both the uniform (2, 2) active space and the symmetry-guided selection with an SMF of 33.33 % produce RSE values with deviations of less than 0.02 kcal/mol relative to DFT and 1.08–1.45 kcal/mol relative to CCSD for both homodesmotic reaction sets [Figs. 4(a,b)]. Increasing the active space size while preserving the SMF condition leads to further improve-16 ment for the Set II reaction scheme, reducing the deviation to approximately 0.77 kcal/mol relative to CCSD [Fig. 4(d)], whereas Set I again shows minimal sensitivity to active space enlargement [Fig. 4(c)]. 
+
+3. Cyclopentane 
+
+For cyclopentane, the uniform (2, 2) active space yields deviations of 0.8–1.05 kcal/mol relative to DFT and 1.04–1.5 kcal/mol relative to CCSD for both homodesmotic schemes (Fig. 5). Application of the symmetry-guided protocol with small active spaces does not lead to a substantial improvement [Figs. 5(a,b)]. However, upon increasing the active space size, a noticeable enhancement is obtained, particularly for the Set II reaction scheme. In this case, an SMF match of 33.33 % yields better agreement than the 50 % condition, highlighting the importance of both symmetry matching and sufficient active space flexibility [Figs. 5(c,d)]. 
+
+4. Cyclohexane 
+
+Cyclohexane follows a pattern similar to cyclopentane (Fig. 6). Using a uniform (2, 2) active space results in deviations of 0.8–1.09 kcal/mol with respect to DFT and 0.5–1.1 kcal/mol relative to CCSD. The symmetry-guided strategy does not significantly alter the results for the Set I reaction scheme, irrespective of active space size [Figs. 6(a,c)]. In contrast, for the Set II scheme, employing a larger symmetry-consistent active space with an SMF of 33.33 % leads to a marked improvement in the predicted RSE [Figs. 6(b,d)]. 
+
+5. Adamantane 
+
+The most pronounced impact of the symmetry-guided active space selection strategy is observed for adamantane (Fig. 7). When a uniform (2, 2) active space is used, the RSE deviates by approximately 2.0–2.4 kcal/mol from DFT and by about 1.5 kcal/mol from CCSD. Upon implementing the symmetry-guided protocol with larger active spaces, the agreement improves substantially [Figs. 7(c,d)]. Unlike the smaller rings, a consistent SMF value of 33.33 % could not be obtained for all reaction species involved in the homodesmotic 17 (a) (b)  
+
+> (c) (d)
+
+FIG. 6: Bar plots for cyclohexane schemes for adamantane. Consequently, the RSE was evaluated using a common SMF value of 50 %. Despite the increased active space requirements, this symmetry-consistent approach yields excellent agreement with DFT and moderate agreement with CCSD, underscoring the applicability of the method to larger and more structurally complex systems. Across the series from Cyclopropane to Cyclohexane, a systematic decrease in the refer-ence RSE values is observed, reflecting the progressive release of angular strain as the ring size increases. Notably, the group-theory-inspired active space selection protocol within the VQE framework successfully reproduces this chemically expected trend using hypothetical reaction schemes. Error analyses for both homodesmotic sets (Fig. 8) further indicate that Set II reactions consistently yield closer agreement with both DFT and CCSD benchmarks. 18 (a) (b)  
+
+> (c) (d)
+
+FIG. 7: Bar plots for adamantane The consistently superior performance of the Set II homodesmotic reaction schemes can be attributed to their stricter balancing of local bonding patterns, hybridization states, and stereo electronic environments across reactants and products. This enhanced chemical bal-ance promotes more effective cancellation of correlation energy contributions at the reaction level, which complements the symmetry-guided active space selection protocol employed in this work. Consequently, enforcing a common symmetry-matched fraction across reac-tion species is particularly effective for Set II schemes, leading to systematically improved accuracy, especially for larger and structurally more complex ring systems. Overall, the symmetry-guided active space selection strategy produces RSE values within 0.2–1.0 kcal/mol of DFT and within approximately 1.8 kcal/mol of CCSD across all five 19 (a) (b) 
+
+FIG. 8: (a) and (b) Errors in ring strain energies (RSEs) obtained from VQE calculations for saturated cyclic hydrocarbons using Set I and Set II homodesmotic reaction schemes, respectively. Errors are reported relative to DFT and CCSD reference values for symmetry-matched fractions (SMF) of 33.33% and 50%. The horizontal axis denotes the ring system (cyclopropane through adamantane), while the vertical axis represents the deviation (kcal/-mol) of the VQE results from the corresponding reference methods. The plots illustrate the dependence of VQE accuracy on both the homodesmotic reaction scheme and the choice of SMF-guided active space across different ring sizes. systems, thereby approaching chemical accuracy. These results demonstrate that enforc-ing symmetry consistency across reactants and products is crucial for balanced correlation treatment in homodesmotic reaction-based VQE calculations. The systematic agreement of symmetry-guided VQE results with both density functional theory and coupled-cluster benchmarks across all five cyclic hydrocarbons indicates that enforcing symmetry consis-tency across reactants and products provides a chemically meaningful route to balanced correlation effects in homodesmotic reaction schemes. For larger and structurally complex systems, such as adamantane, the transition from a uniform (2, 2) active space to symmetry matched active spaces improves the predicted ring strain energies by up to ∼2 kcal/mol, restoring chemical accuracy and underscoring the necessity of symmetry-consistent correla-tion treatment in homodesmotic VQE calculations. 20 (a) (b) 
+
+> (c)
+
+FIG. 9: (a) and (b) Ring strain energies (RSEs) of unsaturated cyclic hydrocarbons (cy-clopropene, cyclobutene, cyclopentene, and cyclohexene) computed using Set I and Set II homodesmotic reaction schemes, respectively. Results obtained from symmetry-guided VQE calculations employing an SMF of 33.33% are compared against DFT and CCSD reference values. (c) Corresponding errors in the VQE-computed RSEs relative to DFT and CCSD references for both homodesmotic schemes. The plots illustrate the performance of the symmetry-guided VQE protocol for unsaturated ring systems and its dependence on the reaction scheme. 21 B. Unsaturated Cyclic Hydrocarbons 
+
+To further assess the robustness of the symmetry-guided VQE framework, we extended the analysis of ring strain energies to unsaturated cyclic hydrocarbons, namely cyclopropene, cyclobutene, cyclopentene, and cyclohexene, using both Set I and Set II homodesmotic re-action schemes. Figure 9 summarizes the RSE values obtained from symmetry-guided VQE calculations employing a common SMF value of 33 .33% (restricted to the larger symmetry-consistent active spaces), together with a comparison to DFT and CCSD reference values. Overall, the protocol continues to yield chemically meaningful RSEs for unsaturated rings, with performance that correlates strongly with the degree of ring strain and electronic com-plexity. The qualitative trends in RSE are consistently reproduced across all systems, and quantitative agreement with both DFT and CCSD is maintained for most cases. For the highly strained unsaturated system cyclopropene, the symmetry-guided VQE approach underestimates the RSE by approximately 2 .0 kcal mol −1 relative to DFT and by ∼ 3.0 kcal mol −1 relative to CCSD across both homodesmotic reaction schemes. This larger deviation can be attributed to the pronounced ring strain and enhanced π–σ coupling in cyclopropene, which introduce significant near-degeneracy and multireference character. These effects are not fully captured within the compact symmetry-consistent active spaces and the UCCSD ansatz employed here, leading to residual correlation contributions that remain partially unaccounted for. Notably, Set II homodesmotic reactions offer a modest improvement over Set I, reflecting more effective error cancellation. For cyclobutene, the protocol yields improved agreement. Deviations relative to DFT remain within chemical accuracy, while comparison to CCSD shows moderate discrepancies, up to 2 kcal mol −1, that are nevertheless reduced when employing Set II reaction schemes. This trend mirrors the behavior observed for saturated four-membered rings and underscores the importance of the electronic environment encoded in the reaction design. In contrast, cyclopentene represents a particularly successful case for the present framework. For both Set I and Set II reactions, the symmetry-guided VQE results lie well within chemical accuracy relative to both DFT and CCSD. This system demonstrates that, once the extreme strain and strong π–σ coupling characteristic of small unsaturated rings are alleviated, the symmetry-consistent active space selection strategy is capable of capturing the dominant correlation effects governing ring strain with high fidelity. 22 Cyclohexene exhibits similarly robust behavior. The deviations observed are small and slightly negative, indicating mild overestimation of RSE arising from favorable error cancel-lation rather than a systematic failure of the method. Importantly, these deviations remain within or very close to chemical accuracy for both homodesmotic reaction sets, confirming that the symmetry-guided VQE framework remains reliable for moderately strained unsat-urated rings. Overall, the extension of the symmetry-guided VQE framework to unsaturated cyclic hydrocarbons demonstrates its robustness even in the presence of π-electron correlation. Consistent with the observations for saturated ring systems, the Set II homodesmotic reac-tion schemes provide systematically improved agreement with both DFT and CCSD bench-marks, reinforcing their superior error-cancellation characteristics within the VQE paradigm. Taken together, the results for both saturated and unsaturated rings highlight the potential of the symmetry-guided active space selection strategy as a broadly applicable and chemi-cally consistent approach for evaluating virtual properties, such as ring strain energy, using hypothetical reaction schemes within quantum computational chemistry. 
+
+C. Symmetry-Matched Fraction and the Role of Intrinsic Molecular Symmetry 
+
+To further rationalize the symmetry-guided active space selection protocol employed in this work, we examined the origin and physical meaning of the symmetry-matched fraction (SMF) by evaluating its value in the full orbital space (6-31G*) for all reactants and products involved in the homodesmotic reactions. In all cases, the highest-order Abelian point group symmetry intrinsic to each molecule was used. As defined earlier, the SMF corresponds to the fraction of excited configurations that transform according to the same irreducible representation as the Hartree–Fock reference state. Fig. 9 illustrates the SMF values for representative molecules grouped according to their point-group order. A striking observation emerges: molecules belonging to point groups of the same order exhibit nearly identical SMF values, independent of molecular size or chemical composition. For instance, all species with point-group order 4 yield SMF values clustered around ∼ 25 .6% [Fig. 9(a)], whereas species with point-group order 2 consistently exhibit SMF values near ∼ 50% [Fig. 9(b)]. This numerical evidence indicates that SMF is 23 fundamentally governed by molecular symmetry rather than by chemical identity or system size. This observation provides a firm theoretical basis for enforcing a common SMF value across reactants and products in homodesmotic reactions: doing so ensures a symmetry consistent description of the excitation manifold and, consequently, a balanced treatment of electron correlation within the VQE framework.  
+
+> (a) (b)
+
+FIG. 10: (a) Symmetry-matched fraction (SMF) values computed from the full orbital space (6-31G*) for representative reaction species belonging to point groups of order 2. (b) Corresponding SMF values for species belonging to point groups of order 4. In each panel, molecules sharing the same symmetry order exhibit very close SMF values with each other. This numerical clustering provides a group-theoretical basis for selecting a common SMF value across all reactants and products in a given homodesmotic reaction scheme However, an important caveat emerges when symmetry consistency is imposed incorrectly. While SMF correlates strongly with point-group order, artificially enforcing the same point-group symmetry across all reaction species, by reducing the intrinsic symmetry of certain molecules, leads to erroneous ring strain energies. This effect is clearly demonstrated for cyclopentane, cyclopentene, cyclohexene and adamantane. Cyclopentane and cyclopentene possess an envelope conformation with an intrinsic highest-order Abelian symmetry of Cs
+
+(order 2), whereas cyclohexene possesses C2 symmetry. Artificially lowering the symme-try of the corresponding reaction species (e.g., ethane, propane, hexane and cis-2-butene, 24 which naturally possess point-group order 4) to enforce a common symmetry order results in severely degraded RSE values, despite achieving a nominally matching SMF (Table I). A similar failure is observed for adamantane, where forcing lower symmetry on highly sym-metric species produces unphysical RSE values for both Set I and Set II reaction schemes (Table I). TABLE I: RSEs obtained when the molecular symmetry of selected reaction species is ar-tificially reduced to enforce a common SMF value across all reactants and products. The resulting RSE values show large deviations and non-physical trends, indicating that forced symmetry lowering disrupts the balanced cancellation of correlation effects in the homod-esmotic reaction schemes.          
+
+> Ring Systems RSE (kcal/mol) SET I SET II Cyclopentane 2.693 -6.670 Adamantane -11.156 -30.478 Cyclopentene -2.500 -26.600 Cyclohexene -3.030 -35.170
+
+In contrast, when the intrinsic highest-order Abelian symmetry of each reaction species is preserved, the computed RSE values recover excellent agreement with both DFT and CCSD values. This behavior can be attributed to the alteration of the degeneracy struc-ture of the electronic Hilbert space upon symmetry lowering, which redistributes molecular orbitals among irreducible representations and modifies the associated correlation contribu-tions. These results establish that SMF consistency must be enforced within each molecule’s intrinsic highest-order symmetry, rather than by artificially forcing all reaction species into a common symmetry order. When this principle is respected, SMF emerges as a robust, 25 symmetry-structured quantity that naturally supports balanced correlation treatment across reactants and products in homodesmotic VQE calculations. 
+
+V. Conclusion 
+
+In this work, we have demonstrated that homodesmotic reaction schemes can be mean-ingfully and systematically implemented within the Variational Quantum Eigensolver frame-work to evaluate ring strain energies of cyclic hydrocarbons. By enforcing symmetry-consistent treatment of electron correlation across reactants and products, chemically mean-ingful reaction energies can be obtained even within the constraints imposed by finite active spaces and NISQ-era quantum algorithms. This study establishes homodesmotic reactions as a viable and powerful construct for reaction-based quantum simulations, extending their long-standing utility in computational chemistry into the quantum computing paradigm. The methodology was validated across a broad range of systems, including small strained rings, moderately sized cyclic hydrocarbons, structurally complex polycyclic systems such as adamantane, and unsaturated rings containing π electrons. For all saturated and most unsaturated systems, the symmetry-consistent VQE results show close agreement with den-sity functional theory and coupled-cluster benchmarks, approaching chemical accuracy. The systematic trends in ring strain energies, from highly strained small rings to larger, more flex-ible frameworks, are faithfully reproduced, confirming that reaction-level error cancellation can be effectively achieved within a quantum algorithmic setting. A consistent observa-tion throughout this study is that Set II homodesmotic reaction schemes provide improved agreement relative to Set I schemes across all ring systems considered. This behavior reflects the superior matching of local electronic environments in Set II reactions, leading to more effective cancellation of residual correlation errors when combined with symmetry-consistent VQE calculations. These findings highlight the importance of reaction design, in addition to active space considerations, for achieving reliable thermochemical predictions on quantum computing platforms. Beyond numerical benchmarking, this work also clarifies the symmetry origin of reaction-consistent correlation treatment in homodesmotic VQE calculations. By analyzing the symmetry-matched fraction, we show that the structure of the excitation manifold is pri-marily governed by molecular point-group symmetry rather than molecular size or chemical 26 identity. Importantly, we demonstrate that preserving each molecule’s intrinsic highest-order Abelian symmetry is essential; artificial symmetry reduction, even when nominal symmetry-based metrics appear matched, disrupts the degeneracy structure of the electronic Hilbert space and leads to unphysical reaction energetics. These observations establish clear guide-lines for the correct application of symmetry-based consistency criteria in reaction-level quantum simulations. For highly strained and electronically complex systems such as cyclopropene, larger de-viations are observed, reflecting enhanced π–σ coupling and near-degeneracy effects that are not fully captured within compact active spaces and single-reference ans¨ atze such as UCCSD. These cases delineate the current limits of the approach and point toward natu-ral future extensions involving larger active spaces or more flexible ans¨ atze. Nevertheless, for cyclobutene, cyclopentene, and cyclohexene, the symmetry-consistent VQE framework remains robust, yielding results within or very close to chemical accuracy relative to both DFT and CCSD benchmarks. Overall, this study establishes a general and chemically consistent framework for evalu-ating virtual thermodynamic properties using quantum algorithms, in which homodesmotic reaction design and symmetry-consistent correlation treatment play central roles. The ap-proach is readily extendable to larger polycyclic systems, heteroatom-containing rings, and additional virtual properties such as aromatic stabilization energies, resonance energies, and hyperconjugative effects. As quantum hardware and algorithms continue to mature, the combination of reaction-based error cancellation and symmetry-aware quantum simulations demonstrated here provides a promising pathway toward scalable and reliable quantum computational chemistry. 
+
+Data Availability Statement 
+
+The data that support the findings of this study are available within the article and its Supporting Information. Additional data and computational details are available from the corresponding author upon reasonable request. The following materials are available in the Supporting Information: 
+
+• Optimized molecular geometries for all reactants and products. 27 • Total electronic energies of all reaction species for both Set I and Set II homodesmotic reactions. 
+
+• Highest-order Abelian point-group symmetries employed for each molecule. 
+
+• All symmetry-consistent active spaces yielding identical SMF values in the group-theoretical analysis used for VQE calculations. 
+
+• Molecular orbital details, including irreducible representations, for all reaction species from which the active spaces were constructed. 
+
+Acknowledgement 
+
+LR, MS, MT, AK, and MP gratefully acknowledge the Indian Institute of Technology, Jodhpur, for providing the computational facilities essential for completing this work. AK also acknowledges SERB (Grant No. CRG/2022/005979) for funding the project. LR and MS are grateful to the Department of Chemistry, IIT Jodhpur, and the Ministry of Education (MoE) for offering research infrastructure and financial support. 
+
+References 
+
+> 1
+
+Y. Cao, J. Romero, J. P. Olson, M. Degroote, P. D. Johnson, M. Kieferov´ a, I. D. Kivlichan, T. Menke, B. Peropadre, N. P. Sawaya et al. , Chem. Rev. , 2019, 119 , 10856–10915. 
+
+> 2
+
+S. McArdle, S. Endo, A. Aspuru-Guzik, S. C. Benjamin and X. Yuan, Rev. Mod. Phys. ,2020, 92 , 015003. 
+
+> 3
+
+B. P. Lanyon, J. D. Whitfield, G. G. Gillett, M. E. Goggin, M. P. Almeida, I. Kassal, J. D. Biamonte, M. Mohseni, B. J. Powell, M. Barbieri et al. , Nat. Chem. , 2010, 2, 106–111. 
+
+> 4
+
+D. Claudino, Int. J. Quantum Chem. , 2022, 122 , e26990. 
+
+> 5
+
+S. Kais, Quantum Inf. Comp. Chem. , 2014, 1–38. 
+
+> 6
+
+G. Fano and S. Blinder, in Mathematical Physics in Theoretical Chemistry , Elsevier, 2019, pp. 377–400. 
+
+> 7
+
+I. Kassal, J. D. Whitfield, A. Perdomo-Ortiz, M.-H. Yung and A. Aspuru-Guzik, Annu. Rev. Phys. Chem. , 2011, 62 , 185–207. 
+
+> 8
+
+P. A. M. Dirac, Proc. R. Soc. Lond. A. , 1929, 123 , 714–733. 28 9R. P. Feynman, Int. J. Theor. Phys. , 1982, 21 , 467–488. 
+
+> 10
+
+A. Aspuru-Guzik, A. D. Dutoi, P. J. Love and M. Head-Gordon, Science , 2005, 309 ,1704–1707. 
+
+> 11
+
+V. Armaos, D. A. Badounas, P. Deligiannis and K. Lianos, Appl. Phys. A. , 2020, 126 ,625. 
+
+> 12
+
+A. Kandala, A. Mezzacapo, K. Temme, M. Takita, M. Brink, J. M. Chow and J. M. Gambetta, Nature , 2017, 549 , 242–246. 
+
+> 13
+
+J. Preskill, Quantum , 2018, 2, 79. 
+
+> 14
+
+M. Ostaszewski, E. Grant and M. Benedetti, Quantum , 2021, 5, 391. 
+
+> 15
+
+M. Benedetti, E. Lloyd, S. Sack and M. Fiorentini, Quantum Sci. Technol. , 2019, 4, 043001. 
+
+> 16
+
+J. D. Whitfield, J. Biamonte and A. Aspuru-Guzik, Mol. Phys. , 2011, 109 , 735–750. 
+
+> 17
+
+J. Lee, W. J. Huggins, M. Head-Gordon and K. B. Whaley, J. Chem. Theory Comput. ,2018, 15 , 311–324. 
+
+> 18
+
+K. B. Wiberg, Angewandte Chemie International Edition in English , 1986, 25 , 312–322. 
+
+> 19
+
+R. D. Bach and O. Dmitrenko, The Journal of Organic Chemistry , 2002, 67 , 2588–2599. 
+
+> 20
+
+A. Greenberg and J. F. Liebman, Strained Organic Molecules: Organic Chemistry: ASeries of Monographs, Vol. 38 , Academic Press, 2013, vol. 38. 
+
+> 21
+
+J. D. Cox and G. Pilcher, (No Title) , 1970, 312–322. 
+
+> 22
+
+P. R. Khoury, J. D. Goddard and W. Tam, Tetrahedron , 2004, 60 , 8103–8112. 
+
+> 23
+
+T. Dudev and C. Lim, Journal of the American Chemical Society , 1998, 120 , 4450–4458. 
+
+> 24
+
+J. D. Dill, A. Greenberg and J. F. Liebman, Journal of the American Chemical Society ,1979, 101 , 6814–6826. 
+
+> 25
+
+S. E. Wheeler, Wiley Interdisciplinary Reviews: Computational Molecular Science , 2012, 
+
+2, 204–220. 
+
+> 26
+
+M. Sarkar, L. Roy, A. Gutal, A. Kumart and M. Paranjothy, arXiv preprint arXiv:2503.12084 , 2025, 2588–2599. 
+
+> 27
+
+M. Alteg, B. Chevalier, O. Mestoudjian and J.-L. Rossi, arXiv preprint arXiv:2210.15438 ,2022, 311–324. 
+
+> 28
+
+H. R. Grimsley, D. Claudino, S. E. Economou, E. Barnes and N. J. Mayhall, J. Chem. Theory Comput. , 2019, 16 , 1–6. 
+
+> 29
+
+H. Singh, S. Majumder and S. Mishra, J. Chem. Phys. , 2023, 159 , 1–6. 
+
+> 30
+
+W. J. Hehre, R. Ditchfield, L. Radom and J. A. Pople, Journal of the American Chemical 
+
+29 Society , 1970, 92 , 4796–4801. 
+
+> 31
+
+W. J. Hehre, Accounts of Chemical Research , 1976, 9, 399–406. 
+
+> 32
+
+J. A. Pople, L. Radom and W. J. Hehre, Journal of the American Chemical Society , 1971, 
+
+93 , 289–300. 
+
+> 33
+
+P. George, M. Trachtman, C. W. Bock and A. M. Brett, Journal of the Chemical Society, Perkin Transactions 2 , 1976, 1222–1227. 
+
+> 34
+
+P. George, M. Trachtman, C. W. Bock and A. M. Brett, Theoretica chimica acta , 1975, 
+
+38 , 121–129. 30

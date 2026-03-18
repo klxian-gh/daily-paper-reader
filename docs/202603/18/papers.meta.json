@@ -1,0 +1,51 @@
+{
+  "label": "2026-03-18",
+  "date": "2026-03-18",
+  "generated_at": "2026-03-18T20:58:11",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202603/18/2603.12737v1-reaction-level-consistency-within-the-variational-quantum-eigensolver-homodesmotic-ring-strain-energies-of-cyclic-hydrocarbons",
+      "section": "quick",
+      "title_en": "Reaction-Level Consistency within the Variational Quantum Eigensolver: Homodesmotic Ring Strain Energies of Cyclic Hydrocarbons",
+      "authors": "L. Roy, M. Sarkar, M. Tewari, A. Kumar, M. Paranjothy",
+      "date": "2026-03-13",
+      "pdf": "https://arxiv.org/pdf/2603.12737v1",
+      "score": "7.0",
+      "evidence": "化学反应模拟与反应一致性",
+      "tldr": "本研究针对变分量子本征求解器（VQE）在模拟化学反应时电子相关处理不一致的问题，提出了一种基于对称性引导的活性空间选择协议。通过在同等同键反应方案中确保反应物与产物的对称匹配分数（SMF）一致，实现了对从环丙烷到金刚烷等一系列环状烃类环张力能的高精度计算。该方法在保持化学精度的同时，显著提升了量子模拟在处理复杂分子系统时的可靠性与扩展性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Simulation of chemical reactions on quantum computing platforms using quantum classical hybrid algorithms such as the Variational Quantum Eigensolver (VQE) is challenged by the need for a reaction consistent treatment of electron correlation in reaction energy evaluations. In this work, we employ a previously reported symmetry guided active space selection protocol to compute ring strain energies of cyclic hydrocarbons using homodesmotic reaction schemes. The protocol enforces symmetry consistency across all reactants and products by selecting active spaces that yield identical symmetry matched fraction (SMF) values, thereby ensuring balanced correlation treatment at the reaction level. When multiple active spaces satisfy this criterion for a given molecule, larger active spaces often provide improved correlation treatment; however, smaller symmetry consistent active spaces can also yield comparable agreement due to favorable error cancellation within the homodesmotic framework. Using this framework, ring strain energies were evaluated for a series of saturated and unsaturated cyclic hydrocarbons, ranging from cyclopropane to the structurally complex adamantane. The resulting energies achieve chemical accuracy relative to density functional theory (DFT) and remain in close agreement with coupled cluster singles and doubles (CCSD) benchmarks. The systematic performance across increasing molecular complexity highlights the effectiveness of combining homodesmotic reaction design with symmetry-consistent VQE calculations. This approach, which enforces physically grounded consistency across reaction species, demonstrates clear potential for extending reaction based quantum simulations to larger molecular systems and broader classes of chemical reactions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/18/2603.09410v1-infrared-spectroscopy-of-protonated-water-clusters-via-the-quantum-thermal-bath-method-and-highly-accurate-machine-learned-potentials",
+      "section": "quick",
+      "title_en": "Infrared spectroscopy of protonated water clusters via the quantum thermal bath method and highly accurate machine-learned potentials",
+      "authors": "T. Baird, R. Vuilleumier, S. Bonella",
+      "date": "2026-03-10",
+      "pdf": "https://arxiv.org/pdf/2603.09410v1",
+      "score": "6.0",
+      "evidence": "量子热浴与分子动力学模拟",
+      "tldr": "本研究利用机器学习势能面（PES）和偶极矩面（DMS），结合量子热浴（QTB）方法，对质子化水团簇（单体到四体）的红外光谱进行了分子动力学模拟。该方法在有效包含核量子效应（NQEs）的同时，显著降低了计算成本。研究结果与实验及传统高精度理论方法高度吻合，为研究复杂水环境的结构与动力学提供了一种高效且准确的新途径。",
+      "tags": "query:qmmm",
+      "abstract_en": "The spectral features of water clusters provide important information on their structure and dynamics and can assist in deciphering the nature of the local environment of aqueous solutions in a variety of different conditions. Accurately capturing these features via numerical simulations is a non-trivial task that typically requires a sophisticated combination of high-level electronic structure methods and costly quantum dynamics techniques. We present results of molecular dynamics simulations of the IR spectra of protonated water clusters, ranging from the monomer to the tetramer, obtained via the combination of highly accurate machine-learned potential energy surfaces (PES) and dipole moment surfaces (DMS), and the quantum thermal bath (QTB) methodology which facilitates cost-effective inclusion of NQEs in molecular dynamics simulations. We compare our results with previous theoretical and experimental studies and show that this combination provides a significantly cheaper, yet still suitably accurate, alternative to more traditional computational approaches.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/18/2603.10159v1-bias-in-universal-machine-learned-interatomic-potentials-and-its-effects-on-fine-tuning",
+      "section": "quick",
+      "title_en": "Bias in Universal Machine-Learned Interatomic Potentials and its Effects on Fine-Tuning",
+      "authors": "Nicolas Wong, Julia H. Yang",
+      "date": "2026-03-10",
+      "pdf": "https://arxiv.org/pdf/2603.10159v1",
+      "score": "6.0",
+      "evidence": "分子动力学中的机器学习原子间势",
+      "tldr": "本研究探讨了通用机器学习原子间势（uMLIPs）在处理域外任务时的偏差问题，指出微调是提高准确性的关键。通过对比“朴素微调”（并行轨迹采样）与“周期性微调”（单轨迹间隔采样）两种数据生成策略，发现周期性微调能显著提升模型的泛化能力和动力学模拟的准确性。研究还利用主成分分析和Q残差分析量化了外推不确定性，为优化大规模模拟提供了指导。",
+      "tags": "query:qmmm",
+      "abstract_en": "Universal machine learned interatomic potentials (uMLIPs) embody a growing area of interest due to their transferability across the periodic table, displaying an error of about 0.6 kcal/mol against the Matbench Discovery test set. However, we show that achieving more accurate predictions on out-of-domain tasks requires fine-tuning. Additionally, we investigate the existence and influence of model biases in molecular dynamics (MD) by examining two approaches for data generation: from multiple MD trajectories in parallel, which we call naive fine-tuning, and from a single MD trajectory with fine-tuning after set intervals, which we call periodic fine-tuning. Our results find that naive fine-tuning generates constrained datasets that fail to represent MD simulations, and thus downstream fine-tuned models fail during extrapolation. In contrast, periodic fine-tuning yields models which are more generalizable and accurate, producing low-error dynamics. These findings indicate the role of uMLIP bias in fine-tuning, and highlights the need for multiple fine-tuning steps. Lastly, we relate unphysical behavior to principal component space, and quantify extrapolations through Q-residual analysis, which are useful as a proxy for epistemic uncertainty for larger simulations.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

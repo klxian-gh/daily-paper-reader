@@ -1,0 +1,127 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-18T20:57:41.573728+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.12737v1",
+      "title": "Reaction-Level Consistency within the Variational Quantum Eigensolver: Homodesmotic Ring Strain Energies of Cyclic Hydrocarbons",
+      "abstract": "Simulation of chemical reactions on quantum computing platforms using quantum classical hybrid algorithms such as the Variational Quantum Eigensolver (VQE) is challenged by the need for a reaction consistent treatment of electron correlation in reaction energy evaluations. In this work, we employ a previously reported symmetry guided active space selection protocol to compute ring strain energies of cyclic hydrocarbons using homodesmotic reaction schemes. The protocol enforces symmetry consistency across all reactants and products by selecting active spaces that yield identical symmetry matched fraction (SMF) values, thereby ensuring balanced correlation treatment at the reaction level. When multiple active spaces satisfy this criterion for a given molecule, larger active spaces often provide improved correlation treatment; however, smaller symmetry consistent active spaces can also yield comparable agreement due to favorable error cancellation within the homodesmotic framework. Using this framework, ring strain energies were evaluated for a series of saturated and unsaturated cyclic hydrocarbons, ranging from cyclopropane to the structurally complex adamantane. The resulting energies achieve chemical accuracy relative to density functional theory (DFT) and remain in close agreement with coupled cluster singles and doubles (CCSD) benchmarks. The systematic performance across increasing molecular complexity highlights the effectiveness of combining homodesmotic reaction design with symmetry-consistent VQE calculations. This approach, which enforces physically grounded consistency across reaction species, demonstrates clear potential for extending reaction based quantum simulations to larger molecular systems and broader classes of chemical reactions.",
+      "authors": [
+        "L. Roy",
+        "M. Sarkar",
+        "M. Tewari",
+        "A. Kumar",
+        "M. Paranjothy"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "quant-ph"
+      ],
+      "published": "2026-03-13T07:32:18+00:00",
+      "link": "https://arxiv.org/pdf/2603.12737v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "simulation of chemical reactions and reaction consistency",
+      "llm_evidence_cn": "化学反应模拟与反应一致性",
+      "llm_evidence": "化学反应模拟与反应一致性",
+      "canonical_evidence": "化学反应模拟与反应一致性",
+      "llm_tldr_en": "Applies VQE to compute reaction energies with consistent treatment of electron correlation.",
+      "llm_tldr_cn": "应用 VQE 计算反应能，并对电子相关性进行一致性处理。",
+      "llm_tldr": "应用 VQE 计算反应能，并对电子相关性进行一致性处理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.09410v1",
+      "title": "Infrared spectroscopy of protonated water clusters via the quantum thermal bath method and highly accurate machine-learned potentials",
+      "abstract": "The spectral features of water clusters provide important information on their structure and dynamics and can assist in deciphering the nature of the local environment of aqueous solutions in a variety of different conditions. Accurately capturing these features via numerical simulations is a non-trivial task that typically requires a sophisticated combination of high-level electronic structure methods and costly quantum dynamics techniques. We present results of molecular dynamics simulations of the IR spectra of protonated water clusters, ranging from the monomer to the tetramer, obtained via the combination of highly accurate machine-learned potential energy surfaces (PES) and dipole moment surfaces (DMS), and the quantum thermal bath (QTB) methodology which facilitates cost-effective inclusion of NQEs in molecular dynamics simulations. We compare our results with previous theoretical and experimental studies and show that this combination provides a significantly cheaper, yet still suitably accurate, alternative to more traditional computational approaches.",
+      "authors": [
+        "T. Baird",
+        "R. Vuilleumier",
+        "S. Bonella"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-10T09:25:16+00:00",
+      "link": "https://arxiv.org/pdf/2603.09410v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum thermal bath and molecular dynamics simulations",
+      "llm_evidence_cn": "量子热浴与分子动力学模拟",
+      "llm_evidence": "量子热浴与分子动力学模拟",
+      "canonical_evidence": "量子热浴与分子动力学模拟",
+      "llm_tldr_en": "Combines quantum thermal baths with machine-learned potentials to simulate IR spectra of water clusters.",
+      "llm_tldr_cn": "结合量子热浴与机器学习势能，模拟水团簇的红外光谱。",
+      "llm_tldr": "结合量子热浴与机器学习势能，模拟水团簇的红外光谱。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.10159v1",
+      "title": "Bias in Universal Machine-Learned Interatomic Potentials and its Effects on Fine-Tuning",
+      "abstract": "Universal machine learned interatomic potentials (uMLIPs) embody a growing area of interest due to their transferability across the periodic table, displaying an error of about 0.6 kcal/mol against the Matbench Discovery test set. However, we show that achieving more accurate predictions on out-of-domain tasks requires fine-tuning. Additionally, we investigate the existence and influence of model biases in molecular dynamics (MD) by examining two approaches for data generation: from multiple MD trajectories in parallel, which we call naive fine-tuning, and from a single MD trajectory with fine-tuning after set intervals, which we call periodic fine-tuning. Our results find that naive fine-tuning generates constrained datasets that fail to represent MD simulations, and thus downstream fine-tuned models fail during extrapolation. In contrast, periodic fine-tuning yields models which are more generalizable and accurate, producing low-error dynamics. These findings indicate the role of uMLIP bias in fine-tuning, and highlights the need for multiple fine-tuning steps. Lastly, we relate unphysical behavior to principal component space, and quantify extrapolations through Q-residual analysis, which are useful as a proxy for epistemic uncertainty for larger simulations.",
+      "authors": [
+        "Nicolas Wong",
+        "Julia H. Yang"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-03-10T18:51:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.10159v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine-learned interatomic potentials in molecular dynamics",
+      "llm_evidence_cn": "分子动力学中的机器学习原子间势",
+      "llm_evidence": "分子动力学中的机器学习原子间势",
+      "canonical_evidence": "分子动力学中的机器学习原子间势",
+      "llm_tldr_en": "Analyzes biases in machine-learned potentials and their impact on molecular dynamics fine-tuning.",
+      "llm_tldr_cn": "分析了机器学习势能中的偏差及其对分子动力学微调的影响。",
+      "llm_tldr": "分析了机器学习势能中的偏差及其对分子动力学微调的影响。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
