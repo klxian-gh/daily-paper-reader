@@ -1,0 +1,1755 @@
+Title: Extended Lagrangian molecular dynamics on vibronic surfaces in the nuclear-electronic orbital framework
+
+URL Source: https://arxiv.org/pdf/2603.16990v1
+
+Published Time: Thu, 19 Mar 2026 00:05:14 GMT
+
+Number of Pages: 35
+
+Markdown Content:
+# Extended Lagrangian molecular dynamics on vibronic surfaces in the nuclear–electronic orbital framework 
+
+Joseph A. Dickinson, 1, 2 Mathew Chow, 1, 2 Eno Paenurk, 2 and Sharon Hammes-Schiffer 1, 2, a) 
+
+> 1)
+
+Department of Chemistry, Yale University, New Haven, CT 06520, USA 
+
+> 2)
+
+Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+Proton transfer is central to many processes of chemical interest. The simulation of proton transfer dynamics requires the inclusion of nuclear quantum effects, such as zero-point energy, nuclear delocalization, and tunneling. Herein, we introduce methods within the nuclear–electronic orbital (NEO) framework, where specified nuclei are treated quantum mechanically on the same level as the electrons, for the simulation of proton transfer dynamics. Specifically, NEO density functional theory is used to treat the transferring protons quantum mechanically, and the other nuclei are propagated classically on the adiabatic vibronic ground-state surface. We formulate a NEO extended Lagrangian molecular dynamics (NEO-ELMD) approach to incorporate the motion of the nuclear basis function centers during such simulations. Density matrix extrapolation and purification are introduced as a means to accelerate the NEO self-consistent field procedure at each time step by reducing the number of iterations required for convergence. We demonstrate the fidelity and efficiency of NEO-ELMD by comparison to related dynamics methods for intramolecular proton transfer in malonaldehyde. We also use these accelerated techniques to simulate the nonequilibrium single and double proton transfer dynamics of proton-coupled electron transfer in much larger benzimidazole-phenol systems. This work provides a foundation for future methodologies to efficiently simulate proton transfer dynamics within the NEO-DFT framework while incorporating nonadiabatic effects between adiabatic vibronic states. 
+
+I. INTRODUCTION 
+
+Proton transfer plays a crucial role in a wide range of chemical and biological processes. 1–3 Nuclear quantum effects (NQEs), such as nuclear delocalization and zero-point energy, often significantly impact proton trans-fer dynamics. 4 The significance of NQEs has motivated the development of a large body of methods to cap-ture them during dynamics simulations. Wavepacket dynamics 5–7 provide accurate results but generally can-not be scaled to large molecular or condensed-phase sys-tems due to computational expense. Computational ef-ficiency can be gained by employing moving nuclear ba-sis sets, as in thawed 8 and frozen 9 Gaussian approaches for wave packet simulations, direct dynamics with varia-tional Gaussian wave packets, 10 and the multiple spawn-ing method. 11,12 Approaches based on quantum mechan-ical path integrals, such as the semiclassical initial value representation (SC-IVR), 13,14 path integral molecular dynamics (PIMD), 15,16 and ring-polymer molecular dy-namics (RPMD), 17,18 capture NQEs within trajectory-based simulations. However, path integral methods rely on the propagation of the coupled dynamics of many replicas of the system. Multicomponent quantum chemistry approaches 19,20 
+
+provide a promising avenue for capturing NQEs on-the-fly during first-principles molecular dynamics sim-ulations. In particular, the nuclear–electronic orbital (NEO) 21 approach has emerged as a prominent frame-work for capturing NQEs in this manner. In the NEO approach, select nuclei are quantized and treated on an equal footing as the electrons within quantum chemistry calculations. 22 The mixed nuclear–electronic 
+
+> a) Electronic mail: shs566@princeton.edu
+
+Schrödinger equation is solved in a self-consistent man-ner, providing both electronic and nuclear densities while incorporating the NQEs directly into the NEO en-ergies. In addition, the NEO approach avoids the Born– Oppenheimer separation between the quantum nuclei and the electrons. A large suite of NEO methods has been developed, 20–27 with NEO density functional theory (NEO-DFT) 28–31 emerging as the main methodology for simulating proton transfer dynamics, 32–39 although NEO time-dependent configuration interaction 40,41 
+
+is another promising direction. The popularity of NEO-DFT for dynamical simulations is due to the efficient inclusion of electron–proton correlation (epc) via the epc functionals. 29,30 In this work, we will assume that the underlying nuclear–electronic structure of all systems is solved with NEO-DFT and that all quantized nuclei are protons. We will also limit our discussion to dynamics on the electron–proton vibronic ground-state surface, with the understanding that the methods discussed herein can be combined with nonadiabatic dynamics approaches, 42 such as Ehrenfest 43,44 and surface hopping 45,46 methods, to describe dynamics on multiple vibronic surfaces. The dynamics of the classical nuclei on the electron– proton vibronic ground-state surface can be simu-lated with NEO Born–Oppenheimer molecular dynam-ics (NEO-BOMD), as demonstrated for hydride trans-fer in C 4H+9 .32,47 Analogous to conventional BOMD, 48 
+
+the NEO-DFT ground state energy is computed via the NEO self-consistent field (NEO-SCF) procedure at each time step of a molecular dynamics (MD) trajectory. The gradient of this energy is then used to numerically prop-agate the classical nuclei according to Newtonian equa-tions of motion, solving the NEO-SCF equations at each time step. The protonic basis function center positions can be optimized variationally at each time step to ob-
+
+> arXiv:2603.16990v1 [physics.chem-ph] 17 Mar 2026
+
+2tain the lowest-energy vibronic state energy. NEO-BOMD simulations are typically more expensive than their conventional BOMD counterparts due in part to the slightly higher cost of the NEO-SCF procedure. However, the speed of the NEO-SCF procedure can be enhanced via simultaneous optimization of nuclear and electronic orbitals, 49,50 the nuclear Hartree prod-uct representation for systems with multiple quantum protons, 50,51 and more sophisticated initial guesses. 50 
+
+Although these enhancements do indeed offer a substan-tial speedup, obtaining long-time nuclear dynamics, on the order of picoseconds, is still a challenge. Similarly, conventional BOMD simulations have been made more efficient via techniques such as extrapolation procedures for Fock 52 or density 53,54 matrix elements, yet long-time dynamics is still challenging. Extended Lagrangian approaches 55–58 have also been used to enhance the efficiency of conventional BOMD simulations, although they do not yield exact classical dynamics on Born–Oppenheimer potential energy sur-faces. In extended Lagrangian approaches for BOMD, fictitious degrees of freedom are introduced into the sys-tem and are governed by underlying equations of mo-tion in an effort to circumvent costly computations. The most famous extended Lagrangian approach to BOMD is the Car–Parrinello molecular dynamics approach. 55 
+
+Although the classical nuclei do not evolve on the ex-act potential energy surface for these approaches, the dynamics are qualitatively correct for sufficiently small fictitious masses. In NEO simulations, an extended Lagrangian approach 59 can be employed to move the nuclear basis functions during dynamics via a traveling proton basis (TPB) scheme. Until now, TPB schemes have only been applied to real-time NEO dynamics methods, 33,34,59–61 
+
+which propagate the nuclear-electronic time-dependent Schrödinger equation. In these TPB schemes, the nu-clear basis function centers are propagated classically along with the classical nuclei, in conjunction with the time-dependent quantum dynamical propagation of the electronic and protonic densities. These real-time NEO dynamics methods are distinct from NEO-BOMD on the adiabatic vibronic ground state, where the nuclear–electronic time-independent Schrödinger equa-tion is solved via the NEO-SCF procedure at each MD time step. Herein, we introduce a NEO extended Lagrangian MD (NEO-ELMD) method to perform NEO-BOMD at a greatly reduced cost. Adopting the always stable predictor-corrector scheme, 53,62,63 we show that density matrix extrapolation and subsequent purification 64 can enhance the speed of NEO-SCF procedures performed at each time step of a NEO-ELMD trajectory. We also show that an extended Lagrangian approach for moving nuclear basis function centers during such simulations yields qualitatively similar results to NEO-BOMD with variationally optimized nuclear basis function centers. In addition, we compare these NEO-ELMD approaches to constrained NEO molecular dynamics (CNEO-MD), which applies a Lagrangian constraint such that the nuclear basis function center remains at the expecta-tion value of the nuclear position operator. 65–67 We dis-cuss how CNEO-MD arises as a special case of NEO-ELMD and show that the efficiency of CNEO-MD is also enhanced by the density matrix extrapolation pro-cedures. We benchmark the new methods by simulat-ing the intramolecular proton transfer of malonaldehyde. We then use these NEO-ELMD methods to simulate the nonequilibrium dynamics of proton-coupled electron transfer (PCET) in much larger benzimidazole-phenol (BIP) constructs. 68–73 
+
+This paper is organized as follows. Section II provides an overview of the NEO-ELMD method, including the details of the density matrix extrapolation procedures and TPB scheme. Section III provides the computa-tional details of the malonaldehyde and BIP trajectories, and Section IV provides the results of these simulations. We discuss future directions in Section V.   
+
+> II. THEORY AND METHODS A. Overview of NEO-DFT
+
+Consider a system composed of an N e electrons, N p
+
+quantum protons, and N c classical nuclei. The non-relativistic Hamiltonian for this system, ˆHNEO , is given in atomic units by 
+
+ˆHNEO = − 12 
+
+> Ne
+
+X
+
+> i
+
+∇2 
+
+> i
+
+− 12mp 
+
+> Np
+
+X
+
+> I
+
+∇2
+
+> I
+
++ 
+
+> Ne
+
+X 
+
+> iNe
+
+X
+
+> j>i
+
+1
+
+|ri − rj | + 
+
+> Np
+
+X 
+
+> INp
+
+X
+
+> J>I
+
+1
+
+|rI − rJ |− 
+
+> Ne
+
+X 
+
+> iNc
+
+X
+
+> A
+
+ZA
+
+|ri − RA| + 
+
+> Np
+
+X 
+
+> INc
+
+X
+
+> A
+
+ZA
+
+|rI − RA|− 
+
+> Ne
+
+X 
+
+> iNp
+
+X
+
+> I
+
+1
+
+|ri − rI | + 
+
+> Nc
+
+X 
+
+> ANc
+
+X
+
+> B>A
+
+ZAZB
+
+|RA − RB | ,
+
+(1) where the indices {i, j, . . . }, {I, J, . . . }, and {A, B, . . . }
+
+denote electrons, quantum protons, and classical nuclei, respectively, mp is the mass of a proton, r denotes the position of either an electron or a quantum proton, and 
+
+R denotes the position of a classical nucleus. Within multicomponent DFT, the energy of this sys-tem, UNEO , is a functional of the electronic and protonic densities, ρe and ρp, respectively, according to 
+
+UNEO [ρe, ρ p] = Uref [ρe, ρ p] + Uext [ρe, ρ p]+ Uexc [ρe] + Upxc [ρp] + Uepc [ρe, ρ p], (2) Here, Uref [ρe, ρ p] is the energy of the noninteract-ing reference system of electrons and quantum pro-tons, including the kinetic energies of the electrons and quantum protons and the Coulomb interactions 3within this quantum subsystem. Uext [ρe, ρ p] corre-sponds to the interaction of the electronic and pro-tonic densities with the external field generated by the classical nuclei. Uexc [ρe], Upxc [ρp], and Uepc [ρe, ρ p]
+
+denote the electron-electron exchange-correlation func-tional, proton-proton exchange-correlation functional, and electron-proton correlation functional, respectively. In NEO-DFT, the KS reference state is represented by a product of an electronic and protonic Slater determinant. 20 However, due to the locality of quan-tized protons in molecular systems, the nuclear Slater determinant can be replaced by the nuclear Hartree product representation, treating the quantum protons as distinguishable. 51 This treatment is justified because the proton-proton exchange terms are typically eight to ten orders of magnitude smaller than their electronic counterparts. 20,27 The nuclear Hartree product repre-sentation greatly reduces the computational cost of the NEO-SCF procedure, 51 mainly by significantly decreas-ing the number of iterations compared to the nuclear Slater determinant representation. 50 Thus, in this work, all calculations with multiple quantum protons use the nuclear Hartree product representation. In this context, the NEO-DFT KS reference state 
+
+|Ψ( xe, xp)⟩ is expressed as 
+
+|Ψ( xe, xp)⟩ = Φ e(xe) 
+
+> Np
+
+Y
+
+> I=1
+
+χp 
+
+> I
+
+(xp 
+
+> I
+
+), (3) where xe(p) are generalized electronic (protonic) coordi-nates containing position and spin, χp 
+
+> I
+
+is the spin orbital for the I-th quantum proton, and Φe is an electronic Slater determinant. Assuming a closed-shell electronic configuration, the electronic and protonic densities ρe
+
+and ρp can be expressed in terms of doubly-occupied electronic spatial orbitals {ψe 
+
+> i
+
+} and singly-occupied pro-tonic spatial orbitals {ψp 
+
+> I
+
+} as 
+
+ρe(re1) = 2  
+
+> Ne/2
+
+X
+
+> i=1
+
+|ψe 
+
+> i
+
+(re1)|2, (4a) 
+
+ρp(rp1 ) =  
+
+> Np
+
+X
+
+> I=1
+
+|ψp 
+
+> I
+
+(rp1 )|2 = 
+
+> Np
+
+X
+
+> I=1
+
+ρp 
+
+> I
+
+(rp1 ), (4b) where the density of the I-th distinguishable quantum proton is defined as ρp 
+
+> I
+
+= |ψp 
+
+> I
+
+|2. Generalization to open-shell electronic configurations is straightforward. Minimizing the NEO-DFT energy given in Eq. (2) with respect to electronic and protonic orbital variations under orthonormality constraints leads to the NEO-KS equations, 
+
+
+
+− 12 ∇21 + veeff (re1)
+
+
+
+ψe 
+
+> i
+
+(re1) = ϵe 
+
+> i
+
+ψe 
+
+> i
+
+(re1), (5a) 
+
+
+
+− 12mp
+
+∇21 + vpeff ,I (rp1 )
+
+
+
+ψp 
+
+> I
+
+(rp1 ) = ϵp 
+
+> I
+
+ψp 
+
+> I
+
+(rp1 ), (5b) where 
+
+veeff (re1) = − 
+
+> Nc
+
+X
+
+> A
+
+ZA
+
+|re1 − RA| +
+
+Z
+
+dre2
+
+ρe(re2)
+
+|re1 − re2| −
+
+Z
+
+drp1
+
+ρp(rp1 )
+
+|re1 − rp1 | + δU exc [ρe]
+
+δρ e(re1) + δU epc [ρe, ρ p]
+
+δρ e(re1) , (6a) 
+
+vpeff ,I (rp1 ) =  
+
+> Nc
+
+X
+
+> A
+
+ZA
+
+|rp1 − RA| + 
+
+> Np
+
+X 
+
+> J̸=I
+
+Z
+
+drp2
+
+ρp 
+
+> J
+
+(rp2 )
+
+|rp1 − rp2 | −
+
+Z
+
+dre1
+
+ρe(re1)
+
+|re1 − rp1 | + δU epc [ρe, ρ p]
+
+δρ p(rp1 ) , (6b) and ϵe(p)  
+
+> i(I)
+
+is the orbital energy of the corresponding elec-tronic (protonic) orbital. This expression neglects the proton-proton correlation energy, which is valid due to the locality of the quantum protons as well as previous work showing that proton-proton correlation terms are many orders of magnitude smaller than their electronic counterparts. 20,27 
+
+The electronic (protonic) orbitals can be expanded in terms of electronic (protonic) basis functions {ϕe(p)  
+
+> μ
+
+} ac-cording to 
+
+ψe(p)  
+
+> i(I)
+
+= 
+
+> Ne(p) basis
+
+X
+
+> μ
+
+Cμ,i (I)ϕe(p)  
+
+> μ
+
+, (7) where N e(p) basis is the number of electronic (protonic) basis functions. This expansion leads to a coupled set of NEO-KS matrix equations 
+
+FeCe = SeCeϵe, (8a) 
+
+FpCp = SpCpϵp, (8b) where Fe(p) , Ce(p) , Se(p) , and ϵe(p) are the electronic (protonic) Kohn-Sham, coefficient, overlap, and orbital energy matrices, respectively. These equations are strongly coupled because both the electronic and pro-tonic Fock matrices depend on both the electronic and protonic coefficient matrices. Eq. (8) is solved self-consistently via the NEO-SCF procedure, 49,50 yielding converged electronic and protonic densities, as well as the NEO-DFT energy given in Eq. (2). The analytical gradient of this NEO-DFT energy is given in Eq. (17) of Ref. 32. 4In typical NEO calculations, each quantum proton is associated with a single protonic basis function center. A constraint can be imposed to ensure that the expec-tation value of each quantum proton position operator coincides with its respective protonic basis function cen-ter position, as in constrained NEO (CNEO) DFT. 65 In the CNEO-DFT approach, UNEO in Eq. (2) is minimized subject to orthonormality constraints on the electronic and protonic orbitals, as well as N p constraints on the protonic orbitals 
+
+⟨ψp 
+
+> I
+
+|ˆr|ψp 
+
+> I
+
+⟩ = RI , ∀I ∈ { 1, . . . , N p}, (9) where RI is the position of the protonic basis function center associated with the I-th quantum proton. Impos-ing these additional constraints leads to slightly modified NEO-KS equations, 
+
+
+
+− 12 ∇21 + veeff (re1)
+
+
+
+ψe 
+
+> i
+
+(re1) = ϵe 
+
+> i
+
+ψe 
+
+> i
+
+(re1),
+
+(10a) 
+
+
+
+− 12mp
+
+∇21 + vpeff ,I (rp1 ) + fI · rp1
+
+
+
+ψp 
+
+> I
+
+(rp1 ) = ϵp 
+
+> I
+
+ψp 
+
+> I
+
+(rp1 ),
+
+(10b) where fI is a three-component vector of Lagrange mul-tipliers for the I-th proton that satisfies the I-th con-straint of Eq. (9). Note that because the constraints of Eq. (9) only act on the protonic orbitals, only the eigen-value equations for the quantum protons are changed in Eq. (10) compared to Eq. (5). The coupled NEO-KS matrix equations of Eq. (8) are now solved via the CNEO-SCF routine, which includes optimization of all 
+
+N p Lagrange multiplier vectors fI needed to satisfy each constraint of Eq. (9). We refer the reader to Eq. (S19) of Ref. 74 for the analytical gradient of UNEO when sub-ject to the constraints of Eq. (9). It can be shown that the optimized fI for each quantum proton is equal to the force on the expectation value of that proton to con-strain it to that position. 65  
+
+> B. NEO Extended Lagrangian Molecular Dynamics
+
+In conventional BOMD, the nuclei are propagated classically on the electronic BO potential energy sur-face. The numerical accuracy is subject to the conver-gence criteria for the SCF procedure and the MD time step. 48 After choosing initial positions and velocities for all nuclei, the ground-state energy and forces are com-puted at the chosen level of theory, and the dynamics of the nuclei are propagated classically according to 
+
+MA ¨RA = −∇ AUDFT , (11) where MA is the mass of the A-th nucleus and ∇AUDFT 
+
+is the gradient of the ground-state energy UDFT with respect to the Cartesian coordinates of the A-th nucleus. The NEO-BOMD approach is algorithmically similar to conventional BOMD, but the classical nuclei move on the electron-proton vibronic surface rather than the electronic surface. The BO separation between the elec-trons and quantum protons is not invoked, but there is a BO separation between the quantum subsystem, com-posed of the electrons and quantized protons, and the classical nuclei. In other words, the electrons and quan-tum protons respond instantaneously to the motion of the classical nuclei on the ground state vibronic sur-face. Nonadiabatic effects between the classical nuclei and the quantum subsystem can be incorporated using Ehrenfest 43,44 or surface hopping 45,46 dynamics on NEO vibronic surfaces, but this work focuses on the dynamics on the ground-state vibronic surface. If the quantum protons were represented by a com-plete protonic basis set, the NEO energy, UNEO , at a given classical nuclear configuration, R, would be in-variant with respect to the protonic basis function cen-ter positions. In practice, however, we use finite protonic basis sets that are not complete. Thus, UNEO does in-deed vary with respect to the protonic basis function center positions. Rigorously, UNEO is defined as the en-ergy obtained by variationally optimizing all protonic basis function center positions, leading to the following conditions being satisfied for all points on the NEO vi-bronic surface: 
+
+∂U NEO 
+
+∂RI
+
+= 0 , ∀I ∈ { 1, . . . , N p}. (12) Thus, in conventional BOMD, only one SCF procedure and force evaluation is required at each time step to ob-tain the ground-state energy and gradient, respectively, but in NEO-BOMD, the protonic basis function centers must be optimized at each time step, requiring many energy and force evaluations per time step. This neces-sity greatly inflates the cost of running a NEO-BOMD trajectory. Moreover, occasionally the proton basis func-tion center optimization leads to unstable or local min-ima, causing numerical issues with propagation of the equations of motion. In order to avoid optimizing the protonic basis func-tion centers at each time step, their positions can be represented as additional degrees of freedom and prop-agated classically according to Eq. (11), with fictitious masses equal to that of a proton. This strategy has been implemented previously in the context of real-time NEO dynamics methods, 33,59–61 but not yet in the context of adiabatic dynamics on the NEO ground-state vibronic surface. In this case, the NEO Lagrangian, 
+
+LNEO = 12 
+
+> Nc
+
+X
+
+> A
+
+MA| ˙RA|2 − UNEO (R), (13) is extended according to 
+
+Lext NEO = 12 
+
+> Nc
+
+X
+
+> A
+
+MA| ˙RA|2 + 12 
+
+> Np
+
+X
+
+> I
+
+mp| ˙RI |2 −U eff NEO (R, R).
+
+(14) In Eq. (13), UNEO refers to the NEO vibronic surface ob-tained when Eq. (12) is satisfied for all classical nuclear 5coordinates R. In Eq. (14), U eff NEO refers to the NEO energy computed at R with the protonic basis function center positions at R, where Eq. (12) is not necessarily satisfied. Thus, U eff NEO can be viewed as an “effective” potential energy of the extended system composed of the classical nuclear coordinates and the protonic basis function center coordinates. We emphasize that in the limit of a complete basis, UNEO = U eff NEO for all R and 
+
+R.The NEO-ELMD approach presented herein corre-sponds to the dynamics based on the extended NEO La-grangian of Eq. (14). In this approach, only one NEO-SCF and one force evaluation are performed per time step, as in conventional BOMD. NEO-ELMD is system-atically improvable in that it will always approach the NEO-BOMD trajectory obtained by satisfying Eq. (12) as the protonic basis set approaches completeness. NEO-ELMD can also be expected to qualitatively reproduce the NEO-BOMD trajectory assuming that the classical propagation of the protonic basis function centers closely follows the evolution of their variationally optimized po-sitions. As with all extended Lagrangian approaches, NEO-ELMD does not conserve the “physical” energy of the system, Ephys , which is defined as the sum of the ki-netic energy of the classical nuclei and the NEO poten-tial energy UNEO . Instead, NEO-ELMD conserves the “extended” energy of the system, Eext , defined as the sum of the kinetic energy of the classical nuclei, the ki-netic energy associated with the protonic basis function centers, and the NEO effective potential energy U eff NEO .NEO-ELMD propagates the classical nuclei on an ex-tended NEO vibronic surface that is a function of both 
+
+R and R. If CNEO-DFT is performed at each time step instead of NEO-DFT, the extended NEO surface has the same dimensionality, but the basis function center posi-tions RI are replaced with their respective expectation values of the quantum proton position operator, ⟨rI ⟩,which are constrained to be equivalent. This extended NEO surface, where the dependence on R has been re-placed by the dependence on the expectation values of the quantized proton position operator, can be regarded as a constrained minimized energy surface, 67 and dy-namics on this surface is the basis of CNEO-MD. 66 Thus, a NEO-ELMD trajectory that enforces the constraints in Eq. (9) on the NEO-DFT solution at each time step is equivalent to CNEO-MD.  
+
+> C. Density Matrix Extrapolation and Other Enhancements
+
+BOMD simulations can be made more efficient by speeding up the SCF procedure performed at each time step, often by enhancing the fidelity of the initial guess so that the SCF procedure requires fewer iterations to con-verge. Various Fock matrix and density matrix extrapo-lation schemes have been proposed for this purpose. 52,54 
+
+Although NEO-ELMD is already much cheaper than NEO-BOMD because it requires only one NEO-SCF procedure and force evaluation at each time step, such extrapolation schemes promise to offer additional effi-ciency gains that can increase the timescale and system size over which NEO-ELMD can be applied. In this work, we implemented a density matrix ex-trapolation scheme for both electronic and protonic den-sities based on the always stable predictor-corrector (APSC) scheme 62,63 previously adapted to conventional BOMD. 53 The concept underlying this extrapolation procedure is to use the history of previously converged density matrices to predict the converged density matrix at the next time step. The density matrix extrapolation process that we have implemented is as follows. Let Pe(p) be the electronic (protonic) density matrix in the nonorthogonal atomic orbital basis: Pe(p) = Ce(p) occ Ce(p) T 
+
+> occ
+
+, where Ce(p) occ is the oc-cupied block of the electronic (protonic) coefficient ma-trix from Eq. (8). Let tn represent the time at the n-th time step of a NEO-ELMD trajectory and K be some positive integer representing how many previous time steps to use in the extrapolation scheme. We can approx-imate the electronic (protonic) density matrix at time tn
+
+by applying a simple transformation matrix to the con-verged electronic (protonic) density matrix at time tn−1
+
+according to 
+
+Pe(p) (tn) ≈ Ue(p) (n, K ) × Pe(p) (tn−1) (15) where the transformation matrix Ue(p) is dependent on the current time step index n and the chosen K. We compute the transformation matrix Ue(p) according to 
+
+Ue(p) (n, K ) = 
+
+> K
+
+X
+
+> j=1
+
+w(j, K ) × Pe(p) (tn−j ) × Se(p) (tn−j ),
+
+(16) where Se(p) is the electronic (protonic) atomic orbital overlap matrix and w(j, K ) is a coefficient for each term in the summation given by 
+
+w(j, K ) = ( −1) j+1 × j ×
+
+  2KK−j
+
+ 2K−2
+
+> K−1
+
+ . (17) The transformation matrix in Eq. (16) is computed ac-cording to the previous contra-covariant density matri-ces Pe(p) Se(p) because these evolve more smoothly in time than the coefficient matrices Ce(p) .53 The weights given by Eq. (17) were chosen in order to guarantee suffi-cient time-reversibility of the original APSC scheme. 62,63 
+
+Eqs.(15)–(17) provide a clear algorithm for extrapo-lating the density matrices at a given time step based on the previous K converged density matrices. Although the predicted density matrix can be an effective initial guess for an SCF procedure, it does not strictly satisfy the idempotency condition 
+
+Pe(p) × Se(p) × Pe(p) = Pe(p) , (18) a necessary condition for an SCF solution. However, the predicted density matrices can be expected to nearly satisfy idempotency. Therefore, after extrapolating the 6electronic and protonic density matrices, we recursively purify 64 them according to 
+
+Pe(p) pred ,⊥ ← 3Pe(p) 2 
+
+> pred ,⊥
+
+− 2Pe(p) 3
+
+> pred ,⊥
+
+, (19) where Pe(p) pred ,⊥ is the predicted electronic (protonic) den-sity matrix in the orthogonalized atomic orbital basis. We iterate the purification routine until the idempo-tency error satisfies a specified tolerance. The idempo-tency error is defined as 
+
+ϵidem = ∥Pe(p) pred × Se(p) × Pe(p) pred − Pe(p) pred ∥F , (20) where ∥·∥ F denotes the Frobenius norm of a given matrix. Once the error is within the specified toler-ance, Pe(p) pred ,⊥ is back-transformed into the nonorthog-onal atomic orbital basis and used as an initial guess for the SCF procedure at that time step. Herein, we intro-duce the notation NEO-ELMD (K), where K refers to the number of previous time steps used to extrapolate the electronic and protonic density matrices. We use the same notation for CNEO-MD, which enforces the constraints of Eq. (9). In addition to this “extrapolate-then-purify” approach for obtaining initial guesses to the electronic and pro-tonic density matrices at each time step, we investigated the use of loosely converged NEO-SCF solutions to ac-celerate NEO-ELMD simulations further. This approx-imation entails using the extrapolated density matrices as initial guesses but not solving Eq. (8) to full self-consistency. This investigation was motivated by the “corrector” steps following extrapolation (the “predictor” step) from the original ASPC scheme 62,63 and its adap-tation to BOMD. 53 We provide more details and results regarding the use of loosely converged solutions in Sec-tion S3A of the Supplementary Material. In brief, we found that this approximation was not useful for our simulations. We emphasize that all results presented in the main text solved Eq. (8) to full self-consistency at each time step.  
+
+> III. COMPUTATIONAL DETAILS
+
+In this work, we benchmarked the NEO-ELMD (K)
+
+method by simulating the intramolecular proton trans-fer of malonaldehyde and comparing it to NEO-BOMD as well as to CNEO-MD (K). We then used NEO-ELMD (K) to simulate the nonequilibrium dynamics of the PCET reactions in the benzimidazole-phenol (BIP) systems exhibiting either one proton transfer (E1PT) or two proton transfers (E2PT), as studied previously with conventional BOMD. 71 The structures and mechanisms of these reactions are depicted in Fig. 1. The computa-tional details for initializing and propagating these tra-jectories are given in this section. Further details are given in Section S1. All methods discussed in this work have been implemented in a developer version of the Q-Chem 6.3 electronic structure software package. 75  
+
+> A. Malonaldehyde Trajectories
+
+In all NEO calculations of malonaldehyde, only the transferring proton was treated quantum mechanically, and it was represented by one protonic basis function center. These NEO calculations used the ωB97X 76 
+
+electron exchange-correlation functional and the epc17-229,30 electron-proton correlation functional. These cal-culations also used the def2-SVP and def2-TZVP 77 elec-tronic basis sets for the classical nuclei and quantum pro-ton, respectively, and a range of protonic basis sets. To obtain the initial coordinates and velocities for the classi-cal nuclei, the equilibrium and transition state structures were optimized at the conventional ωB97X/def2-SVP level of theory. 76,77 The protonic basis function center was then optimized at the NEO-DFT level while keep-ing the classical nuclei at their positions in the equilib-rium structure. Starting at this structure, the classical nuclei were assigned initial velocities corresponding to a temperature of 110 K in the direction toward their po-sitions in the optimized transition state structure. The protonic basis function center was initialized at its opti-mized position with zero velocity for all trajectories. To benchmark the NEO-ELMD (K) method, we var-ied the protonic basis set (PB4-F2, PB5-G, PB6-H, 78 
+
+and even-tempered 8s8p8d8f8g basis 30 ), the value of K
+
+in the extrapolation routine (0, 2, 4, and 6), the MD time step (0.2 fs, 0.5 fs, and 1.0 fs), and the SCF con-vergence criterion ( 10 −6 Eh and 10 −8 Eh). Note that 
+
+K = 0 denotes using the previously converged densi-ties as initial guesses following purification. These NEO-ELMD (K) trajectories were compared to corresponding NEO-BOMD trajectories, where the protonic basis func-tion center was optimized variationally at each time step instead of moving classically. In addition, for all NEO-ELMD (K) trajectories propagated, the corresponding CNEO (K) trajectory was also propagated. At the start of each malonaldehyde trajectory, an ini-tial single-point calculation was performed utilizing the stepwise NEO-SCF algorithm with the GDM 79 solver. The resulting densities were used as the starting guess for the first time step of the trajectory, and the simul-taneous DIIS NEO-SCF 49,80,81 solver was used for the remainder of the trajectory. All malonaldehyde trajec-tories were propagated for 60 fs.  
+
+> B. BIP Trajectories
+
+The E1PT and E2PT BIP systems 71 are known to exhibit proton transfer upon electrochemical or photo-chemical oxidation. 68–70,72,73 To simulate the nonequi-librium dynamics of these systems following oxidation, we optimized structures in the neutral singlet state but propagated them in the cationic doublet state. We prop-agated NEO-ELMD (4) and conventional BOMD trajec-tories for both systems, as well as a CNEO-MD (4) tra-jectory for the E1PT system. The E1PT and E2PT neutral singlet systems 7OH O
+
+OH 
+
+N
+
+H
+
+N OH 
+
+N
+
+H
+
+N
+
+N
+
+Malonaldehyde E1PT BIP E2PT BIP 
+
++ +
+
+FIG. 1. Schematic depictions of proton transfers simulated in this work, including the intramolecular proton transfer of malonaldehyde (left), the single proton transfer in E1PT BIP following oxidation (middle), and the double proton transfer relay in E2PT BIP following oxidation (right). Arrows point in the direction of proton transfer. Note that the phenolic proton transfer occurs first in the E2PT system, followed by the imidazolic proton transfer. were optimized at the conventional B3LYP-D3(BJ)/6-31G ∗∗ 82–88 level of theory. For the conventional BOMD trajectories, the nuclei were initialized at the optimized neutral singlet structures and then were propagated on the cationic doublet surface at the same level of the-ory using sixth-order Fock matrix extrapolation 52 with twelve previous time points. For the NEO-ELMD (4) and CNEO-MD (4) trajectories, the protonic basis function centers for each transferring proton were optimized with NEO-DFT or CNEO-DFT, respectively, in the cationic doublet state with the classical nuclei fixed at the neu-tral singlet geometry optimized with conventional DFT. All NEO BIP simulations used the B3LYP-D3(BJ) 87,88 
+
+electron exchange-correlation functional and the epc17-229,30 electron-proton correlation functional, as well as the 6-31G ∗∗ and 6-311G ∗∗ 82,83 electronic basis sets for the classical nuclei and quantum protons, respectively. Note that the D3(BJ) dispersion terms were computed based on the positions of the proton basis function cen-ters. The resulting geometries were used as the initial coordinates for all BIP trajectories. Starting at these structures for the E1PT and E2PT systems, the classical nuclei were assigned initial veloci-ties according to the following procedure. First, both systems were perturbed along the normal mode cor-responding to the bending motion between the phenol and benzimidazole (denoted the “phenol-benzimidazole bend”) in their neutral singlet states. The displacement vector along this mode was used as the initial velocity vector for each classical nucleus in the system after scal-ing these velocities to a target temperature of 40 K and 400 K for the E1PT and E2PT systems, respectively. For all NEO trajectories, the protonic basis function centers were initialized at their optimized positions with zero velocities. For the conventional BOMD trajectories, the initial velocities of the transferring protons were set to zero to allow a comparison to the NEO trajectories. This step made no appreciable difference to the conventional BOMD dynamics (see Section S3B). In addition to these trajectories, we propagated trajectories for the E1PT system with the initial velocities of all classical nuclei set to zero. At the start of each trajectory, an initial single-point calculation was performed utilizing the stepwise GDM NEO-SCF algorithm. The resulting electronic and pro-tonic densities were used as the starting guess for the first time step of the trajectory. The E1PT and E2PT NEO trajectories utilized the simultaneous DIIS 49,80,81 
+
+and GDM 50,79 NEO-SCF algorithms, respectively. Atime step of 0.5 fs and convergence criteria of 10 −7 Eh
+
+were used for all BIP trajectories. The E1PT and E2PT trajectories were propagated for 100 fs and 500 fs, re-spectively. We emphasize that the BIP dynamics simulated herein are not comparable to experiment. Such a com-parison would require propagating a large number of trajectories with appropriate sampling of initial condi-tions at finite temperature. The simulations here are rather meant to demonstrate the capabilities of the NEO-ELMD (K) approach in terms of timescale and system size. The comparisons between conventional and NEO trajectories for the initial conditions chosen demonstrate that the qualitative dynamics can change when the transferring protons are quantized.  
+
+> C. Extrapolation and Optimization Procedures
+
+In this subsection, we provide additional computa-tional details about the density matrix extrapolation and purification procedures described in Section II C and the protonic basis function center optimization mentioned in Section III A. Regarding density matrix extrapolation and purifica-tion procedures, 64 after the electronic and protonic den-sity matrices at each time step were extrapolated accord-ing to Eqs.(15)–(17), we recursively purified them ac-cording to Eq. (19). We iterated the purification routine until the idempotency error, ϵidem , defined in Eq. (20), satisfied ϵidem ≤ 10 −12 . For time steps n such that 
+
+n < K , where n = 0 is the initial time step and K
+
+is the number of previous time steps used in the extrap-olation procedure, we used all previous density matrices for the extrapolation. In other words, we extrapolated 8C
+
+0 fs 
+
+Time 
+
+28 fs 56 fs 
+
+# A B
+
+OD−H 
+
+OA−H 
+
+OD OA
+
+OD−O A
+
+FIG. 2. NEO-BOMD malonaldehyde trajectory used as a reference for the NEO-ELMD (K) and CNEO-MD (K)
+
+trajectories. (A) Distance between the oxygen donor and proton position operator expectation value (blue) and proton basis function center (light blue) and distance between the oxygen acceptor and the proton position operator expectation value (red) and proton basis function center (light red) along the trajectory. (B) Distance between the donor and acceptor oxygens along the trajectory. (C) Evolution of the proton density (shown in cyan with an isosurface value of 0.04 a.u.) along the trajectory. the density matrices using all previous time steps for the first K steps. Regarding protonic basis function center optimiza-tion, we adopted the same convergence criteria used by Q-Chem: 75 the maximum absolute value of the gradient in any direction on the basis function center must fall be-low a specified threshold, and either the energy change or displacement of the center from one optimization cy-cle to the next must fall below a specified threshold. For the gradient tolerance threshold, we tested values of 
+
+3.0 × 10 −4 Eha−10 , 1.2 × 10 −4 Eha−10 , and 3.0 × 10 −5
+
+Eha−10 , where 3.0 × 10 −4 Eha−10 is the Q-Chem default value. For both the energy and displacement tolerances, we used the Q-Chem default values of 1.0 × 10 −8 Eh and 
+
+1.2 × 10 −3 a0, respectively.  
+
+> IV. RESULTS AND DISCUSSION
+
+In this section, we present and discuss the NEO-ELMD (K) approach by simulating the intramolecular proton transfer of malonaldehyde, followed by simula-tions of the E1PT and E2PT BIP systems upon oxida-tion. For simplicity, we define the proton transfer time for a transferring proton as the first time step at which the expectation value of the position operator associated with that quantum proton becomes closer to its acceptor than to its donor.  
+
+> A. Malonaldehyde Simulations
+
+In this subsection, we present an analysis of the tra-jectories propagated using the PB6-H protonic basis set. We provide additional results for other protonic basis sets in Section S3A. The results shown and dis-cussed herein are consistent across the protonic basis sets tested. We find that the NEO-ELMD approach is two to three orders of magnitude faster than the NEO-BOMD approach, where the protonic basis function centers are optimized variationally at each time step, depending on the basis sets and tolerances used in the calculations (Tables SI and SII). This speed-up is obtained without adversely impacting the nuclear–electronic dynamics. We first provide an analysis of the NEO-BOMD tra-jectory to which we will compare the NEO-ELMD (K)
+
+and CNEO-MD (K) trajectories. This NEO-BOMD tra-jectory used a time step of 0.5 fs, convergence criteria 9of 10 −6 Eh, and gradient tolerance of 3.0 × 10 −5 Eha−10 .Fig. 2A shows that the proton transfer proceeds with the expectation value of the quantum proton position operator evolving away from its donor and toward its acceptor in a monotonic fashion. At around 24 fs, where the oxygen donor and acceptor reach their shortest dis-tance along the trajectory (Fig. 2B), the rate at which the expectation value of the quantum proton position operator moves toward its acceptor noticeably increases, and shortly thereafter it reaches its proton transfer time of 28.5 fs. Subsequently, the distance between the ex-pectation value of the proton position operator and the acceptor begins to plateau, but the distance from the donor steadily increases as the donor and acceptor move apart. Fig. 2C shows the time-evolution of the proton density in this trajectory. The NEO-BOMD reference represents a straightfor-ward proton transfer reaction. We emphasize that this particular set of initial conditions was chosen to ensure that hydrogen tunneling contributions 89 are minimal. Initializing the classical nuclei with velocities directed toward the conventional transition state structure re-sults in a trajectory where the proton density moves downhill without becoming bilobal. Moreover, the evo-lution of the expectation value of the proton position operator closely follows the evolution of the optimized position of the protonic basis function center (Fig. 2A). These observations indicate that the quantum proton does not need to be described by multireference meth-ods, such as NEO multireference configuration interac-tion (NEO-MRCI) 26,90 or NEO multistate DFT (NEO-MSDFT), 91,92 as would be necessary if hydrogen tunnel-ing effects were significant. Analysis of energy conser-vation and the impact of basis set, convergence criteria, and other parameters is provided in Section S3A. Fig. 3 shows the NEO-ELMD (4) and CNEO-MD (4) 
+
+trajectories using the same basis sets, convergence crite-ria, time step, and other parameters as the NEO-BOMD trajectory shown in Fig. 2. Recall that the value of K
+
+does not impact the dynamics but rather only impacts the efficiency of the simulation. We observe qualitative agreement between both the NEO-ELMD and CNEO-MD trajectories and the NEO-BOMD trajectory, with the NEO-ELMD and CNEO-MD trajectories exhibit-ing proton transfer times of 32.0 fs and 29.5 fs, respec-tively. Note that the protonic basis function center po-sition closely follows the proton position operator ex-pectation value in the NEO-ELMD trajectory, as in the NEO-BOMD trajectory. Recall that in CNEO-MD, the proton basis function center and the proton position op-erator expectation value are constrained to be exactly the same. The CNEO-MD trajectory appears to agree slightly better with the NEO-BOMD trajectory, but this is not a general trend and will depend on the system and level of theory. We note that both the NEO-ELMD and CNEO-MD trajectories exhibit non-monotonic behav-ior, appearing as O–H vibrations, after proton transfer in Fig. 3A. In the CNEO-MD trajectory, these oscillations A
+
+# B
+
+OD−H 
+
+OA−H 
+
+OD−O A
+
+Solid: NEO -BOMD 
+
+Dashed: NEO -ELMD(4) 
+
+Dotted: CNEO -MD(4) 
+
+FIG. 3. NEO-ELMD (4) and CNEO-MD (4) trajectories compared to the NEO-BOMD trajectory for malonalde-hyde. NEO-BOMD data is identical to the data shown in Fig. 2. (A) Distance between the oxygen donor and proton position operator expectation value (blue) and distance between the oxygen acceptor and the proton po-sition operator expectation value (red) along the NEO-BOMD (solid lines), NEO-ELMD (4) (dashed lines), and CNEO-MD (4) (dotted lines) trajectories. The corre-sponding distances for the proton basis function center are shown in light blue and light red dashed lines for the NEO-ELMD(4) trajectory. (B) Distance between the donor and acceptor oxygens along the NEO-BOMD (solid line), NEO-ELMD (4) (dashed line), and CNEO-MD (4) (dotted line) trajectories. would be present even in the limit of a complete protonic basis set, representing the vibrations of the proton posi-tion operator expectation value. In NEO-ELMD, how-ever, these vibrations would be less pronounced in the limit of a complete protonic basis because of the under-lying assumption of vibronic adiabaticity (i.e., the quan-tum subsystem responds instantaneously to the classical nuclear motion). This observation highlights a fundamental difference between the NEO-ELMD and CNEO-MD approaches. For fully converged basis sets, NEO-ELMD will more faithfully reproduce the results of NEO-BOMD because both NEO-ELMD and NEO-BOMD are propagating the classical nuclei on the ground state adiabatic vibronic surface. In NEO-BOMD, the protonic basis function 10 A
+
+# B
+
+NEO -ELMD( K)
+
+CNEO -MD( K)
+
+FIG. 4. Number of iterations of the simultaneous DIIS NEO-SCF procedure needed to fully converge the elec-tronic and protonic densities at each time step at varying values of K for the (A) NEO-ELMD (K) and (B) CNEO-MD (K) malonaldehyde trajectories. K = 0 indicates that the converged densities from the previous time step were used as initial guesses following purification. All orders of extrapolation tested significantly decrease the number of SCF iterations needed to converge for both the NEO-ELMD and CNEO-MD trajectories, often by a factor of two to four. centers are optimized variationally at each time step, whereas in NEO-ELMD, this optimization is approxi-mated by moving the centers classically on an extended NEO vibronic surface to account for the finite proton basis set. In contrast, CNEO-MD is not performed on the adiabatic vibronic ground state but rather on a constrained minimized energy surface that includes quantum nuclear delocalization effects. In other words, CNEO-MD propagates the dynamics of the classical nu-clei and the proton position operator expectation value on the constrained minimized energy surface, which has a different topology than the extended NEO vibronic surface due to the constraints. In this sense, CNEO-MD is not expected to reproduce NEO-BOMD as well as NEO-ELMD does but rather is designed to capture some of the qualitative dynamics of the vibrational mo-tions. Fig. 4 shows the number of simultaneous DIIS iter-ations needed to fully converge the electronic and pro-
+
+FIG. 5. Change in extended energy along the NEO-ELMD (4) malonaldehyde trajectories with time steps 0.2 fs (magenta), 0.5 fs (orange), and 1.0 fs (green). As expected, the extended energy is better conserved as the time step decreases. tonic densities with varying values of K for the NEO-ELMD (K) and CNEO-MD (K) trajectories. Recall that 
+
+K = 0 refers to using the converged densities from the previous time step as the initial guess following purifica-tion. These results show that the extrapolation proce-dure significantly decreases the number of SCF iterations needed to converge at each time step for both the NEO-ELMD and CNEO-MD trajectories. For higher values of K, the number of iterations needed to converge com-pared to K = 0 is often decreased by a factor of two to four. Near the end of the trajectories, the extrapolation procedure offers a more modest speedup. For other pro-tonic basis sets tested, K = 0 trajectories occasionally resulted in a failure to converge and therefore premature termination, but finite K allowed successful completion of the trajectory (see Section S3A). Based on the results of Fig. 4 and Section S3A, we conclude that K = 4 offers essentially the same level of speedup as K = 6 , and both these values of K generally outperform the lower K = 2 .Note that CNEO-DFT often requires fewer iterations to converge than NEO-DFT, but this is not always the case, especially for systems with more challenging electronic structures, such as the BIP systems discussed below. Finally, we analyze the energy conservation along the NEO-ELMD (4) and CNEO-MD (4) trajectories in Fig. 5. As discussed above, the extended energy is defined as the sum of the kinetic energy of the classical nuclei, the ki-netic energy associated with the protonic basis function centers for NEO-ELMD or the proton position operator expectation values for CNEO-MD, and the NEO poten-tial energy. A time step of 1.0 fs conserves the extended energy on the order of 10 −5 Eh, and the smaller time steps of 0.5 fs and 0.2 fs conserve the extended energy on the order of 10 −6 Eh and 10 −7 Eh, respectively. 11 0 fs 
+
+## Time 
+
+## 100 fs 60 fs 
+
+# A
+
+## 0 fs 
+
+## Time 
+
+## 500 fs 100 fs 
+
+# B
+
+FIG. 6. Select structures along the NEO-ELMD (4) trajectories for the (A) E1PT and (B) E2PT BIP systems. The initial and final structures of each trajectory are shown, as well as the structures at the proton transfer time for the E1PT system and after the phenolic proton transfer but before the imidazolic proton transfer for the E2PT system. The proton densities are shown in cyan with an isosurface value of 0.04 a.u. The E1PT NEO-ELMD (4) trajectory shown in Panel (A) was initialized with zero velocities.  
+
+> B. Nonequilibrium Dynamics of BIP Molecules
+
+We now analyze the results of our simulations of the E1PT and E2PT BIP systems following instantaneous oxidation, which can occur either electrochemically or photochemically. Based on the results discussed above and the timings of malonaldehyde trajectories provided in Section S4, we set K = 4 for our BIP trajectories. This value of K offers a sufficient speedup while not ad-versely affecting extrapolation stability (see Tables SII and SIII) or having a major storage requirement. 53,62,63 
+
+We provide select structures along NEO-ELMD (4) tra-jectories for both the E1PT and E2PT systems in Fig. 6. 93 See Fig. S8 for select BIP structures along the conventional BOMD trajectories. First we analyze the E1PT system, where we have in-vestigated two sets of initial velocities. The first set cor-responds to zero initial velocities for all nuclei, and the second set corresponds to initial velocities directed along the phenol-benzimidazole bend mode. Fig. 7 shows the distances between the oxygen donor and nitrogen accep-tor and either the classical proton position or the quan-tum proton position operator expectation value for the conventional BOMD and NEO trajectories. The trajec-tories obtained with zero initial velocities and non-zero initial velocities are shown in Fig. 7A and B, respec-tively. Fig. S9 shows the distance between the oxygen donor and nitrogen acceptor along each of these trajec-tories. The dynamics differ qualitatively when the proton is treated classically in the conventional BOMD trajectory compared to the quantum treatment in the NEO trajec-tories when the initial velocities are zero (Fig. 7A). A classical treatment of the transferring proton does not lead to proton transfer under these conditions. In con-trast, both the NEO-ELMD (4) and CNEO-MD (4) tra-jectories exhibit proton transfer with similar dynamics and proton transfer times of 60.0 fs and 56.0 fs, re-spectively. Interestingly, the oxygen donor and nitro-gen acceptor achieve their closest distance to each other at roughly the same time in all three trajectories, at around 50 fs (Fig. S9A). The successful proton transfer in both NEO trajectories is due mainly to the inclusion of the quantum proton zero-point energy in the underly-ing NEO vibronic surface, which can significantly reduce proton transfer barriers. 47 
+
+The classical and quantum treatments of the transfer-12 A
+
+# B
+
+OD−H 
+
+NA−H 
+
+Solid: Conv. BOMD 
+
+Dashed: NEO -ELMD(4) 
+
+Dotted: CNEO -MD(4) 
+
+OD−H 
+
+NA−H 
+
+FIG. 7. Distance between the oxygen donor and the classical proton or proton position operator expectation value (blue) and distance between the nitrogen accep-tor and the classical proton or proton position operator expectation value (red) along the conventional BOMD (solid lines), NEO-ELMD (4) (dashed lines), and CNEO-MD (4) (dotted lines) E1PT trajectories, initialized with (A) zero velocities and (B) velocities directed along the phenol-benzimidazole bend mode. ring proton give more similar results for the trajectories initiated with non-zero velocities (Fig. 7B). In this case, the conventional BOMD, NEO-ELMD (4) , and CNEO-MD (4) trajectories exhibit proton transfer with proton transfer times of 53.0 fs, 35.5 fs, and 34.5 fs, respec-tively. The accelerated proton transfer observed in the NEO trajectories compared to the conventional BOMD trajectory is again due to the inclusion of the quantum proton zero-point energy, which lowers the proton trans-fer barrier and enhances the rate. Next, we analyze the E2PT trajectories. For this system, we propagated conventional BOMD and NEO-ELMD (4) trajectories with initial velocities along the phenol-benzimidazole bend mode. Oxidation of this molecule leads to proton transfer from the phenol to the imidazole (i.e., from an oxygen to a nitrogen atom), fol-lowed by a second proton transfer from the imidazole to the pyridine (i.e., between two nitrogen atoms). Fig. 8A A
+
+# B
+
+Solid: Conv. BOMD 
+
+Dashed: NEO -ELMD(4) 
+
+NA−H 
+
+ND−H 
+
+OD−H 
+
+NA−H 
+
+FIG. 8. Distances between the donor and the classi-cal proton or proton position operator expectation value (blue) and distance between the corresponding accep-tor and the classical proton or proton position operator expectation value (red) along the conventional BOMD (solid lines) and NEO-ELMD (4) (dashed lines) E2PT trajectories for the (A) phenolic and (B) imidazolic pro-tons. and 8B show the dynamics of the phenolic and imidazolic proton transfer reactions, respectively, each showing the distance between the classical proton positions or the quantum proton position operator expectation values for the conventional BOMD and NEO-ELMD (4) trajecto-ries. Fig. S10 shows the distance between the proton donors and acceptors along these trajectories. Again, we observe a significant difference in the quali-tative dynamics obtained with classically treated pro-tons in the conventional BOMD trajectory and with quantum mechanically treated protons in the NEO-ELMD (4) trajectory, particularity for the imidazolic proton transfer. The NEO-ELMD (4) trajectory exhibits asynchronous double proton transfer, with the phenolic and imidazolic proton transfers occurring at 16.5 fs and 349.0 fs, respectively. The conventional BOMD trajec-tory exhibits the phenolic proton transfer at 24.5 fs but does not show imidazolic proton transfer at all. The dy-namics of the phenolic proton transfer are similar in the conventional BOMD and NEO-ELMD (4) trajectories, 13 with the NEO-ELMD (4) trajectory predicting a slightly faster phenolic proton transfer time, as expected due to the inclusion of zero-point energy effects. Although this difference in phenolic proton transfer times is sub-tle, the imidazolic proton transfer does not even occur at all without a quantum treatment of the transferring protons. Note that after the imidazolic proton transfer in the NEO trajectory, the proton briefly becomes closer to its donor than its acceptor again at 455.5 fs, but it goes back to being closer to its acceptor a short time later at 475.0 fs. This behavior corresponds to a type of recrossing that occurs prior to stabilization of the final product state. We emphasize that simulating molecular systems of the size of these BIP molecules over these timescales would have been intractable with NEO-BOMD, partic-ularly NEO-BOMD simulations with tight enough gra-dient tolerance criteria to yield adequate energy conser-vation. For a relatively low computational cost, NEO-ELMD allows the simulation of such molecules over these timescales and thereby provides insights about the im-pact of NQEs on the dynamics of such PCET processes. 
+
+V. CONCLUSIONS 
+
+In this work, we have introduced an extended La-grangian approach to NEO molecular dynamics on the adiabatic vibronic ground-state surface. The NEO-ELMD framework employs a similar workflow to con-ventional BOMD, with one SCF and one force evalua-tion per time step. The NQEs associated with the quan-tized protons are incorporated directly into the extended vibronic surface on which the classical nuclear dynam-ics are performed. The movement of the protonic basis function centers according to classical mechanics allows the use of a relatively localized protonic basis set while maintaining extended energy conservation and offering several orders of magnitude speedup compared to vari-ational optimization at each time step. We introduced density matrix extrapolation as a means of further en-hancing the efficiency of these simulations and showed that this scheme results in a notable speedup while main-taining the accuracy of the dynamics. This technique is also applicable to CNEO-MD simulations, resulting in similar computational speedups. With the methods introduced herein, we are now able to simulate proton transfer dynamics with quan-tum protons for molecular systems of a significantly larger size and over longer timescales than were pre-viously accessible with multicomponent DFT methods. In addition, this work provides a foundation for future methods that include hydrogen tunneling effects 89 us-ing the NEO multistate DFT approach. 91,92 It also pro-vides the foundation for nonadiabatic dynamics simu-lations using Ehrenfest 43 or surface hopping 45 on the vibronic surfaces, 94,95 as well as NEO quantum mechan-ical/molecular mechanical (QM/MM) 37–39 simulations of condensed-phase systems. 
+
+SUPPLEMENTARY MATERIAL 
+
+Further details on trajectory initialization; discussion of energy conservation; additional malonaldehyde and BIP trajectories; timings of select trajectories; Cartesian co-ordinates of relevant structures. 
+
+ACKNOWLEDGMENTS 
+
+This method development was supported by the Na-tional Science Foundation Grant No. CHE-2408934. E.P. acknowledges funding through a Postdoc Mobil-ity fellowship by the Swiss National Science Founda-tion (SNSF, Project No. 210754) for implementation of CNEO-DFT and nuclear Hartree product into Q-Chem. The authors thank Dr. Kai Cui and Nicholas Boyer for helpful discussions and comments on the manuscript. The authors thank Dr. Chiara Aieta, Dr. Jonathan Fetherolf, Dr. Scott Garner, Tim Duong, Andreas Ghosh, Rowan Goudy, Jack Morgenstein, Millan Wel-man, and Jang Mok Yoo for useful discussions. 
+
+AUTHOR DECLARATIONS Conflict of Interest 
+
+The authors have no conflicts to disclose. 
+
+DATA AVAILABILITY STATEMENT 
+
+The data that support the findings of this study are available within this article and its supplementary mate-rial. Also, all Q-Chem output files and raw data used to support these findings will be openly available on Github at https://github.com/joseph-dickison20/neo_elmd.                      
+
+> 1J. Stubbe, D. G. Nocera, C. S. Yee, and M. C. Y. Chang, “Rad-ical Initiation in the Class I Ribonucleotide Reductase: Long-Range Proton-Coupled Electron Transfer?” Chem. Rev. 103 ,2167 (2003).
+> 2S. Hammes-Schiffer, “Hydrogen Tunneling and Protein Motion in Enzyme Reactions,” Acc. Chem. Res. 39 , 93–100 (2006).
+> 3L. Hammarström and S. Styring, “Proton-Coupled Electron Transfer of Tyrosines in Photosystem II and Model Systems for Artificial Photosynthesis: The Role of a Redox-Active Link Be-tween Catalyst and Photosensitizer,” Energy Environ. Sci. 4,2379 (2011).
+> 4T. E. Markland and M. Ceriotti, “Nuclear quantum effects enter the mainstream,” Nat. Rev. Chem. 2, 1–14 (2018).
+> 5H. D. Meyer, U. Manthe, and L. S. Cederbaum, “The Multi-Configurational Time-Dependent Hartree Approach,” Chem. Phys. Lett. 165 , 73 (1990).
+> 6M. H. Beck, A. Jäckle, G. A. Worth, and H. D. Meyer, “The multiconfiguration time-dependent Hartree (MCTDH) method: a highly efficient algorithm for propagating wavepackets,” Phys. Rep. 324 , 1 (2000).
+
+14 
+
+> 7
+
+H.-D. Meyer and G. A. Worth, “Quantum molecular dynamics: propagating wavepackets and density operators using the mul-ticonfiguration time-dependent Hartree method,” Theor. Chem. Acc. 109 , 251 (2003). 
+
+> 8
+
+E. J. Heller, “Time-dependent approach to semiclassical dynam-ics,” J. Chem. Phys. 62 , 1544–1555 (1975). 
+
+> 9
+
+E. J. Heller, “Frozen Gaussians: A very simple semiclassical approximation,” J. Chem. Phys. 75 , 2923–2931 (1981). 
+
+> 10
+
+G. A. Worth, M. A. Robb, and I. Burghardt, “A novel algo-rithm for non-adiabatic direct dynamics using variational Gaus-sian wavepackets,” Faraday Discuss. 127 , 307–323 (2004). 
+
+> 11
+
+M. Ben-Nun, J. Quenneville, and T. J. Martínez, “Ab Ini-tio Multiple Spawning: Photochemistry from First Principles Quantum Molecular Dynamics,” J. Phys. Chem. A 104 , 5161– 5175 (2000). 
+
+> 12
+
+M. Ben-Nun and T. J. Martínez, “Ab Initio Quantum Molecular Dynamics,” in Advances in Chemical Physics (John Wiley & Sons, Ltd, 2002) pp. 439–512. 
+
+> 13
+
+H. Wang, X. Sun, and W. H. Miller, “Semiclassical Approxima-tions for the Calculation of Thermal Rate Constants for Chem-ical Reactions in Complex Molecular Systems,” J. Chem. Phys. 
+
+108 , 9726 (1998). 
+
+> 14
+
+X. Sun, H. Wang, and W. H. Miller, “Semiclassical Theory of Electronically Nonadiabatic Dynamics: Results of a Linearized Approximation to the Initial Value Representation,” J. Chem. Phys. 109 , 7064 (1998). 
+
+> 15
+
+B. J. Berne, G. Ciccotti, and D. F. Coker, eds., Classical and Quantum Dynamics in Condensed Phase Simulations: Proceed-ings of the International School of Physics (World Scientific, 1998). 
+
+> 16
+
+M. E. Tuckerman, “Path integration via molecular dynamics,” in 
+
+Quantum Simulations of Complex Many-Body Systems: From Theory to Algorithms , Vol. 10 (John von Neumann Institute for Computing, 2002) p. 269. 
+
+> 17
+
+I. R. Craig and D. E. Manolopoulos, “Quantum statistics and classical mechanics: Real time correlation functions from ring polymer molecular dynamics,” J. Chem. Phys. 121 , 3368–3373 (2004). 
+
+> 18
+
+S. Habershon, D. E. Manolopoulos, T. E. Markland, and T. F. Miller, “Ring-Polymer Molecular Dynamics: Quantum Effects in Chemical Dynamics from Classical Trajectories in an Extended Phase Space,” Annu. Rev. Phys. Chem. 64 , 387–413 (2013). 
+
+> 19
+
+T. Kreibich and E. K. U. Gross, “Multicomponent Density-Functional Theory for Electrons and Nuclei,” Phys. Rev. Lett. 
+
+86 , 2984 (2001). 
+
+> 20
+
+F. Pavošević, T. Culpitt, and S. Hammes-Schiffer, “Multicom-ponent Quantum Chemistry: Integrating Electronic and Nuclear Quantum Effects via the Nuclear–Electronic Orbital Method,” Chem. Rev. 120 , 4222–4253 (2020). 
+
+> 21
+
+S. P. Webb, T. Iordanov, and S. Hammes-Schiffer, “Multiconfig-urational Nuclear-Electronic Orbital Approach: Incorporation of Nuclear Quantum Effects in Electronic Structure Calcula-tions,” J. Chem. Phys. 117 , 4106 (2002). 
+
+> 22
+
+S. Hammes-Schiffer, “Nuclear–electronic orbital methods: Foun-dations and prospects,” J. Chem. Phys. 155 , 030901 (2021). 
+
+> 23
+
+F. Pavošević, T. Culpitt, and S. Hammes-Schiffer, “Multicom-ponent Coupled Cluster Singles and Doubles Theory within the Nuclear-Electronic Orbital Framework,” J. Chem. Theory Com-put. 15 , 338 (2019). 
+
+> 24
+
+N. Alaal and K. R. Brorsen, “Multicomponent heat-bath config-uration interaction with the perturbative correction for the cal-culation of protonic excited states,” J. Chem. Phys. 155 , 234107 (2021). 
+
+> 25
+
+L. Hasecke and R. A. Mata, “Local Electronic Correlation in Multicomponent Møller–Plesset Perturbation Theory,” J. Chem. Theory Comput. 20 , 9928–9938 (2024). 
+
+> 26
+
+C. L. Malbon and S. Hammes-Schiffer, “Nuclear-Electronic Or-bital Multireference Configuration Interaction for Ground and Excited Vibronic States and Fundamental Insights into Multi-component Basis Sets,” J. Chem. Theory Comput. 21 , 3968– 3980 (2025). 
+
+> 27
+
+R. J. Goudy, F. Pavošević, and S. Hammes-Schiffer, “Triple excitations in nuclear–electronic orbital coupled cluster theory for multiple quantum protons,” J. Chem. Phys. 163 , 224119 (2025). 
+
+> 28
+
+M. V. Pak, A. Chakraborty, and S. Hammes-Schiffer, “Density Functional Theory Treatment of Electron Correlation in the Nu-clear–Electronic Orbital Approach,” J. Phys. Chem. A 111 , 4522 (2007). 
+
+> 29
+
+K. R. Brorsen, Y. Yang, and S. Hammes-Schiffer, “Multicompo-nent Density Functional Theory: Impact of Nuclear Quantum Effects on Proton Affinities and Geometries,” J. Phys. Chem. Lett. 8, 3488–3493 (2017). 
+
+> 30
+
+Y. Yang, K. R. Brorsen, T. Culpitt, M. V. Pak, and S. Hammes-Schiffer, “Development of a practical multicomponent density functional for electron-proton correlation to produce accurate proton densities,” J. Chem. Phys. 147 , 114113 (2017). 
+
+> 31
+
+Y. Yang, T. Culpitt, and S. Hammes-Schiffer, “Multicomponent Time-Dependent Density Functional Theory: Proton and Elec-tron Excitation Energies,” J. Phys. Chem. Lett. 9, 1765 (2018). 
+
+> 32
+
+Z. Tao, Q. Yu, S. Roy, and S. Hammes-Schiffer, “Direct Dynam-ics with Nuclear–Electronic Orbital Density Functional Theory,” Acc. Chem. Res. 54 , 4131 (2021). 
+
+> 33
+
+L. Zhao, Z. Tao, F. Pavošević, A. Wildman, S. Hammes-Schiffer, and X. Li, “Real-time time-dependent nuclear--electronic orbital approach: Dynamics beyond the Born–Oppenheimer approxi-mation,” J. Phys. Chem. Lett. 11 , 4052–4058 (2020). 
+
+> 34
+
+L. Zhao, A. Wildman, F. Pavošević, J. C. Tully, S. Hammes-Schiffer, and X. Li, “Excited State Intramolecular Proton Trans-fer with Nuclear-Electronic Orbital Ehrenfest Dynamics,” J. Phys. Chem. Lett. 12 , 3497–3502 (2021). 
+
+> 35
+
+T. E. Li, Z. Tao, and S. Hammes-Schiffer, “Semiclassical Real-Time Nuclear-Electronic Orbital Dynamics for Molecular Po-laritons: Unified Theory of Electronic and Vibrational Strong Couplings,” J. Chem. Theory Comput. 18 , 2774 (2022). 
+
+> 36
+
+T. E. Li and S. Hammes-Schiffer, “Nuclear-Electronic Orbital Quantum Dynamics of Plasmon-Driven H2 Photodissociation,” J. Am. Chem. Soc. 145 , 18210 (2023). 
+
+> 37
+
+M. Chow, T. E. Li, and S. Hammes-Schiffer, “Nu-clear–Electronic Orbital Quantum Mechanical/Molecular Me-chanical Real-Time Dynamics,” J. Phys. Chem. Lett. 14 , 9556 (2023). 
+
+> 38
+
+M. Chow, E. Lambros, X. Li, and S. Hammes-Schiffer, “Nu-clear–Electronic Orbital QM/MM Approach: Geometry Opti-mizations and Molecular Dynamics,” J. Chem. Theory Comput. 
+
+19 , 3839 (2023). 
+
+> 39
+
+M. Chow, C. R. Reinhardt, and S. Hammes-Schiffer, “Nuclear Quantum Effects in Quantum Mechanical/Molecular Mechan-ical Free Energy Simulations of Ribonucleotide Reductase,” J. Am. Chem. Soc. 146 , 33258–33264 (2024). 
+
+> 40
+
+S. M. Garner, S. Upadhyay, X. Li, and S. Hammes-Schiffer, “Nuclear–Electronic Orbital Time-Dependent Configuration In-teraction Method,” J. Phys. Chem. Lett. , 6017–6023 (2024). 
+
+> 41
+
+S. M. Garner, S. Upadhyay, X. Li, and S. Hammes-Schiffer, “Time-resolved vibronic spectra with nuclear–electronic orbital time-dependent configuration interaction,” J. Chem. Phys. 162 ,044108 (2025). 
+
+> 42
+
+J. C. Tully, “Perspective: Nonadiabatic dynamics theory,” J. Chem. Phys. 137 , 22A301 (2012). 
+
+> 43
+
+X. Li, J. C. Tully, H. B. Schlegel, and M. J. Frisch, “Ab initio Ehrenfest dynamics,” J. Chem. Phys. 123 , 084106 (2005). 
+
+> 44
+
+J. C. Tully, “Ehrenfest dynamics with quantum mechanical nu-clei,” Chem. Phys. Lett. 816 , 140396 (2023). 
+
+> 45
+
+J. C. Tully, “Molecular dynamics with electronic transitions,” J. Chem. Phys. 93 , 1061–1071 (1990). 
+
+> 46
+
+S. Hammes-Schiffer and J. C. Tully, “Proton transfer in solution: Molecular dynamics with quantum transitions,” J. Chem. Phys. 
+
+101 , 4657–4667 (1994). 
+
+> 47
+
+P. E. Schneider, Z. Tao, F. Pavošević, E. Epifanovsky, X. Feng, and S. Hammes-Schiffer, “Transition states, reaction paths, and thermochemistry using the nuclear–electronic orbital analytic Hessian,” J. Chem. Phys. 154 , 054108 (2021). 15 
+
+> 48
+
+D. Marx and J. Hutter, Ab Initio Molecular Dynamics: Basic Theory and Advanced Methods (Cambridge University Press, 2009). 
+
+> 49
+
+A. Liu, M. Chow, A. Wildman, M. J. Frisch, S. Hammes-Schiffer, and X. Li, “Simultaneous Optimization of Nuclear–Electronic Orbitals,” J. Phys. Chem. A 126 , 7033 (2022). 
+
+> 50
+
+M. Chow, E. Paenurk, and S. Hammes-Schiffer, “Efficient and robust optimization of nuclear and electronic orbitals within the nuclear Hartree product representation,” J. Chem. Phys. 164 ,074103 (2026). 
+
+> 51
+
+B. Auer and S. Hammes-Schiffer, “Localized Hartree product treatment of multiple protons in the nuclear-electronic orbital framework,” J. Chem. Phys. 132 , 084110 (2010). 
+
+> 52
+
+P. Pulay and G. Fogarasi, “Fock matrix dynamics,” Chem. Phys. Lett. 386 , 272–278 (2004). 
+
+> 53
+
+T. D. Kühne, M. Krack, F. R. Mohamed, and M. Parrinello, “Efficient and Accurate Car-Parrinello-like Approach to Born– Oppenheimer Molecular Dynamics,” Phys. Rev. Lett. 98 , 066401 (2007). 
+
+> 54
+
+É. Polack, G. Dusson, B. Stamm, and F. Lipparini, “Grass-mann extrapolation of density matrices for born–oppenheimer molecular dynamics,” J. Chem. Theory Comput. 17 (2021). 
+
+> 55
+
+R. Car and M. Parrinello, “Unified Approach for Molecular Dy-namics and Density-Functional Theory,” Phys. Rev. Lett. 55 ,2471–2474 (1985). 
+
+> 56
+
+M. Head-Gordon, Y. Shao, C. Saravanan, and C. A. White, “Curvy steps for density matrix based energy minimization: ten-sor formulation and toy applications,” Mol. Phys. 101 , 37–43 (2003). 
+
+> 57
+
+A. M. N. Niklasson, “Extended Born–Oppenheimer Molecular Dynamics,” Phys. Rev. Lett. 100 , 123004 (2008). 
+
+> 58
+
+A. M. N. Niklasson, P. Steneteg, A. Odell, N. Bock, M. Challa-combe, C. J. Tymczak, E. Holmström, G. Zheng, and V. Weber, “Extended Lagrangian Born–Oppenheimer molecular dynamics with dissipation,” J. Chem. Phys. 130 , 214109 (2009). 
+
+> 59
+
+J. Xu, R. Zhou, T. E. Li, S. Hammes-Schiffer, and Y. Kanai, “Lagrangian formulation of nuclear–electronic orbital Ehrenfest dynamics with real-time TDDFT for extended periodic sys-tems,” J. Chem. Phys. 161 , 194109 (2024). 
+
+> 60
+
+L. Zhao, A. Wildman, Z. Tao, P. Schneider, S. Hammes-Schiffer, and X. Li, “Nuclear-Electronic Orbital Ehrenfest Dynamics,” J. Chem. Phys. 153 , 224111 (2020). 
+
+> 61
+
+T. E. Li, X. Li, and S. Hammes-Schiffer, “Energy conservation in real-time nuclear–electronic orbital Ehrenfest dynamics,” J. Chem. Phys. 162 , 144106 (2025). 
+
+> 62
+
+J. Kolafa, “Numerical Integration of Equations of Motion with a Self-Consistent Field given by an Implicit Equation,” Mol. Sim. 
+
+18 , 193–212 (1996). 
+
+> 63
+
+J. Kolafa, “Time-reversible always stable predictor–corrector method for molecular dynamics of polarizable molecules,” J. Comp. Chem. 25 , 335–342 (2004). 
+
+> 64
+
+R. McWeeny, “Some Recent Advances in Density Matrix The-ory,” Rev. Mod. Phys. 32 , 335–369 (1960). 
+
+> 65
+
+X. Xu and Y. Yang, “Constrained nuclear-electronic orbital den-sity functional theory: Energy surfaces with nuclear quantum effects,” J. Chem. Phys. 152 , 084107 (2020). 
+
+> 66
+
+X. Xu, Z. Chen, and Y. Yang, “Molecular Dynamics with Con-strained Nuclear Electronic Orbital Density Functional Theory: Accurate Vibrational Spectra from Efficient Incorporation of Nuclear Quantum Effects,” J. Am. Chem. Soc. 144 , 4039–4046 (2022). 
+
+> 67
+
+Z. Chen and Y. Yang, “Incorporating Nuclear Quantum Effects in Molecular Dynamics with a Constrained Minimized Energy Surface,” J. Phys. Chem. Lett. 14 , 279–286 (2023). 
+
+> 68
+
+E. Odella, S. J. Mora, B. L. Wadsworth, M. T. Huynh, J. J. Goings, P. A. Liddell, T. L. Groy, M. Gervaldo, L. E. Sereno, D. Gust, T. A. Moore, G. F. Moore, S. Hammes-Schiffer, and A. L. Moore, “Controlling Proton-Coupled Electron Transfer in Bioinspired Artificial Photosynthetic Relays,” J. Am. Chem. Soc. 140 , 15450–15460 (2018). 
+
+> 69
+
+E. Odella, B. L. Wadsworth, S. J. Mora, J. J. Goings, M. T. Huynh, D. Gust, T. A. Moore, G. F. Moore, S. Hammes-Schiffer, and A. L. Moore, “Proton-Coupled Electron Transfer Drives Long-Range Proton Translocation in Bioinspired Systems,” J. Am. Chem. Soc. 141 , 14057–14061 (2019). 
+
+> 70
+
+E. Odella, S. J. Mora, B. L. Wadsworth, J. J. Goings, M. A. Ger-valdo, L. E. Sereno, T. L. Groy, D. Gust, T. A. Moore, G. F. Moore, S. Hammes-Schiffer, and A. L. Moore, “Proton-coupled electron transfer across benzimidazole bridges in bioinspired pro-ton wires,” Chem. Sci. 11 , 3820–3828 (2020). 
+
+> 71
+
+J. J. Goings and S. Hammes-Schiffer, “Nonequilibrium Dynam-ics of Proton-Coupled Electron Transfer in Proton Wires: Con-certed but Asynchronous Mechanisms,” ACS Cent. Sci. 6, 1594– 1601 (2020). 
+
+> 72
+
+Y. Yoneda, S. J. Mora, J. Shee, B. L. Wadsworth, E. A. Arse-nault, D. Hait, G. Kodis, D. Gust, G. F. Moore, A. L. Moore, M. Head-Gordon, T. A. Moore, and G. R. Fleming, “Elec-tron–Nuclear Dynamics Accompanying Proton-Coupled Elec-tron Transfer,” J. Am. Chem. Soc. 143 , 3104–3112 (2021). 
+
+> 73
+
+E. A. Arsenault, W. D. Guerra, J. Shee, E. A. Reyes Cruz, Y. Yoneda, B. L. Wadsworth, E. Odella, M. N. Urrutia, G. Kodis, G. F. Moore, M. Head-Gordon, A. L. Moore, T. A. Moore, and G. R. Fleming, “Concerted Electron-Nuclear Mo-tion in Proton-Coupled Electron Transfer-Driven Grotthuss-Type Proton Translocation,” J. Phys. Chem. Lett. 13 , 4479– 4485 (2022). 
+
+> 74
+
+X. Xu and Y. Yang, “Full-quantum descriptions of molecular sys-tems from constrained nuclear–electronic orbital density func-tional theory,” J. Chem. Phys. 153 , 074106 (2020). 
+
+> 75
+
+E. Epifanovsky, A. T. B. Gilbert, X. Feng, J. Lee, Y. Mao, N. Mardirossian, P. Pokhilko, A. F. White, M. P. Coons, A. L. Dempwolff, Z. Gan, D. Hait, P. R. Horn, L. D. Jacobson, I. Kali-man, J. Kussmann, A. W. Lange, K. U. Lao, D. S. Levine, J. Liu, S. C. McKenzie, A. F. Morrison, K. D. Nanda, F. Plasser, D. R. Rehn, M. L. Vidal, Z.-Q. You, Y. Zhu, B. Alam, B. J. Al-brecht, A. Aldossary, E. Alguire, J. H. Andersen, V. Athavale, D. Barton, K. Begam, A. Behn, N. Bellonzi, Y. A. Bernard, E. J. Berquist, H. G. A. Burton, A. Carreras, K. Carter-Fenk, R. Chakraborty, A. D. Chien, K. D. Closser, V. Cofer-Shabica, S. Dasgupta, M. de Wergifosse, J. Deng, M. Dieden-hofen, H. Do, S. Ehlert, P.-T. Fang, S. Fatehi, Q. Feng, T. Fried-hoff, J. Gayvert, Q. Ge, G. Gidofalvi, M. Goldey, J. Gomes, C. E. González-Espinoza, S. Gulania, A. O. Gunina, M. W. D. Hanson-Heine, P. H. P. Harbach, A. Hauser, M. F. Herbst, M. Hernández Vera, M. Hodecker, Z. C. Holden, S. Houck, X. Huang, K. Hui, B. C. Huynh, M. Ivanov, Á. Jász, H. Ji, H. Jiang, B. Kaduk, S. Kähler, K. Khistyaev, J. Kim, G. Kis, P. Klunzinger, Z. Koczor-Benda, J. H. Koh, D. Kosenkov, L. Koulias, T. Kowalczyk, C. M. Krauter, K. Kue, A. Kunitsa, T. Kus, I. Ladjánszki, A. Landau, K. V. Lawler, D. Lefrancois, S. Lehtola, R. R. Li, Y.-P. Li, J. Liang, M. Liebenthal, H.-H. Lin, Y.-S. Lin, F. Liu, K.-Y. Liu, M. Loipersberger, A. Lu-enser, A. Manjanath, P. Manohar, E. Mansoor, S. F. Manzer, S.-P. Mao, A. V. Marenich, T. Markovich, S. Mason, S. A. Maurer, P. F. McLaughlin, M. F. S. J. Menger, J.-M. Mewes, S. A. Mewes, P. Morgante, J. W. Mullinax, K. J. Oosterbaan, G. Paran, A. C. Paul, S. K. Paul, F. Pavošević, Z. Pei, S. Prager, E. I. Proynov, Á. Rák, E. Ramos-Cordoba, B. Rana, A. E. Rask, A. Rettig, R. M. Richard, F. Rob, E. Rossomme, T. Scheele, M. Scheurer, M. Schneider, N. Sergueev, S. M. Sharada, W. Sko-morowski, D. W. Small, C. J. Stein, Y.-C. Su, E. J. Sundstrom, Z. Tao, J. Thirman, G. J. Tornai, T. Tsuchimochi, N. M. Tub-man, S. P. Veccham, O. Vydrov, J. Wenzel, J. Witte, A. Ya-mada, K. Yao, S. Yeganeh, S. R. Yost, A. Zech, I. Y. Zhang, X. Zhang, Y. Zhang, D. Zuev, A. Aspuru-Guzik, A. T. Bell, N. A. Besley, K. B. Bravaya, B. R. Brooks, D. Casanova, J.-D. Chai, S. Coriani, C. J. Cramer, G. Cserey, A. E. DePrince, III, R. A. DiStasio, Jr., A. Dreuw, B. D. Dunietz, T. R. Furlani, W. A. Goddard, III, S. Hammes-Schiffer, T. Head-Gordon, W. J. Hehre, C.-P. Hsu, T.-C. Jagau, Y. Jung, A. Klamt, J. Kong, D. S. Lambrecht, W. Liang, N. J. Mayhall, C. W. McCurdy, J. B. Neaton, C. Ochsenfeld, J. A. Parkhill, R. Peverati, V. A. Rassolov, Y. Shao, L. V. Slipchenko, T. Stauch, R. P. Steele, J. E. Subotnik, A. J. W. Thom, A. Tkatchenko, D. G. Truh-16 
+
+lar, T. Van Voorhis, T. A. Wesolowski, K. B. Whaley, H. L. Woodcock, III, P. M. Zimmerman, S. Faraji, P. M. W. Gill, M. Head-Gordon, J. M. Herbert, and A. I. Krylov, “Software for the frontiers of quantum chemistry: An overview of develop-ments in the Q-Chem 5 package,” J. Chem. Phys. 155 , 084801 (2021). 
+
+> 76
+
+J.-D. Chai and M. Head-Gordon, “Systematic optimization of long-range corrected hybrid density functionals,” J. Chem. Phys. 
+
+128 , 084106 (2008). 
+
+> 77
+
+F. Weigend and R. Ahlrichs, “Balanced basis sets of split valence, triple zeta valence and quadruple zeta valence quality for H to Rn: Design and assessment of accuracy,” Phys. Chem. Chem. Phys. 7, 3297–3305 (2005). 
+
+> 78
+
+Q. Yu, F. Pavošević, and S. Hammes-Schiffer, “Development of Nuclear Basis Sets for Multicomponent Quantum Chemistry Methods,” J. Chem. Phys. 152 , 244123 (2020). 
+
+> 79
+
+T. Van Voorhis and M. Head-Gordon, “A geometric approach to direct minimization,” Mol. Phys. 100 , 1713–1721 (2002). 
+
+> 80
+
+P. Pulay, “Convergence acceleration of iterative sequences. the case of scf iteration,” Chem. Phys. Lett. 73 , 393–398 (1980). 
+
+> 81
+
+P. Pulay, “Improved SCF convergence acceleration,” J. Comp. Chem. 3, 556–560 (1982). 
+
+> 82
+
+W. J. Hehre, R. Ditchfield, and J. A. Pople, “Self—Consistent Molecular Orbital Methods. XII. Further Extensions of Gaus-sian—Type Basis Sets for Use in Molecular Orbital Studies of Organic Molecules,” J. Chem. Phys. 56 , 2257–2261 (1972). 
+
+> 83
+
+P. C. Hariharan and J. A. Pople, “The influence of polarization functions on molecular orbital hydrogenation energies,” Theo-retica chimica acta 28 , 213–222 (1973). 
+
+> 84
+
+S. H. Vosko, L. Wilk, and M. Nusair, “Accurate spin-dependent electron liquid correlation energies for local spin density calcu-lations: a critical analysis,” Can. J. Phys. 58 (1980). 
+
+> 85
+
+C. Lee, W. Yang, and R. G. Parr, “Development of the Colle-Salvetti Correlation-Energy Formula into a Functional of the Electron Density,” Phys. Rev. B 37 , 785 (1988). 
+
+> 86
+
+A. D. Becke, “Density-Functional Thermochemistry. III. The Role of Exact Exchange,” J. Chem. Phys. 98 , 5648 (1993). 
+
+> 87
+
+S. Grimme, J. Antony, S. Ehrlich, and H. Krieg, “A consistent and accurate ab initio parametrization of density functional dis-persion correction (DFT-D) for the 94 elements H-Pu,” J. Chem. Phys. 132 , 154104 (2010). 
+
+> 88
+
+S. Grimme, S. Ehrlich, and L. Goerigk, “Effect of the damping function in dispersion corrected density functional theory,” J. Comp. Chem. 32 , 1456–1465 (2011). 
+
+> 89
+
+M. V. Pak and S. Hammes-Schiffer, “Electron-Proton Correla-tion for Hydrogen Tunneling Systems,” Phys. Rev. Lett. 92 ,103002 (2004). 
+
+> 90
+
+R. J. Stein, C. L. Malbon, and S. Hammes-Schiffer, “Computing Hydrogen Tunneling Splittings with Nuclear-Electronic orbital Multireference Configuration Interaction,” J. Phys. Chem. Lett. 
+
+16 , 7718–7724 (2025). 
+
+> 91
+
+Q. Yu and S. Hammes-Schiffer, “Nuclear-Electronic Orbital Mul-tistate Density Functional Theory,” J. Phys. Chem. Lett. 11 ,10106–10113 (2020). 
+
+> 92
+
+J. A. Dickinson, Q. Yu, and S. Hammes-Schiffer, “Generalized Nuclear-Electronic Orbital Multistate Density Functional The-ory for Multiple Proton Transfer Processes,” J. Phys. Chem. Lett. 14 , 6170–6178 (2023). 
+
+> 93
+
+L. Schrödinger and W. DeLano, “Pymol,” (2020). 
+
+> 94
+
+Q. Yu, S. Roy, and S. Hammes-Schiffer, “Nonadiabatic Dynam-ics of Hydrogen Tunneling with Nuclear-Electronic Orbital Mul-tistate Density Functional Theory,” J. Chem. Theory Comput. 
+
+18 , 7132–7141 (2022). 
+
+> 95
+
+J. A. Dickinson and S. Hammes-Schiffer, “Nonadiabatic Hydro-gen Tunneling Dynamics for Multiple Proton Transfer Processes with Generalized Nuclear-Electronic Orbital Multistate Density Functional Theory,” J. Chem. Theory Comput. 20 , 7716–7727 (2024). Supplementary Material: Extended Lagrangian molecular dynamics on vibronic surfaces in the nuclear–electronic orbital framework 
+
+Joseph A. Dickinson 
+
+Department of Chemistry, Yale University, New Haven, CT 06520, USA Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+Mathew Chow 
+
+Department of Chemistry, Yale University, New Haven, CT 06520, USA Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+Eno Paenurk 
+
+Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+Sharon Hammes-Schiffer †
+
+Department of Chemistry, Yale University, New Haven, CT 06520, USA Department of Chemistry, Princeton University, Princeton, NJ 08544, USA 
+
+> †
+
+shs566@princeton.edu S1  
+
+> S1. FURTHER DETAILS ON TRAJECTORY INITIALIZATION
+
+In this section, we provide additional details regarding the trajectories presented in the main paper. Specifically, we provide further information about obtaining the initial velocities via scaling to a target temperature and the normal modes used to obtain these initial velocities. Initializing the malonaldehyde and some of the BIP trajectories relied on scaling velocities to match a target temperature. We review this procedure here. For a system of Natom atoms, let {di} be a set of vectors such that di
+
+points from the i-th nucleus in a given structure toward its position in some other structure. By the equipartition theorem, the kinetic energy of the system, K, is related to the temperature, T , via 
+
+K = 32 Natom kBT, (S1) where kB is the Boltzmann constant. Our goal is to obtain velocity vectors for each nucleus {vi} such that the total kinetic energy of the nuclei is equal to some target temperature Ttarget . The kinetic energy of the system is related to {vi} according to 
+
+K = 12
+
+> Natom
+
+X
+
+> i=1
+
+mi|vi|2, (S2) where mi is the mass of the i-th nucleus. Using a simple scaling factor α such that vi = αdi,
+
+12
+
+> Natom
+
+X
+
+> i=1
+
+mi|vi|2 = 32 Natom kBTtarget (S3) 
+
+α2
+
+> Natom
+
+X
+
+> i=1
+
+mi|di|2 = 3 Natom kBTtarget (S4) 
+
+α =
+
+s 3Natom kBTtarget 
+
+PNatom  
+
+> i=1
+
+mi|di|2 . (S5) Thus, the scaling factor α can be computed according to Eq. (S5) to obtain initial velocity vectors for each nucleus according to vi = αdi.For initialization of the malonaldehyde trajectories, {di} were unit vectors pointing each nucleus from their position in the equilibrium structure of Table SIV to their position in the transition state structure of Table SV. For the BIP trajectories with non-zero initial velocities, {di} were the normal mode vectors associated with the phenol-benzimidazole bend mode (see Fig. S1). Note that for the malonaldehyde initialization, only the classical nuclei were taken into account in this procedure, but for BIP, all nuclei were included. In the NEO trajectories, the initial velocities of the proton basis function centers were set to zero. After the initial velocities were obtained for the BIP trajectories, the initial velocities of the transferring proton(s) in the conventional BOMD trajectories were set to zero to allow a direct comparison between the conventional BOMD and NEO trajectories. However, we found that retaining non-zero initial velocities for the transferring protons for the conventional BOMD trajectories has only a small impact on the computed proton transfer times (see Figs. S13 and S14).  
+
+> S2. ENERGY CONSERVATION IN NEO-BOMD AND NEO-ELMD
+
+In this section, we show that energy conservation in NEO-BOMD depends on terms related to the gradient of the NEO energy with respect to the protonic basis function centers. We also show that the extended energy is rigorously conserved in NEO-ELMD. Recall that for some fixed configuration of classical nuclei R, the NEO energy UNEO is defined as the minimum energy under which the conditions of Eq. (12) are satisfied. However, as discussed in Section II B, UNEO is effectively a function of both R and the proton basis function center positions R due to the incompleteness of the protonic basis set. Consider Ephys in NEO-BOMD, defined as the sum of the kinetic energy of the classical nuclei and the NEO potential energy, 
+
+Ephys = 12 
+
+> Nc
+
+X
+
+> A=1
+
+MA| ˙RA|2 + UNEO (R, R), (S6) S2 A
+
+## B
+
+FIG. S1. (A) E1PT and (B) E2PT structures with normal mode displacement vectors for the phenol-benzimidazole bend mode overlayed on top of their respective nuclei. This bend mode has a frequency of 75.07 cm −1 and 240.85 cm −1 in the E1PT and E2PT systems, respectively. The magnitudes of the displacement vectors indicate how much a certain nucleus is displaced along the bend mode relative to other nuclei in this normal mode vector. where we have indicated the dependence of UNEO on both R and R. Computing the time-derivative of Ephys , we obtain 
+
+˙Ephys = 
+
+> Nc
+
+X
+
+> A=1
+
+MA ˙RA · ¨RA + 
+
+> Nc
+
+X
+
+> A=1
+
+∂U NEO 
+
+∂RA
+
+˙RA + 
+
+> Np
+
+X
+
+> I=1
+
+∂U NEO 
+
+∂RI
+
+˙RI
+
+= 
+
+> Nc
+
+X
+
+> A=1
+
+
+
+(MA ¨RA) · ˙RA + ∂U NEO 
+
+∂RA
+
+˙RA
+
+
+
++ 
+
+> Np
+
+X
+
+> I=1
+
+∂U NEO 
+
+∂RI
+
+˙RI
+
+= 
+
+> Nc
+
+X
+
+> A=1
+
+
+
+− ∂U NEO 
+
+∂RA
+
+˙RA + ∂U NEO 
+
+∂RA
+
+˙RA
+
+
+
++ 
+
+> Np
+
+X
+
+> I=1
+
+∂U NEO 
+
+∂RI
+
+˙RI
+
+= 
+
+> Np
+
+X
+
+> I=1
+
+∂U NEO 
+
+∂RI
+
+˙RI .
+
+(S7) 
+
+Ephys is rigorously conserved (i.e., ˙Ephys = 0 ) in NEO-BOMD if any of the following three conditions is satisfied: 1. The basis set is complete, and therefore UNEO is invariant with respect to the protonic basis function center positions. 2. All protonic basis function centers are fixed to their initial positions. 3. All protonic basis function center positions are optimized variationally at all time steps. Condition 1 is not possible to achieve in practice, and Condition 2 is not generally advisable because a computationally tractable fixed protonic basis set is likely too limited in its span of coordinate space to adequately describe proton S3 transfer without knowing the reaction pathway ahead of time. The most general approach is to satisfy Condition 3 and optimize all protonic basis function centers at all time steps, but this procedure is computationally expensive, motivating the development of NEO-ELMD in this work. In NEO-ELMD, Eext is defined as the sum of the kinetic energy of the classical nuclei, the kinetic energy of the protonic basis function centers, and the NEO potential energy, 
+
+Eext = 12 
+
+> Nc
+
+X
+
+> A=1
+
+MA| ˙RA|2 + 12 
+
+> Np
+
+X
+
+> I=1
+
+Mp| ˙RI |2 + U eff NEO (R, R), (S8) where we have indicated that the nuclei evolve on an effective NEO vibronic surface, which is dependent on R and 
+
+R. Computing the time-derivative of Eext , we obtain 
+
+˙Eext = 
+
+> Nc
+
+X
+
+> A=1
+
+MA ˙RA · ¨RA + 
+
+> Nc
+
+X
+
+> A=1
+
+∂U eff NEO 
+
+∂RA
+
+˙RA + 
+
+> Np
+
+X
+
+> I=1
+
+Mp ˙RI · ¨RI + 
+
+> Np
+
+X
+
+> I=1
+
+∂U eff NEO 
+
+∂RI
+
+˙RI
+
+= 
+
+> Nc
+
+X
+
+> A=1
+
+
+
+(MA ¨RA) · ˙RA + ∂U eff NEO 
+
+∂RA
+
+˙RA
+
+
+
++ 
+
+> Np
+
+X
+
+> I=1
+
+
+
+(Mp ¨RI ) · ˙RI + ∂U eff NEO 
+
+∂RI
+
+˙RI
+
+
+
+= 
+
+> Nc
+
+X
+
+> A=1
+
+
+
+− ∂U eff NEO 
+
+∂RA
+
+˙RA + ∂U eff NEO 
+
+∂RA
+
+˙RA
+
+
+
++ 
+
+> Np
+
+X
+
+> I=1
+
+
+
+− ∂U eff NEO 
+
+∂RI
+
+˙RI + ∂U eff NEO 
+
+∂RI
+
+˙RI
+
+
+
+= 0 
+
+(S9) Thus, Eext is rigorously conserved in NEO-ELMD. It is important to note that the physical energy, Ephys , is not conserved in NEO-ELMD. The underlying assumption, as is the case with all extended Lagrangian approaches, 48,55 
+
+is that the exchange of energy between the real and fictitious degrees of freedom in the system is not significant enough to alter the qualitative dynamics.  
+
+> S3. ADDITIONAL TRAJECTORIES AND ANALYSIS
+
+In this section, we provide the results of additional trajectories for malonaldehyde and BIP systems.  
+
+> S3A. Malonaldehyde
+
+In Figs. S2–S4, we show the results of the malonaldehyde trajectories across different protonic basis sets. Note that unless otherwise specified, these simulations use the same parameters as the results given in Section IV A of the main text (i.e., 0.5 fs time step and 10 −6 Eh convergence criteria). Across these basis sets, we see similar results to the PB6-H results given in the main paper: qualitative agreement in the dynamics among NEO-BOMD, NEO-ELMD (4) , and CNEO-MD (4) , substantial decreases in the number of SCF iterations needed to converge per time step with increasing order of density matrix extrapolation, and sufficient extended energy conservation. Note that all simulations with the even-tempered 8s8p8d8f8g protonic basis used a linear dependence threshold of 10 −2.Fig. S5 shows different malonaldehyde NEO-ELMD (4) results with varying levels of SCF convergence following density matrix extrapolation, again with 0.5 fs time step and 10 −6 Eh convergence criteria. In these simulations, we performed a specified number of macrocycles of the stepwise NEO-SCF procedure at each time step and allowed the trajectory to proceed regardless of whether the SCF fully converged in that number of macrocycles. See Ref. 49 for a more detailed explanation of stepwise versus simultaneous NEO-SCF procedures. This investigation was motivated by the “corrector” steps following extrapolation (the “predictor” step) from the original ASPC scheme 62,63 and its adaption to BOMD. 53 Let m represent the number of macrocycles performed at each time step of these trajectories. As the plots show, propagating the trajectories with a fixed value of m has a negligible effect on the dynamics. This observation indicates that the extrapolated densities serve as sufficiently good initial guesses to the SCF procedure such that small values of m still yield nearly identical electronic and protonic densities as fully converged solutions. The main impact of a fixed value of m is observed in the extended energy conservation, where lack of full convergence at each time step resulted in slightly greater energy fluctuations, but still on the order of magnitude typically considered acceptable in conventional BOMD. The same trends are observed in the corresponding CNEO-MD (4) 
+
+trajectories, but these results have been omitted here for brevity. For the systems studied with the computational parameters used herein, the loose convergence did not lead to substantial computational savings, but we anticipate that such an approach would lead to more substantial savings as the expense of each SCF procedure increases. S4 A
+
+B
+
+C
+
+D
+
+> NEO -ELMD( K)
+> CNEO -MD( K)
+> OD−H
+> OA−H
+
+E
+
+F 
+
+> OD−O A
+> CNEO -MD(4)
+> NEO -ELMD(4)
+> Solid: NEO -BOMD
+> Dashed: NEO -ELMD(4)
+> Dotted: CNEO -MD(4)
+
+FIG. S2. Malonaldehyde results with the PB4-F2 protonic basis set. (A) Distance between the oxygen donor and proton position operator expectation value (blue) and distance between the oxygen acceptor and the proton position operator expectation value (red) along the NEO-BOMD (solid lines), NEO-ELMD (4) (dashed lines), and CNEO-MD (4) (dotted lines) trajectories. The corresponding distances for the proton basis function center are shown in light blue and light red dashed lines for the NEO-ELMD(4) trajectory. (B) Distance between the donor and acceptor oxygens along the NEO-BOMD (solid line), NEO-ELMD (4) (dashed line), and CNEO-MD (4) (dotted line) trajectories. (C, D) Number of iterations of the simultaneous DIIS NEO-SCF procedure needed to fully converge the electronic and protonic densities at each time step at varying values of K in the (C) NEO-ELMD (K) and (D) CNEO-MD (K) trajectories. Note that the K = 0 simulation prematurely terminated due to failed SCF convergence at around 48 fs. (E, F) Change in extended energy along the (E) NEO-ELMD (4) and (F) CNEO-MD (4) trajectories with time steps 0.2 fs (magenta), 0.5 fs (orange), and 1.0 fs (green). Fig. S6 shows the change in total energy for the NEO-BOMD trajectories with different protonic basis sets as a function of the gradient tolerance for the basis function center optimization at each time step. These trajectories used the smallest time step and strictest convergence criteria tested (0.2 fs and 10 −8 Eh, respectively) in order to isolate the effect of the gradient tolerance on the energy conservation. The results are consistent across basis sets: the Q-Chem 75 default value for the gradient tolerance is insufficient to conserve energy at what is typically considered to be acceptable in conventional BOMD simulations (i.e., on the order of 10 −5 Eh), and a tolerance an order of magnitude tighter than this value is needed to obtain energy conservation on the order of 10 −5 Eh or better. This tighter value of the tolerance greatly inflates the number of optimization cycles needed at each time step, making NEO-BOMD with sufficient energy conservation intractable for larger molecular systems. We can understand the monotonic decrease in total energy over time for all of these trajectories as energy lost to the fictitious degrees of freedom associated with the basis function center as it “moves” to its optimum position. It is clear that the closer the center is to its variational minimum, the smaller the severity of this monotonic drift. The only way to completely eliminate this drift is to continuously tighten the gradient tolerance, which is computationally intractable. Fig. S7 shows the energy conservation analysis along the CNEO-MD (4) trajectory that is analogous to the NEO-ELMD (4) trajectory analyzed in Fig. 5 of the main paper. As expected, the extended energy is better conserved as the time step decreases. S5 A
+
+B
+
+C
+
+D
+
+> NEO -ELMD( K)
+> CNEO -MD( K)
+> OD−H
+> OA−H
+> OD−O A
+
+E
+
+F CNEO -MD(4)  
+
+> NEO -ELMD(4)
+> Solid: NEO -BOMD
+> Dashed: NEO -ELMD(4)
+> Dotted: CNEO -MD(4)
+
+FIG. S3. Malonaldehyde results with the PB5-G protonic basis set. (A) Distance between the oxygen donor and proton position operator expectation value (blue) and distance between the oxygen acceptor and the proton position operator expectation value (red) along the NEO-BOMD (solid lines), NEO-ELMD (4) (dashed lines), and CNEO-MD (4) (dotted lines) trajectories. The corresponding distances for the proton basis function center are shown in light blue and light red dashed lines for the NEO-ELMD(4) trajectory. (B) Distance between the donor and acceptor oxygens along the NEO-BOMD (solid line), NEO-ELMD (4) (dashed line), and CNEO-MD (4) (dotted line) trajectories. (C, D) Number of iterations of the simultaneous DIIS NEO-SCF procedure needed to fully converge the electronic and protonic densities at each time step at varying values of K in the (C) NEO-ELMD (K) and (D) CNEO-MD (K) trajectories. Note that the K = 0 simulation prematurely terminated due to failed SCF convergence at around 48 fs. (E, F) Change in extended energy along the (E) NEO-ELMD (4) and (F) CNEO-MD (4) trajectories with time steps 0.2 fs (magenta), 0.5 fs (orange), and 1.0 fs (green). S6 B
+
+C
+
+D
+
+> NEO -ELMD( K)
+> CNEO -MD( K)
+
+A
+
+B
+
+> OD−H
+> OA−H
+> OD−O A
+
+E
+
+F CNEO -MD(4)  
+
+> NEO -ELMD(4)
+> Solid: NEO -BOMD
+> Dashed: NEO -ELMD(4)
+> Dotted: CNEO -MD(4)
+
+FIG. S4. Malonaldehyde results with the even-tempered 8s8p8d8f8g protonic basis set. (A) Distance between the oxygen donor and proton position operator expectation value (blue) and distance between the oxygen acceptor and the proton position operator expectation value (red) along the NEO-BOMD (solid lines), NEO-ELMD (4) (dashed lines), and CNEO-MD (4) (dotted lines) trajectories. The corresponding distances for the proton basis function center are shown in light blue and light red dashed lines for the NEO-ELMD(4) trajectory. (B) Distance between the donor and acceptor oxygens along the NEO-BOMD (solid line), NEO-ELMD (4) (dashed line), and CNEO-MD (4) 
+
+(dotted line) trajectories. (C, D) Number of iterations of the simultaneous DIIS NEO-SCF procedure needed to fully converge the electronic and protonic densities at each time step at varying values of K in the (C) NEO-ELMD (K)
+
+and (D) CNEO-MD (K) trajectories. Note that the K = 0 simulation prematurely terminated due to failed SCF convergence at around 48 fs. (E, F) Change in extended energy along the (E) NEO-ELMD (4) and (F) CNEO-MD (4) 
+
+trajectories with time steps 0.2 fs (magenta), 0.5 fs (orange), and 1.0 fs (green). S7 A
+
+B
+
+C
+
+D
+
+E
+
+F
+
+G
+
+H
+
+> OD−H
+> OA−H
+
+I
+
+J
+
+K
+
+L
+
+> OD−H
+> OA−H
+> OD−H
+> OA−H
+> OD−H
+> OA−H
+> OD−O A
+> OD−O A
+> OD−O A
+> OD−O A
+
+FIG. S5. Malonaldehyde NEO-ELMD (4) results with different values of m across protonic basis sets, where m is the number of stepwise NEO-SCF macrocycles performed regardless of convergence, and each row corresponds to a different protonic basis set. Panels (A, E , I), (B, F, J), (C, G, K), and (D, H, L) correspond to the protonic basis sets PB4-F2, PB5-G, PB6-H, and even-tempered 8s8p8d8f8g, respectively. Note that m = ∞ in this context refers to full convergence, which serves as the reference in these tests. (A–D) Distance between the oxygen donor and proton position operator expectation value (blue) and proton basis function center (light blue) and distance between the oxygen acceptor and the proton position operator expectation value (red) and proton basis function center (light red) along the trajectory. Four different values of m, where m = {2, 6, 12 , ∞} , are plotted in each panel from A – H, but they are not visually distinguishable. (E–H) Distance between the donor and acceptor oxygens along the trajectory. (I–L) Change in extended energy along the trajectory for varying values of m. A fixed value of m results in slightly poorer, but still sufficient, extended energy conservation. S8 A PB4 -F2 
+
+## B
+
+## C
+
+## D
+
+PB5 -G
+
+PB6 -H
+
+8s8p8d8f8g 
+
+FIG. S6. Change in total energy along the NEO-BOMD malonaldehyde trajectories with a small time step (0.2 fs) and tight convergence criteria ( 10 −8 Eh) at different gradient tolerance thresholds, gtol , for the protonic basis function center optimization with the protonic basis sets (A) PB4-F2, (B) PB5-G, (C) PB6-H, and (D) even-tempered 8s8p8d8f8g. Note that the 8s8p8d8f8g trajectory with the tightest gradient tolerance was the only trajectory that was not propagated for a full 60 fs due to the computational expense. A gradient tolerance an order of magnitude tighter than the Q-Chem default value is needed in order to conserve energy on the order of 10 −6 Eh.
+
+FIG. S7. Change in extended energy along the CNEO-MD (4) malonaldehyde trajectories with time steps 0.2 fs (magenta), 0.5 fs (orange), and 1.0 fs (green). Note that this figure is analogous to Fig. 5 for the NEO-ELMD(4) malonaldehyde trajectories in the main paper. S9  
+
+> S3B. BIP
+
+In this subsection, we provide additional information regarding the BIP trajectories analyzed in the main text. Fig. S8 shows select structures along the conventional BOMD trajectories for the E1PT and E2PT BIP systems. Figs. S9 and S10 show the distances between the proton donors and acceptors for the E1PT and E2PT trajectories, respectively. Figs. S11 and S12 show the energy conservation analysis for the E1PT and E2PT trajectories, respec-tively. For these plots, the conserved energy is the physical energy in conventional BOMD and the extended energy for the NEO trajectories. Figs. S13 and S14 show the results of the conventional BOMD trajectories for the E1PT and E2PT systems, respectively, where the initial velocities of the transferring proton(s) were not set to zero after rescaling the velocities to the target temperature, as they were for the results presented in the main text. These plots demonstrate that setting the initial velocities of the transferring proton(s) to zero had a negligible impact on the dynamics, presumably because the dynamics were dominated by heavy-atom motion. 0 fs 
+
+## Time 
+
+## 100 fs 60 fs 
+
+# A
+
+## 0 fs 
+
+## Time 
+
+## 500 fs 350 fs 
+
+# B
+
+FIG. S8. Select structures along the conventional BOMD trajectories for the (A) E1PT and (B) E2PT BIP systems. The initial and final structures of each trajectory are shown, as well as the structures at or slightly after the NEO-ELMD (4) proton transfer time for the E1PT system and the NEO-ELMD (4) imidazolic proton transfer time for the E2PT system. The E1PT trajectory shown in Panel (A) was initialized with zero velocities. Note that the transferring classical proton in the middle structure of Panel (A) is close enough to both the oxygen donor and nitrogen acceptor for the visualization software 93 to render “bonds” to both atoms, but this proton never completes the transfer to the acceptor in this particular trajectory. S10 A
+
+# B
+
+FIG. S9. Distances between the oxygen donor and nitrogen acceptor along the conventional BOMD (magenta), NEO-ELMD (4) (orange), and CNEO-MD (4) (green) E1PT trajectories, initialized with (A) zero velocities and (B) velocities directed along the phenol-benzimidazole bend mode. S11 A
+
+# B
+
+FIG. S10. Distances between the respective proton donors and acceptors along the BOMD (magenta) and NEO-ELMD (4) (orange) E2PT trajectories for the (A) phenolic and (B) imidazolic proton transfers. S12 A
+
+# B
+
+FIG. S11. Change in the conserved energy along the conventional BOMD (magenta), NEO-ELMD (4) (orange), and CNEO-MD (4) (green) E1PT trajectories, initialized with (A) zero velocities and (B) velocities along the phenol-benzimidazole bend mode. 
+
+FIG. S12. Change in the conserved energy along the conventional BOMD (magenta) and NEO-ELMD (4) (orange) E2PT trajectories. S13 
+
+FIG. S13. Distance between the oxygen donor (blue) or nitrogen acceptor (red) and the classical proton along the E1PT conventional BOMD trajectory, where the velocity of the classical proton was set to zero (solid lines) or left unchanged (dashed lines) after velocity rescaling. The solid and dashed lines are virtually indistinguishable. A
+
+# B
+
+FIG. S14. Distance between the respective donors (blue) or acceptors (red) and the classical (A) phenolic and (b) imidazolic proton along the E2PT conventional BOMD trajectory, where the velocities of the classical protons were set to zero (solid lines) or left unchanged (dashed lines) after velocity rescaling. The solid and dashed lines are virtually indistinguishable. S14  
+
+> S4. TIMINGS OF SELECT TRAJECTORIES
+
+In this section, we provide timings of NEO-BOMD, NEO-ELMD (K), and CNEO-MD (K) trajectories propagated with varying values of K.
+
+TABLE SI. CPU times a of NEO-BOMD trajectories with ∆t = 0 .5 fs and convergence criteria of 10 −6 Eh, propa-gated for 60 fs. b                         
+
+> Gradient Tolerance / Eha−10PB4-F2 PB5-G PB6-H 8s8p8d8f8g
+> 3.0×10 −498.1570 152.4907 343.5200 595.7902
+> 1.2×10 −4170.3615 163.0287 522.9248 957.2174
+> 3.0×10 −5255.3828 266.5062 880.2709 1637.9452
+> aAll CPU times are given in hours.
+> bCalculations performed on Intel Xeon Platinum 8268 (Cascade Lake) CPU node.
+
+Table SI shows the CPU times of NEO-BOMD trajectories across protonic basis sets and gradient tolerance values with a time step of 0.5 fs and convergence criteria of 10 −6 Eh. As shown in Fig. S6 and discussed in Section S3A, the tightest level of gradient tolerance for the protonic basis function center optimization is necessary for sufficient energy conservation in NEO-BOMD, which is usually about two to three times more expensive than calculations that use the Q-Chem default value for gradient tolerance. Typically, as the protonic basis set becomes larger for a given tolerance, the computational expense increases. However, this trend may not always be followed, as the topologies of the extended NEO vibronic surfaces can vary between basis sets, making it possible for optimizations on the extended vibronic surface with smaller protonic basis sets to be more difficult than those with larger protonic basis sets. In some cases, smaller protonic basis sets result in more local minima along the dimensions corresponding to the protonic basis function center positions RI , explaining why the PB4-F2 and PB5-G trajectories do not have very different timings. However, by the time the protonic basis sets reach the size of PB6-H, the expense of each SCF procedure begins to dominate, making the PB6-H trajectories much more expensive than the PB5-G trajectories. These trends are not general but explain the observed timings for these specific cases. 
+
+TABLE SII. CPU times a of NEO-ELMD (K) and CNEO-MD (K) trajectories with ∆t = 0 .5 fs and convergence criteria of 10 −6 Eh, propagated for 60 fs. b                                            
+
+> NEO-ELMD (K)CNEO-MD (K)
+> KPB4-F2 PB5-G PB6-H 8s8p8d8f8g PB4-F2 PB5-G PB6-H 8s8p8d8f8g 0N/A cN/A c4.5739 10.8954 1.6689 2.3819 3.9847 9.8837 21.7464 2.2875 3.8430 9.2807 1.2598 1.8689 3.4647 8.6340 41.6231 2.1122 3.6632 8.8949 1.1710 1.8210 3.2809 8.5716 61.5524 2.1121 3.6023 8.8105 1.2378 1.7853 3.3284 8.7849
+> aAll CPU times are given in hours.
+> bCalculations performed on Intel Xeon Platinum 8562Y+ (Emerald Rapids) CPU node.
+> cTrajectory did not complete due to failed NEO-SCF.
+
+Table SII provides the CPU times of the NEO-ELMD (K) and CNEO-MD (K) trajectories propagated with varying values of K using a time step of 0.5 fs and convergence criteria of 10 −6 Eh. These timings show that the density matrix extrapolation procedure cuts down the total simulation time compared to K = 0 , where K = 4 and K = 6 
+
+both seem to outperform K = 2 and offer similar speedups. Note that the total number of SCF iterations at each time step across all the trajectories utilizing density matrix extrapolation is lower than the number of iterations for the trajectories that do not use extrapolation, but the CPU times are not necessarily reflective of this aspect because the main computational bottleneck in these malonaldehyde trajectories is the analytical gradient calculation, rather than the SCF procedure. Also, note that for some trajectories, higher orders of extrapolation may not always lead to a decrease in simulation time. We observe this behavior for the CNEO-MD (4) to CNEO-MD (6) timings. Although the computational overhead of increasing K (i.e., storing increasingly more previous density matrices) is quite low, the extrapolation is not always guaranteed to yield better initial guesses for the next time step with increasing K.We find K = 4 to be sufficient in the speedup it provides while maintaining the fidelity of the initial guess. S15 
+
+TABLE SIII. CPU times of NEO-ELMD (K) trajectories for the BIP simulations initialized with non-zero velocities, propagated for 50 fs. a                        
+
+> E1PT E2PT
+> KCPU Time / hrs Speedup Rel. to K= 0 / % CPU Time / hrs Speedup Rel. to K= 0 / % 0156.87 -469.80 -2137.54 12.32 471.06 -0.26 4135.76 13.45 300.62 36.01
+> aCalculations performed on Intel Xeon Platinum 8268 (Cascade Lake) CPU node.
+
+Table SIII provides the CPU times of NEO-ELMD (K) trajectories for the BIP simulations initialized with non-zero velocities propagated with varying values of K using a time step of 0.5 fs and convergence criteria of 10 −7 Eh. To quickly assess the relative speedups compared to the K = 0 trajectories, we only propagated these trajectories for 50 fs. For the E1PT system, we observe modest speedups on the order of what we observe in the malonaldehyde trajectories (≈ 12 − 16%) , where the speedup monotonically increases with K. However, for the E2PT system, we observe a very small slowdown with K = 2 , but a fairly large speedup of ≈ 36% with K = 4 . These E2PT results show how any given order of extrapolation is not guaranteed to result in a speedup, but higher orders of extrapolation most likely will result in a speedup, particularly for systems where the NEO-SCF procedure involves multiple quantum protons, as is the case for the E2PT system.  
+
+> S5. CARTESIAN COORDINATES
+
+In this section, we provide relevant Cartesian coordinates of the systems studied in this work. 
+
+TABLE SIV. Optimized structure of malonaldehyde at the ωB97X/def2-SVP level of theory. a
+
+Atom X Y ZH -0.6830093635 4.8873936970 0.0000000000 C -2.2965024834 1.7761906527 0.0000000000 C -0.0778296218 0.4606600999 0.0000000000 C 2.2683699385 1.8502803018 0.0000000000 O -2.4548505732 4.2439921132 0.0000000000 O 2.3773400124 4.1728718529 0.0000000000 H -4.1386563233 0.8241552831 0.0000000000 H -0.0809127358 -1.5993342589 0.0000000000 H 4.0571330701 0.7432112784 0.0000000000   
+
+> aAll values are in a0.
+
+S16 
+
+TABLE SV. Transition state structure of malonaldehyde at the ωB97X/def2-SVP level of theory. a
+
+Atom X Y ZH -0.0178400642 4.6948974682 0.0000000000 C -2.2738492601 1.8442730308 0.0000000000 C -0.0444835260 0.4162240616 0.0000000000 C 2.2034933679 1.8155603217 0.0000000000 O -2.2455272415 4.2398871387 0.0000000000 O 2.2062821788 4.2109971182 0.0000000000 H -4.1427804002 0.9160563337 0.0000000000 H -0.0583443778 -1.6419483513 0.0000000000 H 4.0603662493 0.8634808204 0.0000000000   
+
+> aAll values are in a0.
+
+S17 
+
+TABLE SVI. Optimized structure of neutral singlet E1PT BIP at the B3LYP-D3(BJ)/6-31G** level of theory. a
+
+Atom X Y ZH 1.9998484428 4.0074680603 -0.0075081175 C 7.0112302694 -1.4835836654 0.0209628768 C 6.8885244091 1.1896865648 0.0146639266 C 9.1135165656 2.6145188763 0.0166050021 C 11.4019849190 1.3186321456 0.0248282327 C 11.4930869998 -1.3395785949 0.0311771395 C 9.2961700214 -2.7916419113 0.0293547479 C 2.9993056547 -0.1517697733 0.0077468992 H 9.0340853464 4.6623743272 0.0116495831 H 13.1589068709 2.3765445139 0.0263728194 H 13.3146890634 -2.2816593868 0.0375746303 N 4.3819780033 1.9438818218 0.0067461421 C -1.0925415715 2.1296693142 -0.0123011933 C 0.2518131497 -0.1939610505 -0.0005739643 C -1.0827553285 -2.4835142124 0.0016670131 C -3.7052251173 -2.5605701008 -0.0086751495 C -4.9752141226 -0.2316020140 -0.0200950093 C -3.7671449147 2.1131765625 -0.0221870952 H -0.0395022924 -4.2498426050 0.0117648626 H -7.0146141811 -0.2487190426 -0.0276948756 C -5.0825915909 -5.1135036694 -0.0051976261 C -5.2810935605 4.5948138133 -0.0346543204 O 0.1422622254 4.3537808070 -0.0146179565 N 4.5140056497 -2.2715382158 0.0165012929 H 3.9058963212 -4.0730837876 0.0178150752 C -4.3079108868 -6.6378157302 -2.3691383971 H -2.2725615316 -6.9985461832 -2.4142787938 H -5.2709289801 -8.4699819444 -2.3983577639 H -4.8048235471 -5.6159543869 -4.0970379635 C -4.3500047786 -6.6071277397 2.3913512349 H -4.8792885925 -5.5635719352 4.0965541756 H -5.3117611001 -8.4399368560 2.4266707102 H -2.3153425667 -6.9640998596 2.4776832171 C -7.9715712283 -4.8037765892 -0.0334797204 H -8.6463269513 -3.7788305522 1.6311535265 H -8.6143966140 -3.7950057477 -1.7205242566 H -8.8766067908 -6.6637207255 -0.0328473570 C -4.6345369486 6.1374410750 -2.4292829666 H -5.7095986847 7.9067559522 -2.4345102584 H -2.6275812565 6.5897318587 -2.5108324876 H -5.1411745615 5.0757416096 -4.1321117344 C -4.6527632092 6.1497010384 2.3569226204 H -2.6470972023 6.6057246946 2.4493381998 H -5.7311456855 7.9169389292 2.3470165925 H -5.1685186208 5.0947760496 4.0612105807 C -8.1498666383 4.1190343999 -0.0444954562 H -8.7578632780 3.0718532795 -1.7222449475 H -8.7712837052 3.0825575749 1.6349975324 H -9.1380560316 5.9354170786 -0.0541450736 H 9.3711665911 -4.8411480747 0.0341681182   
+
+> aAll values are in a0.
+
+S18 
+
+TABLE SVII. Optimized structure of neutral singlet E2PT BIP at the B3LYP-D3(BJ)/6-31G** level of theory. a
+
+Atom X Y ZH -2.0832318054 5.1852941954 -0.0274308340 H 3.2162524054 -1.3375434781 0.0000181365 C 4.7529572358 2.2819186769 -0.0100833117 C 3.5389809525 4.6685489676 -0.0208525434 C 4.9741255762 6.8820838309 -0.0255705860 C 7.5961249456 6.6297413533 -0.0189545761 C 8.7714722106 4.2548391527 -0.0077080445 C 7.3923646466 1.9870802148 -0.0026797328 C 0.5717386353 1.8230188803 -0.0166950475 H 4.0675740958 8.7196888346 -0.0339833865 H 8.7706229665 8.3106193745 -0.0224218219 H 10.8187353558 4.1955527293 -0.0029862599 N 0.9484454340 4.3128411515 -0.0247217234 C -4.0995799122 2.1793185549 -0.0212544562 C -1.9047029078 0.6364998326 -0.0165603638 C -2.1479885483 -2.0012625347 -0.0108926693 C -4.4971752382 -3.1708963385 -0.0093606131 C -6.6304530767 -1.5941502978 -0.0138480005 C -6.5196712534 1.0411397123 -0.0198204408 H -0.4510202452 -3.1524620882 -0.0081176842 H -8.4727358276 -2.4669974279 -0.0126201660 C -4.6773804991 -6.0672968103 -0.0030408169 C -8.9297626659 2.6674456131 -0.0241189486 O -3.9140847815 4.7169020657 -0.0266200778 N 2.8262087942 0.5360226309 -0.0080892986 C -3.3575018446 -7.1260910245 -2.3796306556 H -1.3566452482 -6.6096861633 -2.4345308992 H -3.4771433360 -9.1929055608 -2.4152588341 H -4.2447822250 -6.3956116019 -4.0987401606 C -3.3571596397 -7.1158303298 2.3779077075 H -4.2433624277 -6.3770227616 4.0940147167 H -3.4779164625 -9.1824121841 2.4231467064 H -1.3559831722 -6.6003133985 2.4296938489 C -7.4295897870 -6.9997200382 -0.0009006942 H -8.4564989823 -6.3504121015 1.6728768926 H -8.4564218390 -6.3580384876 -1.6776525033 H -7.4662332084 -9.0678548390 0.0038182738 C -8.9956943314 4.3335995745 -2.4214097849 H -10.7214458817 5.4776859083 -2.4374868380 H -7.3712486331 5.5960579687 -2.5084838195 H -8.9986350238 3.1518869097 -4.1206004015 C -8.9985192380 4.3412789164 2.3677440187 H -7.3740769802 5.6039115247 2.4527310223 H -10.7242493542 5.4854530131 2.3780887435 H -9.0035235058 3.1650271651 4.0707337678 C -11.3395580430 1.0392073734 -0.0229142166 H -11.4633369668 -0.1667366929 -1.6992605478 H -11.4658199397 -0.1603452963 1.6578132498 H -12.9949669090 2.2783386219 -0.0264077644 C 8.5656013335 -0.5439986107 0.0101261727 C 11.1990517111 -0.8994430911 0.0209164285 C 12.1782326326 -3.3331549918 0.0328873450 H 12.4632614759 0.7089962195 0.0202218418 C 7.9461031921 -4.8795579617 0.0231928344 C 10.5260509922 -5.3875225844 0.0340403780 H 14.2090817780 -3.6241503644 0.0413702567 H 6.5825175112 -6.4182405391 0.0238063051 H 11.2095194381 -7.3191292003 0.0430916754 N 6.9763464596 -2.5479942534 0.0116275598

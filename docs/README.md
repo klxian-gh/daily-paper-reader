@@ -6,32 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-18
-- 运行时间：2026-03-18 20:58:01 UTC
+- 最新运行日期：2026-03-19
+- 运行时间：2026-03-19 20:45:45 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：6
 - 精读区：0
-- 速读区：3
+- 速读区：6
 
 ### 今日简报（AI）
-今日聚焦量子计算与机器学习在分子模拟中的前沿应用，涵盖环烃张力能计算与势函数偏差分析。
-重点关注 VQE 在反应一致性上的表现，以及通用机器学习势函数在微调中存在的偏差效应。
-建议关注如何结合高精度势函数与量子热浴方法，提升复杂分子体系的模拟精度。
-- 详情：[/202603/18/README](/202603/18/README)
+今日速览 6 篇前沿论文，聚焦非绝热动力学采样与蛋白质-聚糖相互作用的整合建模。
+重点关注利用 MASH 轨迹探索非绝热稀有事件，以及 HADDOCK3 在解析复杂生物分子对接中的新应用。
+建议关注计算化学与结构生物学交叉领域的读者，深入了解这些提升模拟精度与效率的新工具。
+- 详情：[/202603/19/README](/202603/19/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Reaction-Level Consistency within the Variational Quantum Eigensolver: Homodesmotic Ring Strain Energies of Cyclic Hydrocarbons](/202603/18/2603.12737v1-reaction-level-consistency-within-the-variational-quantum-eigensolver-homodesmotic-ring-strain-energies-of-cyclic-hydrocarbons)  
+1. [Nonadiabatic rare events from transition-path sampling of MASH trajectories](/202603/19/2603.14102v2-nonadiabatic-rare-events-from-transition-path-sampling-of-mash-trajectories)  
    标签：评分：7.0/10、query:qmmm
-   evidence：化学反应模拟与反应一致性
-2. [Infrared spectroscopy of protonated water clusters via the quantum thermal bath method and highly accurate machine-learned potentials](/202603/18/2603.09410v1-infrared-spectroscopy-of-protonated-water-clusters-via-the-quantum-thermal-bath-method-and-highly-accurate-machine-learned-potentials)  
+   evidence：反应机理和非绝热反应路径分析
+2. [Extended Lagrangian molecular dynamics on vibronic surfaces in the nuclear-electronic orbital framework](/202603/19/2603.16990v1-extended-lagrangian-molecular-dynamics-on-vibronic-surfaces-in-the-nuclear-electronic-orbital-framework)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：原子核和电子量子化处理的分子动力学
+3. [Integrative modelling of protein-glycan interactions with HADDOCK3](/202603/19/2603.17251v1-integrative-modelling-of-protein-glycan-interactions-with-haddock3)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：模拟Cel12A酶催化结构域中的蛋白质-聚糖相互作用
+4. [Design Space of Self--Consistent Electrostatic Machine Learning Interatomic Potentials](/202603/19/2603.14700v1-design-space-of-self--consistent-electrostatic-machine-learning-interatomic-potentials)  
    标签：评分：6.0/10、query:qmmm
-   evidence：量子热浴与分子动力学模拟
-3. [Bias in Universal Machine-Learned Interatomic Potentials and its Effects on Fine-Tuning](/202603/18/2603.10159v1-bias-in-universal-machine-learned-interatomic-potentials-and-its-effects-on-fine-tuning)  
+   evidence：用于原子模拟的机器学习原子间势能
+5. [Multi-GPU MBE(3)-OSV-MP2 for Performant Large-Scale ab initio Calculations](/202603/19/2603.16575v1-multi-gpu-mbe3-osv-mp2-for-performant-large-scale-ab-initio-calculations)  
    标签：评分：6.0/10、query:qmmm
-   evidence：分子动力学中的机器学习原子间势
+   evidence：大规模从头算计算和轨道特定虚拟MP2
+6. [The Convergence Frontier: Integrating Machine Learning and High Performance Quantum Computing for Next-Generation Drug Discovery](/202603/19/2603.17790v1-the-convergence-frontier-integrating-machine-learning-and-high-performance-quantum-computing-for-next-generation-drug-discovery)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：量子力学与分子动力学结合
 
 
 <div class="dpr-home-promo-card">
