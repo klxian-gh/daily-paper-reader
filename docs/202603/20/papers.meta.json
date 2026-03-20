@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-20",
+  "date": "2026-03-20",
+  "generated_at": "2026-03-20T20:36:12",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/20/2603.13923v1-a-primary-unified-geometric-framework-of-molecular-reaction-dynamics-based-on-the-variational-principle",
+      "section": "quick",
+      "title_en": "A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle",
+      "authors": "Xingyu Zhang, Jinke Yu, Qingyong Meng",
+      "date": "2026-03-14",
+      "pdf": "https://arxiv.org/pdf/2603.13923v1",
+      "score": "6.0",
+      "evidence": "分子反应动力学与势能面",
+      "tldr": "本研究基于变分原理提出了分子反应动力学的统一几何框架。通过结合最小作用量原理、等效原理及AI技术，在非零曲率时空中构建了核哈密顿量，并引入规范场处理锥形交叉等复杂问题。该框架利用单粒子近似和变分法统一了电子结构与量子动力学描述，自然引入了几何相位，并从优化理论视角探讨了生成式AI与马尔可夫过程在其中的应用。",
+      "tags": "query:qmmm",
+      "abstract_en": "This work describes a geometric framework on molecular reaction dynamics based on the variational principle, where the Schr{ö}dinger equation must be solved to ``see'' how a reaction occurs. First, the mathematical preliminaries are given by discussing the principle of least action and the mountain pass theorem. Second, we discuss the physical preliminaries, including the principle of equivalence for deriving the kinetic energy operator (KEO) and artificial intelligence (AI) techniques to build the potential energy surface (PES) in general spacetime. Moreover, we simplified electromagnetic interactions in curved spacetime within the molecular system and consequently, we are able to construct the nuclear Hamiltonian in nonzero curvature spacetime. This indicates possibility to introduce gauge fields through the curvature, such as additional term in the nuclear KEO near a conical intersection. Third, the single-particle approximation provides a powful ansatz to solve the Schr{ö}dinger equation by variational principle. Thus, one can formulate the variational approaches for either electronic structure or quantum dynamics. In this work, based on previous discussions ({\\it Phys. Chem. Chem. Phys.} {\\bf 27} (2025), 20397) we unified them by a geometric description, where the geometric phase is naturally introduced. Finally, due to optimization characteristic of the present theory, further discussions on the present theory from optimization insight are also given, including two postulates, generative AI techniques, role of perturbation, and Markov process in optimization.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/20/2603.17367v1-gpumdkit-a-user-friendly-toolkit-for-gpumd-and-nep",
+      "section": "quick",
+      "title_en": "GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP",
+      "authors": "Zihan Yan, Denan Li, Xin Wu, Zhoulin Liu, Chen Hua, Boyi Situ, Hao Yang, Shengjie Tang, Benrui Tang, Ziyang Wang, Shangzhao Yi, Huan Wang, Dian Huang, Ke Li, Qilin Guo, Zherui Chen, Ke Xu, Yanzhou Wang, Ziliang Wang, Gang Tang, Shi Liu, Zheyong Fan, Yizhou Zhu",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17367v1",
+      "score": "6.0",
+      "evidence": "分子动力学模拟的量子力学精度",
+      "tldr": "机器学习原子间势能（如NEP）在分子动力学中应用广泛，但GPUMD软件的使用门槛较高。本文推出了GPUMDkit，这是一个为GPUMD和NEP量身定制的综合性工具包。它集成了格式转换、结构采样、属性计算及可视化等功能，通过交互式和命令行界面简化了从势函数开发到轨迹处理的完整工作流，显著降低了用户的使用难度并提高了科研效率。",
+      "tags": "query:qmmm",
+      "abstract_en": "Machine-learned interatomic potentials have revolutionized molecular dynamics simulations by providing quantum-mechanical accuracy at empirical-potential speeds. The graphics processing unit molecular dynamics (GPUMD) package, featuring the highly efficient neuroevolution potential (NEP) framework, has emerged as a powerful tool in this domain. However, the complexity of force field development, active learning, and trajectory post-processing often requires extensive manual scripting, imposing a steep learning curve on new users. To address this, we present GPUMDkit, a comprehensive and user-friendly toolkit that streamlines the entire simulation workflow for GPUMD and NEP. GPUMDkit integrates a suite of essential functionalities, including format conversion, structure sampling, property calculation, and data visualization, accessible through both interactive and command-line interfaces. Its modular, extensible architecture ensures accessibility for users of all experience levels while allowing seamless integration of new features. By automating complex tasks and enhancing productivity, GPUMDkit substantially lowers the barrier to using GPUMD and NEP programs. This article describes the program architecture and demonstrates its capabilities through practical applications.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/20/2603.17633v1-atomic-trajectory-modeling-with-state-space-models-for-biomolecular-dynamics",
+      "section": "quick",
+      "title_en": "Atomic Trajectory Modeling with State Space Models for Biomolecular Dynamics",
+      "authors": "Liang Shi, Jiarui Lu, Junqi Liu, Chence Shi, Zhi Yang, Jian Tang",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17633v1",
+      "score": "6.0",
+      "evidence": "生物分子系统原子级分子动力学轨迹的生成框架",
+      "tldr": "针对分子动力学（MD）模拟计算成本高且现有生成模型难以捕捉时间关系或仅限于单体蛋白的问题，本文提出ATMOS框架。该框架基于状态空间模型（SSM），结合Pairformer状态转移机制和扩散解码模块，能够自回归地生成原子级MD轨迹。ATMOS在PDB、mdCATH和MISATO等大规模数据集上训练，支持蛋白质单体及蛋白质-配体复合物，实现了SOTA性能，为高效建模生物分子动力学奠定了基础。",
+      "tags": "query:qmmm",
+      "abstract_en": "Understanding the dynamic behavior of biomolecules is fundamental to elucidating biological function and facilitating drug discovery. While Molecular Dynamics (MD) simulations provide a rigorous physical basis for studying these dynamics, they remain computationally expensive for long timescales. Conversely, recent deep generative models accelerate conformation generation but are typically either failing to model temporal relationship or built only for monomeric proteins. To bridge this gap, we introduce ATMOS, a novel generative framework based on State Space Models (SSM) designed to generate atom-level MD trajectories for biomolecular systems. ATMOS integrates a Pairformer-based state transition mechanism to capture long-range temporal dependencies, with a diffusion-based module to decode trajectory frames in an autoregressive manner. ATMOS is trained across crystal structures from PDB and conformation trajectory from large-scale MD simulation datasets including mdCATH and MISATO. We demonstrate that ATMOS achieves state-of-the-art performance in generating conformation trajectories for both protein monomers and complex protein-ligand systems. By enabling efficient inference of atomic trajectory of motions, this work establishes a promising foundation for modeling biomolecular dynamics.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/20/2603.17790v2-the-convergence-frontier-integrating-machine-learning-and-high-performance-quantum-computing-for-next-generation-drug-discovery",
+      "section": "quick",
+      "title_en": "The Convergence Frontier: Integrating Machine Learning and High Performance Quantum Computing for Next-Generation Drug Discovery",
+      "authors": "Narjes Ansari, César Feniou, Nicolaï Gouraud, Daniele Loco, Siwar Badreddine, Baptiste Claudon, Félix Aviat, Marharyta Blazhynska, Kevin Gasperich, Guillaume Michel, Diata Traore, Corentin Villot, Thomas Plé, Olivier Adjoua, Louis Lagardère, Jean-Philip Piquemal",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17790v2",
+      "score": "6.0",
+      "evidence": "将量子力学整合到药物发现和从头算分子动力学中",
+      "tldr": "本研究探讨了高性能计算（HPC）、机器学习（ML）与量子计算（QC）的融合，旨在解决药物研发中从头算分子动力学的高成本与精度平衡难题。通过混合QPU-GPU架构和ML基础模型，实现了超越经典计算的化学精度模拟，为下一代药物发现和材料设计提供了高效、高保准的计算框架。",
+      "tags": "query:qmmm",
+      "abstract_en": "Integrating quantum mechanics into drug discovery marks a decisive shift from empirical trial-and-error toward quantitative precision. However, the prohibitive cost of ab initio molecular dynamics has historically forced a compromise between chemical accuracy and computational scalability. This paper identifies the convergence of High-Performance Computing (HPC), Machine Learning (ML), and Quantum Computing (QC) as the definitive solution to this bottleneck. While ML foundation models, such as FeNNix-Bio1, enable quantum-accurate simulations, they remain tethered to the inherent limits of classical data generation. We detail how High-Performance Quantum Computing (HPQC), utilizing hybrid QPU-GPU architectures, will serve as the ultimate accelerator for quantum chemistry data. By leveraging Hilbert space mapping, these systems can achieve true chemical accuracy while bypassing the heuristics of classical approximations. We show how this tripartite convergence optimizes the drug discovery pipeline, spanning from initial system preparation to ML-driven, high-fidelity simulations. Finally, we position quantum-enhanced sampling as the beyond GPU frontier for modeling reactive cellular systems and pioneering next-generation materials.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -6,41 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-19
-- 运行时间：2026-03-19 20:45:45 UTC
+- 最新运行日期：2026-03-20
+- 运行时间：2026-03-20 20:36:04 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：4
 - 精读区：0
-- 速读区：6
+- 速读区：4
 
 ### 今日简报（AI）
-今日速览 6 篇前沿论文，聚焦非绝热动力学采样与蛋白质-聚糖相互作用的整合建模。
-重点关注利用 MASH 轨迹探索非绝热稀有事件，以及 HADDOCK3 在解析复杂生物分子对接中的新应用。
-建议关注计算化学与结构生物学交叉领域的读者，深入了解这些提升模拟精度与效率的新工具。
-- 详情：[/202603/19/README](/202603/19/README)
+今日聚焦分子动力学前沿，涵盖从变分原理几何框架到 AI 轨迹建模的理论与工具创新。
+重点关注基于状态空间模型（SSM）的生物分子轨迹模拟，以及大幅降低 GPUMD 使用门槛的全新工具包 GPUMDkit。
+建议尝试利用新发布的工具包提升模拟效率，并关注 AI 模型在原子尺度动力学中的跨界应用。
+- 详情：[/202603/20/README](/202603/20/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Nonadiabatic rare events from transition-path sampling of MASH trajectories](/202603/19/2603.14102v2-nonadiabatic-rare-events-from-transition-path-sampling-of-mash-trajectories)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：反应机理和非绝热反应路径分析
-2. [Extended Lagrangian molecular dynamics on vibronic surfaces in the nuclear-electronic orbital framework](/202603/19/2603.16990v1-extended-lagrangian-molecular-dynamics-on-vibronic-surfaces-in-the-nuclear-electronic-orbital-framework)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：原子核和电子量子化处理的分子动力学
-3. [Integrative modelling of protein-glycan interactions with HADDOCK3](/202603/19/2603.17251v1-integrative-modelling-of-protein-glycan-interactions-with-haddock3)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：模拟Cel12A酶催化结构域中的蛋白质-聚糖相互作用
-4. [Design Space of Self--Consistent Electrostatic Machine Learning Interatomic Potentials](/202603/19/2603.14700v1-design-space-of-self--consistent-electrostatic-machine-learning-interatomic-potentials)  
+1. [A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle](/202603/20/2603.13923v1-a-primary-unified-geometric-framework-of-molecular-reaction-dynamics-based-on-the-variational-principle)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于原子模拟的机器学习原子间势能
-5. [Multi-GPU MBE(3)-OSV-MP2 for Performant Large-Scale ab initio Calculations](/202603/19/2603.16575v1-multi-gpu-mbe3-osv-mp2-for-performant-large-scale-ab-initio-calculations)  
+   evidence：分子反应动力学与势能面
+2. [GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP](/202603/20/2603.17367v1-gpumdkit-a-user-friendly-toolkit-for-gpumd-and-nep)  
    标签：评分：6.0/10、query:qmmm
-   evidence：大规模从头算计算和轨道特定虚拟MP2
-6. [The Convergence Frontier: Integrating Machine Learning and High Performance Quantum Computing for Next-Generation Drug Discovery](/202603/19/2603.17790v1-the-convergence-frontier-integrating-machine-learning-and-high-performance-quantum-computing-for-next-generation-drug-discovery)  
+   evidence：分子动力学模拟的量子力学精度
+3. [Atomic Trajectory Modeling with State Space Models for Biomolecular Dynamics](/202603/20/2603.17633v1-atomic-trajectory-modeling-with-state-space-models-for-biomolecular-dynamics)  
    标签：评分：6.0/10、query:qmmm
-   evidence：量子力学与分子动力学结合
+   evidence：生物分子系统原子级分子动力学轨迹的生成框架
+4. [The Convergence Frontier: Integrating Machine Learning and High Performance Quantum Computing for Next-Generation Drug Discovery](/202603/20/2603.17790v2-the-convergence-frontier-integrating-machine-learning-and-high-performance-quantum-computing-for-next-generation-drug-discovery)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：将量子力学整合到药物发现和从头算分子动力学中
 
 
 <div class="dpr-home-promo-card">

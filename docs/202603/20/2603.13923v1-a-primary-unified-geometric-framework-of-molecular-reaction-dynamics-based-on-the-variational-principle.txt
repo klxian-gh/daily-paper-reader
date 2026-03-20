@@ -1,0 +1,2051 @@
+Title: A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle
+
+URL Source: https://arxiv.org/pdf/2603.13923v1
+
+Published Time: Tue, 17 Mar 2026 01:07:49 GMT
+
+Number of Pages: 70
+
+Markdown Content:
+A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle 
+
+Xingyu Zhang, Jinke Yu, and Qingyong Meng* a) 
+
+Theoretical Chemistry, Department of Chemistry, Northwestern Polytechnical University, West Youyi Road 127, 710072 Xi’an, China 
+
+(Dated: 17 March 2026) 
+
+Abstract : This work describes a geometric framework on molecular reaction dynamics based on the variational principle, where the Schr¨ odinger equation must be solved to “see” how a reaction occurs. First, the mathematical preliminaries are given by discussing the principle of least action and the mountain pass theorem. Second, we discuss the physical preliminaries, including the principle of equivalence for deriving the kinetic energy operator (KEO) and artificial intelligence (AI) techniques to build the potential energy surface (PES) in general spacetime. Moreover, we simplified electromagnetic interactions in curved spacetime within the molecular system and consequently, we are able to construct the nuclear Hamiltonian in nonzero curvature spacetime. This indicates possibility to introduce gauge fields through the curvature, such as additional term in the nuclear KEO near a conical intersection. Third, the single-particle approximation provides a powful ansatz to solve the Schr¨ odinger equation by variational principle. Thus, one can formulate the variational approaches for either electronic structure or quantum dynamics. In this work, based on previous discussions ( Phys. Chem. Chem. Phys. 
+
+27 (2025), 20397) we unified them by a geometric description, where the geometric phase is naturally introduced. Finally, due to optimization characteristic of the present theory, further discussions on the present theory from optimization insight are also given, including two postulates, generative AI techniques, role of perturbation, and Markov process in optimization. 
+
+Keywords : Geometric Theory ; Quantum Molecular Dynamics ; Hamiltonian Oper-ator ; Variational Principle 
+
+> a) To whom correspondence should be addressed; Electronic mail: qingyong.meng@nwpu.edu.cn
+
+1
+
+> arXiv:2603.13923v1 [physics.chem-ph] 14 Mar 2026
+
+I. INTRODUCTION 
+
+By solving the Schr¨ odinger equation (SE) of a molecular system, one can directly “see” how a reaction occurs 1–7 . To this end, both electronic structure and quantum molecular dynamics must be performed to separately solve electronic and nuclear SEs, respectively, where the Born-Oppenheimer approximation (BOA) 8–18 should be first assumed. Over the past decades these aspects, especially those based on a hierarchical variation framework 1–7 , have been extensively explored and discussed leading to a wide range of algorithms and implementations. Core idea of the hierarchical variation framework is combination of several coupled degrees of freedom (DOFs) into a single mode making the system defined hierarchically. The ansatz in such framework is then expanded by products of single-particle terms. For instance, function-based variation methods for electronic structure 19–21 , such as Hartree-Fock (HF) and multiconfigurational self-consistent field (MCSCF) together with truncated configuration interaction (CI) and its multi-reference version (called MRCI), expand the electronic wave function through products of single-electron functions, called molecular orbitals (MOs). For another example, time-dependent variational methods for nuclear propagation expand the wave function hierarchically through products of single-particle functions (SPFs), say the multilayer multiconfiguration time-dependent Hartree (ML-MCTDH) method 22–24 . In addition, for one-dimensional quantum lattices, we represent quantum states of either electrons or nuclei by the matrix product states (MPSs) and then the hierarchical frame-work becomes the tensor network (TN) or tree tensor network (TTN). One of typical examples is the density matrix renormalization group (DMRG) in either time-independent or time-dependent fashion. Due to the characteristic of parameter redundancy, MPSs were found to the mathematical structure of a principal fiber bundle 25,26 . Although these powerful methods are widely applied to chemical reactions, the mathematical principles underlying their e ffi cacy require more profound elucidation. In this work, extending previously reported hierarchical framework 2 we provide a geometric description of chemical reaction dynamics through fiber-bundle theory, di ff erential ge-ometry, and geometric quantum mechanics to deeply explore variational framework of chemical reaction, as collected in Table I. The idea of a fiber-bundle geometric quantum theory 25–27 is not new. It plays an important role in various fields, such as the electronic structure and dynamics within periodic boundary condi-tions of condensed matter. Taking variable separation as the first example, one usually separates parameters from the system of interest by treating the separated parameters as an e ff ective back-2ground, called parameter space, when the change in these parameters di ff ers greatly from that in focus. It is often called adiabatic approximation 28 leading to an additional phase, called the Berry phase 28 in the wave function of the remaining part. Over the past decades, the Berry phase was widely discussed 28 and was found to be the holonomy in a Hermitian line bundle since the adi-abatic theorem naturally defines a connection in such a bundle. The BOA is a typical adiabatic approximations 8–18 , where the nuclear coordinates are separated from the molecular wave function as parameters leading the Berry phase in the electronic wave function. Taking the time-dependent variational principle (TDVP) as the second example, it was applied to MPSs for e ffi ciently sim-ulating infinite one-dimensional quantum lattices 26 . The TDVP was found to be optimal without Trotter error preserving all symmetries and conservation laws and performing with low computa-tional complexity 26 . In this context, the total space or bundle space corresponds to the parameter space of tensors associated to every physical site. The base manifold is embedded in Hilbert space and can be given the structure of a K¨ ahler manifold by inducing the Hilbert space metric 25,27 . The main interest for variation framework is the tangent space to the base manifold. By lifting the tangent vectors to the tangent space of the bundle space using a principal bundle connection, one can define an inverse metric and introduce di ff erential geometric concepts, such as parallel trans-port related to the Levi-Civita connection and the Riemann curvature tensor 27 . More generally, a complete theory of quantum mechanics can be formulated in which the usual projective Hilbert space is replaced by the smaller manifold. In addition, construction of a potential energy surface (PES) is one of prerequisites for study-ing chemical dynamics. It requires function approximation through a set of electronic energies 29 .With the fast development of computational techniques, machine learning (ML) or artificial intel-ligence (AI) has become an increasingly popular method 29 , such as neural network (NN) based on generalized linear regression (GLR) and Gaussian process regression (GPR) based on kernel-model regression (KMR). The standard training of AI models typically performs optimization in a Euclidean space of model parameters, relying on gradients of the loss function with respect to the model parameters 29 and facing challenges of convergence to local optima and of vanishing or exploding gradients. In contrast, recognizing that the model parameter space possesses a non-Euclidean space, Riemannian optimization o ff ers a more stable and reliable process, together with enhanced adaptability to complex data structures 30 , if one can overcome the three open challenges. First, the energy database is often geometrically complex implying further database-oriented de-velopment. Second, model-oriented approach should be considered to explore its generalizability, 3computational e ffi ciency, and interpretability. Third, manifold-oriented geometric optimization may be a direction worthy of consideration to find an appropriate manifold for construction of PES. In this work, based on previously reported hierarchical framework 2, we provide a unified the-ory of chemical dynamics through the variational formalism, as shown in Table I. First, the present unified theory provides a geometric description on the single-particle approximation (SPA) provid-ing powful ansatzes to solve the SE by variational principle. Its core idea centers on the concept of modes that combine several DOFs 2. Based on the SPA and BOA, one can formulate almost all of electronic-structure approaches making quantum molecular dynamics the main goal of the present work. In addition, previously comparing 2 the function-based methods with those in the form of TN /TTN, the present theory provides a unified framework for ansatz. Next, we turn to construction of the nuclear Hamiltonian operator, which is written as summation of the kinetic energy operator (KEO) and the PES. The present unified theory provides general expression of the KEO from the viewpoint of geometric characteristics of configuration space which is the space of nuclear con-formation and hence often curved. Moreover, noting the above three open challenges in geometric optimization for building the PES, the present theory suggests probable pathways to develop new AI methods. Further, as indicated above, separation of the fast and slow DOFs leads to the Berry phase e ff ects of the fast motions. The present theory provides a geometric interpretation of the Berry phase e ff ects and clarifies its role in chemical dynamics. The paper is organized as follows. In Section II, we describe mathematical preliminaries of the present geometric framework. Section III describes physical preliminaries and construction techniques of the Hamiltonian for reaction dynamics. Section IV includes main contents of the geometric theory of molecular reaction dynamics. Section V gives chemical insight and discus-sions of the present theory. Section VI concludes with a summary. Given the numerous abbre-viations and notations in this work, Section VII compiles a list of them for clarity and ease of reference. Finally, unless otherwise specified, Einstein summation convention, natural units, and mass-weighted coordiantes are always used for simple. 
+
+II. MATHEMATICAL PRELIMINARIES 
+
+In this section, preliminaries of the present geometric framework are given, as collected in Table II. We first describe the principle of least action given in Section II A, in which we also 4introduce notations used in this work. In Section II B, the mountain pass theorem is discussed, which states that there exists a critical point between two minima on a smooth hypersurface (see Figure 1 as an illustration). 
+
+A. Principle of Least Action 
+
+Recently, a hierarchical wavepacket propagation framework for quantum molecular dynam-ics was presented 2, whose core methodologies are based on the ML-MCTDH method 22–24 . This wavepacket propagation framework centers on the concept of modes that combine several coordi-nates along with their hierarchical separations and revolves around the variational methods. First, designing a set of coordinates for configuration space, the KEO can be derived through the poly-spherical approach 31 . Second, the database {X, E} = {Xi, Ei}ni=1 is constructed through ab initio 
+
+energy calculations on a set of sampled geometries X = {Xi}ni=1. Based on the energy database, the PES is constructed in an appropriate form f (x). Third, with the Hamiltonian operator, the nuclear wave function can be propagated from the rovibrational eigenstate providing time-dependent wave function |Ψ(t)⟩ and hence obtaining dynamics of the system. From a unified perspective, all of the above steps are optimizations performed in an appropriately defined space employing variational methods for special functional. This section presents unified geometric descriptions on the varia-tional methods for these steps, where the principle of least (or stationary) action is required as one of postulates. 
+
+Postulate 1 (principle of stationary action) Among all possible paths a system could take to go from one event to another event, the path that satisfies the equation of motion (EOM) is the one that makes the action stationary. 
+
+It is worth noting that Hackl and Guaita and co-workers 32 presented a systematic geometric frame-work based on variational families for real or imaginary time evolution and excitation spectra on the K¨ ahler manifold, where multiplication by the imaginary unit preserves the tangent spaces, together with the non-K¨ ahler manifold, which has already been encountered occasionally. To simply understand the principle of stationary action, we deifne d-dimensional configuration space X as a set of atomic coordinates for a molecular system. According to Postulate 1, from time 
+
+t0 to t1 this d-dimensional system moves along a curve x : [ t0, t1] → Rd, called a Euler-Lagrange 5trajectory, where the EOM satisfies the principle of stationary action, 
+
+δS x(t1) 
+
+> x(t0)
+
+= δ
+
+Z t1
+
+> t0
+
+LX(t), ˙X(t)dt
+
+> x(t1)
+> x(t0)
+
+= 0, (1) where L(X(t), ˙X(t)) and S are the Lagrangian and the action, respectively, and ˙ X(t) denotes the derivative with respect to t.
+
+Definition 1 The Lagrangian L : T X → R is a real-valued function defined on the tangent bundle T X of the configuration space X, providing the states of the system. 
+
+It should be mentioned that t can be generally seen as a parameter (may or may not time). It is worth noting that, Postulate 1 requires the Euler-Lagrange trajectory extremizes the action with fixed end points on each finite interval [ t0, t1]. By Equation (1), the Lagrange must satisfy the Euler-Lagrange equation ddt ∂ ˙X LX(t), ˙X(t) − ∂X LX(t), ˙X(t) = 0, (2) providing the variational character of solutions of the Lagrangian system. The Euler-Lagrange equation given by Equation (2) is thus one kind of the EOM. Based on the d-dimensional configu-ration space X, introducing its 2 d-dimensional phase space one can obtain the Hamiltonian system from the Lagrangian system by the Legendre transform associated with a Lagrangian L : T X → R.
+
+Definition 2 The Hamiltonian H : T ∗X → R is a real-valued function defined on the cotangent bundle T ∗X of the configuration space X, providing the states of the system. 
+
+The Legendre transform yields a symplectic structure on the cotangent bundle T ∗X, namely the phase space, and the corresponding Hamiltonian H : T ∗X → R. Setting Y to be the fiber variable, the Legendre transform of Equation (2) gives the Hamiltonian equations ˙X(t) = ∂Y HX(t), Y(t), ˙Y(t) = −∂X HX(t), Y(t), (3) which are thus another kind of the EOM. Given the Lagrangian and the Hamiltonian, one can finally derive the EOMs of the system by Equation (2) or (3). Therefore, the above derivations of the Euler-Lagrange and Hamiltonian equations are typical applications of the variational principle. Mathematically, there exist action minimizing measures with any given asymptotic direction, which can be described by a homological rotation vector. Associating each rotation vector to the action of a minimal measure, the minimal action functional is defined as 
+
+α : H1
+
+ X, R → R, (4) 6where H1(X, R) is the first real homology group of the configuration space X. By its definition in Equation (4), the minimal action α only partially describes the full dynamics, but concentrates on a very special part of it. In other words, the minimal action functional encodes only the homolog-ical part of the dynamics, not the full details. For simple, considering d-dimensional torus Td as a periodic configuration space and letting θ be the Liouville 1-form in the phase space, we consider the cotangent bundle T ∗X = T ∗Td with its canonical symplectic form ω0 = dθ and suppose a con-vex Hamiltonian H : T ∗Td → R. Since H is t-indepdent, all trajectories lie on fiberwise convex (2 d − 1)-dimensional hypersurfaces Σ with the symplectic form ω0 vanishing, called Lagrangian submanifolds. Here, we should emphasize again that t may or may not time. By the pull-back of the Liouville form θ to the Lagrangian submanifold, one can introduce a Liouville class that determines the Lagrangian submanifold uniquely. Letting U be a fiberwise convex subset of T ∗Td,every cohomology class can be represented as the Liouville class of some Lagrangian submani-fold in U and actually by a Lagrangian section contained in U. Thus, Lagrangian sections actually belong to symplectic geometry. Further, the above result allows symplectic descriptions of seem-ingly non-symplectic objects. The stable norm of a Riemannian metric on Td and the minimal action of a convex Lagrangian both admit a symplectically invariant description. In summary, the long-term behavior of a dynamical system can be encoded in the geometry of Lagrangian subman-ifolds. This encoding is powerful and unifies concepts from Riemannian geometry and dynamics under a single symplectic framework. 
+
+B. Mountain Pass Theorem 
+
+In Section II A, we simply describe the importance of the principle of least action (Postulates 1) in conjunction with the variational principle in determining the EOMs. We now turn to the variation itself through the mountain pass theorem 33 which has been applied frequently to establish the existence of critical points for functionals. Considering a real Banach space X and a function 
+
+I : X → R of class C1 and setting Ik = {x ∈ X|I(x) < k, ∀k ∈ R}, let Y be a subset of X and k apositive number such that Ik ∩ Y , ∅ and then define ˜ Y = {x ∈ X|dist( x, Y) < 1}. Pucci and Serrin 34 
+
+have proved that, the set Ik ∩ ˜Y contains a point y such that either I(y) < 0 or ∥I′(y)∥ < 2k, where 
+
+I′(y) is the derivative of function I(X) at point y. Then, Pucci and Serrin 34 proved the mountain pass theorem. 
+
+Theorem 1 (mountain pass theorem) Let function I satisfies (1) there exist ∃a, r, R ∈ R such 
+
+7that 0 < r < R and I (x) ≥ a for ∀x ∈ A = {x ∈ X|r < ∥x∥ < R}, (2) there are I (0) ≤ a and I(e) ≤ a for some e ∈ X with ∥e∥ ≥ R, and (3) any sequence {xn ∈ X}∞ 
+
+> n=1
+
+such that lim I(xn) ≥ a and 
+
+lim I′(xn) = 0 possesses a convergent subsequence. There exists a critical point x 0 ∈ X, di ff erent from 0 and e, with critical value I (x0) = c ≥ a, in addition x 0 ∈ A when c = a. 
+
+In the case c = a, there are an infinite number of critical points in set A34 . Moreover, if the inequality I(x) ≥ a (in condition (1)) is replaced by I(x) > a, then there is a critical point with critical value c > a. To understand this result, letting G = {g ∈ C([0 , 1] , X)|g(0) = 0, g(1) = e},for ∀g ∈ G we have max 0≤t≤1 I g(t) ≥ a and thus obtain inf  
+
+> g∈G
+
+max  
+
+> 0≤t≤1
+
+I g(t) = c ≥ a. (5) If c > a, a critical value of I(x) is c and corresponding critial point x0 must be di ff erent from 0 and 
+
+e. If c = 0, we should first define the annulus A′ = {x ∈ X|r′ < ∥x∥ < R′} with 0 < r < r′ < R′ < R.Considering the set Y = {x ∈ X|r′ + 1 < ∥x∥ < R′ − 1} together with a fixed number k > 0. There exists some path g ∈ G such that I(g(t)) < k for ∀t ∈ [0 , 1]. By continuity of t → ∥ g(t)∥ and the fact that ∥g(0) ∥ = 0 and ∥g(e)∥ > R′, there exists a value t0 ∈ [0 , 1] such that g(t0) ∈ Y. This implies that 
+
+g(t0) ∈ Ik ∩ Y , ∅. Therefore, since we have ˜ Y = A′ and I(x) ≥ 0 for x ∈ A′, there exists a point 
+
+y ∈ Ik ∩ A′ such that ∥I′(y)∥ < 2k. Because k > 0 is arbitrary, choosing the sequence {2−n}∞ 
+
+> n=1
+
+for k,one can find the existence of a sequence {xn}∞ 
+
+> n=1
+
+in A′ with a ≤ I(xn) < 2−n and ∥I′(xn)∥ < 21−n. By the condition (3), one can extract from {xn}∞ 
+
+> n=1
+
+a subsequence converging to some x0 ∈ A′ ⊂ A. By the regularity of I(x) one can have I(x0) = a and I′(x0) = 0. 
+
+Corollary 1.1 If condition (3) in Theorem 1 holds and function I (x) has two di ff erent local min-ima, then I (x) possesses a third critial point. 
+
+To see this result, changing variables the local minimum point with higher value falls at the origin 0. The other will then be denoted by e, so that ∥e∥ > 0 and I(e) ≤ I(0). We can find an open ball BR
+
+with center 0 and radius R satisfying 0 < R < ∥e∥, such that I(x) ≥ I(0) with ∀x ∈ BR. Choosing 
+
+r = R/2, the critical value at the third point is greater than or equal to I(0), that is as large as either local minimum. Further, Pucci and Serrin 34 have extended the mountain pass theorem (see Theorem 1) to finite-dimensional generalization by assuming that (4) there exist two numbers r > 0 and a such that 
+
+I(x) ≥ a for ∀x ∈ S R = {x ∈ X|∥ x∥ = R} and (5) there exist I(0) ≤ a and I(e) ≤ a for some 
+
+e with ∥e∥ > R. Under condition (3), Pucci and Serrin 34 found that there exists a critical point 8x0 ∈ X, di ff erent from 0 and e, with critical value I(x0) = c ≥ a. If c = a, the critical point can be taken with ∥x0∥ = R. Thus, a critical point exists in the closure of an annulus A. Since the distance from the boundary of A to S R can be taken arbitrarily small, a standard compactness argument shows that there is a critical point x0 ∈ S R with I(x0) = 0. To understand this result, one should turn to Equation (5). The case c > a can be treated exactly as before. When c = a, if there is a point x0 ∈ S R with I′(x0) = 0, we can directly obtain expected results. Now, we should assume that I′(x) , 0 for ∀x ∈ S R. Considering an arbitrary point y ∈ S R, considtion (4) predicts either I(y) > a or I(y) = a. If I(y) > a, there exists an open pluri-interval Jy with center y such that 
+
+I(x) > a for ∀x ∈ Jy. If I(y) = a, the vector I′(y) has zero projection onto the tangent space to S R at 
+
+y implying that I′(y) is orthogonal to S R at y. Since I′ is continuous there is an open pluri-interval 
+
+Jy with center y such that I(x) > a and x · I′(x) , 0 either for each x ∈ By = Jy ∩ { z ∈ X|∥ z∥ < R}
+
+or for each x ∈ Cy = Jy ∩ { z ∈ X|∥ z∥ > R}. From the open covering {Jy|y ∈ S R} of S R one can extract a finite subcovering {Jy1 , · · · , JyM }. The set ∪Mi=1 Jyi contains an open annulus A around S R.Let us consider the set ˜ Y = ∪Mi=1(Zi ∩ A), where Zi denotes Jyi if I(yi) > a or Byi or Cyi if I(yi) = a
+
+and I′(yi) is the inner normal or the outer normal to S R, respectively. If Zi and Zj are adjacent, then they cannot be of the type Byi and Cy j or Cyi and By j , respectively. Evidently, for ∀x ∈ ˜Y and moreover S R ⊂ ˜Y, we have I(x) > a. Putting Yδ = {x ∈ ˜Y|dist( x, X \ ˜Y) > δ }, we may choose δ > 0so small such that Yδ separates 0 and e. Therefore, there exists a critical point in the closure of the annulus A. Since the distance from the boundary of A to S R can be taken arbitrary small, there is a critical point x0 ∈ S R with I(x0) = a.Having the mountain pass theorem 33,34 , Pucci and Serrin 35 further shown that set of the critical points, called the critical set, must have a well-defined structure. In particular, if the underlying Banach space is infinite dimensional then either the critical set contains a saddle point or the set of local minima intersects at least two components of the set of saddle points. Pucci and Serrin 35 also established related conclusions for the finite dimensional case. The mountain pass theorem has become a tool for proving the existence of critical points of nonlinear functionals. Such critical points are solutions of semilinear partial di ff erential equations (PDEs) or periodic solutions of nonlinear Hamiltonian systems. Choi and McKenna 36 proposed an algorithm which is globally convergent and which will always converge to a solution with the required mountain pass property. Moreover, the mountain pass theorem and global homeomorphism theorem are important tools for nonlinear problems in analysis 37 . By the mountain pass theorem, Katriel 37 
+
+proved the global homeomorphism theorem. With these results, Hill and Humphreys 38 considered 9a variational formulation for a set of coupled PDEs in the form ∇2u + f (u) = 0 and then proved the existence of at least one nontrivial solution. Ruppen 39 generalized the mountain pass theorem and shown the existence of multiple critical points for an even functional f : H → R, where H
+
+is the Hilbert space. Ruppen 39 applied these results to a Schr¨ odinger-type equation of the semi-linear eigenvalue problem. Since the above mountain pass theorem for scalar functionals is a foundation of the minimax methods in variational analysis, Molho and co-workers 40 extended it to the class of functions f : Rn → Rm and proved the existence of a critical point of f as a solution of a minimax problem which consists of an inner vector maximization problem and of an outer set-valued minimization problem. 
+
+III. PHYSICAL PRELIMINARIES 
+
+In this section, physical preliminaries and construction techinques for the Hamiltonian are given, as collected in Table II. Section III A gives the principle of equivalence and then gives the relation between the Laplacian operator and variational principle. Section III B gives the geomet-ric framework on deriving the KEO, in particular its dependence on the geometric characteristics of configuration space. Section III C gives geometric consideration in constructing the PES. 
+
+A. Principle of Equivalence 
+
+Now, let us consider the Laplacian operator through the variational principle by introducing the principle of equivalence which is another postulate. As a beginning, let us consider the geodesic of a space which is supposed to be generally curved. 
+
+Definition 3 A geodesic is a curve that locally minimizes distance between nearby points, and whose tangent vector remains parallel to itself along the curve. 
+
+In general, the curvature of a curved space is related to the metric tensor, which in turn is related to the geometric properties of the space. The concept of curvature, all of whose manifestations depend on the so-called connection. The connection connects vectors in the tangent spaces of neighboring points, allowing us to di ff erentiate, compare vectors, and define geodesics by Defi-nition 3. Based on the metric tensor gμν , one can construct a unique connection. To this end, we 10 introduce the Christo ff el symbols 
+
+Γρμν = 12gρσ ∂μgνσ + ∂νgσμ − ∂σgμν 
+
+. (6) It is worth noting that, the Christo ff el symbols Γρμν have a form similar to that of a tensor, but in fact Γρμν are not tensors. This is why they are called “symbols”. Next, based on the Christo ff el symbols one can define the covariant derivative which is one manifestation of the connection. For simple, the covariant derivative of an arbitrary vector field Aν satisfies 
+
+∇μAν = ∂μAν + Γ νμσ Aσ. (7) In addition, the covariant derivative of a general tensor can be written in a similar manner to Equation (7). Simply, the covariant derivative measures change relative to the parallel transport. According to Definition 3, the connection allows us to define a geodesic xμ(λ) through the geodesic equation d2 xμ
+
+dλ2 + Γ μρσ 
+
+dxρ
+
+dλ
+
+dxσ
+
+dλ = 0, (8) where λ represents parameter set. Moreover, Definition 3 implies that the manner in which a family of geodesics spreads or focuses can be used to define the Riemann tensor. According to Equation (8), curvature can be expressed in terms of the Riemann tensor Rρσμν , which is a (1 , 3)-tensor satisfying 
+
+Rρσμν = ∂μΓρνσ − ∂νΓρμσ + Γ ρμη Γηνσ − Γρνη Γημσ . (9) According to Rρσμν , one can obtain geometric characteristics of the space. For instance, contracting the indices of the Riemann tensor, one can obtain the Ricci tensor Rμν = Rρμρν and the Ricci scalar 
+
+R = gμν Rμν . By the Einstein field equations of general relativity, 
+
+Rμν − 12Rg μν = Gμν = 8πTμν , (10) geometric characteristics of the curved sapcetime (the Einstein tensor Gμν ) in the left-hand side is related with the momentum-energy tensor Tμν of matter in the right-hand side. Before giving the KEO which is essentially the Laplacian operator, it is worth noting that a free particle is moving in the curved spacetime with no other interaction acting on it along a geodesic which satisfies Equation (8). This can be found by the principle of equivalence, which is another postulate of the present work. 
+
+Proposition 1 (Weak principle of equivalence) All objects move in gravitational fields in the same manner. 
+
+11 According to Proposition 1, the properties of the motion in a noninertial frame are the same as those in an inertial frame in the presence of a gravitational field, which implies that a noninertial reference system is equivalent to a certain gravitational field. In other words, one can obtain the following statement of the principle of equivalence 
+
+Postulate 2 (principle of equivalence) In freely falling reference frames, the laws of physics are the same as in an inertial frame without gravity. 
+
+Postulate 2 indicates that gravity is not a force, but a consequence of spacetime curvature, meaning that free particle moves along geodesics in such curved spacetime. Nevertheless, it must be men-tion that the field to which a noninertial reference frame is equivalent, is not completely identical with the gravitational field which actually occurs in an inertial frame. The essential di ff erence between them is with respect to their behaviour at infinity. Taking motion in a uniformly acceler-ated reference frame as an example, a particle of arbitrary mass, freely moving in such a reference frame, has relative to this frame a constant acceleration, equal and opposite to the frame accelera-tion itself. The same motion can be observed for the particle freely moving in a uniform constant gravitational field. Therefore, a uniformly accelerated reference frame is equivalent to a constant, uniform external field. Keeping the above idea in the mind, let us apply the variational principle to derivation of the Laplacian operator on any Riemannian manifold with metric gμν . To this end, we should turn to derivation of the geodesic equation (see Equation (8)) by optimizing the kinetic energy functional of a free particle in parameter space, 
+
+Ex(λ) = 12
+
+Z
+
+gμν 
+
+ x(λ)dxμ
+
+dλ
+
+dxν
+
+dλ dλ. (11) Obviously, setting δE[x(λ)] = 0 gives the geodesic equation. Similarly, to derive the Laplacian operator, it is worth noting that the energy functional of a free particle can be given by functional of a scalar field f on the manifold M in local coordinates xμ,
+
+E f  = 12
+
+Z
+
+> M
+
+gμν  ∂μ f   ∂ν f  p |g|d4 x, (12) where g = det( gμν ) and p|g| accounts for the 4-volume element during variation. Varying E[ f ] in Equation (12) with respect to f , one can obtain 
+
+δE =
+
+Z
+
+> M
+
+gμν  ∂μ f   ∂νδ f  p |g|d4 x = −
+
+Z
+
+> M
+
+δ f 1
+
+p|g|∂ν
+
+ p |g|gμν  ∂μ f  p |g|d4 x, (13) 12 where the second equality follows from integration by parts and the divergence 
+
+∇μ xμ = 1
+
+p|g|∂μ
+
+ p |g|xμ . (14) By Equation (6), the contracted Christo ff el symbol is given by Γμμν = ∂ν ln( p|g|) which can be substituted into Equation (7) to obtain the divergence ∇μ xμ in Equation (14). Setting δE = 0 and noting the arbitrariness of f , Equation (15) directly predicts the Laplacian operator 
+
+∇2 
+
+> g
+
+= 1
+
+p|g|∂ν
+
+ p |g|gμν ∂μ
+
+. (15) Therefore, the Laplacian operator is fundamentally the Euler-Lagrange operator associated with the kinetic energy norm. It measures the di ff erence between the value of a function at a point and its average value on an infinitesimal geodesic sphere, hence its deep connection to geodesic distance. 
+
+B. Kinetics Energy Operator 
+
+In this subsection, we consider the KEO through Equation (15). Noting that the KEO depends on the metric tensor of configuration space 2, this section mainly concerns on geometric charac-teristics of the configuration space. For simple, we transfer the chemical reaction in the general four-dimensional (4D) spacetime to molecular motions of three-dimensional (3D) in spatial slicing orthogonal to the one-dimensional (1D) temporal component, called the [3 +1] decomposition 41–43 .
+
+Definition 4 By the [3 + 1] decomposition, the 4D spacetime is split into 3D space and 1D time. 
+
+By Definition 4, the [3 + 1] decomposition transforms the Einstein field equations (see Equa-tion (10)) from a geometric description into a time evolution problem suitable for numerical simulations 41–43 . The molecular system living in a 3D slicing at a given instant is further rep-resented by the configuration space whose point maps to a specific molecular conformation. For the 3 N-dimensional configuration space with N atoms, where the system dimensionality is equal to d = 3N, the coordiante set {x(i)}3Ni=1 satisfies the spatial interval ds2 =
+
+> N
+
+X
+
+> n=1
+
+γin jn dx(in)dx( jn) + 12
+
+> N
+
+X
+
+> n,m=1
+
+γin jm dx(in)dx( jm) = ˜γi j dx(i)dx( j), (16) 13 where γin jn is spatial metric of the 3D slicing local to the n-th atom. According to Equation (16), one can separate the 3 N × 3N matrix ˜ γi j into N2 blocks each representing the metric for the body-fixed (BF) frame at the atom, ˜γi j =
+
+
+
+γi1 j1 γi1 j2 · · · γi1 jN
+
+γi2 j1 γi2 j2 · · · γi2 jN
+
+· · · · · · · · · · · · 
+
+γiN j1 γiN j2 · · · γiN jN
+
+
+
+, (17) where γin jm is 3 × 3 matrix for the metric connected coordinates of the n-th and m-th atoms. In gen-eral, the metric ˜ γi j depends on the 4D spacetime 41–43 and thus varies with geometric characteristics of the slicing. At a given moment, the KEO is associated with the Laplacian operator which is the second-order derivative with respect to the BF coordinates. For mass-weighted Cartesian coordinate set 
+
+x = {x(i)}3Ni=1, according to Equation (15), the metric tensor ˜ γi j and Christo ff el coe ffi cients tensor 
+
+Γki j of the second kind encode geometric characteristic of the configuration space and lead to the KEO 31 ,2 ˆ T = −∇ 2 = −˜γi j ∂i∂j − Γki j ∂k
+
+ = −
+
+"
+
+˜γi j ∂i∂j + ∂i ˜γi j ∂j + 12 ˜γi j ∂i ln ˜ γ∂j
+
+#
+
+= − 1
+
+p|˜γ|∂i
+
+ p |˜γ|˜γi j ∂j
+
+,
+
+(18) where, due to metric compatibility, the Christo ff el symbols (see Equation (6)) are uniquely deter-mined by the components of the metric tensor and their first partial derivatives, 
+
+Γki j = 12 ˜γkl ∂i ˜γl j + ∂j ˜γli − ∂l ˜γi j 
+
+. (19) In Equation (18), ∂i means ∂/∂ x(i) and ˜ γ is determinant of the metric ˜ γi j . For a flat slice, there exist expressions of ˜ γi j = δi j and Γki j = 0 making Equation (18) become the simplest form 2 ˆ T = −∂i∂i = −
+
+> d
+
+X
+
+> i=1
+
+∂2
+
+∂x(i)2 . (20) However, the Cartesian coordinates usually cannot intuitively describe the breaking and forming of chemical bond. These limitations prevent the use of the Cartesian coordinates in quantum dynamics calculations. In practical calculations, a set of generalized coordinates q must be defined as functions of x,that is q(κ) = q(κ)(x(1) , · · · , x(d)) and x(i) = x(i)(q(1) , · · · , q(d)). If they are linear functions, called 14 rectilinear coordinate, Equation (18) transforms covariantly; meanwhile, if they are non-linear, called curvilinear coordinate, Equation (18) becomes complex and has been thoroughly derived through the polyspherical approach 31,44–46 . To obtain the KEO in q, the metric tensor 1i j has to be defined by the transformations between q and x and hence to encode geometric characteristic by 
+
+q. Such KEO in q was already derived in the form 47 
+
+2 ˆ T = −J−1∂ι J1ικ ∂κ, J = det ∂x(i)
+
+∂q(κ)
+
+!
+
+= det ∂κ x(i) , (21) where J is the absolute value of the determinant of the (3 N − 3) × (3 N − 3) Jacobian matrix with elements ∂κ x(i) and 1ικ the metric tensor of the configuration space represented by q. Since transformation of cooridnates does not change the length of a vector, the metric tensor 1ικ can be derived in the form 1ικ = ˜γi j ∂iq(ι)∂jq(κ) and 1ικ = (1ικ )−1, implying that J = (| det( 1ικ )|)−1/2. It is then straightforward to eliminate J in Equation (21) and obtain the KEO represented by momentum operators rather than coordinates 31 ,2 ˆ T = ˆp† 
+
+> ι
+
+1ικ ˆpκ. (22) In the coordinate representation, the momentum operators ˆ pκ and ˆ p† 
+
+> ι
+
+are given by ˆpκ = −i∂κ, ˆp† 
+
+> ι
+
+= −iJ−1∂ι J = ˆpι + (J−1 ˆpι J) = ˆpι + ˆΛι, (23) where ˆ Λι = (J−1 ˆpι J) is a purely multiplicative operator. The parentheses in the expression of ˆΛι means that ˆ pι in it does not operate beyond the parentheses. In Equations (22) and (23), the momentum operators ˆ p = { ˆpκ}d 
+
+> κ=1
+
+are conjugate to the generalized coordinates q = {q(κ)}d
+
+> κ=1
+
+, re-quiring existence of J. Momenta of otherwise kind are often called quasi-momenta, denoted by ˆp = {ˆpζ }d
+
+> ζ=1
+
+. Similar to Equation (22), the KEO can be written in terms of quasi-momenta as 31 
+
+2 ˆ T = ˆp† 
+
+> ζ
+
+1ζη ˆpη, 1ζη = ˜γi j ∂iq(ζ)∂jq(η), (24) where q = {q(ζ)}d 
+
+> ζ=1
+
+means coordinate set associated with quasi-momenta ˆ p, say angular coordinates associated with angular momenta. 
+
+C. Potential Energy Surface 
+
+Having the KEO, we now turn to the potential term of the nuclear Hamiltonian operator. Since the PES is a function operator of only coordinates, its expression in the coordinate representation remains metric invariant under transformations between frames of nuclear coordinates. In this 15 context, the task of constructing the PES is to approximate a real-valued function f : Rd → R
+
+through the set of discrete energies 2,29 . As previously discussed 2,29 , the approximated function parametrically depends on a set of parameters θ ∈ Rm, denoted by fθ : Rd → R. The GLR-based function approximation 29 aims to find the optimal parameters θ by directly minimizing the distance between f and fθ. The KMR-based function approximation 29 aims to find the optimal superparameters θ of the kernel function by maximizing the marginal likelihood of the database. Inspired by GLR and KMR of entirely di ff erent styles, the concept of potenial tangent bundle (PTB), PTB   fθ, θ  = span 
+
+( ∂∂θ i
+
+fθ i = 1, · · · , m
+
+)
+
+, (25) off ers a general approach to function approximation by PTB   fθ, α  = ∂∂θ fθ · α, α ∈ Rm, (26) where α are the linear combination coe ffi cients and thus the minimizer in building the PES. To easily derive the present theory, let us firstly consider the simplest case with an analytical function 
+
+f (q) as objective function in function approximation. Then, we consider the practical case with the discrete database as training set. If the analytic form of the objective potential function f (q) has been obtained, the function approximation becomes least-squares problem 
+
+α = arg min 
+
+> α∈Rm
+
+Z ∂∂θ fθ(q) · α − f (q)
+
+> 2
+
+ddq. (27) This is a semi-convex optimization and has solution expressed in a transformed form 
+
+α = G† 
+
+> θ
+
+P θ, f , Gθ ∈ Rm×m, P θ, · : L2 Rd, R → Rm, (28) where 
+
+Gθ =
+
+Z ∂∂θ f ⊥
+
+> θ
+
+ q · ∂∂θ fθ
+
+ qddq, P θ, f  =
+
+Z ∂∂θ f ⊥
+
+> θ
+
+ q · f  qddq (29) are metric tensor of the parameter space and projection, respectively, while L2(Rd, R) is the square-integrable function space, usually denoted by L2 space. Defining a projection operator in the L2
+
+space as 
+
+Kθ
+
+ ·   q = ∂∂θ fθ
+
+ qG† 
+
+> θ
+
+P θ, ·, (30) one can write the approximation in Equation (26) of function f (q) as PTB( fθ, α ) = Kθ[ f ]( q). Substituting Equation (29) into Equation (30), one can finally obtain PTB   fθ, α  = Kθ
+
+ f   q = ∂∂θ fθ ·
+
+Z ∂∂θ f ⊥
+
+> θ
+
+ q · ∂∂θ fθ
+
+ qddq
+
+!†
+
+·
+
+Z ∂∂θ f ⊥
+
+> θ
+
+ q · f  qddq
+
+!
+
+. (31) 16 Comparing to the unified regression model for building the PES 29 , the PTB approximation of Equation (28) optimizes the coe ffi cients α rather than the parameters θ.Now, we should express the above function approximation in discrete form leading to the matrix formalism. According to the unified regression model 29 the tangent bundle defined by Equation (25) o ff ers the PES in the expansional form of Equation (26). With the training database {X, E} =
+
+{Xi, Ei|i = 1, · · · , n}, the least-squares problem of Equation (27) becomes the matrix form 
+
+α = arg min 
+
+> α∈Rm
+> n
+
+X
+
+> i=1
+
+∂∂θ fθ(Xi) · α − Ei
+
+> 2
+
+, (32) where Xi and Ei are the i-th point in the configuration space and corresponding energy value, respectively, while X and E are n×d and n×1 matrices, respectively. Similar to Equation (28), this optimization in Equation (32) for α has solution expressed in a matrix transform α = G† 
+
+> θ
+
+P(θ, E), where Gθ ∈ Rm×m and P(θ, ·) : L2(Rd, R) → Rm are given by 
+
+Gθ =
+
+> n
+
+X
+
+> i=1
+
+∂∂θ f ⊥
+
+> θ
+
+ Xi
+
+ · ∂∂θ fθ
+
+ Xi
+
+, P θ, E =
+
+> n
+
+X
+
+> i=1
+
+∂∂θ f ⊥
+
+> θ
+
+ Xi
+
+ · Ei. (33) With Equation (30) in the L2 space and the metric and projection in Equation (33), one can simi-larly write the PES prediction fθ(q) as PTB   fθ, α  = Kθ
+
+E  q = ∂∂θ fθ ·
+
+
+
+> n
+
+X
+
+> i=1
+
+∂∂θ f ⊥
+
+> θ
+
+ Xi
+
+ · ∂∂θ fθ
+
+ Xi
+
+
+
+> †
+
+·
+
+
+
+> n
+
+X
+
+> i=1
+
+∂∂θ f ⊥
+
+> θ
+
+ Xi
+
+ · Ei
+
+ . (34) Until now, we have not specified the functional form of fθ, consequently, the PES construction presented above (say Equations (31) and (34)) is general. We refer the reader to Reference 2 for various functional forms of fθ in building the PES. According to the unified regression model 29 , all of fitting approaches to build the PES can be seen as linear relation of the so-called feature space 29 . This space is a su ffi ciently flexible function of coordinates, denoted by ˜ f˜θ(q), where ˜ θ ∈ Rm−m′
+
+and ˜ f˜θ(q) ∈ R1×m′
+
+with 1 < m′ < m. Thus, the objective potential function fθ can be generally written in linear relation, 
+
+fθ
+
+ q = ˜f˜θ
+
+ q · ω, ω ∈ Rm′
+
+. (35) By Equation (35), it should be emphasize that there must exist fθ in the PTB as deifned by Equation (25). This point is easy to understand if we further rewritten Equation (35) as 
+
+fθ
+
+ q = ˜f˜θ
+
+ q · ω =
+
+ ∂∂˜θ ˜f˜θ · ω ˜f˜θ
+
+
+
+·
+
+
+
+0
+
+ω
+
+ = ∂∂θ fθ · α ∈ span 
+
+( ∂∂θ i
+
+fθ i = 1, · · · , m
+
+)
+
+= PTB   fθ, θ .
+
+(36) 17 Obviously, Equations (34) and (36) possess little practical significance but can achieve reasonable approximation PES, even if the PTB is not optimal 29 . In addition, if the feature space ˜f˜θ itself possesses a certain mathematical structure, say expansion by products basis, then the resulting PES fθ will also exhibit the same structure 3,4 . This serves as the mathematical foundation for developing a range of fitting methods 2.
+
+IV. GEOMETRIC THEORY 
+
+In this section, we turn to the geometric theory of molecular reaction dynamics, as collected in Table III. Section IV A gives electromagnetic interaction in general spacetime based on previous discussions on electrodynamics in curved spacetime. Section IV B gives geometric description of a quantum state assumed in the SPA, as shown in Figure 2(a). Section IV C gives the variational framework in deriving working equation for solving the single-particle terms, as shown in Figure 2(b). Section IV D gives the geometric phase e ff ects during the motions, as explained by Figure 3. 
+
+A. Electromagnetic Interaction 
+
+As is well known, molecular systems exemplify electromagnetic confinement, with their con-stituents, namely electrons and nuclei, held together by electromagnetic interaction. Now, we should briefly review electromagnetic interaction and especially revisit to electronic structure from a geometric viewpoint. To this end, we turn to Definition 4 and give more details on the [3 + 1] decomposition, where the metric tensor defines the event interval 41–43 
+
+ds2 = gμν dxμdxν = −α2dt2 + γi j 
+
+ dxi + βidt  dx j + βjdt, (37) where α and βi are lapse function and shift vector, respectively. According to Equation (37), lapse function determines the rate at which proper time τ elapses for observers moving normally to the slices, relative to coordinate time t, while shift vector describes how the spatial coordinate xi shifts from one slice to the next. In the [3 + 1] decomposition, the choice of lapse function and shift vector is often a matter of gauge freedom, but not arbitrary. 
+
+Definition 5 Gauge freedom is the existence of a family of transformations that leave a theory unchanged, but modify the mathematical descriptions. 
+
+18 Thus, one can see α and βi as gauge variables which should be chosen according to some given condition. 
+
+Definition 6 Gauge variables are the unobservable, redundant components of a field that encode gauge freedom and can be fixed by a gauge condition. 
+
+For insatnce, for systems located on Earth, that is in a typical approximately flat spacetime, the lapse function and shift vector simply satisfy α = 1 and βi = 0. Based on the Eulerian observer one can accept the adsolute-space and universal-time viewpoint of Galileo, where the [3 + 1] formulation of electrodynamics involves the Maxwell equations in curved spacetime 48 . It must be noted that the viewpoint of Galileo, where all inertial frames share the same space and the same time, is only available to the Eulerian observers. Considering a charged particle with rest mass m and charge q, such as an electron with mass me = 1 and charge 
+
+q = −1, its ordinary velocity ⃗ v and momentum ⃗ p are 3-vectors in 3D slice Σt with v < 1. Then, the EOM for the charged particle in 4D spacetime can be written in the [3 + 1] decomposed form 48 
+
+ DF +⃗ v ·⃗ ∇⃗ p = − m⃗ a
+
+√1 − v2 +⃗ σ ·⃗ p + 13ϑ⃗ p
+
+!
+
++ q ⃗ E +⃗ v ×⃗ B, (38) where ⃗ a,⃗ E, and ⃗ B are 3-vectors in Σt for acceleration, electric field, and magnetic field, respec-tively. In Equation (38), ⃗ σ and ϑ describe shear and expansion of the 4D spacetime, respective, while DF is a time derivative defined by Fermi transport along the fiducial world lines 48 , called the Fermi derivative. Unlike the covariant derivative (see also Equation (7)), which describes how a vector changes due to the curvature of spacetime, the Fermi derivative describes how a vector changes from the viewpoint of an observer moving along its own world line. The left-hand side of Equation (38) is the convective derivative of ⃗ p along the particle world line, that is the rate of momentum change, where the particle is (1) Fermi-transported from its initial position on Σt to the next slice, and then (2) spatially parallel-transported within the new slice to its final position. The first term of the right-hand side of Equation (38) is a kind of inertial force to consider the fact that the fiducial observers have a relative velocity to inertial observers, while the second term is the usual Lorentz force. For electrons living in the molecular systems located on Earth, where the sapcetime is nearly flat, noting that m = me, q = −1, ⃗ σ = 0, ϑ = 0, and v2 ≪ 1, Equation (38) can be rewritten as 
+
+ DF +⃗ v ·⃗ ∇⃗ p = −me⃗ a −  ⃗ E +⃗ v ×⃗ B. (39) 19 Solutions of Equation (38) or (39) predict the motion of charged particle in the 4D spacetime with general geometric characteristics determined by the metric, lapse function, and shift vector. How-ever, it is still di ffi cult to predict electornic structure of the molecular sytems in the 4D spacetime. To consider this problem, we should turn to the electromagnetic interaction in general form with geometric characteristics of the 4D spacetime 49 . According to Postulate 1, on the one hand, if we apply the principle of least action to the spacetime curvature in a coordinate-invariant man-ner, the Einstein field equations can be obtained through a stationarity condition for the metric tensor. On the other hand, the classical electromagnetic Lagrangian can be understood through the scalar curvature of a manifold, implying that the electromagnetic field equations are a special case of the Einstein field equations. It must be noted that, however, even though one can derive the electromagnetic field equations by an ad hoc action (or Lagrangian) for a special case, there is still no satisfactory model to link electromagnetic field and the geometric characteristics of the 4D spacetime. Nevertheless, many attempts to find such relationship have been reported by Einstein, Eddington, Weyl and Schr¨ odinger, and so on 50 . The simplest case is the electromagnetic interac-tion between atomic nucleus and an electron in a uniformly curved spacetime 51–53 with a constant positive curvature R but without any charge and rotation, 
+
+V(curved) coul 
+
+ re
+
+ = − Zre
+
+q
+
+1 − Rr 2e = V(flat) coul 
+
+ re
+
+ q
+
+1 − Rr 2e , r <
+
+r 1
+
+R, (40) where Z is the charge of the atomic nucleus and re is distance between atomic nucleus and elec-tron, while V(flat) coul is the electromagnetic interaction in the flat spacetime. The curvature radius, 
+
+√1/R, can be seen as apparent radius of the universe of order of magnitude 10 26 m, while re is approximately equal to atomic radius of 10 −10 m. Therefore, it is safety to have approximation 
+
+V(curved) coul ≈ V(flat) coul for electrons moving in the molecular system. Thus, one can generalize the elec-tronic structure methods developed under conditions at the flat spacetime to approximate those under general conditions at the curved spacetime, where it is only required that the p1 − Rr 2e term is su ffi ciently small, that is R is not too large. 
+
+B. Single-Particle Approximation 
+
+Having the electromagnetic interaction in general spacetime, we now turn to the SPA for the wave function ansatz. It in conjunction with variational principles have been widely used in elec-tronic structure and quantum molecular dynamics 2, where the wave function is given by a sum-20 mation of products (SOP) of single-particle terms, such as SPFs and MOs. Each of these terms is the solution of single-particle working equations derived by substituting the ansatz into the EOM. Similar to the SOP ansatz, the molecular quantum state can be also given in the form of MPS. Haegeman and co-workers 25 discussed existence of MPS to represent states based on the language of fiber bundles. We refer the reader to Reference 25 for more mathematical details. Such solutions form a set of quantum states depending on variational parameters, called a variational manifold, which is a smooth manifold embedded in the total Hilbert space H of the problem. To greatly simplify formulas, state vector |Ψ⟩ is normalized to obtain [ |Ψ⟩] in the projective Hilbert space 
+
+P(H). The tangent space T[|Ψ⟩]P(H) can be denoted by H/ ∼, where “ ∼” means that two vectors 
+
+∀| Φ1⟩, |Φ2⟩ ∈ H satisfy equivalentce relation |Φ1⟩ ∼ | Φ2⟩ on H, if and only if ∃c ∈ C such that 
+
+|Φ1⟩ − | Φ2⟩ = |Ψ⟩c. In this context, a unique vector |Φ⟩ ∈ T[|Ψ⟩]P(H) can be found by imposing 
+
+⟨Ψ|Φ⟩ = 0. The projective Hilbert space P(H) is a K¨ ahler manifold if one endows it with the Fubini-Study metric ˜g(H)
+
+> |Ψ⟩
+
+|Φ1⟩, |Φ2⟩ = Φ2 ˆP⊥|Ψ⟩ Φ1
+
+Ψ Ψ , (41) where ˆ P⊥|Ψ⟩ is orthogonal projector onto T[|Ψ⟩]P(H) ≃ H⊥|Ψ⟩. Next, we only consider the state in the holomorphic tangent space. For submanifold M ⊂ H, the holomorphic tangent space at |Ψ⟩ ∈ M
+
+satisfies T|Ψ⟩ M ⊂ H. The variational subset M corresponding to a variational ansatz Ψ : U ⊂
+
+Cm → H is defined as M = {| Ψ(z)⟩| z ∈ U}, where Ψ is restricted by parameters z = {zi}mi=1. Under the injectivity assumption, a holomorphic inverse map Ψ−1 : M → U ⊂ Cm can be defined making (M, Ψ−1) be a global coordinate chart for M. The partial derivatives of Ψ at a point z ∈ U is denoted by ∂iΨ : U → H : z 7 → | ∂iΨ(z)⟩ = ∂i|Ψ(z)⟩| z. The tangent map d Ψz is then given by dΨz : Cm → T|Ψ(z)⟩ M ⊂ H : ωi∂i z 7 → ωi ∂iΨ(z) = Φ(ω, z) , (42) which defines map Φ : Cm × Cm → H. The pushfroward of Ψ induces a bundle map between the tangent bundles d Ψ : Cm × U → T M : ( ω, z) 7 → (|Φ(ω, z)⟩, |Ψ(z)⟩). For a d-dimensional system represented by a set of grids I = {i1, · · · , id}, we now consider its quantum state represented in the SOP form, where the κ-th point of a grid I contains an mκ-dimensional variable, so that the local Hilbert space Hκ is spanned by a basis {| iκ⟩κ|iκ = 1, · · · , mκ}.The total Hilbert space is thus given by direct product HI = ⊗d
+
+> κ=1
+
+Hκ and spanned by the product basis |i1 · · · id⟩ = |i1⟩1 ⊗· · ·⊗| id⟩d. The dimension of HI is thus Qd 
+
+> κ=1
+
+mκ. In this context, an arbitrary state |Ψ⟩ ∈ HI is represented by coe ffi cients AI corresponding to the basis |i1 · · · id⟩. The variational 21 parameters correspond to a set of mκ coe ffi cients for the κ-th dimensionality, forming space A. The state is defined as the holomorphic map Ψ : A → HI : AI 7 → | Ψ[AI ]⟩ and given by prescription 
+
+Ψ[AI ] =
+
+> m1
+
+X
+
+> i1=1
+
+· · · 
+
+> md
+
+X 
+
+> id=1
+
+Ai1··· id i1 · · · id . (43) By Equation (43), one can have got a variational set V = {| Ψ[AI ]⟩|∀ AI ∈ A}. Turning to the operator, let the operator ˆ O for an observable be a product operator ⊗d 
+
+> κ=1
+
+ˆOκ of local operators ˆ Oκ
+
+acting non-trivially only on Hκ. We can define superoperator as linear homomorphism, ˆE(κ)ˆOκ
+
+=
+
+> mκ
+
+X 
+
+> iκ,jκ=1
+
+iκ ˆOκ jκ A∗ 
+
+> I
+
+⊗AJ , ˆE(κ)ˆOκ
+
+(x) =
+
+> mκ
+
+X 
+
+> iκ,jκ=1
+
+iκ ˆOκ jκ A∗ 
+
+> I
+
+⊗x⊗AJ , ˜E(κ)ˆOκ
+
+(x) =
+
+> mκ
+
+X 
+
+> iκ,jκ=1
+
+iκ ˆOκ jκ A∗ 
+
+> J
+
+⊗x⊗AI ,
+
+(44) where x represents virtual operators. Equation (44) further implies the expectation of the product operator ˆ O in the form 
+
+Ψ[AI ] ˆO Ψ[AI ] = tr  ˆE(1) ˆO1
+
+· · · ˆE(d)ˆOd
+
+ = tr 
+
+
+
+> d
+
+Y
+
+> κ=1
+
+ˆE(κ)ˆOκ
+
+ (45) Since most local operators are trivial on the majority of grids, one can define the set of virtual densities l = {lκ}d 
+
+> κ=1
+
+and r = {rκ}d 
+
+> κ=1
+
+through the recursive expressions lκ = ˜E(κ)ˆ1 (lκ−1) with l0 = 1 and 
+
+rκ−1 = ˆE(κ)ˆ1 (rκ) with rd = 1. Generally, the SPA for multi-dimensional quantum state (see Equation (43)) is always feasible as long as the product basis set {| i1 · · · id⟩| iκ = 1, · · · , mκ, κ = 1, · · · , d} is su ffi ciently close to complete. However, complete basis sets are rare and, in practical calculations, unrealistic because they require an infinite number of terms, that is mκ → ∞ for all dimensions in Equation (43). The fact that mκ < ∞ in practical calculations inevitably leads to the so-called “correlation” e ff ects among the single-particle terms during variation. A typical example is the correlation energy problem in variational approaches for electronic structure. In addition, the correlation e ff ects in time propagation lead to convergence problem and low computational e ffi ciency, particularly when considering the dynamics of higher-lying energy regions. To overcome such correlation eff ects, it is necessary to expand the basis set or to endow it with a certain physical significance of the system. In this context, as previously proposed 2 the system is firstly separated into several modes which are lower-dimensional subsystems. Then, these modes can be further separated into modes in deeper layer. Repeatedly separating the subsystems until the modes in the deepest layer are manageable, the system is finally organized within a hierarchical framework. The quantum state can be accordingly expanded in a multilayer form, where the modes in the deepest layer are 22 further expanded using a given basis set. For example, to address electron correlation, multilayer wave function is adopted by CI, MCSCF, MRCI, quantum chemistry DMRG, and so on. For time evolution, such multilayer wave function is employed by ML-MCTDH, time-dependent DMRG, and so on. 
+
+C. Variational Framework 
+
+Next, one can define the subset of full rank states with open boundary as A = {AI ∈ A|lκ >
+
+0, rn > 0, ∀κ = 1, · · · , d}. All virtual densities should be strictly positive definite and thus have full rank on top of being positive semi-definite. The subsect A ⊂ A of full-rank states is a complex manifold with the same dimensionality of A. Introducing the group G = { ˆG} of local gauge transformations, the group action of G on A is defined as the map Λ : A × G → A :(AI , ˆG) 7 → Λ[AI , ˆG] = A[G]  
+
+> I
+
+with ∀ ˆG ∈ G. This implies that the map Λ is holomorphic. Then, gauge invariance of the state means that ∀AI ∈ A : |Ψ[A[G]  
+
+> I
+
+]⟩ = |Ψ[AI ]⟩ for ∀ ˆG ∈ G. The stabilizer subgroup of transformations ˆ G that leave Λ[AI , ˆG] = AI is denoted by GL(1 , C). With the groups G and GL(1 , C), the structure group S can be defined as S = G \ GL(1 , C). The group action 
+
+Λ : A × S → A is free, where the stabilizer subgroup of any AI ∈ A is given by the trivial group containing only the identity. A group action Λ : M × L → M of a real Lie group L on a complex manifold M is proper if L is a closed subgroup of holomorphic automorphisms on M and preserves a continuous distance on M. Thus, the group action Λ : A × S → A is proper. If M is a smooth manifold, L is a Lie group, and Λ : M × L → M is a smooth, free, and proper group action, one can then find that the space M \ L is a smooth manifold and the natural projection π : M → M \ Lis a smooth submersion. Correspondingly, π : M → M \ L is a principal fiber bundle with total space M, base space 
+
+M \ L and structure group L. Since the complex manifold A is in the first place a smooth manifold, and the holomorphic group action Λ is a smooth map, we can find that A \ S is a smooth manifold. Letting Λ : M × L → M be a holomorphic, free, and proper group action of a complex Lie group L to a complex manifold M, M \ L is a complex manifold and the quotient map π : M → M \ Lis holomorphic. In addition, any holomorphic map Ψ : M → A that is invariant under the action of L factorizes as Ψ = ψ ◦ π, where ψ is a holomorphic map from M \ L to A. Thus, A \ Sis a complex manifold. Since Ψ : A → HI invariant under the group action, it has a natural restriction ψ : A \ S → HI . One can define D as the image of ψ : A \ S → HI or equivalently, 23 the image of Ψ : A → HI . The variational class of Ψ : A → V is a principal fiber bundle with structure group S, base manifold V, total manifold A and bundle projection Ψ. The variational manifold V is a complex manifold that is biholomorphic to A \ S. In summary, by restricting to the subset of full rank state (open boudary) or injective state (periodic boundary), we can identify the SOP representation with a principal fiber bundle. The variational parameters live in the bundle space. The quantum state encoded by the variational parameters should be left invariant under a well-understood set of gauge transformations and therefore be identified with points in the base space, that is the quotient space of the bundle space and the structure group (gauge group). This is bijective, and standard theorems of fiber bundle automatically imply that the set of the quantum state in the SOP form can be given the structure of a complex manifold. Since this manifold is embedded in an a ffi ne or projective Hilbert space, which is a K¨ ahler manifold, such manifold is also a K¨ ahler manifold. The corresponding K¨ ahler metric can be obtained by inducing the standard metric of Hilbert space. By the pushforward d Ψ of the bundle projection Ψ, one can deifne a bundle map d Ψ : T A →
+
+T V between the holomorphic tangent bundle of A and the holomorphic tangent bundle of V. At any point in A we have TAA ≃ A. The holomorphic tangent space T|Ψ[AI ]⟩V ⊂ HI is biholomorphic to a subspace of HI and defines a variational class to consider the excited states of a Hamiltonian for which |Ψ[AI ]⟩ in Equation (43) is a well approximation of ground state. Next, a map |Φ⟩ :
+
+T A → HI : ( BI , AI ) 7 → | Φ[BI , AI ]⟩ can be defined leading to the expression 
+
+Φ[BI , AI ] =
+
+> d
+
+X
+
+> κ=1
+
+
+
+> m1
+
+X
+
+> i1=1
+
+· · · 
+
+> mκ
+
+X
+
+> iκ=1
+
+· · · 
+
+> md
+
+X 
+
+> id=1
+
+Ai1··· iκ−1iκ+1··· id Bi1··· iκ··· id
+
+ i1 · · · iκ · · · id
+
+=
+
+> d
+
+X
+
+> κ=1
+
+
+
+> m1
+
+X
+
+> i1=1
+
+· · · 
+
+> mκ
+
+X
+
+> iκ=1
+
+· · · 
+
+> md
+
+X 
+
+> id=1
+
+AIκ BI
+
+ i1 · · · iκ · · · id , (46) where Iκ = {i1, · · · , iκ−1, iκ+1, · · · , id}. Equation (46) is a general tangent vector |Φ[BI , AI ]⟩, where coe ffi cients for the κ-th grid are replaced by AIκ BI . For brevity, introducing the notation T|Ψ[AI ]⟩V =
+
+T[A], the linear homomorphism can be defined as Φ[AI ] : TAA ≃ A → T[A] : BI 7 → | Φ[BI , AI ]⟩.Moreover, one can omit the explicit notation [ A] or AI of the base point in the notation of the tangent space T or its vectors |Φ[BI ]⟩. The tangent space to the K¨ ahler manifold for quantum states in the SOP form has been proven a key role in time evolution. Due to the gauge invariance of the SOP representation, not all partial derivatives with respect to the variational parameters produce linearly independent tangent states of the manifold. Within the fiber bundle framework, the tangent map from the tangent bundle of parameter space to the tangent bundle of the base 24 manifold has a non-trivial kernel referred to as the vertical subspace. To obtain unique tangent vector representations, a principal bundle connection is introduced, defining a complementary horizontal subspace. This connection provides a canonical representation for tangent vectors, or called a gauge fixing prescription, and simplifies physical expectations involving tangent states. Notably, for any given base point, at least two such canonical representations exist, both of which render the metric at that point into the unit matrix. 
+
+D. Motion and Phase 
+
+Now, we should turn to concept of the motion and phase for reaction dynamics and further develop the theory of wavefunction phase established in our previous work 2,5 . Without loss of generality, let us consider a system with the Hamiltonian operator ˆ H whose normalized eigenstate is denoted by |k⟩, where k is set of quantum numbers. One can then denoted the eigenstate set by 
+
+K = {| k⟩|⟨ k|k⟩ = 1}. According to our previously reported work 5, when the state |k⟩ adiabatically evolves along a closed curve Γ, the system has got a geometric phase, called the Berry phase. Shortly after its discovery, Simon 54 suggested that the Berry phase is the holonomy in a Hermitian line bundle since the adiabatic theorem naturally defines a connection in such a bundle. In this sub-section, based on the geometrically formulated concept of the Berry phase 54 , we will re-examine it from the views of both electronic and nuclear motions. First, we note that |k⟩ and |k⟩ exp(i φ) cannot be distinguished in the Hilbert space, denoted by 
+
+|k⟩ ∼ | k⟩ exp(i φ), where exp(i φ) ∈ U(1). Then, the proper quantum state space of the system is defined as H = K/ ∼ by removing all similar redundant relationships denoted by the above relation symbol “ ∼” from K. Now, letting H be the base manifold, a U(1)-principle bundle P(H, U(1)) can be defined. The fiber Fk at each point of H contains the equivalent class of states 
+
+π−1 = n k = k g k ∈ K, g ∈ U(1) o, (47) where π is a projection with local expression defined using a local trivialization ϕ, that is π ◦
+
+ϕ(|k⟩, |k⟩g) = |k⟩. The Berry phase is produced by parallel transport of a quantum state in H along a loop Γ : [0 , 1] → H, where the loop Γ is supposed to be parameterized by parameter t (may or may not be time). A section σ : H → P is a smooth map and satisfies π ◦ σ = 1H . Choosing a specific section is equivalent to locally fixing the phase of |k⟩, namely σ(|k⟩) = |k⟩ exp(i φ(k)). If 
+
+π ◦ ˜Γ = Γ , a curve in P given by ˜ Γ : [0 , 1] → P is a horizontal lift of Γ, where ˜ Γ may not be a closed 25 loop even if Γ is. In general, the horizontal lift ˜ Γ satisfies ˜ Γ(1) = ˜Γ(0) gΓ(1), where gΓ ∈ U(1) is a transformation on the fiber. The set of gΓ forms a subgroup of the structure group U(1), called the holonomy group or the Berry holonomy for convenience. Assuming Γ(0) = |k⟩ and Γ(t) = |k⟩,the horizontal lift ˜ Γ(t) defines a section ˜ Γ(t) = σ(|k(t)⟩) = |k(t)⟩ exp(i φ(t)). Figure 3 schamatically illustrates curves of Γ(t) and ˜ Γ(t). Now, we should show the connection on a fiber bundle, in particular the Ehresmann connection, and then give its application to the phase in chemical dynamics. Since the loop Γ(t) is parameter-ized by t, the tangent vector X to Γ(t) can be locally expressed as 
+
+X = Xκ ∂∂q(κ) = dq(i)
+
+dt
+
+∂∂q(i) = ddt . (48) Letting ˜X be the tangent vector to ˜ Γ(t), it forms the tangent bundle associated with P, denoted by 
+
+T P and thus ˜X ∈ T P . Figure 3 also shows tangent vectors X and ˜X associated with Γ(t) and ˜ Γ(t), respectively. Noting π ◦ ˜Γ = Γ , we have π∗ ˜X = X. The tangent bundle T P can be separated as 
+
+T P = HP ⊕ VP , where HP and VP are horizontal and vertical subspaces, respectively. As shown in Figure 3, ˜X is tangent to the horizontal lift implying that ˜X ∈ HP . In the V P subspace, all vectors are tangent to the fiber. At |k⟩ ∈ H, the fiber is given by Equation (47) and hence a vector in the vertical subspace is given by dds
+
+ k exp  iφs 
+
+> s=0
+
+= k iφ, φ ∈ R, and thus V P |k⟩ = n k iφ φ ∈ Ro, (49) where s denotes a parameter (coordinate) along the fiber. Equation (49) indicates that if ⟨k′|k⟩ , 0for ∀| k′⟩ ∈ H then i · arg ⟨ϕ|k⟩ ∈ VP |k⟩ for ∀| ϕ⟩ ∈ π−1(|k⟩). In other words, a horizontal vector must not have any component in the vertical subspace, which implies that the horizontal subspace at |k⟩
+
+is given by 
+
+HP |k⟩ = n ψ ψ k = 0o. (50) Letting |ψ(t)⟩ = |k⟩ exp(i φ(t)) be a point on ˜ Γ(t), the tangent vector at |k⟩ is similarly given by (d P|ψ⟩/dt)t=0, where d P is the exterior derivative on P and thus satifies the horizontal-space condi-tion 
+
+ψ ˜X ψ =
+
+*
+
+ψ dP
+
+dt ψ
+
++
+
+= 0, ∀t ∈ R. (51) Euation (51) means that one can define a connection at |ψ⟩ on P by 
+
+ω|ψ⟩ = ψ dP ψ = i · Im ψ dP ψ , (52) 26 called Ehresmann connection on P. The seocnd equality in Equation (52) exists since ⟨ψ|dP|ψ⟩ is imaginary-valued. With Equation (52), one can further express Equation (51) as ω( ˜ X) = 0. The pullback of ω, known as the Berry connection, is defined on M. If X is the pushforward of ˜X then, similar to Equation (52), one can have the Berry connection 
+
+AB
+
+ X =
+
+*
+
+k ddt k
+
++
+
+. (53) Due to |ψ(t)⟩ = |k⟩ exp(i φ(t)) and ω( ˜ X) = 0, one can have 0 = idφ
+
+dt +
+
+*
+
+k ddt k
+
++
+
+= idφ
+
+dt + AB
+
+ X, (54) and thus the Berry phase 
+
+φB = i
+
+I
+
+AB
+
+ X(t)dt = arg ψ(0) ψ(1) , (55) where only the closed loops in the paramter space with |k⟩(0) = |k⟩(1) are considered. Thus, a parallel transport of a vector (such as quantum state or wave function) along ˜ Γ(t) is equivalent to a parallel transport of the associated fiber element along Γ(t) = π( ˜ Γ(t)). It must be noted again that the parameter t of the loop Γ is not necessary to be time. If it is chosen to be time, the above derivations hold and all results stand. To end the present section, let us have a look at the gauge theory for molecular reaction dy-namics. There exist two complementary frameworks for the gauge theory, including physical formulation and geometric formulation. The physical formulation is represented in terms of gauge potentials, field strengths, and local symmetries, while the the geometric formulation is given by concepts of principal bundles, connections, and curvature. The gauge theory is not new in chem-istry. For instance, with the idea of the gauge theory, Baer 17 deeply discussed on the concept of molecular field and the theory beyond the BOA. As is well known, all four fundamental interac-tions in the world can be described in terms of gauge theories. Among these four interactions, only electromagnetic interaction is involved in molecular reaction. In details, if the Lagrangian of a free charged particle remains invariant under a local U(1) phase transformation, an additional gauge field must be introduced. The EOMs of such gauge field are Maxwell equations, which introduces the electromagnetic interaction. In other words, the electromagnetic interaction is the static and non-relativistic limit of quantum electrodynamics which can be obtained by U(1) gauge symmetry. In this context, one can attribute motions in a molecular reaction to gauge fields, as summarized in Table IV, implying existence of gauge field theory for molecular reaction. This 27 idea is not surprising because the gauge field theory connects the interactions in a many-body system (say the molecular system) and its dynamics properties. Thus, further development of the gauge field theory for molecular reaction may provide theoretical tools to classify interactions and the inspiration for experiments, such as quantum simulators. 
+
+V. OPTIMIZATION INSIGHT 
+
+Section V A gives discussions on chemical insight of the principle of least action. Section V B discusses the reaction dynamics in general spacetime. Section V C gives perspectives on potential applies of generative artificial intelligence (GenAI) to molecular reaction dynamics. Sections V D gives precision of optimizations from the viewpoint of statistical mechanics by introducing the thermodynamics uncertainty relation. Section V E simply describes the Markov process because optimization result depends only on the current setup, not on the sequence of past optimizations. 
+
+A. Principle of Least Action in Geometry 
+
+First, we should turn to Section II A providing further mathematical interpretations on the prin-ciple of least action (Postulate 1) that plays a central role in introducing the requirement of varia-tional principles. As is well known, the principle of least action in Equation (1) states that solutions extremize the action with fixed end points on each finite time interval. Until now, we show nothing about the end points, in particular elliptic fixed point, that is fundamentally stable. It must be noted that neither the reactants nor the products in a chemical reaction are at rest. From the viewpoint of state-to-state reactions or mode-/bond-specific reactions, all these species are in motion, but stable. Therefore, a deep connection between the local behavior near fixed points and the minimal action should be discussed through the Birkho ff normal form. For a general elliptic fixed point, the symplectic character of the map (that connects the elliptic fixed points) permits a transformation to symplectic coordinates that puts it into the particularly simple Birkho ff normal form. In other words, due to the freedom to change coordinates in a way that preserves volume in configuration space, one can simplify the map near the point through coordinate transformation to capture the essence of the dynamics leading to the Birkho ff normal form. This is similar to perturbation theory. For instance, let H = H0 + V be Hamiltonian of a nonharmonic oscillator as function of coordinate 
+
+q, where H0 is Hamiltonian of a harmonic oscillator and P a real-valued function. There exists 28 a real analytical canonical transformation making H in the form H0 + Z + O(qr+1), where Z is a polynomial of order r ≥ 3 in normal form. Second, noting that the Birkho ff normal form is a simplified polynomial expression, the co-effi cients of this normal form are symplectically invariant and hence called Birkho ff invariants. In this context, as long as the coordinates are transferred symplectically, the Birkho ff invariants remain the same and thus a kind of fingerprint of the fixed point. From the Birkho ff normal form, one obtains an asymptotic approximation whcih coincides with the original map only up to a term that vanishes asymptotically when one approaches the fixed point. It was shown in Section II A that there is symplectically invariant minimal action α given by Equation (4) associated with a volume-preserving map near a general elliptic fixed point. It is a local invariant and contains dy-namics information near the fixed point. Moreover, the Taylor coe ffi cients of the convex conjugate 
+
+α∗ (Legendre transform of α) are the Birkho ff invariants. Next, the germ of the minimal action can be associated with a general elliptic closed geodesic on a two-dimensional Riemannian mani-fold. The minimal action carries information about the geodesic flow near the closed geodesic. In higher dimensions, considering a symplectic di ff eomorphism ϕ in a neighbourhood of an invari-ant torus Λ, if the dynamics on Λ satisfy a certain non-resonance condition, one can transform ϕ
+
+into Birkho ff normal form. If it is positive definite, the map ϕ determines the germ of the mini-mal action α and the minimal action contains the Birkho ff invariants as Taylor coe ffi cients of α∗.Therefore, the minimal action contains all local dynamical information. Finally, instead of single system shown in the above sections, let us simply discuss all sys-tems on a symplectic manifold ( M, ω ) at once, collected in the Hamiltonian di ff eomorphism group Ham( M, ω ) which carries the Hofer metric. In general, the Hofer metric on Ham( M, ω ) is defined by d(ϕ, ψ ) = ∥ϕ−1 · ψ∥ with ∀ϕ, ψ ∈ Ham( M, ω ). The group Ham( M, ω ) can be seen as infinite-dimensional Lie group with Lie algebra composed of all smooth, compactly supported functions 
+
+H : M → R with mean value of zero. If any function norm ∥ · ∥ is invariant under the adjoint ac-tion, the Hofer distance of a di ff eomorphism ϕ from the identity is the infimum of the lengths of all paths in Ham( M, ω ) that connect ϕ to the identity. Since the Hamiltonian system is determined by the first derivatives of the Hamiltonian, which is variant under the adjoint action, the appropriate choice may be the oscillation norm ∥ · ∥ = max − min. Despite its simple definition, the Hofer dis-tance is hard to obtain making one know vary little about the relation between the Hofer geometry and dynamics of a Hamiltonian di ff eomorphism. For Hamiltonians on the cotangent bundle T ∗Td
+
+satisfying a Legendre condition, one can define the minimal action α for convex Lagrangians on 29 T ∗Td. As given in Section II A, Td is d-dimensional torus which is a periodic, compact, smooth manifold. For a reaction, however, the Hamiltonians are unbounded and cannot fit into the frame-work of the Hofer metric. Thus, the Hamiltonians have to be restricted to a compact part of T ∗Td,such as the unit ball cotangent bundle B∗Td, allowing us to stay in the range of Mather theory. Mather theory provides a variational framework for understanding the complex behavior of dy-namical systems, particularly the persistence of stability. To understand this point, letting α be the minimal action associated to a convex Hamiltonian di ff eomorphism on B∗Td, the oscillator of α∗,that is α(0), is a lower bound for the Hofer distance. Therefore, there exists a relation between Hofer geometry of convex Hamiltonian mappings and their dynamical behaviour. 
+
+B. Reaction Dynamics in Geometry 
+
+Now, we should turn to the mountain pass theorem (Theorem 1) given in Section II B, which predicts existence of the saddle points between two separated minima. There are two aspects of Theorem 1 worth paying attention to. On one hand, Theorem 1 indicates that between two local minima (namely intermediates) on the PES, there must exist at least one first-order sad-dle point (namely transition state), which corresponds to a pathway of elementary reaction. For special cases, there is no saddle point on the PES if one of the intermediates is not an energy minimum, such as in reactions involving two radicals. However, when statistical e ff ects are taken into account, it becomes necessary to consider the damping e ff ect of non-reactive motions on the reaction, meaning that the change of the reaction must be examined on the free energy surface. On such surface, a transition state can usually be identified. To understand this point, it is worth noting that the free energy barrier of elementary reaction combines the potential-energetic resis-tance from the PES and the and the entropic resistance from statistics and disorder. For reactions without potential energy barrier, the latter term arises the transition state. On ther other hand, The-orem 1 can be also applied to functional variation and predicts existence of a saddle point between two local minima in the parameter space, such as parameter set θ in defining the approximated function fθ (see also Equation (25)). Theorem 1 and Corollary 1.1 indicate that, when optimizing a complex functional, it is quite common for the optimization to converge to a local minimum rather than the global minimum. The presence of saddle point can hinder optimization iterations from escaping one local minimum to reach another, often resulting in outcomes that are either stochastic in nature or exhibit significant fluctuations. This highlights the inherent challenges in 30 non-convex optimization, where the landscape of the objective function is rugged and the path to the true global extremum is obstructed by numerous critical points. Consequently, the choice of initial guess and optimization algorithm plays a crucial role in determining the final result. As is well known, the motion of a molecular system in configuration space is confined to the PES. Even if the initial condition of the reaction is changed, the system can never “leave” the PES. Geometrically, this represents a form of boundary rigidity phenomenon in geometry. Nevertheless, if we consider mode-/bond-specific reactions and state-to-state reactions, the PES can only roughly determine each individual channel, but cannot encompass all the dynamical information. However, the initial state, as an eigenstate, is computed from the PES, indicating the existence of some invariant connection. Moreover, when statistical e ff ects are taken into account, the molecular system is alternatively constrained to the free energy surface. In this case, boundary rigidity is lost. However, one must note that at least entropy still serves as a connecting link between the free energy and the potential energy. That is, the dynamical features on the PES influence the motion of the system on the free energy surface and leave indelible traces. This is the origin of the non-removable intersection in geometry. Next, we should turn to boundary rigidity and non-removable intersection. Letting Σ be a hepersurface bounding a domain UΣ and containing Lagrangian submanifold Λ, one can summarize existence of boundary rigidity as the question whether can Λ be pushed inside UΣ by an exact Lagrangian deformation that can preserve the Liouville class aΛ or not. If one cannot even move Λ at all, then we call this phenomenon boundary rigidity. Setting L to be the class of all Lagrangian submanifolds of T ∗X, which are Lagrangian isotopic to the zero section O, if Λ, Υ ∈ L are Lagrangian submanifolds both lying in an optical hypersurface Σ and in UΣ with the same Liouville class aΥ = aΛ, then Λ and Υ can be find to be identical, that is Υ = Λ . This result is applicable to a wider class of hypersurfaces and does not require strict convexity. Even if boundary rigidity may fail for a given Lagrangian submanifold Λ, in many cases the intersection Λ ∩ Σ cannot be empty set, called non-removable intersection. The intersection always contains an invariant set of the characteristic foliation of Σ.Finally, the present geometric theory of molecular reaction dynamics might open a way to consider reaction in curved spacetime. As is well known, the [3 + 1] decomposition given by Definition 4 has been widely applied to develop numerical general relativity through methods of hydrodynamics. Algorithms of hydrodynamics in conjunction with general relativity become the foundation for simulating astrophysical phenomena where strong gravity interacts with matter. In essence, the [3 + 1] decomposition enables the evolution of curved spacetime, and the hydrody-31 namics describes how the matter moves and interacts on the spacetime. Meanwhile, choosing appropriate ensemble as boundary conditions, the reaction kinetics can be simulated through hy-drodynamics in phase space if the ensemble of the system is considered as a continuous fluid. Similarly, simulation of reaction kinetics in phase space can be extended to a general spacetime framework. In this context, the configuration space becomes curved, and the corresponding phase space can accordingly be constructed in a generally curved one. As a result, the algorithms devel-oped for relativistic hydrodynamics within the framework of numerical general relativity can be naturally applied to simulate reaction kinetics. Of course, there exist many theoretical problems on this issue. For example, how to write the EOM in curved spacetime and how to construct the Lagrangian or Hamiltonian of the molecular system in curved spacetime. In Sections II and III, we have provided ways to find the EOM and to construct the Hamiltonian. Nevertheless, it is still an open question to finally solve these problems. As recently discussed 2, it may be possible to extend the SPA to its field-theory counterpart through similar pathway in condensed matter many-body theory. If molecular reaction dynamics were fully understood within the quantum field theory, it would then be possible to further generalize it to couple with theory of curved spacetime. 
+
+C. Applications of Generative Artificial Intelligence 
+
+Usually, GenAI refers to AI models that can generate new content based on patterns learned from training data and can serve as a creative assistant that helps us explore alternative possibilities. In particular, GenAI provides data-driven solutions to PDEs by learning from data based on the minimax methods in mathematics (see also Section II B). Over the past years, it was well discussed on the relationship between the mountain pass theorem and the minimax methods, as indicated in the end of Section II B, together with their applications to solving PDEs. For instance, to solve semilinear elliptic problem in configuration space X ∈ Rd,
+
+−∇ 2u + λu = − f  u, λ > 0, d , 3, u ∈ H 1 Rd = nu ∈ L 2 Rd, R⃗ ∇u ∈ L 2 Rd, Ro , (56) where H1(Rd) is Sobolev space, the ground state solution can be obtained through the minimax of the associated functional 
+
+Iu(X) = 12
+
+Z
+
+> Rd
+
+⃗ ∇u 2 + λu2dd X −
+
+Z
+
+> Rd
+
+F udd X, F u =
+
+Z u
+
+> 0
+
+f  tdt. (57) 32 Recently, Maia and co-workers 55 transferred this solution to the minimum of the functional I[u]constrained to the Pohozaev manifold 
+
+PO = nu ∈ H 1 Rd\0 J(u) = 0o, J(u) =  d−2 Z
+
+> Rd
+
+⃗ ∇u 2dd X−2d
+
+Z
+
+> Rd
+
+
+
+−λ
+
+2 u2 + F(u)
+
+
+
+dd X. (58) Therefore, Maia and co-workers 55 found that the ground state solution of Equation (56) can be given by min u∈PO I[u]. This result implies that one can solve special type of PDEs through an variational method. Moreover, noting that problem of Equation (56) is a type of the SE, it is possible to develope optimization methods for solving the SE based on the minimax methods making the GenAI applicable in solving the SE. For instance, a chemistry-informed genAI model was proposed by some of us 56 providing the chemistry-informed generative adversarial network (CI-GAN) approach. Answering the question of how to sample the training data in the configurational space, the original CI-GAN approach was developed 56 . To easily build database for complex molecular systems, an image-input intersection was also implemented 56 making CI-GAN have capability to directly recognize the molecular im-age. Therefore, the CI-GAN approach can use the training data in either a numerical fashion or in image. Calculations and analysis 56 on typical examples, H + H2, OH + HO 2, and H 2O/TiO 2(110), indicated that CI-GAN can generate distributions of geometry and associated energy making it have the capability to replace classical dynamics simulations as well as electronic structure cal-culations. On the basis of these calculations, deep discussions on the power of CI-GAN were given. Due to its power, systematical and comprehensive studies on the predictions of the dynam-ics through GenAI are necessary. Nevertheless, it is worth noting that GenAI is not new in the fields of chemistry. Many numerical developments should be considered in next studies on molec-ular reaction dynamics. First, one should compare the generated geometries and energies with a realistic target and then systematically consider the accuracy of the GenAI models. Second, the computational e ffi ciency of GenAI should be further systematically inspected, in particular, if we were to apply it to constructing the PES. Third, for CI-GAN, influences of the input training data and the chemistry inspiration contained in the training data should be carefully considered. Finally, as previously discussed 56 , calculations for benchmarks implied that CI-GAN has the potential capability to predict classical trajectories and electronic energy values avoiding expensive solving of equations for them, i.e. Newton equation for trajectory and electronic SE for electronic structure. Chemistry insight of the CI-GAN generated trajectory depends on that contained in the training data. If the training data were computed for fitting the PES, then the distribution of the 33 energy values in the configuration space can be obtained by training the CI-GAN model 56 . With such a model, one can generate the energy values rather than solving the electronic SE. If the training data were computed in time-series order, the generated geometries should, in principle, in time-series order. Thus, it was expected 56 that the CI-GAN model has capability to generate time-dependent geometries and thus obtain trajectories. Nevertheless, applications of time series analysis to molecular reaction dynamics through GenAI is not a simple and direct extension of the current GenCI approaches (such as CI-GAN) because the time-dependent wave function is certainly di ff erent from geometries, associated energies, and classical trajectories. In generating the wave function propagation, the target is given by the tensor form, say Equation (43), instead of those in function (say the PES) or in scalar (say the classical trajectory). Turning to Section II B and above discussions by Maia and co-workers 55 , either the mountain pass theorem together with the minimax methods or the variational methods for functional were developed for scalar. The applicability of the minimax approaches to the tensor still requires further investigation from the viewpoint of either mathematics or implementation. As given in the end of Section II B, similar existence of critical point for vector-valued functional was proved by Molho and co-workers 40 .The critical point of vector-valued functions was found to be a solution of a minimax problem consisting of an inner vector maximization problem and of an outer set-valued minimization prob-lem. 
+
+D. Precision of Optimization 
+
+The present theory of molecular reaction dynamics is developed (see also Section IV) on the basis of the variational principle, in which a specified functional is optimized. Because the opti-mization of a functional can be interpreted as a stochastic process unfolding in parameter space, a kinetic description provides a natural and powerful framework for its analysis. By optimiza-tion, one finds a way that contains the largest amount of the information in the functional with specified restrictions and /or conditions, as illustrated by Figure 1. By the mountain pass theorem (Theorem 1 and Corollary 1.1), there exists critical point on the manifold making such way exist. This is a typical constrained optimization problem, where the marginal likelihood ln P(θ, ·) of a “landscape” can be chosen to be the optimization target. According to Bayesian inference, ex-tremizing ln P(θ, ·) yields the final parameters θ. Since the optimized target contains information for relations in the manifold, optimization of ln P(θ, ·) can be seen as stochastic processes (see 34 Figure 4 for schematic illustration). At the first glance, one may analogize P(θ, ·) with probability distribution of microstates of the parameter set θ making ln P(θ, ·) a kind of entropy. For a given macrostate of the parameter set θ, to determine the entropy is equilvalent to finding the minimum number of questions required to be answered to fully specify the microstate of θ. The final way (the red dash line in Figure 1) typically centers around the mean value but also on examining its behavior up to its tails, that is probability distribution. This consists in assessing the likelihood of a stochastic process fluctuating from its usual state to a particular rare value. This is theory of large deviations (LD) in statistical mechanics, where one can precisely and systematically estimate the probability of observing a particular rare event relative to its most likely value. Now, determining the way that contains the largest amount of information at a given preciseness is such rare event and hence needs evaluation of its observing probability. Keeping this idea in the mind, as illustrated in Figure 4, an optimization process can be de-composed into a series of transformations Z′ ← Z forming a path Γ in the space of intermediate parameter values represented by z. It should be note that there are various possibilities of the op-timization path, even though the initial and finial states are fixed as illustrated in Figure 4. Thus, the quality of the optimization can be represented by an additive property, 
+
+A(t) =
+
+Z t
+
+> 0
+
+dτα (τ), (59) where α(τ) depends on an underlying stochastic dynamics at τ. Here, we would like to mention that parameters t and τ may be time or may not time. Equation (59) is very similar to the expression of action given in Equation (1). The former represents an intermediate state in the optimization process, while the latter represents a possible state of motion. Due to the stochastic feature of optimization, values of A(t) given by Equation (59) fluctuate around a steady value that represents its more likely outcome, which is also similar to the principle of least action. This is because both optimization property A(t) and action S describe a certain intermediate state during the change. Characterizing the probability distribution P(A, t) of A(t) at time t to describe events of interest, quantity A(t) is approximately given by A(t) = at in large enough time t with t → ∞ . By the LDT, we can generally have 
+
+P(A = at , t) ≍ exp( −tI (a)) , lim 
+
+> t→∞
+
+1
+
+t ln P(A = at , t) = −I(a), (60) where I(a) is a rate function. It quantifies the rate at which the probability of observing a value A
+
+deviates from that of its typical value. If I(a) reaches its minimum in a, then a is the typical value of A/t.35 Turning to LD for optimization process, the optimization process is equivalent to working in a conditional probability distribution 
+
+P z A/t = a =
+
+Z
+
+D Zp Z = zδ A(Z)/t − a, (61) where D(Z) represents path integral over all trajectories depending on Z, while p(·) represents distribution function. Equation (61) implies that conditional probability P(z|A/t = a) is the dy-namical analogy to a microcanonical ensemble in equilibrium systems where A(t) is arbitrary and plays a role of constraining variable. Following the G¨ artner-Ellis theorem 57,58 , one can obtain the rate function as 
+
+I(a) = max  
+
+> λ
+
+λa − lim 
+
+> t→∞
+
+1
+
+t ln Dexp λAE = max  
+
+> λ
+
+λa − ψ(λ). (62) The extremalization expression in Equation (62) gives precisely λ conjugated to a. Equation (62) indicates that the likelihood of fluctuations of A(t) can be obtained from the limiting calculation of 
+
+ψ(λ) alone. In Equation (62), we introduce rate function and thus averaged dynamics in learning process where the averaging process sums over all possible optimization paths. As illustrated in Figure 4, we denote an optimization path in the intermediate space by Γ. An operation of parameter reversal Γ → ˜Γ can be defined as that changes the order of the intermediate states and reverses the t-dependence contained in the t-dependent driving protocols. In optimization process, such parameter reversal operation is realizable because it is exactly the process of continuously adjusting values in the parameter space. With concept of path and detailed fluctuation theorem, the path level entropy production can be further defined as 
+
+S  Γ = kB ln P(Γ)˜P(Γ), (63) where kB is Boltzmann constant. Rearranging Equation (63) and averaging the results, one can find the integral fluctuation theorem 
+
+*
+
+exp − SkB
+
+!+ 
+
+=
+
+X
+
+> Γ
+
+P(Γ) ˜P( ˜ Γ)
+
+P(Γ) =
+
+X
+
+> Γ
+
+˜P( ˜ Γ) =
+
+X
+
+> ˜Γ
+
+˜P( ˜ Γ) = 1. (64) To obtain the third equality of Equation (64), one should recognize that the sum over all paths can be enumerated equivalently using the forward or the reversed paths. Averaging the entropy production defined by Equation (63), one can find the inequality 
+
+S = kB
+
+X
+
+> Γ
+
+P(Γ) ln P(Γ)˜P( ˜ Γ) ≥ 0. (65) 36 Combining Equations (64) and (65), one directly has got so-called Jensen inequality 1 =
+
+*
+
+exp − SkB
+
+!+ 
+
+≥ exp ⟨S ⟩
+
+kB
+
+!
+
+≥ 1 − ⟨S ⟩
+
+kB
+
+, (66) which is essentially an expression of the thermodynamic uncertainty relation (TUR) 59 . The TUR expression bounds the signal-to-noise ratio of a current J, such as measure of the precision during the optimization process, in terms of the entropy production needed to achieve it 59 ,
+
+P(J) = ⟨J⟩2
+
+⟨(J − ⟨ J⟩)2⟩ ≤ ⟨S ⟩
+
+2kB
+
+, 2P(J)kB ≤ ⟨ S ⟩. (67) Obviously, Equation (67) provides a bound relation on the precision in terms of an observable and further implies that such observable can be exploited either to optimize the precision or to infer the entropy production. Therefore, by the entropy production of the optimization process it is possible to estimate the optimization precision. 
+
+E. Markov Process in Optimization 
+
+As is well known, model of Markov state 60 is a powerful framework for analyzing stochastic processes and has gained widespread use over the past several decades. Now, let us consider its application to determining the distribution p(z, t) which is useful to obtain P by Equation (61). Dynamics of an optimization process is determined by transition rates r(z ← z′) and satisfies the master equation for the probability distribution of states p(z, t), 
+
+∂∂t p(z, t) =
+
+X
+
+> z′,z
+
+hr(z ← z′)p(z′, t) − r(z′ ← z)p(z, t)i. (68) Now, the additive observable A (see Equation (59)) is written over a summation of K jumps as 
+
+A =
+
+X
+
+> 0≤k≤K−1
+
+αzkzk+1 , (69) where αzkzk+1 are individual contributions along the path of successively states {zk}Kk=0. To obtain the likelihood of observing fluctuations of A, we consider a joint probability distribution satisfying 
+
+∂∂t p(z, A, t) =
+
+X
+
+> z′,z
+
+hr(z ← z′)p(z′, A − αz′z, t) − r(z′ ← z)p(z, A, t)i, (70) where αzz ′ represents the amount by which A is increased during a jump from z to z′. Transferring the microcanonical probability distribution p(z, A, t) to the biased canonical one ˇp z, λ, t =
+
+X
+
+> A
+
+exp  λAp z, A, t, (71) 37 one can transfer Equation (70) into joint probability distribution that satisfies 
+
+∂∂t ˇp z, λ, t =
+
+X
+
+> z′,z
+
+h exp  − λα z′z
+
+r(z ← z′) ˇ p z′, λ, t − r(z′ ← z) ˇ p z, λ, ti , (72) where λ is the conjugate variable with A. Employing Equation (62) we have got 
+
+X
+
+> z
+
+ˇp z, λ, t = exp  λA ≍ 
+
+> t→∞
+
+exp  tψ(λ). (73) By Equations (72) and (73), one can obtain expectation values with respect to ˇ p(z, λ, t) and hence the likelihood of fluctuations of A(t). Here, the optimization process has been transferred into the Markov process composed by a series of intermediate states. Dynamics of this process is thus required two ways to focus on these interacting states. In one way, we consider these states on a fixed network and increase the number of intermediate states until there is a large number of states on each site. In other way, we consider intermediate states on a lattice or in continuous space and rescale space until the density of states 
+
+ρ(·) at every point is finite. Obviously, the first way generally represents dynamics of population models. A typical example of population model is chemical reaction networks. The second way is dynamics of di ff usion models of ρ(·) even if the resulting dynamics is sometimes determined trajectory, that is ballistic. In either way, the Markov process can be seen as an optimization process on the action that is a functional of path with physical insight of interest. For a finite step 
+
+δt, the probability of a path is a simple product 
+
+Pt
+
+h ρk
+
+i =
+
+> K
+
+Y
+
+> k=1
+
+Pδt
+
+ ρk+1 ρk
+
+. (74) Keeping only the initial and final conditions fixed (see also Figure 4), a finite transition probability in terms of these paths is obtained by Equation (74) as summation of probabilities associared with all of probable paths, 
+
+Pt
+
+ ρK ρ0
+
+ =
+
+X
+
+> {ρk}
+
+Pt
+
+h ρk
+
+i =
+
+X
+
+> {ρk}
+> K−1
+
+Y
+
+> k=1
+
+Pδt
+
+ ρk+1 ρk
+
+ =
+
+X
+
+> {λk}
+> K−1
+
+Y
+
+> k=0
+
+Pδt
+
+ λk ρk
+
+δ ρk+1 − ρk − ∇ · λδ t. (75) Limitation of δt → 0 turns Equation (75) into path integral where the variable is either displace-ment rate ˙ ρ or current λ. With an extra continuity constraint implemented by delta functions, Equation (75) is further given by 
+
+Pt
+
+ ρt ρ0
+
+ ≍
+
+Z
+
+exp −
+
+Z t
+
+> 0
+
+L( ˙ ρ, ρ )d τ
+
+!
+
+δ ρ(t) − ρt
+
+δ ρ(0) − ρ0
+
+dρ(τ)
+
+38 ≍
+
+Z
+
+exp −
+
+Z t
+
+> 0
+
+L(λ, ρ )d τ
+
+!
+
+δ ˙ρ + ∇ · λδ ρ(t) − ρt
+
+δ ρ(0) − ρ0
+
+dλ(τ), (76) where L(λ, ρ ) and L( ˙ ρ, ρ ) are detailed Lagrangian and standard Lagrangian, respectively. The Lagrangians L(λ, ρ ) and L( ˙ ρ, ρ ) are related with Pδt(λ|ρ) and Pδt( ˙ ρ|ρ), respectively. The two ex-ponentials in Equation (76) are thus actions giving, respectively, the detailed action and standard action. Therefore, the optimization process corresponds to one path in the intermediate parameter space (say path Γ in Figure 4). This path connects the initial setup and the finally optimized result. However, it is necessary to further consider the optimization paths with various initial se-tups, that is EOMs of intermediate states. To this end, one might note that we have got Lagrangian of intermediate sates by Equation (76). By Lagrangian, the principle of least action can be used to obtain the reuslting Euler-Lagrange equation, 
+
+∂ρL − ddt ∂˙ρL = 0, ∇∂ρL + ddt ∂λL = 0. (77) Moreover, one can define Hamiltonian of the optimization Markov process through Legendre transformations, 
+
+H(u, ρ ) = sup 
+
+> u
+
+hu · ˙ρ − L( ˙ ρ, ρ )i, H( f, ρ ) = sup 
+
+> λ
+
+h f · λ − L(λ, ρ )i, (78) where u = ∂˙ρL and f = ∂λL. By Equation (78), one has got ˙u = −∂ρH, ˙ρ = ∂uH; ˙f = ∇ · ∂ρH, ˙ρ = −∇ · ∂f H. (79) Equatoins (77) and (79) both are EOMs for the optimization process which has been seen as the Markov process. One can directly find that these EOMs have identical formalism to those of classical mechanics. This is not surprising because principle of least action is adopted. Now, we would like to take back from the mathematics for Markov process to its physical-insight that one might typically want to consider. To this end, the intermediate states in opti-mization process are virtually supposed to be particles randomly walking in optimizing flux. The restrictions on the optimization process are specific source of the randomness, such as implemen-tation of regression model and quality of training database in building the PES (that is a typical optimization process). At every point in optimization, these restrictions exert an e ff ective force on the randomly optimizing process whose distribution is independent of the intermediate states. According to Equation (79), the dynamical variable f of the detailed Hamiltonian H( f, ρ ) can 39 be interpreted as the random force produced by the restrictions. When there are fixed external forces, they will appear additively with f . This is particularly clear for the process with detailed balance. In general, this variable can instead be taken as the definition of a force being the quantity conjugate to flux through Legendre transformations. The variable u of the standard Hamiltonian 
+
+H(u, ρ ) can be interpreted as a random potential, in situations where all random forces derive from potentials. All of observables of optimization process can be analysed or expressed in terms of solutions to EOMs. It is often complicated to explicitly perform. In order to make things simpler, one usually observe the optimization process at long times where it converges to characteristic and interpretable behaviours. Such long-time behaviours for stochastic process is mostly characterised by the attractors of the deterministic dynamics. 
+
+VI. CONCLUSIONS 
+
+In this work, based on previously reported hierarchical framework 2 for wavepacket propaga-tion, we try to provide a unified geometric theory of chemical dynamics. In general, such frame-work centers on the concept of modes that combine several coordinates along with their hierar-chical separations and revolves around the variational methods. From a unified perspective, all of steps in this framework are optimizations performed in an appropriately defined space employing variational methods for special functional. As the beginning, the present unified theory provides a description on the single-particle approximation (SPA) providing a powful ansatz to solve the Schr¨ odinger equation of either electronic structure or wavepacket propagation by variational prin-ciple. Its core idea centers on the concept of modes that combine several DOFs 2. In this context, one can formulate almost all of electronic-structure and wavepacket propagation approaches. In addition, the hierarchical framework 2 can be rearranged by tensor networks (TN) or tree tensor networks (TTN). Previously comparing the function-based methods with those in the form of a TN or a TTN 2, the present theory provides a unified framework for the ansatz. Next, we turn to construction of the nuclear Hamiltonian operator, which is a summation of the kinetic energy operator (KEO) and the potential function. The present unified theory provides general expres-sion of the KEO from the viewpoint of geometric characteristics of configuration space which is the space of nuclear conformation and hence often curved. For the PES, based on the unified regression model, we unify the PES construction into a geometric optimization by which one can suggest probable pathways to develop new regression methods. Next, separation of the fast and 40 slow DOFs leads to the Berry phase e ff ects of the fast motions. The present theory also provides a geometric interpretation of the Berry phase e ff ects and clarifies its role in chemical dynamics. Finally, discussions on the present theory and perspectives on field theory of chemical reaction are given. 
+
+VII. APPENDIX A. Abbreviations 
+
+Here, list of abbreviations used in the present work is given. The first column gives the numbers of these abbreviations. The second column gives abbreviations, while the third column gives full terms of these abbreviations. The rightmost column gives remark for each abbreviation. 41 No. Abbreviation Full Term Remark 1 AI artificial intelligence Hamiltonian construction 2 BOA Born-Oppenheimer approximation system separation 3 CI configuration interaction electronic structure 4 CI-GAN chemistry-informed generative adversarial network automatical solver 5 DMRG density matrix renormalization group ansatz 6 DOF degrees of freedom system representation 7 EOM equation of motion law of motion 8 GenAI generative artificial intelligence automatical solver 9 GPR Gaussian process regression Hamiltonian construction 10 GLR generalized linear regression function approximation 11 HF Hartree-Fock ansatz 12 KEO kinetic energy operator one of Hamiltonian terms 13 KMR kernel-model regression function approximation 14 MCSCF multiconfigurational self-consistent field ansatz 15 MCTDH multiconfiguration time-dependent Hartree ansatz 16 ML machine learning Hamiltonian construction 17 ML-MCTDH multilayer multiconfiguration time-dependent Hartree ansatz 18 MO molecular orbital single-electronic function 19 MPS matrix product state ansatz 20 MRCI multi-reference configuration interaction ansatz 21 NN neural network Hamiltonian construction 22 PES potential energy surface one of Hamiltonian terms 23 PTB potential tangent bundle see Equation (25) 24 SE the Schr¨ odinger equation law of motion 25 SOP summation of products ansatz formalism 26 SPA single-particle approximation system representation 27 SPF single-particle function one-dimensional function 28 TDVP time-dependent variational principle law of motion 29 TN tensor network ansatz 30 TTN tree tensor network ansatz 
+
+42 B. Notations 
+
+Here, list of notations used in the present work is given. The first column gives the numbers of these notations. The second and third columns give mathematical symbols and full terms, respectively. The rightmost column gives remark for each symbol. 43 No. Symbol Full Term Remark 
+
+a real number real constant ⃗
+
+a acceleration 3-vector of acceleration 1 A, A′ part of real Banach space A, A′ = {x ∈ X|r < ∥x∥ < R}
+
+A full-rank state set set of full rank states with open boundary complex manifold space that locally looks like C
+
+AB Berry connection see Equation (53) 
+
+AI coe ffi cient coe ffi cient AI = Ai1··· id associated with product basis |I⟩ = |ii · · · id⟩
+
+AIκ coe ffi cient coe ffi cient without the κ-th index 
+
+A[G]  
+
+> I
+
+map group action of G on A
+
+Aν 4-vector field arbitrary vector field in 4D spacetime 
+
+A coe ffi cient space space of coe ffi cients AI ,where I = {i1, · · · , id}⃗
+
+B magnetic field 3-vector of magnetic field 
+
+BR open ball center 0 and radius 0 < R < ∥e∥
+
+By subset of real Banach space By = Jy ∩ { z ∈ X|∥ z∥ < R}
+
+BI coe ffi cient coe ffi cient BI = Bi1··· id associated with product basis |I⟩ = |ii · · · id⟩
+
+c critical value of function I critical value at crtical point x0, i.e. I (x0) = c
+
+coe ffi cient c ∈ C
+
+C class a set of continuous functions 
+
+C1 class a set of continuously di ff erentiable functions 
+
+Cy subset of real Banach space Cy = Jy ∩ { z ∈ X|∥ z∥ > R}
+
+d dimensionality of the system d = 3N for N-atomic system 
+
+D image image of ψ : A \ S → HI or Ψ : A → HI
+
+E all electronic energy values of the database part of database for fitting the PES 
+
+e real number real constant with ∥e∥ , R⃗
+
+E electric field 3-vector of electric field 
+
+Ei the i-th electronic energy in the database part of database for fitting the PES 
+
+E[·] kinetic energy functional see Equation (11) 
+
+44 No. Symbol Full Term Remark 
+
+f scalar field defined on manifold M in local coordinates 
+
+f (·) function function in general form, say f : Rd → R
+
+fθ function function determined by parameter set θ
+
+˜f˜θ function function determined by parameter set ˜ θ
+
+Fk fiber at point k fiber at each point of Hg continuous function g ∈ C([0 , 1] , X)determinant of metric g = det ( gμν )elements in U(1) g ∈ U(1) 
+
+gΓ transformation on the fiber gΓ ∈ U(1) 
+
+gμν covariant metric geometric characteristic of 4D spacetime 
+
+gμν contravariant metric geometric characteristic of 4D spacetime ˜g(H) 
+
+> |Ψ⟩
+
+(·, ·) Fubini-Study metric see Equation (41) 
+
+1i j , 1ικ contravariant metric metric of configuration space represented by generalized coordiantes 
+
+G calss G = {g ∈ C([0 , 1] , X)|g(0) = 0, g(1) = e}
+
+G group group of local gauge transformation, G = { ˆG} 
+
+Gμν Einstein tensor geometric characteristic of curved spacetime 
+
+Gθ metric of parameter space metric encoded geometry of set θ
+
+GL(1 , C) stabilizer subgroup stabilizer subgroup of ˆ G
+
+H Hamiltonian quantity encoded all dynamics information space of proper states H = K\ ∼ where K = {| k⟩|⟨ k| k⟩ = 1, |k⟩ ∼ | k⟩ exp(i φ)}
+
+H Hilbert space vector space over the complex numbers with a Hermitian inner product 
+
+Hκ local Hilbert space the local Hilbert space for the κ-th grid 
+
+HI total Hilbert space direct product of local Hilbert spaces, 
+
+i.e. HI = ⊗d
+
+> κ=1
+
+Hκ
+
+H1(X, R) first real homology group of X space of possible asymptotic drift directions on XHP horizontal subspace of T P horizontal subspace of the tangent bundle T P HP |k⟩ horizontal subspace of T P subspace HP of T P at |k⟩
+
+45 No. Symbol Full Term Remark i imaginary unit i2 = −1 or i = √−1
+
+|iκ⟩ basis basis of the κ-th local Hilbert space 
+
+|i1 · · · id⟩ product basis basis in the direct product form, 
+
+i.e. |i1 · · · id⟩ = |i1⟩1 ⊗ · · · ⊗ | id⟩d
+
+I function or functional function of class C1
+
+set of grids grids to represent d-dimensional system with I = {i1, · · · , id}
+
+Ik subset of real Banach space Ik = {x ∈ X|I(x) < k, ∀k ∈ R}
+
+Iκ grids without the κ-th grid grid set Iκ = {i1, · · · , iκ−1, iκ+1, · · · , id}
+
+J absolute Jacobian determinant see Equation (21) 
+
+Jy pluri-interval finite collection of intervals with center yk real number or integer real number or index of a quantity or set of quantum numbers 
+
+|k⟩ normalized eigenstate eigenstate of ˆ H with ⟨k|k⟩ = 1
+
+K eigenstate set set of normalized eigenstates of ˆ H
+
+Kθ[·]( ·) projection in L2 see Equation (30) 
+
+l set of virtual densities l = {lκ}d
+
+> κ=1
+
+L Lagrangian quantity encoded all dynamics information 
+
+L2 L2(Rd, R) square-integrable function space L Lie group a group and also a smooth manifold 
+
+m, m′ integer index or number of parameters rest mass mass of free particle 
+
+me electronic mass me = 1 in natural units 
+
+mκ dimensionality of variable dimensionality of the κ-mode in grid IM manifold space that is locally indistinguishable from Euclidean space, but may be curved globally. integer number of expansional terms 
+
+n integer number of training data or index of sequence 
+
+N number of atoms d = 3N for N-atomic system 
+
+46 No. Symbol Full Term Remark ⃗
+
+p momentum vector 3-vector of momentum of charaged particle 
+
+p generalized momenta functions of q
+
+{p(κ)}d 
+
+> κ=1
+
+set of generalized momenta generalized momenta of d modes 
+
+P(θ, ·) projection projection from L2 space to parameter set θ
+
+P(H) projective Hilbert space space of normalized state vectors 
+
+P(H, U(1)) principle bundle a U(1)-principle bundle with base manifold Hq charge q = −1 for one electron 
+
+q generalized coordinates functions of x
+
+q quasi-generalized coordinates coordinates associated with quasi-momenta 
+
+{q(κ)}d 
+
+> κ=1
+
+set of generalized coordinates generalized coordinates of d modes 
+
+{q(ζ)}d 
+
+> ζ=1
+
+set of quasi-generalized coordinates coordinates associated with quasi-momenta 
+
+r set of virtual densities r = {rκ}d
+
+> κ=1
+
+r, r′ real number real constant 
+
+re radial coordinate distance between electron and atomic nucleus 
+
+R, R′ real number real constant 
+
+R Ricci scalar scalar curvature of spacetime, i.e. R = gμν Rμν 
+
+Rρσμν Riemann tensor curvature (1 , 3)-tensor of spacetime 
+
+Rμν Ricci tensor curvature tensor of spacetime, i.e. R μν = Rρμρν 
+
+Rd all ordered d-tuples of real numbers d-dimensional set of real number 
+
+s events interval interval between events in the spacetime parameter a coordinate along the fiber 
+
+S action quantity encoded all dynamics information S structure group S = G \ GL(1 , C)
+
+S R sphere sphere with radius R, i.e. S R = {x ∈ X|∥ x∥ = R}
+
+t time subscripted one for moment, say t0 and t1
+
+parameter may or may not time 
+
+Tμν momentum-energy tensor also called stree-energy tensor 
+
+T, T[A] tangent space T|Ψ[AI ]⟩V = T[A] = TTd d-dimensional torus periodic configuration space 
+
+T P tangent bundle associated with the U(1)-principle bundle P
+
+47 No. Symbol Full Term Remark 
+
+u function solution of a partial di ff erential equation 
+
+U fiberwise convex subset of T ∗Td U ∩ T ∗ 
+
+> x
+
+Td ⊂ Rd is convex with ∀x ∈ Td
+
+set of numbers subset of Cm, i.e. U ⊂ Cm
+
+U(1) 1-dimensional abelian Lie group group of all 1 × 1 unitary matrices 
+
+v speed speed of charged particle ⃗
+
+v veclocity 3-vector of veclocity 
+
+V variational set set of state functionals V = {| Ψ[AI ]⟩|∀ AI ∈ A}
+
+variational manifold complex manifold biholomorphic to A \ S
+
+V(flat) coul (·) electromagnetic interaction electromagnetic interaction in the flat spacetime 
+
+V(curved) coul (·) electromagnetic interaction electromagnetic interaction in curved spacetime 
+
+V P vertical subspace of T P vertical subspace of the tangent bundle T P V P |k⟩ vertical subspace of T P subspace VP of T P at |k⟩
+
+48 No. Symbol Full Term Remark 
+
+x(·) curve or trajectory a curve in configuration space variable x ∈ Xxμ local coordinates coordinates of the 4D spacetime 
+
+x0 critical point x0 ∈ X but di ff erent from 0 and e
+
+{x(i)}3Ni=1 nuclear coordinates coordinate set of configuration space 
+
+{xn}∞ 
+
+> n=1
+
+sequence of real numbers defined for the mountain pass theorem 
+
+x cooridnates set of configuration space general nuclear coordinates 
+
+X configuration space set of nuclear coordiantes real Banach space complete normed vector space over R
+
+X, ˜X tangent vector see Equation (48) 
+
+Xκ the κ-th component of X see Equation (48) 
+
+X all conformations of the database part of database for fitting the PES 
+
+Xi the i-th conformation in X part of database for fitting the PES 
+
+y point y ∈ Ik ∩ A′
+
+Y fiber variable quantity living in the fiber of a fiber bundle subset of real Banach space subset of X such that Ik ∩ Y , ∅
+
+˜Y subset of real Banach sapce ˜Y = {x ∈ X|dist( x, Y) < 1}
+
+or ˜ Y = ∪Mi=1(Jyi ∩ A)
+
+z variable z ∈ X
+
+set of parameters z = {zi}mi=1
+
+Z nuclear charge charge of the atomic nucleus 
+
+Zi subset of real Banach space Zi = Jyi
+
+49 No. Symbol Full Term Remark 
+
+α minimal action functional quantity encoded long-term dynamical behavior optimal parameter set see Equations (27) and (28) lapse function in [3 + 1] decomposition, rate of flow of proper time with respect to coordinate time when moving between slices 
+
+βi shift vector in [3 + 1] decomposition, shift of the spatial coordinates when moving between slices 
+
+δ positive real number δ > 0
+
+δi j , δ i j Kronecker symbol δi j = 1 if i = j and δi j = 0 if i , j
+
+γi j spatial metric 3D metric of the spatial slice 
+
+γin jn spatial metric local spatial metric of the n-th atom ˜γi j entire spatial metric metric of configuration space ˜γ determinant of spatial metric determinant of ˜ γi j , i.e. ˜γ = det(˜ γi j )
+
+Γ closed curve an arbitrary closed curve in space ˜Γ curve curve in the principle bundle P(H, U(1)) 
+
+Γρμν , Γki j Christo ff el symbols see Equations (6) and (19) 
+
+λ parameter parameter similar to t
+
+Λ group action for G = { ˆG} on A, it is Λ[AI , ˆG] = A[G] 
+
+> I
+
+ι, κ index index of generalized coordinates or grids 
+
+θ Liouville 1-form quantity encoded the momentum structure of Hamiltonian system parameter set parameters to represent the potential function 
+
+ϑ expansion expansion scalar of the 4D spacetime 
+
+50 No. Symbol Full Term Remark 
+
+μ, ν, ρ, σ index for 4-vector 0 for temporal and 1 , 2, 3 for spatial cooridnates 
+
+ω coe ffi cient set set ω = {ωi}mi=1 for expanding the tangent map d Ψz
+
+ω0 canonical symplectic form ω0 = dθω|ψ⟩, ω Ehresmann connection at |ψ⟩ see Equation (52) 
+
+σ section a map from the base manifold to the principle bundle, i.e. σ : H → P⃗σ shear vector 3-vector for shear of the 4D spacetime 
+
+Σt slice spatial slice at time t
+
+ψ holomorphic map a holomorphic map from M \ L to A
+
+|ψ(t)⟩ a point on ˜ Γ(t) |ψ(t)⟩ = |k⟩ exp(i φ(t)) 
+
+Ψ holomorphic map invariant under the action of L and Ψ = ψ ◦ π
+
+|Ψ⟩, Ψ state vector state vector in the Hilbert space 
+
+|Ψ(·)⟩, Ψ(·) parameter-dependent state state vector in the Hilbert space 
+
+|Ψ[AI ]⟩ state functional state vector as functional of coe ffi cient set AI
+
+|Ψ[A[G]  
+
+> I
+
+]⟩ state functional gauge G invariance state as functional of coe ffi cient set AI
+
+[|Ψ⟩] normalized state normalized state vector in the Hilbert space 
+
+ϕ local trivialization a way to map the bundle onto a product 
+
+φ phase factor or simply called phase of the wave function 
+
+φB Berry phase or called geometric phase of the wave function 
+
+|Φ[BI , AI ]⟩, |Φ[BI ]⟩ tabgent vector see Equation (46) 
+
+π natural projection π : M → M \ L for manifold M and Lie group L, say see Equation (47) 
+
+51 C. Operators and Constructions 
+
+Here, list of operators and constructions (or called functors) used in the present work is given. In this work, we use symbol with a hat to denote an operator. The first column gives the numbers of these operators or constructions. The second and third columns give mathematical symbols and full terms, respectively. The rightmost column gives remark for each symbol. 52 No. Symbol Full Term Remark 1 T construction of tangent bundle T in tangent bundle T X represents the functor applied to X
+
+2 T ∗ construction of cotangent bundle the dual bundle of T X 
+
+3 ˆT kinetic energy operator 
+
+53 SUPPLEMENTARY MATERIAL 
+
+The Supporting Information documents are available free of charge at https: // www.doi.org /X. In the Supporting Information file, we give details of (1) the [3 + 1] decomposition of the 4D spacetime, (2) the hydrodynamics techniques in numerical general relativity, and (3) numerical calculations on the benchmarks. 
+
+INTEREST STATEMENT 
+
+The authors declare that they have no known competing financial interests or personal relation-ships that could have appeared to influence the work reported in this paper. 
+
+DATA AVAILABILITY 
+
+All data have been reported in this work. The data supporting this article have been included as part of the Supplementary Information. 
+
+ACKNOWLEDGMENTS 
+
+The financial supports of National Natural Science Foundation of China (Grant No. 22273074) and Fundamental Research Funds for the Central Universities (Grant Nos. 2025JGZY34 and 2025KCW017) are gratefully acknowledged. The authors are also grateful to anonymous review-ers for their thoughtful suggestions. 
+
+TABLES 
+
+54 TABLE I: Roles of the variational principles in di ff erent issues of molecular reaction dynamics. The second coulumn gives the issues that need to be solved. The third coulumn gives target functional to be optimized. The fourth coulumn gives physical insight corresponding to the target functional and its variation. The rightmost coulumn gives section of the main text in which the corresponding issue is given. 
+
+No. Issue Functional Description Section 1 the principle action It summarizes dynamics of a system II A of least action by providing EOM. 2 the principle kineitc energy It provides the Laplacian operator for III A of equivalence of free particle the spacetime with a given metric. 3 function loss function It provides the potential function of III C approximation of a model the configuration space. 4 eigenvalue ⟨Ψ[AI ]| ˆH|Ψ[AI ]⟩ It provides working equations for single-partical IV B terms and expansion coe ffi cients. 5 time evolution ⟨Ψ[AI ]|i∂t − ˆH|Ψ[AI ]⟩ It provides working equations for single-partical IV B terms and expansion coe ffi cients. 
+
+55 TABLE II: Preliminaries of the present unified geometric framework of molecular reaction dynamics, as given in Sections II and III. These theoretical preliminaries contain (1) the principle of least action, (2) the mountain pass theorem, (3) the principle of equivalence, and (4) constructions of the KEO and PES. The principles of least action and equivalence are the only two postulates of the present theory. The mountain pass theorem predicts existence of the saddle point during the variational optimization of the functional, that is existence of transition state which is key to determining the reaction mechanism. The Hamiltonian constructions play a foundation role in dynamical theory. The first column gives the numbers of these objectives. The second column gives object of the present framework. The third column describes the details of the corresponding object. The fourth column gives remarks. The rightmost column indicates section of the main text in which the corresponding object is discussed. 
+
+> No.  Object  Description  Remark  Section 1 the principle of  It provides the working equations through variation of di ff erent  It is the only postulate of  II A least action  a functionals enabling variational principles formulated on  the present framework. distinct manifolds to serve as the mathematical foundation. 2 the mountain  It states that moving from one locally optimized result to  It is the foundation of  II B pass theorem  b another result requires a certain amount of e ff ort implying  mechanisms of an that optimization requires iteration. It also predicts that  elementary reaction. there must exist a transition state between two intermediates. 3 the principle  It states that a free particle moves along geodesics in curved  Gravity is related with  III A of equivalence  spacetime, implying that gravity is not a force.  spacetime curvature.  c
+> 4 the KEO  It can be derived along geodesic of the configuration space.  It depends on metric of  III B the spacetime. 5 the PES  It can be constructed by optimizing potential tangent bundle.  It depends on metric of  III C the training data space.  d
+> a The principle of least action states that action must take its least value when the working equations are obeyed. It is the foundation of dynamical theory.
+> b The mountain pass theorem states existence of a saddle point between two local minima for a functional under suitable geometric and compactness conditions.
+> c Such relationship satisfies the Einstein field equations.
+> d The training data are computed through extensive electronic-structure energy calculations.
+
+56 TABLE III: Dynamical theory of the present unified geometric framework of molecular reaction dynamics given in Sections IV and V, including (1) the electromagnetic interaction in general spacetime, (2) the single-particle approximation, (2) the variational principle, (3) time evolution and geometric phase, and (4) gauge theory in molecular reaction. The electromagnetic interaction plays a foundation role in dynamical theory for molecular reaction. The single-particle approximation gives ansatz for solving the Schr¨ odinger equation in the sum-of-products form. The variational principle gives working equations when ansatz is determined. Solving the working equation, time evolution of the system can be “seen”, while the geometric phase might be arisen due to the system partition. The gauge field thoery may thus be helpful to consider the gauge freedom. The first column gives the numbers of these objectives. The second column gives object of the present framework. The third column describes the details of the corresponding object. The fourth column gives remarks. The rightmost column indicates section of the main text in which the corresponding object is discussed. 57 No.  Object  Description  Remark  Section 1 the electromagnetic  It provides elementary interactions in molecular system  It is especially important  IV A interaction  and a foundation of reaction dynamics in general spacetime.  for electronic structure. 2 the single-particle  It provides ansatz in the summation of products  It partitions the many-body problem into  IV B approximation  of single-particle terms, such as SPFs and MOs.  a set of coupled few-body problems. It also introduces a gauge freedom into the system.  a
+
+> 3 the variational  It provides working equations by optimizing  The ansatz is simply substituted into  IV C principle  b the target functional that depends on ansatz.  c the variational expression of the principle.  d
+> 4 time evolution  Solving the working equations for SPFs, one can  It is di ff erent from quantum scattering,  IV D obtain propagated wave function based on  which compares the initial and final states which analysis can be made.  rather than propagating the initial state. 5 geometric phase  It is arisen from the single-particle approximation  If the phase undergoes a change of  π, IV D that partitions the system into many subsystems.  it gives rise to quantum interference.  e
+> 6 gauge theory  It introduce a vector gauge field  Aμ which  It provides the final unified geometric  IV D in reaction  f transforms and mediates the gradients in variations.  theory for molecular reaction dynamics.
+> a The gauge freedom refers to the arbitrariness how to partition the system into subsystems.
+> b The variational principle is arisen from the fact that the principle of least action is adopted, as indicated in Table II.
+> c The functional of electronic energy is the target in electronic structure, while the functional of action is the target in propagation.
+> d The ansatz for electronic structure is substituted into the linear variational principle, while the ansatz for propagation is substituted into the time-dependent one.
+> e A typical example is that when a molecular system encircles a conical intersection, the electronic wave function undergoes a phase change of  π.
+> f It is a mathematical framework that describes optimization processes for molecular reaction dynamics through local symmetry.
+
+58 TABLE IV: Comparisons of the concepts in the geometric phase e ff ects on the nuclear and electronic properties, together with these concepts associated with electromagnetic (EM) field. The second column provides geometric concepts that will be compared to various fields. These concepts are the Berry connection, Berry curvature, and geometric phase. The third and fourth columns list physical insight of these concepts for the nuclear and electronic properties. The fifth column lists the electromagnetic quantities or properties associated with the geometric features. The rightmost column gives remarks of these physical quantities or geometric properties. 
+
+> No.  Feature  a Nuclear  Electron  EM field  Remarks 1 connection  AB in Equation (53)  diagonal element of  analogous to the vector potential  b a gauge-dependent object electronic NACM  c encoding system’s dependence on the parameters space 2 curvature  curl of  AB curl of  τelec
+> nn  (y) d eff ective magnetic field in  a local geometric property of parameter space  b parameter space encoding the states’ anholonomy under adiabatic parameter variations 3 phase  nuclear wave function  electronic wave function  geometric propertities in both  geometric properties of classical polarization dynamics  wave eigenstates and quantum photonic system 4 Chern number  number of critical points  number of CI points  global properties of EM modes  e a topological invariant classifing the global topology of the system’s eigenstate bundle
+> a For clarity, the term “Berry” is omitted for the Berry connection, Berry curvature, and Berry phase.
+> b It is a concept in di ff erential geometry but has similar expression to the corresponding concepts in the classical EM field leading to analogous phenomena.
+> c If the  j-th electronic state  υ j(x, y) depends on electronic cooridnates  x and parameters  y, the elements of the electronic NACM satisfy  τelec
+> i j  (y) = ⟨υi|∇ y|υ j⟩x.
+> d The Berry curvature of the  n-th electronic state is  Ωn(y) = ∇y × τelec
+> nn  (y). See also Footnote  c.
+> e In general, the EM modes are defined for photons, or more pricisely bosons, such as photon bands in periodic structures.
+
+59 FIGURES AND CAPTIONS Figure 1: Illustration of the mountain pass theorem taking a 2D smooth function in configuration space X as an example, where solid lines are contour lines. Two distinct circle symbols represent two minima. The symbol × represents the saddle point. The straight red dotted line represents the shortest distance between two minima. The curved blue line I represents a general path. 
+
+Figure 2: Subfigure (a) is a schematic illustration of the principal fiber bundle interpretation of the map Ψ : A → HI . The left and right panels are parameter space A and Hilbert space 
+
+HI , respectively. The middle arrow means the map Ψ : A → HI . The closed colored lines in parameter space A are gauge orbits that are mapped to identical states in Hilbert space H. The yellow dot in the middle of A corresponds to a state that does not have full rank. The gauge orbit looks fundamentally di ff erent and this point has to be excluded from the set A in order to define a principal fiber bundle. The right panel shows base manifold V of the variational class of Ψ : A → V
+
+which is a principal fiber bundle with structure group S, base manifold V, total manifold A and bundle projection Ψ, as given in the main text. The variational manifold V is a complex manifold that is biholomorphic to A \ S. Subfigure (b) is a schematic illustration of the tangent map Φ at base point AI . Similar to (a), the left and right panels are parameter space A and Hilbert space HI ,respectively; meanwhile, the back line in A and surface V in HI are gauge orbit and variational manifold, respectively. In parameter space (left panel), there is a vertical subspace (green plane) of vectors tangent to the gauge orbits (red lines). A unique parameterization of vectors |Φ[BI , AI ]⟩
+
+in the tangent space (right panel) requires the definition of a complementary horizontal subspace (green plane). If this horizontal subspace is defined as the kernel of a principal bundle connection, then it transforms equivariantly according to the adjoint representation. 
+
+Figure 3: Schematic illustration of concepts of the curves Γ(t) (the black loop with arrow) and ˜Γ(t) (the red curve with arrow), together with tangent vectors X (the black dashed arrow) and ˜ X
+
+(the red dashed arrow). The Berry phase is produced by parallel transport of a state in the proper quantum phase space H along the loop Γ : [0 , 1] → H. For the U(1)-principle bundle P(H, U(1)), 60 the curve ˜ Γ : [0 , 1] → P is the horizontal lift of Γ if π ◦ ˜Γ.
+
+Figure 4: Diagrammatic sketch of the optimization processes in the hyperparameters set θ, where colored paths represent di ff erent optimization processes. These processes share the same initial and finial states. Each circle represents an intermediate state of θ during the optimizations, where 
+
+Γ represents a path during optimization in regression. Coordinates frame z is defined to repre-sent space of the hyperparameters and the intermediate state during optimization (represented by symbols “ ◦”) is represented by Z.61 I
+
+# XFIG. 1: Quan-Mol-Geom 62 AI
+
+# AI’
+
+# AI”
+
+# Ψ
+
+# V
+
+# (a) Illustration of the principal fiber bundle interpretation of the SOP state Φ
+
+# V
+
+# dΛ [G] 
+
+# AI
+
+# AI[G] 
+
+# BI[G] 
+
+# BI
+
+# (b) Illustration of the tangent map Φ at base point AIFIG. 2: Quan-Mol-Geom 63 X
+
+# Γ( t)
+
+# Γ( 0) 
+
+# Γ( τ)
+
+# (0) 
+
+# (τ)FIG. 3: Quan-Mol-Geom 64 initial point 
+
+# final point FIG. 4: Quan-Mol-Geom 65 REFERENCES 
+
+> 1
+
+T. Wu, H.-J. Werner, and U. Manthe. First-principles theory for the H + CH 4 → H2 + CH 3
+
+reaction. Science 306 (2004), 2227–2229. 
+
+> 2
+
+X. Zhang and Q. Meng. A hierarchical wavepacket propagation framework via ml-mctdh for molecular reaction dynamics. Phys. Chem. Chem. Phys. 27 (2025), 20397–20420. 
+
+> 3
+
+Q. Song, X. Zhang, Z. Miao, and Q. Meng. Construction of mode-combination hamiltonian under the gridbased representation for the quantum dynamics of oh + ho 2 → o2 + h2o. J. Chem. Theory Comput. 20 (2024), 597–613. 
+
+> 4
+
+Q. Song, X. Zhang, D. Pel´ aez, and Q. Meng. Direct canonical-polyadic-decomposition of the potential energy surface from discrete data by decoupled gaussian process regression. J. Phys. Chem. Lett. 13 (2022), 11128–11135. 
+
+> 5
+
+Q. Meng, J. Chen, J. Ma, X. Zhang, and J. Chen. Adiabatic models for the quantum dynamics of surface scattering with lattice e ff ects. Phys. Chem. Chem. Phys. 24 (2022), 16415–16436. 
+
+> 6
+
+Q. Meng, M. Schr¨ oder, and H.-D. Meyer. High-dimensional quantum dynamics study on excitation-specific surface scattering including lattice e ff ects of a five-atom surface cell. J. Chem. Theory Comput. 17 (2021), 2702–2713. 
+
+> 7
+
+H. R. Larsson. A tensor network view of multilayer multiconfiguration time-dependent hartree methods. Mol. Phys. 122 (2024), e2306881. 
+
+> 8
+
+D. R. Yarkony. Diabolical conical intersections. Rev. Mod. Phys. 68 (1996), 985–1013. 
+
+> 9
+
+D. R. Yarkony. On the consequence of nonremovable derivative couplings. I. The geometric phase and quasidiabatic states: A numerical study. J. Chem. Phys. 105 (1996), 10456–10461. 
+
+> 10
+
+D. R. Yarkony. On the description of potential energy surfaces exhibiting conical intersections: a compact representation of the energies and derivative couplings and locally diabatic bases for the HOH and OHH portions of the 1 1A′ − 21A′ seam of conical intersection in water. Mol. Phys. 
+
+93 (1998), 971. 
+
+> 11
+
+D. R. Yarkony. Conical intersections: the new conventional wisdom. J. Chem. Phys. 105 (2001), 6277–6293. 
+
+> 12
+
+J. C. Juanes-Marcos, S. C. Althorpe, and E. Wrede. Eff ect of the geometric phase on the dynamics of the hydrogen-exchange reaction. J. Chem. Phys. 126 (2007), 044317. 
+
+> 13
+
+F. Bouakline, S. C. Althorpe, and D. Pel´ aez. Strong geometric-phase e ff ects in the hydrogen-exchange reaction at high collision energies. J. Chem. Phys. , 12 (2008), 124322. 66 14 J. C. Juanes-Marcos, A. J. C. Varandas, and S. C. Althorpe. Geometric phase e ff ects in resonance-mediated scattering: H +h2 + on its lowest triplet electronic state. J. Chem. Phys. 
+
+128 (2008), 211101. 
+
+> 15
+
+S. C. Althorpe, T. Stecher, and F. Bouakline. E ff ect of the geometric phase on nuclear dynamics at a conical intersection: Extension of a recent topological approach from one to two coupled surfaces. J. Chem. Phys. 129 (2008), 214117. 
+
+> 16
+
+L. S. Cederbaum. Born-oppenheimer approximation and beyond. In Conical Intersections (Sin-gapore, 2004), W. Domcke, D. R. Yarkony, and H. K¨ oppel, Eds., World Scientific Co., pp. 3–40. 
+
+> 17
+
+M. Baer. Beyond Born-Oppenheimer: Electronic Nonadiabatic Coupling Terms and Conical Intersections . Wiley, Hoboken, NJ, 2006. 
+
+> 18
+
+L. S. Cederbaum. The exact molecular wavefunction as a product of an electronic and a nuclear wavefunction. J. Chem. Phys. 138 (2013), 224110. 
+
+> 19
+
+J. J. Goings, P. J. Lestrange, and X. Li. Real-time time-dependent electronic structure theory. 
+
+WIREs: Comput. Mol. Sci. 8 (2018), e1341. 
+
+> 20
+
+X. Li, N. Govind, C. Isborn, A. E. DePrince III, and K. Lopata. Real-time time-dependent electronic structure theory. Chem. Rev. 120 (2020), 9951–9993. 
+
+> 21
+
+B. Sverdrup Ofstad, E. Aurbakken, Ø. Sigmundson Schøyen, H. E. Kristiansen, S. Kvaal, and T. B. Pedersen. Time-dependent coupled-cluster theory. WIREs: Comput. Mol. Sci. 13 
+
+(2023), e1666. 
+
+> 22
+
+H. Wang and M. Thoss. Multilayer formulation of the multiconfiguration time-dependent Hartree theory. J. Chem. Phys. 119 (2003), 1289–1299. 
+
+> 23
+
+U. Manthe. A multilayer multiconfigurational time-dependent Hartree approach for quantum dynamics on general potential energy surfaces. J. Chem. Phys. 128 (2008), 164116. 
+
+> 24
+
+O. Vendrell and H.-D. Meyer. Multilayer multiconfiguration time-dependent Hartree method: Implementation and applications to a Henon-Heiles Hamiltonian and to pyrazine. J. Chem. Phys. 
+
+134 (2011), 044135. 
+
+> 25
+
+J. Haegeman, M. Mari¨ en, T. J. Osborne, and F. Verstraete. Geometry of matrix product states: Metric, parallel transport, and curvature. J. Math. Phys. 55 (2014), 021902. 
+
+> 26
+
+J. Haegeman, J. I. Cirac, T. J. Osborne, I. Piˇ zorn, H. Verschelde, and F. Verstraete. Time-dependent variational principle for quantum lattices. Phys. Rev. Lett. 107 (2011), 070601. 
+
+> 27
+
+D. C. Brody and L. P. Hughston. Geometric quantum mechanics. J. Geom. Phys. 38 (2001), 19–53. 67 28 M. V. Berry. Quantal phase factors accompanying adiabatic changes. Proc. R. Soc. A 392 (1984), 45. 
+
+> 29
+
+Q. Song, X. Zhang, Z. Miao, Q. Zhang, and Q. Meng. Unified regression models in fitting potential energy surfaces for quantum dynamics. J. Math. Chem. 60 (2022), 1983–2012. 
+
+> 30
+
+Y. Fei, Y. Liu, C. Jia, Z. Li, X. Wei, and M. Chen. A survey of geometric optimization for deep learning: From euclidean space to riemannian manifold. ACM Comput. Surv. 57 (2025). 
+
+> 31
+
+F. Gatti and C. Iung. Exact and constrained kinetic energy operators for polyatomic molecules: The polyspherical approach. Phys. Rep. 484 (2009), 1–69. 
+
+> 32
+
+L. Hackl, T. Guaita, T. Shi, J. Haegeman, E. Demler, and J. I. Cirac. Geometry of variational methods: dynamics of closed quantum systems. SciPost Phys. 9 (2020), 048. 
+
+> 33
+
+A. Ambrosetti and P. H. Rabinowitz. Dual variational methods in critical point theory and applications. J. Funct. Anal. 14 (1973), 349–381. 
+
+> 34
+
+P. Pucci and J. Serrin. A mountain pass theorem. J. Di ff er. Equations 60 (1985), 142–149. 
+
+> 35
+
+P. Pucci and J. Serrin. The structure of the critical set in the mountain pass theorem. Trans. Amer. Math. Soc. 299 (1987), 115–132. 
+
+> 36
+
+Y. S. Choi and P. J. McKenna. A mountain pass method for the numerical solution of semilinear elliptic problems. Nonlinear Anal. 20 (1993), 417–437. 
+
+> 37
+
+G. Katriel. Mountain pass theorems and global homeomorphism theorems. Ann. Inst. Henri Poincar´ e C 11 (1994), 189–209. 
+
+> 38
+
+S. Hill and L. D. Humphreys. Mountain pass solutions for a system of partial dierential equa-tions: An existence theorem with computational results. Nonlinear Anal. 39 (2000), 731–743. 
+
+> 39
+
+H.-J. Ruppen. A generalized mountain-pass theorem: the existence of multiple critical points. 
+
+Calc. Var. 55 (2016), 89. 
+
+> 40
+
+E. M. Bednarczuk, E. Miglierina, and E. Molho. A mountain pass-type theorem for vector-valued functions. Set-Valued Anal. 19 (2011), 569–587. 
+
+> 41
+
+B. Schutz. A First Course in General Relativity . Cambridge University Press, 2012. 
+
+> 42
+
+C. W. Misner, K. S. Thorne, and J. A. Wheeler. Gravitation . Princeton University Press, 2017. 
+
+> 43
+
+S. M. Carroll. Spacetime and Geometry: An Introduction to General Relativity . Cambridge University Press, 2019. 
+
+> 44
+
+M. Ndong, L. Joubert Doriol, H.-D. Meyer, A. Nauts, F. Gatti, and D. Lauvergnat. Automatic computer procedure for generating exact and analytical kinetic energy operators based on the polyspherical approach. J. Chem. Phys. 136 (2012), 034107. 68 45 M. Ndong, A. Nauts, L. Joubert-Doriol, H.-D. Meyer, F. Gatti, and D. Lauvergnat. Automatic computer procedure for generating exact and analytical kinetic energy operators based on the polyspherical approach: general formulation and removal of singularities. J. Chem. Phys. 139 
+
+(2013), 204107. 
+
+> 46
+
+K. Sadri, D. Lauvergnat, F. Gatti, and H.-D. Meyer. Numeric kinetic energy operators for molecules in polyspherical coordinates. J. Chem. Phys. 136 (2012), 234112. 
+
+> 47
+
+B. Podolsky. Quantum-mechanically correct form of hamiltonian function for conservative sys-tems. Phys. Rev. 32 (1928), 812. 
+
+> 48
+
+K. S. Thorne and D. MacDonald. Electrodynamics in curved spacetime: 3 + 1 formulation. 
+
+Mon. Not. R. Astr. Soc. 198 (1982), 339–343. 
+
+> 49
+
+N. N. Nikolaev and S. N. Vergele. Maxwell equations in curved space-time: non-vanishing magnetic field in pure electrostatic systems. J. High Energy Phys. 2020 (2020), 191. 
+
+> 50
+
+D. Baldomir and P. Hammond. Geometry of Electromagnetic Systems . Oxford University Press, Oxford, 1996. 
+
+> 51
+
+J. H. Noble and U. D. Jentschura. Dirac hamiltonian and reissner-nordstr¨ om metric: Coulomb interaction in curved space-time. Phys. Rev. A 93 (2016), 032108. 
+
+> 52
+
+C. Quesne. Quantum oscillator and kepler–coulomb problems in curved spaces: Deformed shape invariance, point canonical transformations, and rational extensions. J. Math. Phys. 57 (2016), 102101. 
+
+> 53
+
+L. Aggoun, N. Bounouioua, F. Benamira, and L. Guechi. Path integral solution for the coulomb potential in a curved space of constant positive curvature. Int. J. Theor. Phys. 55 (2016), 2653– 2667. 
+
+> 54
+
+B. Simon. Holonomy, the quantum adiabatic theorem, and berry’s phase. Phys. Rev. Lett. 51 
+
+(1983), 2167–2170. 
+
+> 55
+
+L. A. Maia, D. Raom, R. Ruviaro, and Y. D. Sobral. Mini-max algorithm via pohozaev manifold. 
+
+Nonlinearity 34 (2021), 642. 
+
+> 56
+
+Z. Miao, X. Zhang, Y. Zhang, L. Wang, and Q. Meng. Chemistry-informed generative model for classical dynamics simulations. J. Phys. Chem. Lett. 15 (2024), 532–539. 
+
+> 57
+
+J. G¨ artner. On large deviations from the invariant measure. Theory Probab. Appl. 22 (1977), 24–39. 
+
+> 58
+
+R. S. Ellis. Large deviations for a general class of random vectors. Ann. Probab. 12 (1984), 1–12. 69 59 A. C. Barato and U. Seifert. Thermodynamic uncertainty relation for biomolecular processes. 
+
+Phys. Rev. Lett. 114 (2015), 158101. 
+
+> 60
+
+B. E. Husic and V. S. Pande. Markov state models: From an art to a science. J. Am. Chem. Soc. 
+
+140 (2018), 2386–2396. 70

@@ -1,0 +1,446 @@
+Title: GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP
+
+URL Source: https://arxiv.org/pdf/2603.17367v1
+
+Published Time: Thu, 19 Mar 2026 00:48:24 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP 
+
+Zihan Yan ,1, 2, ∗ Denan Li, 3 Xin Wu ,4 Zhoulin Liu ,5 Chen Hua ,6, 7 Boyi Situ ,1, 2 Hao Yang, 8
+
+Shengjie Tang, 1, 2 Benrui Tang, 9 Ziyang Wang, 10 Shangzhao Yi, 11 Huan Wang ,12 Dian Huang, 13 
+
+Ke Li ,14 Qilin Guo, 15 Zherui Chen, 16 Ke Xu, 9 Yanzhou Wang, 17 Ziliang Wang ,18 Gang Tang, 19 
+
+Shi Liu, 3 Zheyong Fan ,9 and Yizhou Zhu 1, †
+
+> 1
+
+Department of Materials Science and Engineering, School of Engineering, Westlake University, Hangzhou, Zhejiang 310030, China 
+
+> 2
+
+School of Materials Science and Engineering, Zhejiang University, Hangzhou, Zhejiang 310027, China 
+
+> 3
+
+Department of Physics, School of Science, Westlake University, Hangzhou, Zhejiang 310030, China 
+
+> 4
+
+Institute of Industrial Science, The University of Tokyo, Tokyo 153-8505, Japan 
+
+> 5
+
+School of Science, Harbin Institute of Technology, Shenzhen 518055, Guangdong, China 
+
+> 6
+
+State Key Lab of Cryogenic Science and Technology, Technical Institute of Physics and Chemistry, Chinese Academy of Sciences, Beijing 100190, China 
+
+> 7
+
+School of Future Technology, University of Chinese Academy of Sciences, Beijing 100049, China 
+
+> 8
+
+School of Physical Science and Technology, ShanghaiTech University, Shanghai 201210, China 
+
+> 9
+
+College of Physical Science and Technology, Bohai University, Jinzhou 121013, China 
+
+> 10
+
+School of Energy and Power Engineering, Key Lab of Ocean Energy Utilization and Conservation of Ministry Education, Dalian University of Technology, Dalian, 116024, China 
+
+> 11
+
+Suzhou Institute of Nano-Tech and Nano-Bionics, Chinese Academy of Sciences, Suzhou 215123, China 
+
+> 12
+
+School of Materials Science and Engineering, Wuhan University of Technology, Wuhan 430070, China 
+
+> 13
+
+MOE Key Laboratory of Thermo-Fluid Science and Engineering, School of Energy and Power Engineering, Xi’an Jiaotong University, Xi’an 710049, China 
+
+> 14
+
+Department of Thermal Science and Energy Engineering, School of Engineering Science, University of Science and Technology of China, Hefei, Anhui 230027, China 
+
+> 15
+
+Hangzhou International Innovation Institute, Beihang University, Hangzhou 311115, China 
+
+> 16
+
+Future Technology School, Shenzhen Technology University, Shenzhen 518118, China 
+
+> 17
+
+School of Electronic Engineering, Chengdu Technological University, Chengdu 611730, China 
+
+> 18
+
+National Engineering Laboratory for Reducing Emissions from Coal Combustion, Shandong Key Laboratory of Green Thermal Power and Carbon Reduction, Shandong University, Jinan, Shandong 250061, China 
+
+> 19
+
+School of Interdisciplinary Science, Beijing Institute of Technology, Beijing 100081, China 
+
+# Abstract 
+
+Machine-learned interatomic potentials have revolutionized molecular dynamics simulations by providing quantum-mechanical accuracy at empirical-potential speeds. The graphics pro-cessing unit molecular dynamics (GPUMD) package, featuring the highly efficient neuroevo-lution potential (NEP) framework, has emerged as a powerful tool in this domain. However, the complexity of force field development, active learning, and trajectory post-processing often requires extensive manual scripting, imposing a steep learning curve on new users. To address this, we present GPUMDkit, a comprehensive and user-friendly toolkit that streamlines the entire simulation workflow for GPUMD and NEP. GPUMDkit integrates a suite of essential functionalities, including format conversion, structure sampling, property calculation, and data visualization, accessible through both interactive and command-line interfaces. Its modular, extensible architecture ensures accessibility for users of all experi-ence levels while allowing seamless integration of new features. By automating complex tasks and enhancing productivity, GPUMDkit substantially lowers the barrier to using GPUMD and NEP programs. This article describes the program architecture and demonstrates its capabilities through practical applications. 
+
+GitHub Repository: https://github.com/zhyan0603/GPUMDkit     
+
+> ∗yanzihan@westlake.edu.cn
+> †zhuyizhou@westlake.edu.cn
+> arXiv:2603.17367v1 [cond-mat.mtrl-sci] 18 Mar 2026 GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al.
+
+# I. Introduction 
+
+Machine-learned interatomic potentials (MLIPs) have fundamentally transformed the landscape of atomistic simulations in recent years, bridging the accuracy-efficiency gap that has long constrained molecular dynamics (MD) simulations. MLIPs can capture high-dimensional potential energy surfaces with near-quantum-mechanical accuracy, at a computational cost several orders of magnitude lower than first-principles methods such as density functional theory (DFT). This paradigm shift has enabled machine-learning molecular dynamics (MLMD) simulations of unprecedented scale and duration, unlock-ing new possibilities for studying various properties of materials, such as mechanical properties [1, 2], thermal transport [3–5], phase transitions [6–8], various dynamic phenomena [8, 9], and more [10, 11]. The concept of modern MLIPs was established by Behler and Parrinello in 2007 [12], who introduced high-dimensional neural network potentials. Subsequent developments have greatly expanded the MLIP landscape. For example, Gaussian approximation potentials employ Gaussian process regression to interpolate potential energy surfaces [13]. Moment tensor potentials offer a polynomial-like potential based on the tensors of inertia of atomistic environments [14]. Deep potentials introduced a deep neural network approach that accurately describes local atomic environments and atomic interactions [15]. More recently, graph neural network-based approaches have gained prominence, with E(3)-equivariant architectures demonstrating exceptional accuracy and data efficiency [16], and the MACE framework further advancing the field through higher-order equivariant message passing [17, 18]. Together, these methods offer researchers diverse pathways to accurate and efficient atomistic simulations. Among them, the neuroevolution potential (NEP) method [19] based on the separable natural evolution strategy [20] stands out for its unique combination of computational efficiency and accuracy. NEP has demonstrated remarkable success across diverse applications, including large-scale simulations of thermal transport [21], radiation damage [22], phase transition [6–8], and inorganic and organic systems [23]. The release of GPUMD 4.0 [24], along with the development of NEP89 [23], a universal NEP model across 89 elements, further demonstrates the versatility and accuracy of this approach across diverse material systems, enabling simulations at unprecedented scale on modern GPU architectures. Despite these advantages, practical use of GPUMD and NEP often demands proficiency with special-ized scripts or Python packages. Within the GPUMD ecosystem, several excellent packages have been developed to assist users: NepTrain and NepTrainKit [25] provide powerful automated workflows for force field development and enable GUI-based visualization of the training datasets, while Calorine [26] offers a comprehensive Python API designed specifically for various property analysis, and PYSED [27] is specifically designed to extract kinetic-energy-weighted phonon dispersion and lifetimes from MD sim-ulations. Although these tools form the cornerstone of many advanced workflows, they can still present a barrier for users who prefer an “out-of-the-box” experience. For researchers focused on specific material systems or properties rather than method development, the most pressing need is a straightforward way to perform standardized tasks through simple command-line operations or intuitive interactive prompts. To bridge this gap, we developed GPUMDkit. Rather than replacing existing tools, GPUMDkit serves as an integrator that encapsulates a wide range of scripts and modular functionalities into a unified interface, accessible via both command-line and interactive modes. This design allows users to move rapidly from data preparation to property analysis without extensive custom coding, lowering the barrier to using GPUMD and NEP, so users can focus more on scientific questions rather than technical implementation. 
+
+# II. The GPUMD Package and the NEP method 
+
+GPUMD is a general-purpose MD simulation package built on a natively optimized CPU + GPU heterogeneous architecture via CUDA/HIP programming [24, 28], delivering exceptional computational efficiency for large-scale atomistic simulations. The package supports a wide range of interatomic poten-tials, including Lennard-Jones [29], embedded-atom method [30], Tersoff [31], force-constant [32], deep GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+potential [33], NEP [34], hybrid NEP-ILP [35] and ILP-SW [36]. Renowned for its extreme simulation efficiency, it is rapidly gaining popularity among MD packages. The recent release of GPUMD 4.0 has further expanded its capabilities for versatile materials simulations with NEP method [24]. The NEP method was originally proposed by Fan et al. in 2021 (NEP1) [19] and has undergone continuous development through successive generations including NEP2 [37], NEP3 [38], and NEP4 [34], with NEP4 demonstrating improved accuracy for multi-component systems. In the NEP model, the separable natural evolution strategy proposed by Schaul et al. [20] is employed to train the neural network potential function, which is why this MLIP is called NEP. The artificial neural network (ANN) model of NEP is a multivariate function, in which the energy is defined as the sum of the atomic energies of all sites: 
+
+Ui =
+
+> Nneu
+
+X
+
+> μ=1
+
+w(1)  
+
+> μ
+
+tanh 
+
+> Ndes
+
+X
+
+> v=1
+
+w(0) 
+
+> μν
+
+qiv − b(0) 
+
+> μ
+
+!
+
+− b(1) (1) Here, the input layer of ANN is qiν , a high-dimensional descriptor vector, and the output layer is Ui.tanh ( x) is the activation function of the hidden layer, Nneu is the number of neurons, Ndes is the number of components of the descriptor vector, w(0) 
+
+> μν
+
+is the matrix of connection weights from the input layer to the hidden layer, w(1)  
+
+> μ
+
+is the vector of connection weights from the hidden layer to the output layer, b(0) 
+
+> μ
+
+is the bias vector of the hidden layer, and b(1) is the bias of the output layer. The descriptors, which consist of high-dimensional vectors that map atomic information into mathe-matical form, are crucial for ANN models. In the NEP model, the descriptors for atom i consist of a number of radial and angular components. Radial descriptor components are expressed as: 
+
+qin = X 
+
+> j̸=i
+
+gn(rij ) with 0 ≤ n ≤ nRmax (2) The function gn(rij ) that depends only on the distance between atoms i and j (rij ) is called a radial function and has the following expression: 
+
+gn(rij ) =  
+
+> NRbas
+
+X
+
+> k=0
+
+cij nk fk(rij ), (3) where 
+
+fk(rij ) = 12
+
+h
+
+Tk
+
+
+
+2  rij /r Rc − 12 − 1
+
+
+
++ 1 
+
+i
+
+fc(rij ). (4) Here, Tk(x) represents the kth order Chebyshev polynomial of the first kind, while fc(rij ) denotes the cutoff function defined as follows: 
+
+fc(rij ) = 
+
+
+
+> 12
+
+h
+
+1 + cos 
+
+
+
+π rij 
+
+> rRc
+
+i 
+
+, rij ≤ rRc ;0, rij > r Rc . (5) 
+
+nRmax and N Rbas in Eq. (2) and Eq. (3) are tunable hyperparameters in the training process and rRc in Eq. (4) and Eq. (5) is the cutoff distance of the radial descriptor components. For the angular descriptor components, NEP4 model considers 3-body to 5-body ones. The formulation is similar but not identical to the atomic cluster expansion approach [39]. For 3-body angular descriptor components (0 ≤ n ≤ nAmax , 1 ≤ l ≤ l3b max ), 
+
+qinl =
+
+> l
+
+X
+
+> m=−l
+
+(−1) mAinlm Ainl (−m), (6) GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+where 
+
+Ainlm = X 
+
+> j̸=i
+
+gn(rij )Ylm (θij , ϕ ij ), (7) and Ylm (θij , ϕ ij ) are the spherical harmonics as a function of the polar angle θij and the azimuthal angle 
+
+ϕij . For more details and the expressions of the 4-body and 5-body descriptor components, we refer to Ref. [38]. 
+
+# III. GPUMDkit Package 
+
+GPUMDkit is primarily written in Shell (for script orchestration and command-line integration) and Python (for data processing and analysis). It leverages established Python libraries, including ASE [40], dpdata [41], pymatgen [42], calorine [26], and NepTrain [25], ensuring robustness and compatibility with existing frameworks. This modular design allows for easy maintenance and straightforward addition of new features without altering the core structure. The key functionalities of GPUMDkit are illustrated in Fig. 1. 
+
+> FIG. 1. Schematic diagram of GPUMDkit.
+
+Inspired by popular VASP post-processing toolkits such as VASPKIT [43, 44] and qvasp [45], GPUMD-kit provides two interface options to meet diverse user needs. The interactive mode delivers intuitive, step-by-step prompts, making it ideal for newcomers or those exploring complex workflows. The command-line interface, by contrast, caters to experienced users who require efficient execution and seamless integration into automated pipelines. 
+
+# A. Interactive Mode 
+
+GPUMDkit provides a user-friendly interactive interface launched via the gpumdkit.sh command. Users are presented with a menu-driven interface (Fig. 1) that organizes functionalities into clearly num-bered categories, including format conversion, structure sampling, workflow management, calculators, GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+and analysis tools. This hierarchical design allows users to navigate and execute a wide range of tasks through simple numeric selections. 
+
+Format Conversion: GPUMDkit supports conversion between a variety of common structure and trajectory formats, including input and output files from VASP [46, 47], CP2K [48], ABACUS [49], LAMMPS [50], and others. Both single structure files and multi-step trajectory files are supported, making this functionality particularly useful for post-processing MD simulations and preparing datasets for NEP training. 
+
+Sample Structures: The structure sampling module supports three main strategies: random sam-pling for rapid dataset construction, equally spaced sampling for uniform coverage of time series, and descriptor-based farthest point sampling (FPS) for optimal coverage of configuration space. FPS is particularly valuable for identifying representative atomic configurations while minimizing structural redundancy, thereby improving the training efficiency and generalization of the NEP model. Addition-ally, the module provides a random perturbation function that applies random atomic displacements to an initial structure, generating diverse training samples that are especially useful for highly symmetric systems or those with limited configuration space. 
+
+Workflow Automation: Although the NepTrain package [25] already provides automated tools for NEP development, GPUMDkit offers a complementary and flexible workflow option. The module supports both fully automated and semi-automated (step-by-step) active learning cycles, encompassing iterative structure selection, DFT job preparation, model training, and validation. A key advantage is the fine-grained control it affords at each stage: users can pause the process to inspect sampled structures or adjust training settings before proceeding to the next iteration. This balance between automation and manual oversight helps users build high-quality NEP models while maintaining full transparency over the development process. 
+
+Property Calculations: The calculator module provides essential post-processing capabilities for GPUMD output analysis. Currently supported properties include radial distribution functions, self-diffusion coefficients, ionic conductivity calculations, density of atomistic states, and nudged elastic band pathway analysis. Additional functionality is under active development. 
+
+Visualization and Analysis: The analyzer module provides comprehensive data quality control capabilities, including training set composition analysis, charge balance verification, and outlier detection. Beyond these analysis functions, GPUMDkit also integrates a rich set of plotting tools for a wide range of visualization tasks, such as monitoring training progress, thermodynamic analysis, error assessment, and structural property visualization including radial distribution function, mean square displacement (MSD), and descriptor distributions. 
+
+# B. Command-Line Interface 
+
+For users familiar with GPUMDkit, the command-line mode enables faster execution by directly passing arguments, supporting batch processing and seamless integration with automated computation pipelines. Here we briefly introduce the -plt (visualization) and -time (real-time monitoring) com-mands. 
+
+Visualization Tools: The -plt command exemplifies the efficiency of the command-line interface. For instance, executing gpumdkit.sh -plt thermo automatically invokes the corresponding visualiza-tion script to parse the thermo.out output file from GPUMD, generating a comprehensive overview of thermodynamic quantities including temperature, pressure, potential and kinetic energy, lattice parame-ters, volume, and lattice angles (Fig. 3). This is particularly useful for assessing thermodynamic equilib-rium, detecting phase transitions, or identifying simulation instabilities. A rich set of additional plotting scripts is accessible via the Scripts/plt_scripts directory or the gpumdkit.sh -plt [options] com-mand, as summarized in Fig. S1 of the Supporting Information (SI). These scripts automatically detect GUI availability and either display an interactive plot or save the output in PNG format. GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+Real-time Monitoring Features: The real-time monitoring feature ( gpumdkit.sh -time nep/gpumd )intelligently parses loss.out or neighbor.out files to dynamically assess computational progress and provide accurate completion time predictions. This function continuously tracks the execution efficiency of the NEP and GPUMD programs, allowing users to plan their time accordingly. 
+
+Other Features: Beyond the functions described above, GPUMDkit provides a range of additional command-line utilities covering common tasks and specialized computing requirements (see Fig. S2 in SI). 
+
+# IV. Case Studies: Phase Transition and Ionic Diffusion of Li 7La 3Zr 2O12   
+
+> FIG. 2. (a) Evolution of various terms in the loss function during the NEP training process. (b) Energy, (c) force, and (d) stress values from the NEP model, in comparison to the DFT reference data.
+
+Garnet-type Li 7La 3Zr 2O12 (LLZO) is one of the most promising solid electrolyte materials for next-generation all-solid-state lithium batteries, combining high ionic conductivity with excellent chemical and electrochemical stability against lithium metal [51]. LLZO undergoes a phase transition at approximately 900 K, from a low-temperature tetragonal phase ( t-LLZO) to a high-temperature cubic phase ( c-LLZO), accompanied by a 2–3 order-of-magnitude increase in ionic conductivity. This transition involves a rearrangement of the Li-ion sublattice, from fully occupied, ordered sites in t-LLZO to partially occupied, disordered arrangements in c-LLZO, fundamentally altering the Li-ion diffusion energy landscape and lowering the activation energy from 1 .227 eV to 0 .309 eV [7]. The LLZO system therefore serves as an ideal testbed for demonstrating the capabilities of GPUMDkit in analyzing structural transitions and ion transport properties. A NEP model was developed based on the training dataset from Yan and Zhu [7], which covers structural configurations representative of both tetragonal and cubic phases, including thermal snapshots at various temperatures, mechanically strained structures, and non-stoichiometric configurations with lithium-oxygen Schottky defect pairs. This diversity ensures robust model performance across a wide range of thermodynamic conditions. The training process and model accuracy were evaluated using the 
+
+gpumdkit.sh -plt train command, which visualizes the evolution of loss terms and generates parity plots of energies, forces, and stresses against DFT reference values (Fig. 2). The energy predictions exhibit excellent agreement ( R2 > 0.999) with an RMSE of 0 .74 meV /atom, force predictions achieve GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+an root mean square error (RMSE) of 80 .31 meV /˚A, and stress tensor predictions yield an RMSE of 0.0885 GPa, confirming the accuracy and reliability of the model. To investigate the tetragonal-to-cubic phase transition in LLZO, we performed MLMD simulations using GPUMD with the NEP model. The simulations employed a 4 × 4 × 4 supercell containing 12,288 atoms under the isothermal-isobaric (NPT) ensemble with Martyna-Tuckerman-Tobias-Klein integrators and a timestep of 1 fs. The system was heated from 600 K to 1200 K at a rate of 300 K /ns, sufficient to capture the phase transition, as verified in the previous work [52]. Thermodynamic properties through-out the heating process were monitored using the gpumdkit.sh -plt thermo command, which tracks temperature, pressure, potential and kinetic energy, lattice parameters, volume, and lattice angles, as shown in Fig. 3. 
+
+> FIG. 3. Thermodynamic properties of LLZO during heating from 600 K to 1200 K: (a) temperature, (b) pressure, (c) potential and kinetic energy, (d) lattice parameters, (e) volume, and (f) lattice angles.
+
+The tetragonal-to-cubic phase transition is reflected in the evolution of the lattice parameters (Fig. 3(d)). Below 900 K, all three parameters exhibit normal thermal expansion while maintaining the tetragonal relationship ( a = b > c). At approximately 900 K, a dramatic structural change occurs: 
+
+a and b contract while c expands until all three converge to equivalent values ( a = b = c), characteristic of the cubic phase. Above this temperature, the three parameters resume thermal expansion as equiv-alent cubic lattice constants. This transition temperature agrees well with previous experimental and computational reports [7, 53], validating the ability of our NEP model to capture the phase transition thermodynamics. Notably, the volume and potential energy also exhibit subtle but discernible anomalies near the tran-sition point, consistent with the first-order nature of the tetragonal-to-cubic phase transition in LLZO. These changes are less pronounced than those in the lattice parameters, as the transition is primar-ily driven by an order-disorder transition of the Li-ion sublattice rather than by significant structural changes in the rigid La-Zr-O framework. This order-disorder transition reshapes the Li-ion diffusion energy landscape, significantly enhancing the ionic transport of LLZO and giving rise to the dramatic conductivity increase observed in the cubic phase [7]. To quantify this effect, we performed 2 ns MLMD simulations in the temperature range of 700 K to 1200 K, using the same 4 × 4 × 4 supercell. Fig. 4(a), generated using the gpumdkit.sh -plt msd_all 
+
+command, shows the MSD of each atomic species at 800 K. Li-ions exhibit high mobility with a linear MSD, confirming long-range diffusion rather than local vibrations, while the framework atoms (La, Zr, O) remain essentially immobile, preserving the structural integrity of the La-Zr-O framework. Fig. 4(b), produced via gpumdkit.sh -plt msd_conv , tracks the evolution of Li-ion diffusion coefficients through-GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+out the 2 ns simulation, which converge to stable values within the first 1 ns, indicating sufficient sampling for reliable statistics. Notably, the diffusion exhibits significant anisotropy at 800 K: Li-ion mobility in the x and y directions is higher than in the z direction, reflecting the crystallographic constraints of the tetragonal structure that preferentially support ion transport within specific crystal planes.    
+
+> FIG. 4. (a) The mean square displacement (MSD) of each atomic species at 800 K. (b) The evolution of Li-ion diffusivities during the simulation. (c) Arrhenius plot of Li-ion diffusion in t-LLZO and c-LLZO. (d) Density of atomistic states of Li-ions in LLZO. Atomistic energy distribution plot (AEDP) of Li-ions in (e) t-LLZO and (f)
+> c-LLZO.
+
+The dramatic effect of the phase transition is evident in the Arrhenius plot (Fig. 4(c)), which reveals a large change in activation energies across the critical temperature. Li-ions diffusion in the c-LLZO has a low activation energy (0 .29 eV), whereas in the t-LLZO, the activation energy is significantly higher (1 .23 eV). These values align well with the previous computational results [7], validating the accuracy of the retrained NEP model in reproducing transport properties. The contrast in transport behavior suggests that while macroscopic thermodynamic properties exhibit only subtle changes during phase transitions (Fig. 3), the underlying structural change has a significant impact on Li-ion dynamics. The order-disorder transition alters the energetic landscape for Li-ions diffusion, transforming LLZO into the cubic phase as an excellent superionic material. To understand the microscopic mechanisms underlying the order-disorder transition and its impact on Li-ions diffusion, we employ the density of atomistic states (DOAS) analysis implemented in GPUMDkit. This method was first proposed by Wang et al. and successfully revealed frustration in superionic conductors [54]. The DOAS approach is based on the fundamental principle that in MLIPs, the total system energy comes from summing individual atomistic energies, where the atomistic energy of each atom is determined by its local atomic environment. By constructing the atomistic energy distribution of different atoms, DOAS provides direct insight into the distribution of local environments and their energy landscape. Fig. 4(d) shows the Li-ion DOAS distributions for both t-LLZO and c-LLZO, revealing significant difference in atomistic energies among different Li-ion sites. In t-LLZO, the Li-ion energy distribution displays three distinct, sharp peaks corresponding to three kinds of fully occupied crystallographic sites: the tetrahedral 8 a position and two octahedral positions 16 f and 32 g. These peaks reflect the ordered Li-ion sublattice in the t-LLZO. In contrast, the c-LLZO displays a markedly different energy landscape. The Li-ion DOAS becomes much broader and more diffuse, with a wider energy distribution range and GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+less distinct peak separation. The two main features correspond to partially occupied tetrahedral (24 d )and octahedral (96 h) sites, but their energy levels are much closer compared to the tetragonal phase. This energy flattening in the cubic phase directly explains the dramatic enhancement in ionic conductivity after the phase transition. The reduced energy barriers between different Li-ion sites create a more favorable landscape for Li-ions diffusion [54]. Therefore, DOAS analysis provides quantitative evidence for an order-disorder transition mechanism, where the discrete energy landscape of Li-ions in the t-LLZO is transformed into a more continuous energy landscape in the c-LLZO. To further demonstrate the Li-ion sublattice rearrangement, Figs. 4(e,f) show the atomistic energy distribution plots (AEDP), depicting the spatial distribution of Li-ion energy states in both phases. In 
+
+t-LLZO, Li-ions exhibit a highly ordered spatial distribution with clear energy segregation. Low-energy Li-ions (deep purple, −3.45 eV) corresponding to the 8 a tetrahedral sites form a regular and well-defined pattern, while mid-energy Li-ions (cyan, −3.3 to −3.15 eV) are systematically arranged near well-defined crystallographic sites (16 f and 32 g). Furthermore, AEDP reveals the presence of high-energy Li-ions (bright yellow, > −3.15 eV), although these states are minimally represented as determined by DOAS. In contrast, the cubic phase displays a markedly different energy distribution. The Li-ions are distributed more connected along diffusion channels, and the discrete energy landscape observed in the t-LLZO is no longer present, replaced by a more continuous energy spread. Notably, the number of mid- and high-energy Li-ions increases significantly, indicating a broader occupation across energy states that facilitates ion transport. This spatial analysis clearly illustrates the order-disorder transition mechanism in LLZO: the changed energy landscape enables Li-ions to access a wider range of positions that were previously prohibited, creating a network of available sites and pathways for ion transport. This smoothed energy distribution replaces the distinct energy barriers that restrict Li-ions diffusion in the t-LLZO, leading to the excellent ionic conductivity of cubic LLZO. 
+
+# V. Case Studies: Phase Transition and Topological Structure in (Pb,Sr)TiO 3
+
+Ferroelectric materials, characterized by a spontaneous polarization that can be reversed by an ex-ternal electric field, are fundamental to a broad spectrum of functional devices, including nonvolatile memory, sensors, and piezoelectric actuators [55–58]. Among these, ABO 3-type perovskite oxides serve as a technologically vital class, where the structural flexibility provided by the distinct ionic radii of the A-site and B-site cations allows for the precise tuning of functional properties. An important ex-ample is PbTiO 3 (PTO), a prototypical ferroelectric that exhibits a robust tetragonal ground state with a large spontaneous polarization and a high Curie temperature ( TC) of 765 K [59]. In contrast, SrTiO 3 (STO) behaves as a quantum paraelectric; while it typically remains nonpolar, ferroelectricity can be induced through external stimuli such as epitaxial strain or terahertz pulses [60, 61]. Further-more, PbTiO 3/SrTiO 3 superlattices have recently emerged as a versatile platform for exploring emergent topological dipolar structures—including flux closures, vortices, and skyrmions—which arise from the complex interplay of electric, elastic, and gradient energies at the nanoscale [62–65]. In this section, we employ GPUMDkit to perform the analysis and visualization of these important materials. To accurately model the atomistic dynamics of this system, we developed a NEP model covering PbTiO 3, SrTiO 3, and their solid solutions. The training dataset was derived from our previous study, which utilized a modular development strategy to efficiently sample the configuration space [66]. The dataset comprehensively covers the end-members, including the tetragonal P 4mm and cubic P m ¯3m
+
+phases of PbTiO 3, as well as the cubic and antiferrodistortive I4/mcm phases of SrTiO 3. It also in-corporates random solid solution configurations (Pb x Sr 1 – x TiO 3) generated through extensive sampling with molecular dynamics and Monte Carlo swapping. The robust fitting performance of the developed NEP model was confirmed by the parity plots of energy, atomic forces, and stress tensors, which were automatically generated using the gpumdkit.sh -plt train_test command (Fig. S3). The model achieves RMSE of 1 .99 meV /atom for energy and 89 .11 meV /˚A for atomic forces, and 0 .217 GPa for stress tensors on the training dataset, demonstrating high fidelity to the reference DFT data. We initiate our analysis by investigating the temperature-driven phase transitions in bulk PbTiO 3GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al.              
+
+> FIG. 5. Temperature dependence of structural properties in bulk PbTiO 3and SrTiO 3. (a) Lattice constants (left axis) and spontaneous polarization along the polar axis Pz(right axis) of PbTiO 3as a function of temperature, showing the ferroelectric tetragonal ( P4mm ) to paraelectric cubic ( P m ¯3m) transition at TC≈600 K. (b) Lattice constants (left axis) and the TiO 6octahedral tilt angle (right axis) of SrTiO 3, illustrating the antiferrodistortive phase transition at TC≈225 K.
+
+and SrTiO 3. By utilizing the gpumdkit.sh -calc avg-stru command, we efficiently extracted the ensemble-averaged structures from the MD trajectories for detailed analysis. The results are presented in Fig. 5. For PbTiO 3 (Fig. 5(a)), we observe a distinct phase transition from the ferroelectric tetragonal phase to paraelectric cubic phase at a TC of approximately 600 K. This result is in good agreement with previous theoretical studies using similar potentials, though slightly lower than the experimental value of 765 K [59]. To quantify the strength of polarization, we define the local polarization Pm(t) for a unit cell m using the formalism [67]: 
+
+Pm(t) = 1
+
+Vu.c.
+
+"
+
+18 Z∗
+
+> A8
+
+X
+
+> k=1
+
+rm
+
+> A,k
+
+(t) + Z∗
+
+> B
+
+rm 
+
+> B
+
+(t) + 12 Z∗
+
+> O6
+
+X
+
+> k=1
+
+rm
+
+> O,k
+
+(t)
+
+#
+
+(8) where Vu.c. is the unit cell volume, r represents the atomic positions and Z represents the Born effective charges. We computed this quantity using the gpumdkit.sh -calc pol-abo3 command. The resulting spontaneous polarization, depicted as the orange line in Fig. 5(a), remains robust at low temperatures and vanishes at TC as the lattice constants a and c converge to the cubic phase. Similarly, for SrTiO 3, a struc-tural phase transition is observed at approximately 225 K (Fig. 5(b)), consistent with previous MD simu-lations [66]. While this theoretical TC is higher than the experimental value of 105 K, it is well-understood that SrTiO 3 is a quantum paraelectric; incorporating nuclear quantum effects into the simulation (e.g., via path-integral MD) has been shown to suppress the transition temperature, bringing it closer to the experimental result [68]. The transition is characterized by the antiferrodistortive rotation of the oxy-gen octahedra. We extracted the associated order parameter using the gpumdkit.sh -calc oct-tilt 
+
+command; the calculated TiO 6 tilt angle (orange line, Fig. 5(b)) diminishes with heating and disappears at the transition temperature. These results confirm that the trained NEP model faithfully reproduces the thermodynamic behavior of the pure bulk phases. Subsequently, we modeled the (PbTiO 3)10 /(SrTiO 3)10 superlattice to investigate its topological polar structures. A supercell comprising alternating 10-unit-cell layers of PTO and STO was constructed, and MD simulations were performed in the NPT ensemble to equilibrate the system. The resulting local polarization distribution, visualized in Fig. 6(a), exhibits a distinct polar vortex array character, reflecting the delicate balance between depolarization fields and domain wall energies in the confined ferroelectric layers. These topological textures are in good agreement with previous theoretical results [65]. To probe the local dielectric properties, we calculated the local out-of-plane dielectric permittivity εmzz for the unit cell m, defined following the fluctuation-based approach [69]: 
+
+εmij = Vu.c.
+
+ε0kBT
+
+ ⟨P mi P mj ⟩ − ⟨ P mi ⟩⟨ P mj ⟩ (9) GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al.       
+
+> FIG. 6. Atomistic modeling of topological polar structures in the (PbTiO 3)10 /(SrTiO 3)10 superlattice at 300 K. (a) Side view of the local polarization distribution in the x-zplane, revealing the formation of polar vortex arrays within the ferroelectric PbTiO 3layers. The arrows indicate the direction and magnitude of the local dipoles. (b) Real-space map of the local out-of-plane dielectric permittivity εzz calculated using the fluctuation-dissipation theorem. The map reveals enhanced dielectric susceptibility at the vortex cores and domain walls compared to the domain regions.
+
+where Vu.c. is the volume of the unit cell, kB is the Boltzmann constant, T is the temperature, ε0 is the vacuum permittivity, and P mi is the instantaneous local polarization of the unit cell m along the i
+
+direction. This value quantifies the local polarization fluctuations. As shown in Fig. 6(b), the permittivity map reveals a significant enhancement at the vortex cores and domain walls compared to the domain regions, indicating that these topologically frustrated regions serve as highly susceptible “hotspots” for dielectric response. 
+
+# VI. Case Study: Thermal transport of graphene 
+
+GPUMD has become a widely used platform for phonon-mediated thermal-transport simulations, driven by two main advantages: (i) GPU acceleration combined with the high accuracy enabled by NEP framework, and (ii) comprehensive coverage of major thermal-transport formalisms within a unified workflow. Building on standard GPUMD outputs, GPUMDkit provides an end-to-end post-processing pipeline that converts raw trajectories and numerical files into publication-ready thermal-transport re-sults through standardized analysis, consistent visualization, and automated uncertainty estimation. In particular, GPUMDkit simplifies common but error-prone tasks such as parsing outputs, aggregating independent runs, checking convergence, computing key correlation functions and transport properties, and producing standardized plots and tables. As a representative high-thermal-conductivity two-dimensional material, monolayer graphene is used here to demonstrate GPUMDkit’s capability in processing and visualizing simulations performed using equilibrium molecular dynamics (EMD), non-equilibrium molecular dynamics (NEMD), and homoge-neous non-equilibrium molecular dynamics (HNEMD). The main text focuses on HNEMD as the primary example, while the EMD and NEMD visualizations are provided in the SI (Figs. S4–5). Based on linear-response theory, the HNEMD method mimics the effect of a thermal gradient by applying a directional external driving force Fext  
+
+> i
+
+to each atom i [70, 71], defined as: 
+
+Fext  
+
+> i
+
+= Fe · Wi, (10) where Fe is a small vector field with dimension of inverse length, and Wi is the per-atom virial tensor. The resulting heat current J = P 
+
+> i
+
+Wi · vi yields a non-equilibrium ensemble average ⟨J(t)⟩ne , from GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+which the running thermal conductivity is obtained as: 
+
+κ(t) = ⟨J(t)⟩ne 
+
+T V Fe
+
+, (11) where T is the temperature, V is the volume, and vi is the velocity of atom i. To assess convergence, 
+
+κ(t) is further expressed as a cumulative average, κ(t) = 1
+
+> t
+
+R t 
+
+> 0
+
+κ(τ )d τ .GPUMDkit enables rapid analysis and figure generation for HNEMD simulations via the command 
+
+gpumdkit.sh -plt hnemd (Fig. 7). The script automatically detects whether spectral heat-current de-composition was performed. If spectral data are available, GPUMDkit outputs and visualizes the corre-sponding spectral thermal conductivity; otherwise, it reports only the standard HNEMD-based running thermal conductivity. For spectral post-processing, users may additionally specify a cut-off frequency to define the decomposition range. Fig. 7(a) shows the time evolution of the thermal conductivity of monolayer graphene and the contribu-tion from the in-plane and out-of-plane phonons at 300 K. The system reaches a clear steady-state plateau within the first 2 ns, indicating rapid convergence of the heat-current response under the applied driving force. The converged thermal conductivity contributed from the in-plane phonons, κin ≈ 803 W m −1 K−1,is significantly smaller than the out-of-plane contribution, κout ≈ 1995 W m −1 K−1, resulting in a total thermal conductivity of κtot ≈ 2798 W m −1 K−1. It reflects the intrinsic phonon-transport characteristics of graphene, where heat conduction is dominated by out-of-plane phonon modes with long mean free paths, arising predominantly from flexural phonons that are efficiently excited under non-equilibrium driving. The Virial-velocity autocorrelation function shown in Fig. 7 (b) exhibits a sharp central peak with rapidly decaying oscillations, suggesting strong short-time correlations and weak long-time memory ef-fects. This behaviour is characteristic of crystalline graphene, where phonon scattering is limited and momentum-conserving normal processes play a significant role at room temperature. The spectral decomposition of thermal conductivity in Fig. 7 (c) further reveals the frequency-resolved contributions of different phonon modes. Low-frequency phonons dominate the thermal conductivity, consistent with the long lifetimes and large group velocities of acoustic phonons. In particular, the (a)     
+
+> (b) (c)
+> FIG. 7. Thermal transport of monolayer graphene by HNEMD at 300 K. (a) Running thermal conductivity as a function of simulation time, decomposed into in-plane and out-of-plane phonon contributions. (b) Virial-velocity correlation function versus time. (c) Spectral thermal conductivity with the same in-plane and out-of-plane decomposition. The results are from five independent simulations, with error bars shown by standard errors. GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al.
+
+out-of-plane contribution shows substantial weight in the low- and mid-frequency range, highlighting the important role of flexural phonons in thermal transport, despite their quadratic dispersion. At higher frequencies ( > 40 THz), the spectral thermal conductivity decays rapidly, indicating limited contributions from optical phonons due to their low group velocities and enhanced scattering. For quick access to detailed parameter definitions and usage options, GPUMDkit offers a built-in help interface, e.g., gpumdkit.sh -plt hnemd -h . The same help mechanism applies to EMD and NEMD by replacing hnemd with the corresponding method name, allowing users to efficiently identify available arguments and their functions. 
+
+# VII. Conclusions 
+
+In this work, we introduced GPUMDkit, a comprehensive toolkit for GPUMD and NEP programs. By integrating a wide range of functionalities into a unified interface, including format conversion, structure sampling, automated workflows, property calculators, and visualization tools, GPUMDkit enables users to move rapidly from data preparation to property analysis without extensive custom coding. Both interactive and command-line interfaces are provided to accommodate users with different levels of pro-gramming experience. The modular architecture of GPUMDkit ensures straightforward maintenance and extensibility, allowing new features to be incorporated without altering the core structure. Overall, GPUMDkit substantially lowers the barrier to entry for GPUMD and NEP simulations and enhances the productivity of researchers across diverse application domains. The capabilities of GPUMDkit were illustrated through three representative case studies: the order-disorder phase transition and ionic transport in the LLZO solid electrolyte, the structural phase tran-sitions and topological polar structures in ferroelectric (Pb, Sr)TiO 3 systems, and the phonon-mediated thermal transport in monolayer graphene. These examples collectively demonstrate the ability of GPUMDkit to connect macroscopic observations with atomic-scale mechanisms, enabling deeper under-standing of complex material behavior. 
+
+# Acknowledgements 
+
+Z. Yan and Y. Zhu acknowledge the support from the National Natural Science Foundation of China (No. 22509162 and 225B2917). Z. Fan acknowledges the support from the Science Foundation from Education Department of Liaoning Province (No. LJ232510167001). X. Wu acknowledges the support from JSPS through a Postdoctoral Fellowship for Research in Japan (P24058) and Grants-in-Aid for Scientific Research (No. 24KF0027). S. Liu acknowledges the support from Zhejiang Provincial Natural Science Foundation of China (LR25A040004). 
+
+# Data Availability 
+
+Source files of case studies will be available on the GitHub repository at https://github.com/ zhyan0603/SourceFiles .
+
+# Code Availability 
+
+The source code of GPUMDkit is freely available at https://github.com/zhyan0603/GPUMDkit . Doc-umentations can be found at https://zhyan0603.github.io/GPUMDkit .GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+# Competing Interests 
+
+The authors declare no competing interests. 
+
+# References 
+
+[1] Z. Qi, X. Sun, Z. Sun, Q. Wang, D. Zhang, K. Liang, R. Li, D. Zou, L. Li, G. Wu, et al. , Interfacial opti-mization for aln/diamond heterostructures via machine learning potential molecular dynamics investigation of the mechanical properties, ACS Appl. Mater. Interfaces 16 , 27998 (2024). [2] Y. Liu, H. Meng, Z. Zhu, H. Yu, L. Zhuang, and Y. Chu, Predicting mechanical and thermal properties of high-entropy ceramics via transferable machine-learning-potential-based molecular dynamics, Adv. Funct. Mater. 35 , 2418802 (2025). [3] K. Xu, Y. Hao, T. Liang, P. Ying, J. Xu, J. Wu, and Z. Fan, Accurate prediction of heat conductivity of water by a neuroevolution potential, J. Chem. Phys. 158 , 204114 (2023). [4] L. Yu, K. Dong, Q. Yang, Y. Zhang, Z. Fan, X. Zheng, H. Wang, Z. Qin, and G. Qin, Dynamic mesophase transition induces anomalous suppressed and anisotropic phonon thermal transport, npj Comput. Mater. 
+
+10 , 280 (2024). [5] P. Ying, W. Zhou, L. Svensson, E. Berger, E. Fransson, F. Eriksson, K. Xu, T. Liang, J. Xu, B. Song, et al. ,Highly efficient path-integral molecular dynamics simulations with GPUMD using neuroevolution potentials: Case studies on thermal properties of materials, J. Chem. Phys. 162 , 064109 (2025). [6] E. Fransson, J. Wiktor, and P. Erhart, Phase transitions in inorganic halide perovskites from machine-learned potentials, J. Phys. Chem. C 127 , 13773 (2023). [7] Z. Yan and Y. Zhu, Impact of lithium nonstoichiometry on ionic diffusion in tetragonal garnet-type Li 7La 3Zr 2O12 , Chem. Mater. 36 , 11551 (2024). [8] K. Li, B. Liu, J. Zhou, and Z. Sun, Revealing the crystallization dynamics of Sb-Te phase change materials by large-scale simulations, J. Mater. Chem. C 12 , 3897 (2024). [9] L. Zeng, J. Peng, J. Zhang, X. Tan, X. Ji, S. Li, and G. Feng, Molecular dynamics simulations of electro-chemical interfaces, J. Chem. Phys. 159 , 091001 (2023). [10] R. Zhao, S. Wang, Z. Kong, Y. Xu, K. Fu, P. Peng, and C. Wu, Development of a neuroevolution machine learning potential of Pd-Cu-Ni-P alloys, Mater. Des. 231 , 112012 (2023). [11] Z. Zhao, M. Yi, W. Guo, and Z. Zhang, General-purpose neural network potential for Ti-Al-Nb alloys towards large-scale molecular dynamics with ab initio accuracy, Phys. Rev. B 110 , 184115 (2024). [12] J. Behler and M. Parrinello, Generalized neural-network representation of high-dimensional potential-energy surfaces, Phys. Rev. Lett. 98 , 146401 (2007). [13] A. P. Bart´ ok, M. C. Payne, R. Kondor, and G. Cs´ anyi, Gaussian approximation potentials: The accuracy of quantum mechanics, without the electrons, Phys. Rev. Lett. 104 , 136403 (2010). [14] I. S. Novikov, K. Gubaev, E. V. Podryabinkin, and A. V. Shapeev, The mlip package: moment tensor potentials with mpi and active learning, Mach. Learn.: Sci. Technol. 2, 025002 (2020). [15] L. Zhang, J. Han, H. Wang, R. Car, and W. E, Deep potential molecular dynamics: a scalable model with the accuracy of quantum mechanics, Phys. Rev. Lett. 120 , 143001 (2018). [16] S. Batzner, A. Musaelian, L. Sun, M. Geiger, J. P. Mailoa, M. Kornbluth, N. Molinari, T. E. Smidt, and B. Kozinsky, E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials, Nat. Commun. 13 , 2453 (2022). [17] I. Batatia, D. P. Kovacs, G. N. C. Simm, C. Ortner, and G. Csanyi, MACE: Higher order equivariant message passing neural networks for fast and accurate force fields, in Advances in Neural Information Processing Systems , edited by A. H. Oh, A. Agarwal, D. Belgrave, and K. Cho (2022). [18] I. Batatia, S. Batzner, D. P. Kov´ acs, A. Musaelian, G. N. Simm, R. Drautz, C. Ortner, B. Kozinsky, and G. Cs´ anyi, The design space of e (3)-equivariant atom-centred interatomic potentials, Nat. Mach. Intell. 7,56 (2025). [19] Z. Fan, Z. Zeng, C. Zhang, Y. Wang, K. Song, H. Dong, Y. Chen, and T. Ala-Nissila, Neuroevolution machine learning potentials: Combining high accuracy and low cost in atomistic simulations and application to heat transport, Phys. Rev. B 104 , 104309 (2021). [20] T. Schaul, T. Glasmachers, and J. Schmidhuber, High dimensions and heavy tails for natural evolution strategies, in Proceedings of the 13th Annual Conference on Genetic and Evolutionary Computation (2011) p. 845–852. GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+[21] H. Dong, Y. Shi, P. Ying, K. Xu, T. Liang, Y. Wang, Z. Zeng, X. Wu, W. Zhou, S. Xiong, et al. , Molecular dynamics simulations of heat transport using machine-learned potentials: A mini-review and tutorial on GPUMD with neuroevolution potentials, J. Appl. Phys. 135 , 161101 (2024). [22] J. Liu, J. Byggm¨ astar, Z. Fan, P. Qian, and Y. Su, Large-scale machine-learning molecular dynamics simu-lation of primary radiation damage in tungsten, Phys. Rev. B 108 , 054312 (2023). [23] T. Liang, K. Xu, E. Lindgren, Z. Chen, R. Zhao, J. Liu, E. Berger, B. Tang, B. Zhang, Y. Wang, et al. ,NEP89: Universal neuroevolution potential for inorganic and organic materials across 89 elements, arXiv 10.48550/arXiv.2504.21286 (2025). [24] K. Xu, H. Bu, S. Pan, E. Lindgren, Y. Wu, Y. Wang, J. Liu, K. Song, B. Xu, Y. Li, T. Hainer, L. Svensson, J. Wiktor, R. Zhao, H. Huang, C. Qian, S. Zhang, Z. Zeng, B. Zhang, B. Tang, Y. Xiao, Z. Yan, J. Shi, Z. Liang, J. Wang, T. Liang, S. Cao, Y. Wang, P. Ying, N. Xu, C. Chen, Y. Zhang, Z. Chen, X. Wu, W. Jiang, E. Berger, Y. Li, S. Chen, A. J. Gabourie, H. Dong, S. Xiong, N. Wei, Y. Chen, J. Xu, F. Ding, Z. Sun, T. Ala-Nissila, A. Harju, J. Zheng, P. Guan, P. Erhart, J. Sun, W. Ouyang, Y. Su, and Z. Fan, GPUMD 4.0: A high-performance molecular dynamics package for versatile materials simulations with machine-learned potentials, MGE Adv. 3, e70028 (2025). [25] C. Chen, Y. Li, R. Zhao, Z. Liu, Z. Fan, G. Tang, and Z. Wang, NepTrain and NepTrainKit: Automated active learning and visualization toolkit for neuroevolution potentials, Comput. Phys. Commun. 317 , 109859 (2025). [26] E. Lindgren, M. Rahm, E. Fransson, F. Eriksson, N. ¨Osterbacka, Z. Fan, and P. Erhart, calorine: A python package for constructing and sampling neuroevolution potential models, J. Open Source Softw. 9, 6264 (2024). [27] T. Liang, W. Jiang, K. Xu, H. Bu, Z. Fan, W. Ouyang, and J. Xu, PYSED: A tool for extracting kinetic-energy-weighted phonon dispersion and lifetime from molecular dynamics simulations, J. Appl. Phys. 138 ,10.1063/5.0278798 (2025). [28] Z. Fan, W. Chen, V. Vierimaa, and A. Harju, Efficient molecular dynamics simulations with many-body potentials on graphics processing units, Comput. Phys. Commun. 218 , 10 (2017). [29] J. E. Lennard-Jones, Cohesion, Proc. Phys. Soc. 43 , 461 (1931). [30] M. S. Daw and M. I. Baskes, Embedded-atom method: Derivation and application to impurities, surfaces, and other defects in metals, Phys. Rev. B 29 , 6443 (1984). [31] J. Tersoff, Empirical interatomic potential for carbon, with applications to amorphous carbon, Phys. Rev. Lett. 61 , 2879 (1988). [32] J. Brorsson, A. Hashemi, Z. Fan, E. Fransson, F. Eriksson, T. Ala-Nissila, A. V. Krasheninnikov, H.-P. Komsa, and P. Erhart, Efficient calculation of the lattice thermal conductivity by atomistic simulations with ab initio accuracy, Adv. Theor. Simulat. 5, 2100217 (2022). [33] J. Zeng, D. Zhang, D. Lu, P. Mo, Z. Li, Y. Chen, M. Rynik, L. Huang, Z. Li, S. Shi, et al. , DeePMD-kit v2: A software package for deep potential models, J. Chem. Phys. 159 , 054801 (2023). [34] K. Song, R. Zhao, J. Liu, Y. Wang, E. Lindgren, Y. Wang, S. Chen, K. Xu, T. Liang, P. Ying, et al. ,General-purpose machine-learned potential for 16 elemental metals and their alloys, Nat. Commun. 15 ,10208 (2024). [35] H. Bu, W. Jiang, P. Ying, Z. Fan, and W. Ouyang, Accurate modeling of lego-like vdw heterostructures: Integrating machine learned with anisotropic interlayer potentials, arXiv 10.48550/arXiv.2504.12985 (2025). [36] W. Jiang, T. Liang, H. Bu, J. Xu, and W. Ouyang, Moir´ e-driven interfacial thermal transport in twisted transition metal dichalcogenides, ACS Nano 19 , 16287 (2025). [37] Z. Fan, Improving the accuracy of the neuroevolution machine learning potential for multi-component sys-tems, J. Phys. Condens. Matter 34 , 125902 (2022). [38] Z. Fan, Y. Wang, P. Ying, K. Song, J. Wang, Y. Wang, Z. Zeng, K. Xu, E. Lindgren, J. M. Rahm, et al. ,GPUMD: A package for constructing accurate machine-learned potentials and performing highly efficient atomistic simulations, J. Chem. Phys. 157 , 114801 (2022). [39] R. Drautz, Atomic cluster expansion for accurate and transferable interatomic potentials, Phys. Rev. B 99 ,014104 (2019). [40] A. H. Larsen, J. J. Mortensen, J. Blomqvist, I. E. Castelli, R. Christensen, M. Dulak, J. Friis, M. N. Groves, B. Hammer, C. Hargus, et al. , The atomic simulation environment—a python library for working with atoms, J. Phys. Condens. Matter 29 , 273002 (2017). [41] J. Zeng, X. Peng, Y.-B. Zhuang, H. Wang, F. Yuan, D. Zhang, R. Liu, Y. Wang, P. Tuo, Y. Zhang, Y. Chen, Y. Li, C. T. Nguyen, J. Huang, A. Peng, M. Rynik, W.-H. Xu, Z. Zhang, X.-Y. Zhou, T. Chen, J. Fan, W. Jiang, B. Li, D. Li, H. Li, W. Liang, R. Liao, L. Liu, C. Luo, L. Ward, K. Wan, J. Wang, P. Xiang, GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+C. Zhang, J. Zhang, R. Zhou, J.-X. Zhu, L. Zhang, and H. Wang, dpdata: A scalable python toolkit for atomistic machine learning data sets, J. Chem. Inf. Model. 65 , 11497 (2025). [42] S. P. Ong, W. D. Richards, A. Jain, G. Hautier, M. Kocher, S. Cholia, D. Gunter, V. L. Chevrier, K. A. Persson, and G. Ceder, Python materials genomics (pymatgen): A robust, open-source python library for materials analysis, Comput. Mater. Sci. 68 , 314 (2013). [43] V. Wang, N. Xu, J.-C. Liu, G. Tang, and W.-T. Geng, VASPKIT: A user-friendly interface facilitating high-throughput computing and analysis using vasp code, Comput. Phys. Commun. 267 , 108033 (2021). [44] W.-T. Geng, Y.-C. Liu, N. Xu, G. Tang, Y. Kawazoe, and V. Wang, Empowering materials science with VASPKIT: A toolkit for enhanced simulation and analysis, Nat. Protoc. 20 , 3143 (2025). [45] W. Yi, G. Tang, X. Chen, B. Yang, and X. Liu, qvasp: A flexible toolkit for vasp users in materials simulations, Comput. Phys. Commun. 257 , 107535 (2020). [46] G. Kresse and J. Hafner, Ab initio molecular-dynamics simulation of the liquid-metal–amorphous-semiconductor transition in germanium, Phys. Rev. B 49 , 14251 (1994). [47] G. Kresse and J. Furthm¨ uller, Efficient iterative schemes for ab initio total-energy calculations using a plane-wave basis set, Phys. Rev. B 54 , 11169 (1996). [48] T. D. K¨ uhne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. Laino, R. Z. Khaliullin, O. Sch¨ utt, F. Schiffmann, et al. , CP2K: An electronic structure and molecular dynamics software package-quickstep: Efficient and accurate electronic structure calculations, J. Chem. Phys. 152 , 194103 (2020). [49] W. Zhou, D. Zheng, Q. Liu, D. Lu, Y. Liu, P. Lin, Y. Huang, X. Peng, J. J. Bao, C. Cai, et al. , ABACUS: An electronic structure analysis package for the AI Era, arXiv 10.48550/arXiv.2501.08697 (2025). [50] A. P. Thompson, H. M. Aktulga, R. Berger, D. S. Bolintineanu, W. M. Brown, P. S. Crozier, P. J. In’t Veld, A. Kohlmeyer, S. G. Moore, T. D. Nguyen, et al. , Lammps-a flexible simulation tool for particle-based materials modeling at the atomic, meso, and continuum scales, Comput. Phys. Commun. 271 , 108171 (2022). [51] F. Han, Y. Zhu, X. He, Y. Mo, and C. Wang, Electrochemical stability of Li 10 GeP 2S12 and Li 7La 3Zr 2O12 
+
+solid electrolytes, Adv. Energy Mater. 6, 1501590 (2016). [52] Z. Yan, Z. Fan, and Y. Zhu, Improving robustness and training efficiency of machine-learned potentials by incorporating short-range empirical potentials, J. Chem. Inf. Model. 66 , 1406 (2026). [53] Y. Chen, E. Rangasamy, C. R. dela Cruz, C. Liang, and K. An, A study of suppressed formation of low-conductivity phases in doped Li 7La 3Zr 2O12 garnets by in situ neutron diffraction, J. Mater. Chem. A 3,22868 (2015). [54] S. Wang, Y. Liu, and Y. Mo, Frustration in super-ionic conductors unraveled by the density of atomistic states, Angew. Chem. Int. Ed. 62 , e202215544 (2023). [55] M. E. Lines and A. M. Glass, Principles and Applications of Ferroelectrics and Related Materials (Clarendon Press, Oxford, 1977). [56] D. Damjanovic, P. Muralt, and N. Setter, Ferroelectric sensors, IEEE Sens. J. 1, 191 (2001). [57] V. Garcia and M. Bibes, Ferroelectric tunnel junctions for information storage and processing, Nat. Commun. 
+
+5, 4289 (2014). [58] F. Li, B. Wang, X. Gao, D. Damjanovic, L.-Q. Chen, and S. Zhang, Ferroelectric materials toward next-generation electromechanical technologies, Science 389 , eadn4926 (2025). [59] G. Shirane and S. Hoshino, On the phase transition in lead titanate, J. Phys. Soc. Jpn. 6, 265 (1951). [60] R. Xu, J. Huang, E. S. Barnard, S. S. Hong, P. Singh, E. K. Wong, T. Jansen, V. Harbola, J. Xiao, B. Y. Wang, S. Crossley, D. Lu, S. Liu, and H. Y. Hwang, Strain-induced room-temperature ferroelectricity in SrTiO 3 membranes, Nat. Commun. 11 , 3141 (2020). [61] X. Li, T. Qiu, J. Zhang, E. Baldini, J. Lu, A. M. Rappe, and K. A. Nelson, Terahertz field–induced ferro-electricity in quantum paraelectric SrTiO 3, Science 364 , 1079 (2019). [62] Y. Tang, Y. Zhu, X. Ma, A. Y. Borisevich, A. N. Morozovska, E. A. Eliseev, W. Wang, Y. Wang, Y. Xu, Z. Zhang, et al. , Observation of a periodic array of flux-closure quadrants in strained ferroelectric PbTiO 3
+
+films, Science 348 , 547 (2015). [63] A. K. Yadav, Observation of polar vortices in oxide superlattices, Nature 530 , 198 (2016). [64] S. Das, Observation of room-temperature polar skyrmions, Nature 568 , 368 (2019). [65] J. Yang and S. Liu, Topological phase transitions in perovskite superlattices driven by temperature, electric field, and doping, Phys. Rev. B 110 , 214112 (2024). [66] J. Wu, J. Yang, L. Ma, L. Zhang, and S. Liu, Modular development of deep potential for complex solid solutions, Phys. Rev. B 107 , 144102 (2023). [67] Y. Qi, S. Liu, I. Grinberg, and A. M. Rappe, Atomistic description for temperature-driven phase transitions in BaTiO 3, Phys. Rev. B 94 , 134308 (2016). GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP Zihan Yan et al. 
+
+[68] H. Wu, R. He, Y. Lu, and Z. Zhong, Large-scale atomistic simulation of quantum effects in SrTiO 3 from first principles, Phys. Rev. B 106 , 224102 (2022). [69] S. Liu and R. E. Cohen, Origin of stationary domain wall enhanced ferroelectric susceptibility, Phys. Rev. B 95 , 094102 (2017). [70] D. J. Evans, Homogeneous NEMD algorithm for thermal conductivity—application of non-canonical linear response theory, Phys. Lett. A 91 , 457 (1982). [71] Z. Fan, H. Dong, A. Harju, and T. Ala-Nissila, Homogeneous nonequilibrium molecular dynamics method for heat transport and spectral decomposition with many-body potentials, Phys. Rev. B 99 , 064308 (2019), 1805.00277.
