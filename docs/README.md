@@ -6,35 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-20
-- 运行时间：2026-03-20 20:36:04 UTC
+- 最新运行日期：2026-03-21
+- 运行时间：2026-03-21 20:22:26 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：1
 - 精读区：0
-- 速读区：4
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦分子动力学前沿，涵盖从变分原理几何框架到 AI 轨迹建模的理论与工具创新。
-重点关注基于状态空间模型（SSM）的生物分子轨迹模拟，以及大幅降低 GPUMD 使用门槛的全新工具包 GPUMDkit。
-建议尝试利用新发布的工具包提升模拟效率，并关注 AI 模型在原子尺度动力学中的跨界应用。
-- 详情：[/202603/20/README](/202603/20/README)
+今日聚焦 AI 物理前沿，探索利用傅里叶神经算子（FNO）实现高效的电子密度预测。
+重点关注 V2Rho-FNO 模型，它通过算子学习为量子化学中的势能到密度映射提供了新方案。
+建议对材料模拟与深度学习交叉感兴趣的读者，关注神经算子在加速微观物理计算中的应用。
+- 详情：[/202603/21/README](/202603/21/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle](/202603/20/2603.13923v1-a-primary-unified-geometric-framework-of-molecular-reaction-dynamics-based-on-the-variational-principle)  
+1. [V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction](/202603/21/2603.15669v1-v2rho-fno-fourier-neural-operator-for-electronic-density-prediction)  
    标签：评分：6.0/10、query:qmmm
-   evidence：分子反应动力学与势能面
-2. [GPUMDkit: A User-Friendly Toolkit for GPUMD and NEP](/202603/20/2603.17367v1-gpumdkit-a-user-friendly-toolkit-for-gpumd-and-nep)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：分子动力学模拟的量子力学精度
-3. [Atomic Trajectory Modeling with State Space Models for Biomolecular Dynamics](/202603/20/2603.17633v1-atomic-trajectory-modeling-with-state-space-models-for-biomolecular-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：生物分子系统原子级分子动力学轨迹的生成框架
-4. [The Convergence Frontier: Integrating Machine Learning and High Performance Quantum Computing for Next-Generation Drug Discovery](/202603/20/2603.17790v2-the-convergence-frontier-integrating-machine-learning-and-high-performance-quantum-computing-for-next-generation-drug-discovery)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：将量子力学整合到药物发现和从头算分子动力学中
+   evidence：电子密度的量子化学预测
 
 
 <div class="dpr-home-promo-card">

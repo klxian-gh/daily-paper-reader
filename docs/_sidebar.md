@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-21 <!--dpr-date:20260321-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/21/2603.15669v1-v2rho-fno-fourier-neural-operator-for-electronic-density-prediction" data-sidebar-item="{&quot;title&quot;: &quot;V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.15669v1-v2rho-fno-fourier-neural-operator-for-electronic-density-prediction&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;电子密度的量子化学预测&quot;}">V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction</a>
   * 2026-03-20 <!--dpr-date:20260320-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/20/2603.13923v1-a-primary-unified-geometric-framework-of-molecular-reaction-dynamics-based-on-the-variational-principle" data-sidebar-item="{&quot;title&quot;: &quot;A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.13923v1-a-primary-unified-geometric-framework-of-molecular-reaction-dynamics-based-on-the-variational-principle&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;分子反应动力学与势能面&quot;}">A Primary Unified Geometric Framework of Molecular Reaction Dynamics Based on the Variational Principle</a>

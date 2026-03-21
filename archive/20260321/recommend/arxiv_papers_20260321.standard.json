@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-21T20:22:08.381360+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.15669v1",
+      "title": "V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction",
+      "abstract": "Density functional theory (DFT) is a cornerstone of computational chemistry and materials science, but its computational cost limits its use in large-scale and high-throughput applications. While machine learning has accelerated energy prediction for specific molecular classes, transferable prediction of electron density across diverse chemical spaces remains challenging. Here, we present a universal framework based on Fourier Neural Operators (FNOs) that directly learns the mapping from external potentials to electron density distributions. Unlike conventional approaches that rely on explicit atomic orbitals, basis sets, or handcrafted descriptors, the proposed method captures global electronic interactions and long-range correlations through operator learning in the spatial-frequency domain. Trained on datasets spanning multiple elements and molecular geometries, the model achieves zero-shot generalization to entirely unseen molecular systems and accurately predicts their electron densities without retraining. This transferability arises from the intrinsic ability of FNOs to represent global structure in continuous fields. Our work establishes neural operator learning as a promising route for fast, accurate, and transferable electronic structure prediction, with potential applications in high-throughput screening and chemical space exploration.",
+      "authors": [
+        "Yingdi Jin",
+        "Xinming Qin",
+        "Ruichen Liu",
+        "Jie Liu",
+        "Zhenyu Li",
+        "Jinlong Yang"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "quant-ph"
+      ],
+      "published": "2026-03-13T06:53:13+00:00",
+      "link": "https://arxiv.org/pdf/2603.15669v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemical prediction of electron density",
+      "llm_evidence_cn": "电子密度的量子化学预测",
+      "llm_evidence": "电子密度的量子化学预测",
+      "canonical_evidence": "电子密度的量子化学预测",
+      "llm_tldr_en": "Presents a Fourier Neural Operator framework for predicting electron density in computational chemistry.",
+      "llm_tldr_cn": "提出了一种用于计算化学中预测电子密度的傅里叶神经算子框架。",
+      "llm_tldr": "提出了一种用于计算化学中预测电子密度的傅里叶神经算子框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
