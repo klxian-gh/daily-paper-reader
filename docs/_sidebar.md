@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-22 <!--dpr-date:20260322-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/22/2603.18339v1-elucidating-norrish-type-i-reactive-pathways-by-ultrafast-x-ray-absorption-spectroscopy" data-sidebar-item="{&quot;title&quot;: &quot;Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.18339v1-elucidating-norrish-type-i-reactive-pathways-by-ultrafast-x-ray-absorption-spectroscopy&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;利用从头算模拟阐明反应路径&quot;}">Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy</a>
   * 2026-03-21 <!--dpr-date:20260321-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/21/2603.15669v1-v2rho-fno-fourier-neural-operator-for-electronic-density-prediction" data-sidebar-item="{&quot;title&quot;: &quot;V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.15669v1-v2rho-fno-fourier-neural-operator-for-electronic-density-prediction&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;电子密度的量子化学预测&quot;}">V2Rho-FNO: Fourier Neural Operator for Electronic Density Prediction</a>

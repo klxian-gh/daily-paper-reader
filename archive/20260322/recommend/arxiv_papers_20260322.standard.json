@@ -1,0 +1,73 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-22T20:08:19.769750+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.18339v1",
+      "title": "Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy",
+      "abstract": "Norrish type I reactions selectively cleave carbon-carbon bonds directly adjacent to carbonyl groups. Despite their broad use in combination with aromatic carbonyls for additive manufacturing and dental UV curing applications, the nature of the photochemically active state and its population mechanism remain insufficiently understood. Detailed mechanistic insight requires mapping of the photoexcited population flow involving internal conversion and intersystem crossing. We present a time-domain study of gas phase acetophenone as a prototypical aromatic carbonyl combining soft X-ray time-resolved near-edge X-ray absorption fine structure (TR-NEXAFS) spectroscopy at the oxygen K-edge with ab initio multiple spawning (AIMS) simulations. Exploiting the specific sensitivity of TR-NEXAFS spectroscopy to states with $nπ^*$ character, we observe population transfer from the initially excited $^1ππ^*$ state to the $^1nπ^*$ state with a time constant of $(0.13 \\pm 0.02)$ ps after an initial induction period of $(0.12 \\pm 0.02)$ ps without population transfer, in quantitative agreement with the AIMS simulations. The population in the $^1nπ^*$ state subsequently decays via intersystem crossing, likely mediated by a $^3ππ^*$ state, within $(3.17 \\pm 0.66)$ ps to a long-lived $^3nπ^*$ state, which is presumed to be active towards Norrish type I chemistry.",
+      "authors": [
+        "Martin Graßl",
+        "Pablo Unzueta",
+        "Andreas E. Hillers-Bendtsen",
+        "Yusong Liu",
+        "Diptarka Hait",
+        "Alice E. Green",
+        "Xinxin Cheng",
+        "Felix Allum",
+        "Taran Driver",
+        "Ruaridh Forbes",
+        "James. M. Glownia",
+        "Erik Isele",
+        "Kirk A. Larsen",
+        "Xiang Li",
+        "Ming-Fu Lin",
+        "Razib Obaid",
+        "Adam Summers",
+        "Emily Thierstein",
+        "Jun Wang",
+        "James P. Cryan",
+        "Matthias F. Kling",
+        "Todd J. Martinez",
+        "Thomas J. A. Wolf"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-18T22:49:16+00:00",
+      "link": "https://arxiv.org/pdf/2603.18339v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "elucidating reactive pathways using ab initio simulations",
+      "llm_evidence_cn": "利用从头算模拟阐明反应路径",
+      "llm_evidence": "利用从头算模拟阐明反应路径",
+      "canonical_evidence": "利用从头算模拟阐明反应路径",
+      "llm_tldr_en": "Combines X-ray spectroscopy and ab initio simulations to study photochemical reaction pathways.",
+      "llm_tldr_cn": "结合X射线光谱和从头算模拟研究光化学反应路径。",
+      "llm_tldr": "结合X射线光谱和从头算模拟研究光化学反应路径。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

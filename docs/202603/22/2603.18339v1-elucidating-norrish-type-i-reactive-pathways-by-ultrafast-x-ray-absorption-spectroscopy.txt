@@ -1,0 +1,479 @@
+Title: Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy
+
+URL Source: https://arxiv.org/pdf/2603.18339v1
+
+Published Time: Fri, 20 Mar 2026 00:33:02 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+# Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy 
+
+## Martin Graßl 1,2 , Pablo Unzueta 1,3 , Andreas E. Hillers-Bendtsen 1,3 ,Yusong Liu 1,4 , Diptarka Hait 1,3,5,6 , Alice E. Green 1,7,8 , Xinxin Cheng 4,Felix Allum 1, 9 , Taran Driver 1,4 , Ruaridh Forbes 4,10 , James. M. Glownia 4,Erik Isele 1, Kirk A. Larsen 1,4 , Xiang Li 4, Ming-Fu Lin 4, Razib Obaid 4,Adam Summers 1,4 , Emily Thierstein 1, Jun Wang 1, James P. Cryan 1,4 ,Matthias F. Kling 1,2,4 , Todd J. Martinez 1,3 , and Thomas J. A. Wolf 1,4 1Stanford PULSE Institute, SLAC National Accelerator Laboratory, 2575 Sand Hill Road, Menlo Park, CA 94025, USA. 
+
+> 2
+
+## Department of Physics, Ludwig-Maximilians-Universit¨ at M¨ unchen, Am Coulombwall 1, D-85748 Garching, Germany. 
+
+> 3
+
+## Department of Chemistry, Stanford University, 333 Campus Drive, Stanford, CA 94305, USA 
+
+> 4
+
+## Linac Coherent Light Source, SLAC National Accelerator Laboratory, 2575 Sand Hill Road, Menlo Park, CA 94025, USA. 
+
+> 5
+
+## Department of Chemistry, Columbia University, New York, New York 10027, United States. 
+
+> 6
+
+## Initiative for Computational Catalysis, Flatiron Institute, New York, New York 10010, United States. 
+
+> 7
+
+## European XFEL, Holzkoppel 4, 22869 Schenefeld, Germany. 
+
+> 8
+
+## EaStCHEM School of Chemistry, University of Edinburgh, Edinburgh EH9 3FJ, U.K. 
+
+> 9
+
+## Deutsches Elektronen-Synchrotron DESY, Notkestr. 85, 22607 Hamburg, Germany. 
+
+> 10
+
+## Department of Chemistry, University of California, Davis, California 95616, USA. March 20, 2026  
+
+> Norrish type I reactions selectively cleave carbon-carbon bonds directly adjacent to carbonyl groups. Despite their broad use in combination with aromatic carbonyls for additive manufacturing and dental UV curing applications, the nature of the photo-chemically active state and its population mechanism remain insufficiently understood. 1
+> arXiv:2603.18339v1 [physics.chem-ph] 18 Mar 2026
+
+Detailed mechanistic insight requires mapping of the photoexcited population flow in-volving internal conversion and intersystem crossing. We present a time-domain study of gas phase acetophenone as a prototypical aromatic carbonyl combining soft X-ray time-resolved near-edge X-ray absorption fine structure (TR-NEXAFS) spectroscopy at the oxygen K-edge with ab initio multiple spawning (AIMS) simulations. Exploiting the specific sensitivity of TR-NEXAFS spectroscopy to states with nπ ∗ character, we observe population transfer from the initially excited 1ππ ∗ state to the 1nπ ∗ state with a time constant of (0 .13 ± 0.02) ps after an initial induction period of (0 .12 ± 0.02) ps without population transfer, in quantitative agreement with the AIMS simulations. The popula-tion in the 1nπ ∗ state subsequently decays via intersystem crossing, likely mediated by a 
+
+> 3
+
+ππ ∗ state, within (3 .17 ± 0.66) ps to a long-lived 3nπ ∗ state, which is presumed to be active towards Norrish type I chemistry. 
+
+# 1 Introduction 
+
+The efficient conversion of light into chemical and mechanical energy is pivotal to many chemical and biological reactions. It often involves radiationless de-excitation processes taking place on ultrafast timescales and is mediated by the coupling of electronic and nu-clear dynamics, which cannot be described within the Born-Oppenheimer approximation. Such nonadiabatic dynamics in the vicinity of conical intersections (CIs) still challenge experimental and quantum chemical investigation approaches. In many cases, the chal-lenge in predicting and understanding ultrafast photochemical reaction mechanisms is further augmented by the presence of intersystem crossing (ISC) pathways providing the photoexcited molecules access to different spin state manifolds. An example is the class of aromatic carbonyls, which exhibit rich photochemistry including Norrish type I and type II, hydrogen atom transfer, and Paterno-Buechi, reactions. [1, 2] Specifically, their Nor-rish type reactivity is widely used in synthetic applications [3] and photopolymerization[4] with applications in additive manufacturing[5] and dentistry.[6] It is well-established that the Norrish-type reactions of aromatic carbonyls, follow-ing ππ ∗ excitation, take place in their triplet manifolds enabled by close-to-unity ISC quantum yields.[7] The high efficiency of spin-forbidden ISC is enabled by the presence of excited singlet and triplet states with ππ ∗ and nπ ∗ character, which are close in en-ergy and exhibit strong spin-orbit coupling according to the El Sayed selection rule.[8] However, it is unclear if the triplet manifold is accessed directly via 1ππ ∗/3nπ ∗ ISC or indirectly via 1ππ ∗/1nπ ∗ internal conversion (IC) followed by 1nπ ∗/3ππ ∗ ISC (see Fig. 1 c). Additionally, the electronic character of the state in which the Norrish type I dissoci-ation takes place is unclear. The nature of the access to the triplet manifold and of the populated states has important consequences for competing processes, such as IC to the electronic ground state, and the potential of their control through modifications of the reactant. A promising approach to gaining a detailed understanding of ultrafast photochemical reaction mechanisms is the investigation of comparably small, organic, and isolated model systems in the gas phase with specifically targeted experimental observables.[9–17] This approach also allows for detailed comparisons to quantum chemical simulations of these time-dependent experimental observables.[18–35] Such comparisons have the promise to lead to a predictive understanding of ultrafast photochemistry in the future. Here, we investigate these pathways in a prototypical aromatic carbonyl, acetophenone 2(AP), excited at 267 nm. The structure of AP is shown in Fig. 1. Its absorption band associated with the ππ ∗ transition has its maximum at 275 nm and is well-separated from a higher-lying ππ ∗ transition centered at 238 nm.[36] Additionally, it exhibits a very weak band at 320 nm, which is associated with its 1nπ ∗ state. Photoexcitation of the 1ππ ∗ state of AP leads to ISC and to the formation of phenylcarbonyl and methyl radicals via a Norrish type I reaction with unity quantum yield and a time constant of 2 ns.[36, 37]. An alternative Norrish type I reaction channel, yielding phenyl and acetaldehyde radicals, has not been observed. Intersystem crossing was inferred to take place within 260 fs after 1ππ ∗ excitation from the bandwidth of the corresponding line in photoexcitation spectroscopy of jet-cooled AP.[38] The first time-domain investigation of gas phase AP was performed using time-resolved photoelectron spectroscopy.[39] A lifetime of 140 fs for the 1ππ ∗ state was obtained. Additionally, the structural dynamics of AP were investigated by ultrafast electron diffraction (UED).[40, 41] The UED study finds a channel bifurcation for the photoinduced process. The 3ππ ∗ state is populated within 50 ps. Additionally, the study finds a Norrish type I reaction channel directly from the 1nπ ∗ singlet state within 100 ps. These previous results leave unanswered questions for Norrish type I reaction dynam-ics of AP and of aromatic carbonyls in general, specifically about (1) the role of the 1nπ ∗
+
+state, (2) its lifetime, and (3) the character of the reactive triplet state. We address these gaps with a combined experimental and simulation study in the gas phase using soft X-ray time-resolved near-edge X-ray absorption fine structure (NEXAFS) spectroscopy at the oxygen edge and ab initio multiple spawning (AIMS) simulations.[42] It was previously demonstrated that time-resolved NEXAFS spectroscopy can provide selective sensitivity to population in excited states of nπ ∗ character.[9, 43] This selectivity arises from the strong dependence of NEXAFS cross-sections on the spatial overlap of core and valence orbital densities. Hence, the strongly localized nature of the lone pair electron hole in the nπ ∗ state at the heteroatom site (see Fig. 1 b) yields substantially larger cross-sections for resonances with the heteroatom core orbitals compared to, for example, strongly delocalized π electron holes in states of ππ ∗ character. The AIMS simulations are performed using the hole-hole Tamm-Dancoff approxi-mated ( hh -TDA) density functional theory electronic structure method, which has been shown to be an accurate and efficient technique for molecules with low-lying nπ ∗ and ππ ∗
+
+excited states, and also amenable to simulation of transient NEXAFS spectra [44–46]. 
+
+# 2 Experimental 
+
+Time-resolved NEXAFS spectroscopy is performed at the Linac Coherent Light Source (LCLS) free electron laser (FEL) facility, SLAC National Accelerator Laboratory, us-ing the time-resolved atomic, molecular and optical science (TMO) instrument [47]. A schematic representation of the experimental setup is shown in Figure 1 a). The sample is purchased from Sigma Aldrich and evaporated using a bubbler seeded with helium through a gas needle directly into the overlap region of the optical and X-ray laser in an ultra high vacuum chamber. The sample is excited by 266 nm laser pulses with a duration of 45 fs full width at half maximum (FWHM), a focus diameter of 212 μmFWHM, and a pulse energy of 18.2 μJ. Soft X-ray pulses with 10 fs duration and an average bandwidth of 2.6 eV FWHM are focused to a diameter of 12 um FWHM using a pair of Kirkpatrick-Baez mirrors and used to probe the sample in the pre-edge region 3Figure 1: Schematic of the experimental setup. a) A 266 nm UV laser pulse (blue) excites the acetophenone sample with a variable delay τ relative to the X-ray pulse (purple), which has a tunable photon energy between 520 and 535 eV. The sample is injected into the interaction region using a gas jet, and resonant Auger–Meitner electrons produced by the X-ray-sample interaction are collected by a magnetic bottle spectrometer. The X-ray pulse spectrum is measured by dispersing the beam with a Fresnel zone plate (FZP) onto a Ce:YAG scintillator. b) Electron configurations (right) and isosurface representation (left) of the natural transition orbitals defining the the 1nπ ∗ and 1ππ ∗ electronic character of the relevant excited states. In the ground state, all molecular orbitals are filled up to the orbital with n character. The lowest unoccupied molecular orbital has π∗ character. The UV laser excites the molecule into the lowest 1ππ ∗ state by promoting one electron from an occupied molecular orbital with π character into the π∗ orbital (blue arrow). Through internal conversion the molecule can transition into a 1nπ ∗ state, where an electron from the n orbital fills the hole in the π orbital. The X-rays can resonantly excite oxygen 1s electrons into valence orbital vacancies (purple arrow). c) Sketch of the proposed reaction pathway leading from the the 1ππ ∗ state through a conical intersection (CI) between to the 1nπ ∗ state, followed by intersystem crossing (ISC) to the 3ππ ∗ state and subsequent internal conversion to the 3nπ ∗ state. of the oxygen K-edge between 520 and 535 eV. Their central photon energy is tuned by varying the gaps of the undulators. We take advantage of the strongly fluctuating spec-4tral distribution of self-amplified spontaneous emission (SASE) pulses created by LCLS by applying the spectral domain ghost imaging technique to improve the energy resolu-tion to ≈0.1 eV.[48] Thereby the absorbance of the sample is correlated with the photon spectrum of the X-rays on a pulse-by-pulse basis [49, 50]. The absorbance is measured by detecting the Auger-Meitner electron yield, which is proportional to the photon energy-dependent absorption cross-section of the sample, with a magnetic bottle spectrometer [51]. The spectrum of the FEL is obtained on a shot-by-shot basis using an in-line Fresnel zone plate (FZP) spectrometer downstream from the magnetic bottle spectrometer [52]. The relative time delay between UV and X-ray pulses is measured on a shot-by-shot basis with an arrival time monitor (ATM) [53]. To ensure that the experiment takes place in the linear absorption regime, the intensity of the transient signal at 527 eV is measured for a range of UV pump intensities (see the Supplementary Information (SI), section 3, for details). X-ray pulses are delayed with respect to UV laser pulses between -2 ps and 20 ps. The transient NEXAFS spectra are obtained by evaluating the difference signal, where the average of the first four time steps preceding t0 is used as a background refer-ence. The dataset of individual ATM-tagged shots is sorted into delay bins of ≈ 60 fs for the region between -2 ps and 3 ps by varying the exact bin-width to maintain a compara-ble number of shots for the ghost imaging evaluation. Additionally, transient spectra are obtained in separate measurements at delays of 5, 10, and 20 ps. The NEXAFS spectra are calibrated using the literature spectra of benzaldehyde and CO 2 [54, 55] (see the SI, section 2). The nonadiabatic dynamics within the singlet state manifold were simulated using the AIMS method[42, 56] in combination with electronic structure calculations employ-ing the fomo-hh-TDA-BHandHLYP/def2-SVP methodology[44, 45, 57–60] with constant smearing of the electrons across the active orbitals as implemented in TeraChem[61, 62]. 50 initial conditions were sampled from a 0 K Wigner distribution[63] and propagated for 45000 a.u. (corresponding to 1.089 ps) with a timestep of 0.5 fs except for regions with high nonadiabatic coupling, where the stepsize was reduced to 0.25 fs. The same electronic structure level was also employed to generate time-resolved NEXAFS spectra from the AIMS simulations, where we only compute the spectrum for the first 500 fs, since the electronic state populations barely change beyond this point. The static NEX-AFS spectra of the ground state, the 1nπ ∗ state, and the 3nπ ∗ state were compared using the OO-DFT/SCAN level of theory[64, 65] with scalar relativistic effects included using the spin-free exact two component model[66] in combination with the aug-pcX-2 basis[67] on Oxygen and the aug-pcseg-1 basis[68] on all other atoms as implemented in QChem[69], using the respective S 0, S 1, and T 1 BHandHLYP/def2-SVP optimized ge-ometries. To facilitate comparison with the experimental data, the simulated spectrum is convolved with a 50 fs Gaussian function to account for the experimental instrument response function. Furthermore, an offset of 4.0 eV is applied to match the maxima of simulated (527.0 eV) and experimental (531.0 eV) π∗ resonance signatures in the ground state spectra. Additional details on the simulation methodology can be found in the SI section 5. 5Figure 2: Acetophenone absorption spectrum before (blue) and 0.5 ps after UV excitation (orange). UV excitation induces a new peak at 527 eV and a depletion to the main peak of the ground state spectrum at 531 eV, shown by the red and blue areas, respectively. 
+
+# 3 Results and discussion 
+
+## 3.1 Ground state and excited state NEXAFS spectra 
+
+The blue line in Figure 2 shows the experimental ground state NEXAFS spectrum of AP. The energy resolution of the spectrum ( ≈ 0.1 eV) is significantly beyond the bandwidth of the FEL pulses ( ≈ 2.6 eV) and is obtained using spectral domain ghost imaging (see the section 2 and additional details in the SI section 1) [50]. The main peak of the spectrum at 531.0 eV corresponds to the π∗ resonance of AP, a resonant transition of an oxygen 1s electron into the lowest unoccupied molecular orbital (LUMO), which has carbonyl π∗
+
+character (see Figure 1b)). The overall shape of the measured spectrum closely resembles the spectrum of the structurally similar benzaldehyde molecule reported in the literature [55]. See the SI section 2 for a complete characterization of the spectrum. The orange line in Figure 2 shows the NEXAFS spectrum taken 0.5 ps after pho-toexcitation at 266 nm. In comparison to the static spectrum, the excitation leads to the appearance of an additional red-shifted peak at 527.0 eV and to a depletion of the ground state absorption peak at 531.0 eV, illustrated by the red and blue areas, respectively. The observed UV-induced features can be explained by a change in electron configuration in the excited sample. The UV laser excites a valence electron into a previously unoccupied molecular orbital. The single electron transition results in an electron hole in a formerly occupied molecular orbital, which in turn enables a new, red-shifted resonant transition of an oxygen 1s electron into the created hole leading to the peak at 527.0 eV. Notably, the energy difference of the UV-induced peak with respect to the π∗ resonance of ≈4eV aligns closely with the UV pump photon energy of 4.65 eV. The UV excitation also reduces the intensity of the ground state π∗ resonance, which indicates that the LUMO is half-filled in the excited state. 
+
+## 3.2 Signatures of sub-picosecond dynamics 
+
+Figure 3 b) shows the experimental time-dependent difference spectrum of AP for pump-probe delays from -1 to 20 ps resulting from subtracting the static from the UV-excited NEXAFS spectra. For comparison, a simulated spectrum covering time delays up to 0.5 ps after optical excitation is shown in Figure 3 c). The simulated spectrum is based on the AIMS method,[42] with the electronic structure calculations based on hh -TDA 6Figure 3: Transient oxygen-edge spectra of AP. a) Comparison of the time evolution of specific regions in the experimental and simulated time-dependent near-edge X-ray absorption fine structure (NEXAFS) difference spectra showing a clear signature of a transient enhancement (I) and depletion (II). b) False-color plot of the experimental time-dependent NEXAFS difference spectra including labels for signatures I and II. c) False-color plot of the simulated time-dependent NEXAFS difference spectra within the first 0.5 ps after UV excitation, based on AIMS simulations. The traces in a) are obtained by averaging the experimental NEXAFS difference signal from panel b) in two energy ranges: (526.7–527.3) eV (red, enhancement) and (529.7–530.9) eV (blue, depletion). The red trace is fitted with a kinetic model over the full 20 ps delay range, while the blue trace is fitted with an error function to capture its onset. The black squares and black dashed line in a) represent averages from the simulated NEXAFS difference spectra from panel c) over (526.4–526.9) eV (enhancement) and (530.3–530.8) eV (depletion), respectively. The time-dependent intensity of the (526.4–526.9) eV in the simulated spectra is fitted by an exponential rise (solid black line). Experimental error bars represent the standard error of the mean, estimated by bootstrapping. The experimental and simulated data are normalized to the corresponding fits (black and red) in panel a). density functional theory (see section 2 and SI section 5 for details). Overall, the simulations show excellent agreement with the experimental results. Both experimental and simulated spectra show the onset of the ground state bleach signature in the 530 - 531 eV region at time zero (II in Fig. 3 b)). In agreement with the experimental data, the most prominent feature in the simulated spectra is a peak red-shifted from the ground state π∗ resonance. The simulation accurately predicts the energetic position of the transient feature relative to the π∗ resonance, with a deviation of only 0.3 eV and a slight overestimation of the peak width. The relative intensity of the dominant feature (I in Fig. 3 b)) is also well reproduced (see Fig. 3 a). Moreover, experiment and simulation quantitatively agree on the delay of its temporal onset from the onset of the bleach feature. The simulated difference spectra also show a weak and broad enhancement around 529 eV which appears together with the bleach feature at time zero. Some evidence of a similar feature can also be observed within the first 0.3 ps after time zero. However, it is too 7close to the noise level to make definitive statements. The reduced signal-to-noise ratio in the depletion region of the experimental difference spectrum arises from the strong ground-state absorption around 531 eV, which both suppresses relative changes due to the large static signal and introduces additional artifacts in the ghost imaging analysis (see the SI section 1 for details). The onset of the bleach feature marks the experimental time zero, since it corresponds to the loss of some of the ground state population. The weak character of the enhancement which appears at 529 eV co-timed with the bleach feature agrees with expectations based on the ππ ∗ character of the initially excited state, which exhibits an electron hole in the strongly delocalized π orbital (see the orbital visualization in figure 1). Such a hole generally yields weak NEXAFS cross-sections due to the limited overlap with the strongly localized O 1s orbital. The simulation confirms this assignment (see SI section 6). Notably, the peak at 529 eV does not correspond to a 1 s → π transition but rather originates from excitation into a higher-lying unoccupied orbital. The 1 s → π transition is located at 525.5 eV in the simulations and even weaker. Thus, it is not discernible in the experimental spectra (see a plot of the simulated 1ππ ∗ signature in the SI, section 7). Accordingly, the much stronger peak at 527 eV (526.7 eV in the simulation) must correspond to an excited state with different diabatic character. The higher intensity of this resonance can be explained by an excitation of the oxygen 1s electron into a valence hole with much stronger localization at the oxygen atom. Such a strong localization is typical for oxygen lone pair orbitals (see visualization in Figure 1), i.e., for an nπ ∗
+
+excited state character. This assignment is confirmed by the simulations (see SI section 6). Moreover, they provide crucial information about its multiplicity and the nature of the population transfer process. The 526.7 eV peak is associated with the 1nπ ∗ state populated by nonadiabatic dynamics through a 1ππ ∗/1nπ ∗ CI. 
+
+## 3.3 Signatures of picosecond dynamics 
+
+Both the nπ ∗ peak and the ground state bleach are observable throughout the entire experimentally investigated time window, suggesting that within this window the pop-ulation does not completely return to the ground state. The nπ ∗ peak intensity decays on the picosecond timescale and settles into a persistent non-zero plateau within the experimental delay range. Figure 3 b) indicates a shift of the nπ ∗ signature to higher photon energies at long delay steps. This shift is more clearly visible considering spectra at different delay steps as shown in Figure 4 a). The blue line corresponds to a delay of 0.5 ps, where the nπ ∗ signature has the highest intensity, the orange line represents the latest delay step at 20 ps. As a baseline reference the green line corresponds to the difference spectrum before time zero. Additionally, the time-dependent peak intensity and position is plotted in Fig. 4 b). The peak center shifts by approximately 0.1 eV to higher photon energies while the peak width stays approximately constant. The majority of the peak shift happens after 2.5 ps, after the initial peak intensity decay is complete. 
+
+## 3.4 Quantification by kinetic model 
+
+The delay in onset between the ground state bleach and the nπ ∗ peak, which is observed in both experimental and simulated spectra, corresponds to a delay in the onset of 1ππ ∗ state depopulation (see SI section 4). The delay is caused by the nuclear wavepacket, which is launched by photoexcitation in the Franck-Condon region of the 1ππ ∗ state, requiring 8Figure 4: Shift in the spectral position of the nπ ∗ feature. a) Transient NEXAFS spectra before time zero (green), at 0.5 ps where the nπ ∗ feature reaches its maximum intensity, and at 20 ps (orange). b) Comparison between the intensity fit (red, see Fig. 3 and equation 1) and spectral position of the nπ ∗ transient signature (teal). The spectral position is evaluated by fitting a Gaussian function to the peak. The red shaded area and the teal error bars represent the standard deviation for the respective observable obtained by bootstrapping. an induction period ti to reach the 1ππ ∗/1nπ ∗ CI seam and to enable efficient population transfer to the 1nπ ∗ state. Thus, the population dynamics between 1ππ ∗ state and 1nπ ∗
+
+state cannot be accurately described by a purely exponential model. Accordingly, we quantify the population dynamics underlying the time-dependent intensity changes of the nπ ∗ peak I (t) with the kinetic model of a delayed two stage consecutive process given by (see the SI section 4 for details), 
+
+I(t) = IRF( t) ⊗
+
+h
+
+H(t − ti) f (t)
+
+i
+
+(1) 
+
+f (t) = I0
+
+τ2
+
+τ2 − τ1
+
+
+
+e− t−ti 
+
+> τ2
+
+− e− t−ti
+
+> τ1
+
+
+
++ ηi 0
+
+
+
+1 − τ2
+
+τ2 − τ1
+
+e− t−ti 
+
+> τ2
+
++ τ1
+
+τ2 − τ1
+
+e− t−ti
+
+> τ1
+
+ (2) where A is the signal amplitude, ti the induction period, IRF ( t) the Gaussian in-strument response function with a FWHM of 50 fs, and H ( t − ti) the Heaviside step function. The first part of the equation f (t) describes the population of the 1nπ ∗ state with a cross section modulated intensity I0 and the second part describes its depopulation towards an additional state with an absorption cross section that differs by a factor η.The exponential rise and subsequent decay of the nπ ∗ peak are quantified by the time constants τ1 = (0 .13 ± 0.02) ps and τ2 = (3 .17 ± 0.66) ps, respectively. The induction period relative to time zero is quantified as ti = (0 .12 ± 0.02) ps. Time zero is sepa-rately obtained from an error function fit of the ground state bleach onset. A fit with 9an exponential rise f (t) = I0
+
+ 1 − e−(t−ti)/τ 1
+
+ of the simulated spectra yields an induction period ti = (0 .102 ± 0.001) ps and a time constant τ1 = (0 .149 ± 0.002) ps in quantitative agreement with the experimental fit. The fits are visualized in figure 3 a). The extracted value of η = (0 .45 ± 0.03) indicates that the effective cross section of the additional state, which the 1nπ ∗ state is depopulated to, amounts to only 45% of that of the 1nπ ∗ state. 
+
+## 3.5 Discussion 
+
+The TR-NEXAFS spectra presented here confirm the fast population of the 1nπ ∗ state through a directly accessible CI. The spectra reveal an induction period of (0 .12 ± 0.02) ps for the 1nπ ∗ signature. During this period the population resides in the initially populated 1ππ ∗ state that only shows a weak signature. The low signal level is expected based on the electronic character of the state and the insensitivity of the experimental observable to delocalized valence holes. The population transfers through the CI to the 
+
+> 1
+
+nπ ∗ state with a time constant of (0 .13 ± 0.02) ps, as evident from the strong signal at 527.0 eV in the NEXAFS spectra. The combination of induction period and decay time constant is by a factor of ≈2 larger than the time constant which was identified by Lee et al. for the 1ππ ∗ state depopulation in AP from time-resolved photoelectron spectra.[39] The difference can be explained by the use of a longer excitation wavelength (283 nm) in the previous study and a potential windowing effect in the photoelectron spectra due to a strong increase of the ionization potential on the path to the 1ππ ∗/1nπ ∗ CI. After reaching a maximum, the signal decreases with a time constant of (3 .17 ±
+
+0.66) ps. Within the investigated window of 20 ps the signal decreases to a level con-sistent with the reduced cross section determined by η = (0 .45 ± 0.03), accompanied by a slight energy shift. The magnitude of the drop in intensity can in principle arise from three possible processes, or a combination thereof: structural relaxation within the 
+
+> 1
+
+nπ ∗ state, its depopulation towards the ground state, or its depopulation towards the triplet manifold via ISC. Structural relaxation is highly unlikely to yield a reduction in cross-section by the observed magnitude by itself, since the cross-sections of NEXAFS transitions are typically not very sensitive to nuclear geometry.[9, 70] Similarly, ground state recovery cannot be the dominating process leading to the observed intensity re-duction, since a return to the ground state would be observable by a reduction in the intensity of the bleach region between 530 and 531 eV even at the limited signal-to-noise ratio of the experiment. However, a triplet state with nπ ∗ character could very well have a cross-section which is lowered by the observed magnitude. The assignment of the plateaued signal to a 3nπ ∗ state would also be consistent with previous observations of ISC with unity quantum yield.[36, 37] Moreover, previous multi configuration time dependent Hartree simulations starting from the 1nπ ∗ state under the approximation of a constant spin-orbit coupling value have predicted fast and efficient intersystem crossing from the 1nπ ∗ state of AP, albeit at even shorter timescales.[71] To further test the assignment of the intensity decay to ISC to a 3nπ ∗ state, we perform OO-DFT calculations, which predict the 3nπ ∗ state to have a relative cross-section of 0.56 with respect to the 1nπ ∗ state in good agreement of the value of η = 0 .45 obtained from the fit. Additionally, they predict the energy of the O 1s →n resonance to be essentially the same within the accuracy of the method (shifted by +0.01 eV with respect to the 
+
+> 1
+
+nπ ∗ state). Thus, the calculations do not contradict the experimentally observed slight shift in photon energy of the nπ ∗ resonance coinciding with the stabilization of the signal intensity for higher delays. The difference in relative intensity values from the fit to the 10 experimental data and the calculations can be explained by the accuracy of absorption cross-section predictions by the OO-DFT method. The close agreement indicates that the predominant fraction of the excited population relaxes via this channel. Additionally, a minor ground state recovery channel and effects from a weak dependence of the resonance intensity on the nuclear structure could contribute. The 3nπ ∗ state is unlikely to be populated by a direct transition from the 1nπ ∗ state. Such a transition is forbidden by the El Sayed selection rule.[8] Therefore, it would not fit the observed timescale of 3nπ ∗ state population. Instead, it is likely mediated by a very short lived 3ππ ∗ state, which the population passes before reaching the 3nπ ∗ state (see Figure 1c)). Due to the spin-forbidden nature of ISC between the 1nπ ∗ and the 3ππ ∗
+
+state, it can be expected to be significantly less efficient than the consecutive spin-allowed IC between 3ππ ∗ and 3nπ ∗ states. Thus, ISC can be expected to be the rate-limiting step and the population residing in the 3ππ ∗ state to be infinitesimally low at any given point in time. Additionally, its NEXAFS cross-section can be expected to be low due to its delocalized character, analogous to the signature of the 1ππ ∗ state. As a result the TR-NEXAFS spectra do not show a signature of this intermediate state. Our findings are in contrast to the results from previous ultrafast electron diffraction studies.[40, 41]. These identified structural signatures pointing to a bifurcation of path-ways with part of the population undergoing a Norrish type I reaction in the 1nπ ∗ state and the remaining population undergoing ISC to a 3ππ ∗ state. Based on our results, we cannot rule out a minor fraction of the population undergoing a Norrish Type I reac-tion from the singlet manifold. Such a minor channel could be more prominent in the diffraction observable due to the associated large structural change. The evidence for the electronic character of the triplet state from UED is only indirect based on the refined structure. In contrast, our results provide direct evidence for the population of a 3nπ ∗
+
+state as the dominant channel. 
+
+# 4 Conclusion 
+
+Our investigation of the excited state dynamics of AP using a combination of time-resolved NEXAFS spectroscopy at the oxygen edge and AIMS simulations at the hh -TDA DFT level showcase the ability of the NEXAFS observable to follow excited state population dynamics across states of various electronic character and multiplicity. For the case of AP, it reveals the mechanism of triplet state population through IC from the photoexcited 1ππ ∗ state through a 1ππ ∗/1nπ ∗ conical intersection followed by ISC to a 3ππ ∗ state, which is in turn followed by IC to a 3nπ ∗ state. Moreover, our study unambiguously identifies the 3nπ ∗ state as the photochemically active state for the Norrish type I reaction in AP. The identified population mechanism of the triplet manifold can likely be generalized to any aromatic carbonyl species. We find close to quantitative agreement between our experimental results and the AIMS simulations of the dynamics including the NEXAFS observable in the singlet manifold with the hh -TDA method showcasing its predictive power for investigations of excited state dynamics involving states with diverse diabatic character. 11 Acknowledgements 
+
+This work was supported by the AMOS program within the U.S. Department of En-ergy, Office of Science, Basic Energy Sciences, Chemical Sciences, Geosciences, and Bio-sciences Division under Contract No. DE-AC02-76SF00515. P.U. acknowledges support by the National Science Foundation MPS-Ascend Postdoctoral Research Fellowship, un-der Grant No. 2213324. A.E.H.B. acknowledges financial support from the Novo Nordisk Foundation under grant reference number NNF24OC0089345. D.H. was a Stanford Sci-ence Fellow for the initial stages of this work. The Flatiron Institute is a division of the Simons Foundation. A.E.G. was supported by the European Union, through Horizon Europe Project No. 123-CO: 101067645. Views and opinions expressed are, however, those of the authors only and do not necessarily reflect those of the European Union. Neither the European Union nor the granting authority can be held responsible for them. R.F. was supported by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences Award No. DE-SC0026078. Use of the Linac Coherent Light Source (LCLS), SLAC National Accelerator Laboratory, is supported by the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences under Contract No. DE-AC02-76SF00515. 
+
+# References 
+
+[1] Albert Padwa, ed. Organic Photochemistry . Boca Raton: CRC Press, Oct. 2017. 
+
+isbn : 978-0-203-74482-6. doi : 10.1201/9780203744826 .[2] Biswanath Dinda. Essentials of Pericyclic and Photochemical Reactions . eng. Lec-ture Notes in Chemistry 93. Cham: Springer, 2017. isbn : 978-3-319-45934-9. doi :
+
+10.1007/978-3-319-45934-9 .[3] Markus D. K¨ ark¨ as, John A. Jr. Porco, and Corey R. J. Stephenson. “Photochemical Approaches to Complex Chemotypes: Applications in Natural Product Synthesis”. In: Chemical Reviews 116.17 (Sept. 2016), pp. 9683–9747. issn : 0009-2665. doi :
+
+10.1021/acs.chemrev.5b00760 . url : https://doi.org/10.1021/acs.chemrev. 5b00760 (visited on 07/18/2025). [4] Stefanie Monika M¨ uller et al. “Recent Advances in Type I Photoinitiators for Vis-ible Light Induced Photopolymerization”. en. In: ChemPhotoChem 6.11 (2022), e202200091. issn : 2367-0932. doi : 10 . 1002 / cptc . 202200091 . url : https : / / onlinelibrary . wiley . com / doi / abs / 10 . 1002 / cptc . 202200091 (visited on 07/20/2025). [5] Yinyin Bao. “Recent Trends in Advanced Photoinitiators for Vat Photopolymer-ization 3D Printing”. en. In: Macromolecular Rapid Communications 43.14 (2022), p. 2200202. issn : 1521-3927. doi : 10 . 1002 / marc . 202200202 . url : https : / / onlinelibrary . wiley . com / doi / abs / 10 . 1002 / marc . 202200202 (visited on 07/18/2025). [6] Frederick A. Rueggeberg. “State-of-the-art: Dental photocuring A review”. In: Dent. Mater. 27.1 (2011), p. 39. issn : 0109-5641. doi : 10.1016/j.dental.2010.10.021 .
+
+url : http://www.sciencedirect.com/science/article/pii/S0109564110004641 .[7] Andrew Gilbert and Jim Baggott. Essentials of Molecular Photochemistry . English. Boca Raton: CRC Press, 1991. isbn : 978-0-8493-7727-3. 12 [8] M. A. El Sayed. “Spin-orbit coupling and the radiationless processes in nitrogen heterocycles”. In: J. Chem. Phys. 38 (1963), pp. 2834–2838. doi : 10 . 1063 / 1 . 1733610 .[9] T. J. A. Wolf et al. “Probing ultrafast ππ */n π* internal conversion in organic chromophores via K-edge resonant absorption”. en. In: Nature Communications 
+
+8.1 (June 2017), p. 29. issn : 2041-1723. doi : 10 . 1038 / s41467 - 017 - 00069 - 7 .
+
+url : https : / / www . nature . com / articles / s41467 - 017 - 00069 - 7 (visited on 02/15/2024). [10] Davide Faccial` a et al. “Unraveling the Relaxation Dynamics of Uracil: Insights from Time-Resolved X-ray Photoelectron Spectroscopy”. In: Journal of the American Chemical Society 147.34 (Aug. 2025), pp. 30694–30707. issn : 0002-7863. doi : 10. 1021/jacs.5c04874 . url : https://doi.org/10.1021/jacs.5c04874 (visited on 10/20/2025). [11] D. Mayer et al. “Following excited-state chemical shifts in molecular ultrafast x-ray photoelectron spectroscopy”. en. In: Nature Communications 13.1 (Jan. 2022), p. 198. issn : 2041-1723. doi : 10.1038/s41467-021-27908-y . url : https://www. nature.com/articles/s41467-021-27908-y (visited on 05/09/2022). [12] Brian Stankus et al. “Ultrafast X-ray scattering reveals vibrational coherence fol-lowing Rydberg excitation”. en. In: Nature Chemistry 11 (July 2019), pp. 716– 721. issn : 1755-4330, 1755-4349. doi : 10.1038/s41557-019-0291-0 . url : http: //www.nature.com/articles/s41557-019-0291-0 (visited on 07/15/2019). [13] T. J. A. Wolf et al. “The photochemical ring-opening of 1,3-cyclohexadiene im-aged by ultrafast electron diffraction”. En. In: Nature Chemistry 11.6 (Apr. 2019), pp. 504–509. issn : 1755-4349. doi : 10.1038/s41557- 019- 0252- 7 . url : http: //www.nature.com/articles/s41557-019-0252-7 (visited on 04/15/2019). [14] Valerie Blanchet et al. “Discerning vibronic molecular dynamics using time-resolved photoelectron spectroscopy”. In: Nature 401.6748 (Sept. 1999), pp. 52–54. issn :0028-0836. url : http://dx.doi.org/10.1038/43410 .[15] Andrew R. Attar et al. “Femtosecond x-ray spectroscopy of an electrocyclic ring-opening reaction”. en. In: Science 356.6333 (Apr. 2017), pp. 54–59. issn : 0036-8075, 1095-9203. doi : 10.1126/science.aaj2198 . url : http://science.sciencemag. org/content/356/6333/54 (visited on 04/08/2017). [16] Yoann Pertot et al. “Time-resolved x-ray absorption spectroscopy with a water window high-harmonic source”. en. In: Science 355.6322 (Jan. 2017), pp. 264– 267. issn : 0036-8075, 1095-9203. doi : 10 . 1126 / science . aah6114 . url : http : //science.sciencemag.org/content/355/6322/264 (visited on 01/24/2017). [17] Xiang Li et al. “Imaging a light-induced molecular elimination reaction with an X-ray free-electron laser”. en. In: Nature Communications 16.1 (July 2025), p. 7006. 
+
+issn : 2041-1723. doi : 10.1038/s41467-025-62274-z . url : https://www.nature. com/articles/s41467-025-62274-z (visited on 03/08/2026). [18] Olivia Bennett et al. “Prediction through quantum dynamics simulations: Photo-excited cyclobutanone”. In: The Journal of Chemical Physics 160.17 (May 2024), p. 174305. issn : 0021-9606. doi : 10.1063/5.0203654 . url : https://doi.org/ 10.1063/5.0203654 (visited on 09/20/2024). 13 [19] J. Eng, C. D. Rankine, and T. J. Penfold. “The photochemistry of Rydberg-excited cyclobutanone: Photoinduced processes and ground state dynamics”. In: The Jour-nal of Chemical Physics 160.15 (Apr. 2024), p. 154301. issn : 0021-9606. doi : 10. 1063 / 5 . 0203597 . url : https : / / doi . org / 10 . 1063 / 5 . 0203597 (visited on 09/20/2024). [20] Diptarka Hait et al. “Prediction of photodynamics of 200 nm excited cyclobutanone with linear response electronic structure and ab initio multiple spawning”. In: The Journal of Chemical Physics 160.24 (June 2024), p. 244101. issn : 0021-9606. doi :
+
+10.1063/5.0203800 . url : https://doi.org/10.1063/5.0203800 (visited on 09/20/2024). [21] Lewis Hutton et al. “Using a multistate mapping approach to surface hopping to predict the ultrafast electron diffraction signal of gas-phase cyclobutanone”. In: The Journal of Chemical Physics 160.20 (May 2024), p. 204307. issn : 0021-9606. doi :
+
+10.1063/5.0203667 . url : https://doi.org/10.1063/5.0203667 (visited on 09/20/2024). [22] V. K. Jaiswal et al. “Ultrafast photochemistry and electron-diffraction spectra in n 
+
+→ (3s) Rydberg excited cyclobutanone resolved at the multireference perturbative level”. In: The Journal of Chemical Physics 160.16 (Apr. 2024), p. 164316. issn :0021-9606. doi : 10.1063/5.0203624 . url : https://doi.org/10.1063/5.0203624 
+
+(visited on 09/20/2024). [23] Jiˇ r´ ı Janoˇ s et al. “Predicting the photodynamics of cyclobutanone triggered by a laser pulse at 200 nm and its MeV-UED signals—A trajectory surface hopping and XMS-CASPT2 perspective”. In: The Journal of Chemical Physics 160.14 (Apr. 2024), p. 144305. issn : 0021-9606. doi : 10.1063/5.0203105 . url : https://doi. org/10.1063/5.0203105 (visited on 09/20/2024). [24] Joseph E. Lawrence et al. “A MASH simulation of the photoexcited dynamics of cyclobutanone”. In: The Journal of Chemical Physics 160.17 (May 2024), p. 174306. 
+
+issn : 0021-9606. doi : 10.1063/5.0203695 . url : https://doi.org/10.1063/5. 0203695 (visited on 09/20/2024). [25] Dmitry V. Makhov et al. “Ultrafast electron diffraction of photoexcited gas-phase cyclobutanone predicted by ab initio multiple cloning simulations”. In: The Journal of Chemical Physics 160.16 (Apr. 2024), p. 164310. issn : 0021-9606. doi : 10.1063/ 5.0203683 . url : https://doi.org/10.1063/5.0203683 (visited on 09/20/2024). [26] Alberto Mart´ ın Santa Dar´ ıa et al. “Photofragmentation of cyclobutanone at 200 nm: TDDFT vs CASSCF electron diffraction”. In: The Journal of Chemical Physics 
+
+160.11 (Mar. 2024), p. 114303. issn : 0021-9606. doi : 10.1063/5.0197895 . url :
+
+https://doi.org/10.1063/5.0197895 (visited on 09/20/2024). [27] Xincheng Miao, Kira Diemer, and Roland Mitri´ c. “A CASSCF/MRCI trajectory surface hopping simulation of the photochemical dynamics and the gas phase ultra-fast electron diffraction patterns of cyclobutanone”. In: The Journal of Chemical Physics 160.12 (Mar. 2024), p. 124309. issn : 0021-9606. doi : 10.1063/5.0197768 .
+
+url : https://doi.org/10.1063/5.0197768 (visited on 09/20/2024). 14 [28] Ericka Roy Miller et al. “Ultrafast photochemistry and electron diffraction for cy-clobutanone in the S2 state: Surface hopping with time-dependent density func-tional theory”. In: The Journal of Chemical Physics 161.3 (July 2024), p. 034105. 
+
+issn : 0021-9606. doi : 10.1063/5.0203679 . url : https://doi.org/10.1063/5. 0203679 (visited on 09/20/2024). [29] Saikat Mukherjee et al. “Prediction Challenge: Simulating Rydberg photoexcited cyclobutanone with surface hopping dynamics based on different electronic struc-ture methods”. In: The Journal of Chemical Physics 160.15 (Apr. 2024), p. 154306. 
+
+issn : 0021-9606. doi : 10.1063/5.0203636 . url : https://doi.org/10.1063/5. 0203636 (visited on 09/20/2024). [30] Jiawei Peng, Hong Liu, and Zhenggang Lan. “The photodissociation dynamics and ultrafast electron diffraction image of cyclobutanone from the surface hopping dynamics simulation”. In: The Journal of Chemical Physics 160.22 (June 2024), p. 224305. issn : 0021-9606. doi : 10.1063/5.0203462 . url : https://doi.org/ 10.1063/5.0203462 (visited on 09/20/2024). [31] Jiˇ r´ ı Suchan et al. “Prediction challenge: First principles simulation of the ultra-fast electron diffraction spectrum of cyclobutanone”. In: The Journal of Chemical Physics 160.13 (Apr. 2024), p. 134310. issn : 0021-9606. doi : 10.1063/5.0198333 .
+
+url : https://doi.org/10.1063/5.0198333 (visited on 09/20/2024). [32] Patricia Vindel-Zandbergen and Jes´ us Gonz´ alez-V´ azquez. “Non-adiabatic dynamics of photoexcited cyclobutanone: Predicting structural measurements from trajectory surface hopping with XMS-CASPT2 simulations”. In: The Journal of Chemical Physics 161.2 (July 2024), p. 024104. issn : 0021-9606. doi : 10.1063/5.0203722 .
+
+url : https://doi.org/10.1063/5.0203722 (visited on 09/20/2024). [33] Tianyu Wang et al. “Imaging the photochemical dynamics of cyclobutanone with MeV ultrafast electron diffraction”. In: The Journal of Chemical Physics 162.18 (May 2025), p. 184201. issn : 0021-9606. doi : 10.1063/5.0267186 . url : https: //doi.org/10.1063/5.0267186 (visited on 07/11/2025). [34] A. E. Green et al. “Imaging the photochemistry of cyclobutanone using ultrafast electron diffraction: Experimental results”. In: The Journal of Chemical Physics 
+
+162.18 (May 2025), p. 184303. issn : 0021-9606. doi : 10.1063/5.0266559 . url :
+
+https://doi.org/10.1063/5.0266559 (visited on 05/12/2025). [35] Pratip Chakraborty and Spiridoula Matsika. “Time-resolved photoelectron spec-troscopy via trajectory surface hopping”. en. In: WIREs Computational Molecu-lar Science 14.3 (2024), e1715. issn : 1759-0884. doi : 10.1002/wcms.1715 . url :
+
+https://onlinelibrary.wiley.com/doi/abs/10.1002/wcms.1715 (visited on 05/19/2024). [36] Michael Berger and Colin Steel. “Photochemical and photophysical processes in acetophenone”. en. In: Journal of the American Chemical Society 97.17 (Aug. 1975), pp. 4817–4821. issn : 0002-7863, 1520-5126. doi : 10 . 1021 / ja00850a006 .
+
+url : https : / / pubs . acs . org / doi / abs / 10 . 1021 / ja00850a006 (visited on 07/03/2024). [37] H.-Q. Zhao et al. “A laser photofragmentation time-of-flight mass spectrometric study of acetophenone at 193 and 248 nm”. In: The Journal of Chemical Physics 
+
+107.18 (Nov. 1997), pp. 7230–7241. issn : 0021-9606. doi : 10.1063/1.474964 . url :
+
+https://doi.org/10.1063/1.474964 (visited on 07/03/2024). 15 [38] J. A. Warren and E. R. Bernstein. “The S2 ←S0 laser photoexcitation spectrum and excited state dynamics of jet-cooled acetophenone”. In: The Journal of Chemical Physics 85.5 (Sept. 1986), pp. 2365–2367. issn : 0021-9606. doi : 10.1063/1.451090 .
+
+url : https://aip-scitation-org.stanford.idm.oclc.org/doi/abs/10.1063/ 1.451090 (visited on 05/04/2022). [39] Shih-Huang Lee et al. “Substituent Effects in Molecular Electronic Relaxation Dy-namics via Time-Resolved Photoelectron Spectroscopy: ππ * States in Benzenes”. In: The Journal of Physical Chemistry A 106.39 (Oct. 2002), pp. 8979–8991. issn :1089-5639. doi : 10.1021/jp021096h . url : https://doi.org/10.1021/jp021096h 
+
+(visited on 07/03/2024). [40] Jonathan S. Feenstra, Sang Tae Park, and Ahmed H. Zewail. “Excited state molec-ular structures and reactions directly determined by ultrafast electron diffraction”. In: The Journal of Chemical Physics 123.22 (Dec. 2005), p. 221104. issn : 0021-9606. doi : 10.1063/1.2140700 . url : https://doi.org/10.1063/1.2140700 
+
+(visited on 07/03/2024). [41] Sang Tae Park, Jonathan S. Feenstra, and Ahmed H. Zewail. “Ultrafast electron diffraction: Excited state structures and chemistries of aromatic carbonyls”. In: The Journal of Chemical Physics 124.17 (May 2006), p. 174707. issn : 0021-9606. doi :
+
+10.1063/1.2194017 . url : https://doi.org/10.1063/1.2194017 (visited on 07/03/2024). [42] M. Ben-Nun, Jason Quenneville, and Todd J. Mart´ ınez. “Ab Initio Multiple Spawn-ing: Photochemistry from First Principles Quantum Molecular Dynamics”. In: Jour-nal of Physical Chemistry A 104.22 (2000), pp. 5161–5175. doi : 10.1021/jp994174i .
+
+url : http://pubs.acs.org/doi/abs/10.1021/jp994174i .[43] Eirik F. Kjønstad et al. “Photoinduced hydrogen dissociation in thymine predicted by coupled cluster theory”. In: Nature Communications 15 (Nov. 2024), p. 10128. 
+
+issn : 2041-1723. doi : 10.1038/s41467-024-54436-2 . url : https://www.ncbi. nlm.nih.gov/pmc/articles/PMC11584849/ (visited on 01/30/2025). [44] Christoph Bannwarth et al. “Hole–hole Tamm–Dancoff-approximated density func-tional theory: A highly efficient electronic structure method incorporating dynamic and static correlation”. In: The Journal of Chemical Physics 153.2 (July 2020), p. 024110. issn : 0021-9606. doi : 10.1063/5.0003985 . url : https://doi.org/ 10.1063/5.0003985 (visited on 09/14/2024). [45] Jimmy K Yu et al. “Ab initio nonadiabatic molecular dynamics with hole–hole Tamm–Dancoff approximated density functional theory”. In: Journal of Chemical Theory and Computation 16.9 (2020), pp. 5499–5511. [46] Edward G. Hohenstein et al. “Predictions of Pre-edge Features in Time-Resolved Near-Edge X-ray Absorption Fine Structure Spectroscopy from Hole–Hole Tamm–Dancoff-Approximated Density Functional Theory”. In: Journal of Chemical Theory and Computation 17.11 (Nov. 2021), pp. 7120–7133. issn : 1549-9618. doi : 10.1021/ acs.jctc.1c00478 . url : https://doi.org/10.1021/acs.jctc.1c00478 (visited on 09/25/2025). 16 [47] P. Walter et al. “The time-resolved atomic, molecular and optical science instrument at the Linac Coherent Light Source”. In: Journal of Synchrotron Radiation 29.4 (July 2022), pp. 957–968. issn : 1600-5775. doi : 10 . 1107 / S1600577522004283 .
+
+url : https://journals.iucr.org/s/issues/2022/04/00/gb5129/ (visited on 07/10/2022). [48] Taran Driver et al. “Attosecond delays in X-ray molecular ionization”. en. In: Nature 
+
+632.8026 (Aug. 2024), pp. 762–767. issn : 1476-4687. doi : 10.1038/s41586-024-07771 - 9 . url : https : / / www . nature . com / articles / s41586 - 024 - 07771 - 9 
+
+(visited on 08/22/2024). [49] Siqi Li et al. “Time-resolved pump–probe spectroscopy with spectral domain ghost imaging”. en. In: Faraday Discussions 228.0 (May 2021), pp. 488–501. issn : 1364-5498. doi : 10.1039/D0FD00122H . url : https://pubs.rsc.org/en/content/ articlelanding/2021/fd/d0fd00122h (visited on 05/12/2025). [50] S Li et al. “Two-dimensional correlation analysis for x-ray photoelectron spec-troscopy”. en. In: Journal of Physics B: Atomic, Molecular and Optical Physics 
+
+54.14 (Aug. 2021), p. 144005. issn : 0953-4075. doi : 10.1088/1361-6455/abcdf1 .
+
+url : https://dx.doi.org/10.1088/1361-6455/abcdf1 (visited on 05/12/2025). [51] Kurtis Borne et al. “Design and performance of a magnetic bottle electron spec-trometer for high-energy photoelectron spectroscopy”. In: Review of Scientific In-struments 95.12 (Dec. 2024), p. 125110. issn : 0034-6748. doi : 10.1063/5.0223334 .
+
+url : https://doi.org/10.1063/5.0223334 (visited on 05/09/2025). [52] Kirk A. Larsen et al. “Compact single-shot soft X-ray photon spectrometer for free-electron laser diagnostics”. en. In: Optics Express 31.22 (Oct. 2023), p. 35822. issn :1094-4087. doi : 10.1364/OE.502105 . url : https://opg.optica.org/abstract. cfm?URI=oe-31-22-35822 (visited on 11/27/2023). [53] Stefan Droste et al. “High-sensitivity x-ray/optical cross-correlator for next gener-ation free-electron lasers”. EN. In: Optics Express 28.16 (Aug. 2020), pp. 23545– 23553. issn : 1094-4087. doi : 10.1364/OE.398048 . url : https://opg.optica. org/oe/abstract.cfm?uri=oe-28-16-23545 (visited on 05/12/2025). [54] G. R. Wight and C. E. Brion. “K-Shell energy loss spectra of 2.5 keV electrons in CO2 and N2O”. en. In: Journal of Electron Spectroscopy and Related Phe-nomena 3.3 (Jan. 1974), pp. 191–205. issn : 0368-2048. doi : 10 . 1016 / 0368 -2048(74)80010- 1 . url : http://www.sciencedirect.com/science/article/ pii/0368204874800101 (visited on 12/15/2019). [55] A. P. Hitchcock, S. G. Urquhart, and E. G. Rightor. “Inner-shell spectroscopy of benzaldehyde, terephthalaldehyde, ethylbenzoate, terephthaloyl chloride and phos-gene: models for core excitation of poly(ethylene terephthalate)”. en. In: The Jour-nal of Physical Chemistry 96.22 (Oct. 1992), pp. 8736–8750. issn : 0022-3654, 1541-5740. doi : 10.1021/j100201a015 . url : https://pubs.acs.org/doi/abs/10. 1021/j100201a015 (visited on 05/09/2025). [56] M Ben-Nun and Todd J Martınez. “Nonadiabatic molecular dynamics: Validation of the multiple spawning method for a multidimensional problem”. In: The Journal of chemical physics 108.17 (1998), pp. 7244–7257. 17 [57] Florian Weigend and Reinhart Ahlrichs. “Balanced basis sets of split valence, triple zeta valence and quadruple zeta valence quality for H to Rn: Design and assessment of accuracy”. In: Physical Chemistry Chemical Physics 7.18 (2005), pp. 3297–3305. [58] Axel D Becke. “Density-functional exchange-energy approximation with correct asymptotic behavior”. In: Physical review A 38.6 (1988), p. 3098. [59] Chengteh Lee, Weitao Yang, and Robert G Parr. “Development of the Colle-Salvetti correlation-energy formula into a functional of the electron density”. In: Physical review B 37.2 (1988), p. 785. [60] Axel D Becke. “A new mixing of Hartree-Fock and local density-functional theo-ries”. In: Journal of chemical Physics 98.2 (1993), pp. 1372–1377. [61] Stefan Seritan et al. “TeraChem: Accelerating electronic structure and ab initio molecular dynamics with graphical processing units”. In: The Journal of chemical physics 152.22 (2020), p. 224110. [62] Stefan Seritan et al. “TeraChem: A graphical processing unit-accelerated electronic structure package for large-scale ab initio molecular dynamics”. In: Wiley Interdis-ciplinary Reviews: Computational Molecular Science 11.2 (2021), e1494. [63] Eugene Wigner. “On the quantum correction for thermodynamic equilibrium”. In: 
+
+Physical review 40.5 (1932), p. 749. [64] Jianwei Sun, Adrienn Ruzsinszky, and John P Perdew. “Strongly constrained and appropriately normed semilocal density functional”. In: Physical review letters 115.3 (2015), p. 036402. [65] Diptarka Hait and Martin Head-Gordon. “Orbital optimized density functional the-ory for electronic excited states”. In: The journal of physical chemistry letters 12.19 (2021), pp. 4517–4529. [66] Leonardo A Cunha et al. “Relativistic orbital-optimized density functional theory for accurate core-level spectroscopy”. In: The journal of physical chemistry letters 
+
+13.15 (2022), pp. 3438–3449. [67] Maximilien A Ambroise and Frank Jensen. “Probing basis set requirements for cal-culating core ionization and core excitation spectroscopy by the ∆ self-consistent-field approach”. In: Journal of chemical theory and computation 15.1 (2018), pp. 325– 337. [68] Frank Jensen. “Unifying general and segmented contracted basis sets. Segmented polarization consistent basis sets”. In: Journal of chemical theory and computation 
+
+10.3 (2014), pp. 1074–1085. [69] Evgeny Epifanovsky et al. “Software for the frontiers of quantum chemistry: An overview of developments in the Q-Chem 5 package”. In: The Journal of chemical physics 155.8 (2021), p. 084801. [70] Thomas J. A. Wolf et al. “Transient resonant Auger–Meitner spectra of photoex-cited thymine”. en. In: Faraday Discussions 228.0 (May 2021), pp. 555–570. issn :1364-5498. doi : 10.1039/D0FD00112K . url : https://pubs.rsc.org/en/content/ articlelanding/2021/fd/d0fd00112k (visited on 02/13/2024). 18 [71] Miquel Huix-Rotllant, Irene Burghardt, and Nicolas Ferr´ e. “Population of triplet states in acetophenone: A quantum dynamics perspective”. fr. In: Comptes Rendus. Chimie 19.1-2 (2016), pp. 50–56. issn : 1878-1543. doi : 10.1016/j.crci.2015.10. 002 . url : https://comptes-rendus.academie-sciences.fr/chimie/articles/ en/10.1016/j.crci.2015.10.002/ (visited on 05/16/2025). 19 Supplementary Information to Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy 
+
+## Martin Graßl 1,2 , Pablo Unzueta 1,3 , Andreas E. Hillers-Bendtsen 1,3 ,Yusong Liu 1,4 , Diptarka Hait 1,3,5,6 , Alice E. Green 1,7,8,9 , Xinxin Cheng 4,Felix Allum 1, 9 , Taran Driver 1,4 , Ruaridh Forbes 4,10 , James. M. Glownia 4,Erik Isele 1, Kirk A. Larsen 1,4 , Xiang Li 4, Ming-Fu Lin 4, Razib Obaid 4,Adam Summers 1,4 , Emily Thierstein 1, Jun Wang 1, James P. Cryan 1,4 ,Matthias F. Kling 1,2,4 , Todd J. Martinez 1,3 , and Thomas J. A. Wolf 1,4 1Stanford PULSE Institute, SLAC National Accelerator Laboratory, 2575 Sand Hill Road, Menlo Park, CA 94025, USA. 
+
+> 2
+
+## Department of Physics, Ludwig-Maximilians-Universit¨ at M¨ unchen, Am Coulombwall 1, D-85748 Garching, Germany. 
+
+> 3
+
+## Department of Chemistry, Stanford University, 333 Campus Drive, Stanford, CA 94305, USA 
+
+> 4
+
+## Linac Coherent Light Source, SLAC National Accelerator Laboratory, 2575 Sand Hill Road, Menlo Park, CA 94025, USA. 
+
+> 5
+
+## Department of Chemistry, Columbia University, New York, New York 10027, United States. 
+
+> 6
+
+## Initiative for Computational Catalysis, Flatiron Institute, New York, New York 10010, United States. 
+
+> 7
+
+## European XFEL, Holzkoppel 4, 22869 Schenefeld, Germany. 
+
+> 8
+
+## EaStCHEM School of Chemistry, University of Edinburgh, Edinburgh EH9 3FJ, U.K. 
+
+> 9
+
+## Deutsches Elektronen-Synchrotron DESY, Notkestr. 85, 22607 Hamburg, Germany. 
+
+> 10
+
+## Department of Chemistry, University of California, Davis, California 95616, USA. March 20, 2026 
+
+> 1
+
+# 1 Spectral domain ghost imaging 
+
+To enhance the spectral resolution of the measurement, we employed the ghost imaging technique, which has been successfully implemented in various FEL experiments [1–3]. Thereby the absorption spectrum is not directly measured, but reconstructed by cor-relating the spectrum of the incident light source with a ’bucket’ measurement of the total absorption in the sample on a shot-to-shot basis. In our case the total absorption is obtained by measuring the absolute yield of Auger-Meitner electrons originating from the decay of the core excited state. The photon spectrum is measured downstream of the interaction point, after interaction with the sample. However, the low density of the sample gas leads to negligible attenuation of the X-rays. Therefore, the transmitted spec-trum is essentially identical to the incident spectrum. The ghost imaging problem can be expressed in a compact mathematical form using a simple linear matrix multiplication: 
+
+b = Ax (1) with a vector b, containing the bucket measurements of the total electron yield for 
+
+n measurements and A, the n × m matrix containing the corresponding spectra of the incident light measured with a resolution of m pixels. The vector x denotes the unknown spectral response of the system, which is the quantity to be reconstructed. Equation 1 can be solved using the pseudo-inverse of A [2, 4]. This method is sensitive to noise, and regularizations of x are typically applied to mitigate its effects. Generally the absorption of the sample can be assumed to be smooth, sparse, and nonnegative. In our case the data quality is good enough to ignore smoothness and sparsity and only restrict our solution by forcing a positive response. (Note: The negative bleach signature in figure 3 in the main text is caused by calculating the difference spectrum after using ghost imaging on the pumped and unpumped data. The respective absorption spectra are still all positive, see figure 2 in the main text). While ignoring smoothness and sparsity regularizations increases the complexity of the reconstruction and results in a higher noise level, it also mitigates the risk of information loss due to over-regularization. By applying this technique, the spectral resolution of the measurement becomes limited solely by the resolution of the spectrometer and the intrinsic variation of the FEL, rather than by the bandwidth of the incident light source. Figure 1 shows a comparison between the data obtained by spectral domain ghost imaging and data binning using the central photon energy of the incident light. The conventional binning approach, shown in blue, exhibits a broad single peak centered at 531 eV with a weak shoulder near 527 eV. In contrast, application of the ghost imaging method, shown in orange, resolves the shoulder into a distinct peak and reveals that the main feature comprises a double-peak structure. An important prerequisite for accurate spectral reconstruction using ghost imaging is a linear detector response, since the method relies on solving a linear inverse problem. Nonlinearities due to detector saturation lead to distortions in the reconstructed absorp-tion spectrum. For the experiment, the magnetic bottle spectrometer was optimized to resolve the transient feature at 527 eV (see Figure 1), which is significantly weaker than the static ground-state feature at 531 eV. This optimization resulted in substantial detec-tor saturation when scanning across the ground-state resonance. To mitigate the impact of saturation on the reconstruction of the transient signal, we restricted the dataset to shots exhibiting only minimal spectral intensity near the ground-state resonance. How-ever, due to the presence of saturated shots and reduced statistics in the vicinity of the ground-state feature, the resulting data exhibit a lower signal-to-noise ratio, and the 2Figure 1: Comparison spectral domain ghost imaging and central photon energy binning reliability of the extracted signal in this region is correspondingly limited. 
+
+# 2 Acetophenone ground state absorption spectrum 
+
+To the best of our knowledge, oxygen K-edge NEXAFS spectra for acetophenone have not been previously reported in the literature. To address this knowledge gap, we mea-sured the static ground-state absorption spectrum of the sample over an extended photon energy range to obtain a comprehensive view of the transitions leading up to the K-edge ionization. The spectrum is plotted in figure 2 (black), it exhibits a main abortion peak at 531 eV followed by two weaker peaks at 533.9 eV and 535.7 eV. These peaks are reason-ably reproduced by calculations performed at the TD-DFT/B3LYP/def2-QZYPP level using the quantum chemistry program ORCA [5–10]. These calculation were performed independent of the calculations in the main text. The orbitals of the highest intensity contribution are shown above the plot. The corresponding energy values and oscillator strengths are given in table 1. Both the experimental and calculated spectrum are refer-enced against the structurally similar benzaldehyde taken from Hitchcock et al. [11]. To validate this comparison, we performed a TD-DFT/B3LYP/def2-QZYPP calculation for benzaldehyde and found the main absorption peak to be different in photon energy by only 0.04 eV. This shows that the substitution of one hydrogen atom with a methyl group at the carbonyl carbon does not affect the resonant energies at the oxygen 1s site. The absorption spectrum is determined by convoluting the calculated core excitation energies and associated oscillator strengths using Gaussian broadening with a FWHM of 1.4 eV. The spectrum is scaled in intensity to the main peak of the experimental spectrum and shifted in photon energy by 13.9 eV to match its spectral position. This shift is also applied to all energies in table 1. In addition to this theory reference we calibrated the Fresnel zone plate spectrometer using the absorption of CO 2 gas at the oxygen edge. The calculations successfully reproduce the second peak at 534.1 eV and indicate 3that the third peak does not arise from a single electronic transition, but rather from the superposition of three weaker transitions at 535.9, 536.1, and 536.2 eV. While the calculations include minor contributions from additional weak transitions, they do not account for the onset of the ionization edge beyond 536 eV. The resulting rise in the baseline leads to an artificially enhanced prominence of the peak in the experimental spectra. The elevated baseline is evident in our AP data as well as in the literature reference for benzaldehyde. 
+
+Figure 2: Comparison of experimental (black) and calculated (red) AP ground state ab-sorption spectrum. The calculation was performed at the TD-DFT/B3LYP/def2-QZYPP level, the relevant orbitals with the hightest oscillatory strength are shown above the plot. The spectrum of the structurally similar benzaldehyde from the literature [11] (drashed grey) is given as a reference for the the main excitation peak. In addition to the main absorption peak at 531 eV we are able to observe two peaks at 533.9 eV and 535.7 eV that are reasonably well predicted by the calculations. 
+
+# 3 UV Power scan 
+
+A 266 nm laser pulse with a pulse duration of 45 fs was used to excite the AP sample. To ensure that the observed transient features are exclusively resulting from single photon excitation, we measured the intensity of the UV induced feature at 527 eV at a delay of 2 ps for different laser powers. The absorption spectrum for each energy was recon-structed using the ghost imaging approach. The transient signal intensity corresponds to the integrated area of the 527 eV peak in the differential absorption spectrum obtained by subtracting the unpumped spectrum from the pumped spectrum. The results of the 4Table 1: Absorption energies and oscillator strengths for the TD-DFT/B3LYP calculation in figure 2. The energies are shifted by 13.9 eV to match the main absorption peak of the measured spectrum at 530.9 eV. Energy (eV) fosc 
+
+530.893475 0.030445967 533.308195 0.000195632 534.136214 0.005767118 534.434378 0.000251398 535.017641 0.000699203 535.413308 0.000241454 535.780183 0.000829874 535.899530 0.000009929 536.066134 0.000848473 536.190380 0.000860542 power scan are shown in figure 3 a) where the intensity of the transient signal is plotted against the UV pulse energy (blue dots). The red star marks the UV pulse energy of 18.2 μJ that was used during the experiment. We did not observe a significant change in signal intensity for pulse energies lower than 25 μJ. This plateau is caused by the ghost imaging method that struggles to reconstruct the spectrum with weak signal intensity in combination with a low signal to noise ratio. However, we observe an essentially linear dependence of the transient signal intensity on the UV intensity for significantly higher intensities than employed in the experiment. To further verify that the sample is not excessively pumped we measured the focus spot size using a knife edge scan figure (3 b) and c)). The FWHM of the focus spot was measured to be 293 μm and 153 μm in horizontal and vertical direction, respectively. With a average focus spot size of 212 μmthe laser fluence during the experiment was 0.1034 J/cm 2. Acetophenone has an absorp-tion cross-section of 2 Mbarn at 266 nm [12]. In comparison, similar experiments using a sample with an absorption cross-section of 30 Mbarn and a pump fluence of 0.2546 J/cm ²
+
+operated within the linear absorption regime [13]. 
+
+# 4 Kinetic Model of the Population Dynamics 
+
+The population dynamics across the excited states of AP are quantified using a kinetic model of 2 consecutive first-order processes, 
+
+A1
+
+> k1
+
+−→ A2
+
+> k2
+
+−→ A3, (2) where A1 denotes the initially excited state, A2 an intermediate state, and A3 the final state. The corresponding rate constants are k1 and k2, respectively. The time-dependent populations of these states are given by 5Figure 3: UV Laser characterization. a) The intensity of the transient signal (blue dot) shows no change for laser powers smaller than 25 μJ and a close-to-linear dependence at higher pulse enegies. The laser pulse energy used during the experiment of 18.2 μJ (red star) lies within a region where the signal-to-noise level was insufficient to show a linear dependence. b) and c) knife edge scan of the laser spotsize at the focus for the x- and y-axis respectively. The measured intensity of the transmitted signal (blue dots) is fitted with an error function (red line). The FWHM of the laser focus is 293 μm in x direction and 153 μm in y direction. [A1]( t) = [ A1]0 e−k1t, (3a) [A2]( t) = [ A1]0
+
+k1
+
+k2 − k1
+
+ e−k1t − e−k2t , (3b) [A3]( t) = [ A1]0
+
+
+
+1 − k2
+
+k2 − k1
+
+e−k1t + k1
+
+k2 − k1
+
+e−k2t
+
+
+
+, (3c) where [ A1]0 is the initial population of the photoexcited state. Equations 3 describe the absolute populations of the involved states. The experimentally measured NEXAFS intensities do not directly correspond to the population of a given state, as they are modulated by the absorption cross section of a given state. Differences in absorption cross sections prevent a direct determination of absolute state populations, but they do not affect the extracted time constants. At the same time, these differences can be exploited to distinguish overlapping electronic states. In the present experiment, this fact is used to track population transfer from the 1nπ ∗ state to the 3nπ ∗ state. Although these states are close in energy, they exhibit different relative absorption cross sections, allowing their contributions to be disentangled. To extract the relevant time constants, the population equations are adapted to the experimentally accessible observable. The measured signal is proportional to the popula-tion of the corresponding state, modified by its absorption cross section. The measured 6intensity can therefore be expressed by 
+
+In(t) = σn[An]( t) (4) where σn is the absorption cross section of the states An. The measured signal is assumed to originate from states that are not directly populated by the initial excitation and to be independent of contributions from other states. Under these assumptions, the total measured intensity is given by 
+
+I(t) = I2(t) + I3(t) (5) 
+
+I(t) = σ2(σ1[A1]0) k1
+
+k2 − k1
+
+ e−k1t − e−k2t +
+
+σ3(σ1[A1]0)
+
+
+
+1 − k2
+
+k2 − k1
+
+e−k1t + k1
+
+k2 − k1
+
+e−k2t
+
+
+
+(6) The total initial population [ A1]0 is unknown. By defining the relative maximum measurable population amplitude as I0 = σ2(σ1[A1]0) the signal is effectively normalized to the contribution of the A2 state. Introducing the relative difference in absorption cross section between the state A3 and A2 as η = σ3/σ 2 and using the relation between rate constant and characteristic decay time, τ = 1 /k , yields 
+
+I(t) = I0
+
+τ2
+
+τ2 − τ1
+
+ e−t/τ 2 − e−t/τ 1  + ηI 0
+
+
+
+1 − τ2
+
+τ2 − τ1
+
+e−t/τ 2 + τ1
+
+τ2 − τ1
+
+e−t/τ 1
+
+
+
+. (7) This expression is used as the model function to fit the experimental data and extract the characteristic time constants of the population transfer. 
+
+# 5 Computational Details 
+
+To simulate the static and transient x-ray absorption of acetophenone at the oxygen K-edge from first principles, we initially perform ground-state geometry optimization and a subsequent harmonic frequency calculation at the B3LYP-D3/6-31G* level of theory[14– 17]. Following this, we conduct a series of calculations modeling the electronic structure of the system i.e., energies, gradients, nonadiabatic coupling, and transition moments, using the fomo-hh-TDA-BHandHLYP/def2-SVP methodology[15, 18–22] to simulate x-ray absorption spectra. We chose fomo-hh-TDA-BHandHLYP based on its qualitative agreement with EOM-CCSD across different geometries as illustrated in Figure 4 for all but the S1/S0 minimum energy conical intersection that EOM-CCSD is unable to de-scribe meaningfully. For these calculations, we sample 50 random geometries around the ground-state minimum from a 0 K Wigner distribution[23] and determine vertical excita-tion energies and associated dipole oscillator strengths within the core-valence separation approximation[24] keeping only the oxygen 1s orbital active. In all cases, we model the x-ray absorption of the S 0, S 1, and S 2 states at the oxygen K-edge by calculating the excitation energies of the S 1 and S 2 states and of the nine lowest core-excited states from the oxygen 1s orbital as well as the oscillator strengths for transitions between all of these states. 7Figure 4: Energy diagram across different important geometries using fomo-hh-TDA-BHandHLYP (solid lines) and EOM-CCSD (dashed lines). Note: EOM-CCSD results are not shown for then S1/S0 minimum energy conical intersection (MECI). The static x-ray absorption spectra are determined by convoluting the vertical core excitation energies and associated oscillator strengths of each Wigner sample using Gaus-sian broadening with a full-width half maximum (FWHM) of 0.2 eV. Subsequently, the final spectra are obtained by averaging over the spectra obtained from the 50 geometries. To simulate excited state dynamics and transient x-ray absorption spectrum of ace-tophenone, we perform nonadiabatic molecular dynamics using the ab initio multiple spawning (AIMS) method[25, 26]. We used the 50 Wigner samples (positions and mo-menta) as initial conditions and propagated the AIMS trajectory basis functions using a time step of 0.5 fs except in regions of high nonadiabatic coupling, where the step size is reduced to 0.25 fs to allow for more accurate integration of the time-derivative coupling. Following excitation to the bright S 2 (π → π∗) state, we propagate each trajectory for 1 ps including the S 0, S 1, and S 2 states allowing for population transfer between these. Following the AIMS dynamics, we model the transient x-ray absorption spectrum by de-termining the x-ray absorption spectrum of each trajectory and averaging over them at each time step. For each trajectory, the contribution to the overall transient x-ray ab-sorption spectrum is determined by computing the x-ray absorption through convolution using Gaussians with a FWHM of 0.1 eV of both initial and spawned trajectory basis functions on their respective electronic state. This is done at each time step and the spec-trum is obtained by weighting the trajectory basis functions by their population. Lastly, a 50 fs Gaussian time broadening is applied to facilitate comparison to experiment. All of the above calculations were performed using the TeraChem quantum chemistry package[27, 28] and the FMS program [29]. Lastly, we investigate the potential change in x-ray absorption associated with ISC from the S 1 state to the T 1 state, on which the excited state population might be trapped. To this end, we perform calculations at the OO-DFT/SCAN level of theory[30, 31] with scalar relativistic effects included using the spin-free exact two component model[32] in QChem[33] (using the aug-pcX-2 basis[34] on O and aug-pcseg-1 basis[35] on all other 8atoms), using the respective S 0, S 1, and T 1 BHandHLYP/def2-SVP optimized geometries. We determine the energies of the S 0, S 1, and T 1 states as well as the energies of states corresponding to oxygen 1s core excitation from these states following the procedure outlined in previous studies[31, 32]. Finally, we calculate transition strengths for the core excitations of the S 1 and T 1 states to probe differences in spectral intensity obtained from ISC from S 1 to T 1.
+
+# 6 Simulated Excited State Populations 
+
+Using AIMS, we are able to track the population of different electronic states included in the nonadiabatic dynamics over time following the initial excitation to the S 2 (ππ ∗)state. In Figure 5, we display the transient population over the 1 ps AIMS dynamics with error bars estimated from Bootstrap sampling. As seen the S 2 state rapidly depopulates within the first 500 fs by internal conversion to the S 1 (nπ ∗) state on which most of the population remains for the remainder of the simulation. A very small fraction of the total population does reach the ground state, but this is only the case for 8 out of the 366 resulting trajectory basis functions. To verify that the mapping of the nπ ∗ and ππ ∗ states 
+
+Figure 5: Simulated populations of the S 0, S 1, and S 2 states during the AIMS simulation following initial excitation to the S 2 state. The plotted error bars were obtained from Bootstrap sampling. to the S 1 and S 2 states is consistent across the dynamics, we show the average transition dipole moments of these for each initial condition and the total average in Figure 6. As 9Figure 6: Simulated transition dipole moments for transition from S 0 to S 1 and S 2 states during the AIMS simulation. (Left) Averaged transition dipole moments for each of the 50 initial conditions. (Right) Averaged transition dipole moments over all trajectories. seen from the averaged transitions dipole moments, the S 2 state is generally bright, which is consistent with it being the ππ ∗ state, while S 1 is generally dark consistent with the 
+
+nπ ∗ assignment. This is evident both for individual initial conditions and across all of the trajectories. It is only in the time region where decay from S 2 to S 1 happens that the two states are close in energy and flip very briefly. Nevertheless, mapping of nπ ∗ and 
+
+ππ ∗ states to the S 1 and S 2, respectively, is generally preserved. 
+
+# 7 Simulated 1ππ ∗ state signature 
+
+The AIMS method used to simulate the excited-state dynamics enables analysis of the transient absorption spectra associated with each electronic state independently. The dominant feature in both the experimental and simulated data is the signature of the nπ ∗
+
+state, which exhibits a delayed onset. The initially populated ππ ∗ state is challenging to observe experimentally due to its weak resonant excitation cross-section. Figure 7 a) shows the simulated transient NEXAFS spectrum of acetophenone, considering only the initially excited ππ ∗ state. The intensity is plotted as a relative percentage with respect to the maximum signal of the more pronounced nπ ∗ state. The positions of the nπ ∗ and ground-state depletion features (taken from Figure 3 c) in the main text) are indicated by blue and red outlines, respectively. The ππ ∗ state exhibits two primary contributions: the dominant feature is centered at 529.3 eV with a maximum relative intensity of approxi-mately 13%, overlapping with the ground-state depletion at 531 eV. This overlap results in a narrowing of the depletion feature during the first 300 fs. A weaker contribution, with a relative intensity of approximately 3%, is centered at 525.6 eV, lying below the 
+
+nπ ∗ signature at 526.7 eV. Electronic structure calculations predict the nπ ∗ state to be the lowest in energy, corresponding to an electron displacement from the HOMO to the LUMO. In contrast, the ππ ∗ state involves a vacancy in a deeper-lying occupied orbital. As a result, resonant excitation from the oxygen 1s orbital to the ππ ∗ state is expected 10 to occur at lower photon energy than to the nπ ∗ state. Accordingly, the peak at 525.6 eV is assigned to direct excitation from the oxygen 1s level into a π orbital, whereas the peak at 529.3 eV corresponds to excitation into the π∗ orbital of the excited state. Both features begin to decay with the onset of the nπ ∗ state and fully vanish after 300 fs, leaving only minor artifacts (vertical stripes) in the data. 
+
+Figure 7: Comparison of excited state signatures. a) Simulated transient NEXAFS spec-trum for the initially occupied S 2 state with ππ ∗ character. The red and blue outline mark the position of the S 1 feature and S 0 depletion, respectively. Both outlines are taken form figure 3 c). The intensity is normalized to the maximum of the S 1 state with 
+
+nπ ∗ character and plotted as relative percentage. The ππ ∗ state has two components, one with an maximum intensity of ≈ 13 % around 529.3 eV, that overlaps with the ground state depletion. And a weak contribution with a maximum intensity of ≈ 3 % at 525.6 eV which corresponds to the direct excitation of a oxygen 1s electron to the molecular orbital with π character. b) Integrated lineouts of the individual states. The fits for the S 1 and S 2
+
+state show that the transition from one state to the other occurs simultaneous at 104.2 fs and 107.2 fs, with comparable time constants of 135.1 fs and 141.7 fs, respectively. 11 References 
+
+[1] S Li et al. “Two-dimensional correlation analysis for x-ray photoelectron spec-troscopy”. en. In: Journal of Physics B: Atomic, Molecular and Optical Physics 
+
+54.14 (Aug. 2021), p. 144005. issn : 0953-4075. doi : 10.1088/1361-6455/abcdf1 .
+
+url : https://dx.doi.org/10.1088/1361-6455/abcdf1 (visited on 05/12/2025). [2] Jun Wang et al. “Photon energy-resolved velocity map imaging from spectral do-main ghost imaging”. en. In: New Journal of Physics 25.3 (Mar. 2023), p. 033017. 
+
+issn : 1367-2630. doi : 10.1088/1367-2630/acc201 . url : https://dx.doi.org/ 10.1088/1367-2630/acc201 (visited on 06/19/2025). [3] Kai Li et al. “Ghost-imaging-enhanced noninvasive spectral characterization of stochastic x-ray free-electron-laser pulses”. en. In: Communications Physics 5.1 (July 2022), p. 191. issn : 2399-3650. doi : 10 . 1038 / s42005 - 022 - 00962 - 8 .
+
+url : https : / / www . nature . com / articles / s42005 - 022 - 00962 - 8 (visited on 01/05/2026). [4] Bartolomeo Stellato et al. “OSQP: an operator splitting solver for quadratic pro-grams”. en. In: Mathematical Programming Computation 12.4 (Dec. 2020), pp. 637– 672. issn : 1867-2957. doi : 10.1007/s12532-020-00179-2 . url : https://doi. org/10.1007/s12532-020-00179-2 (visited on 06/19/2025). [5] Frank Neese. “Software update: The ORCA program system—Version 5.0”. en. In: 
+
+WIREs Computational Molecular Science 12.5 (2022), e1606. issn : 1759-0884. doi :
+
+10.1002/wcms.1606 . url : https://onlinelibrary.wiley.com/doi/abs/10. 1002/wcms.1606 (visited on 07/08/2025). [6] Frank Neese and Gottfried Olbrich. “Efficient use of the resolution of the iden-tity approximation in time-dependent density functional calculations with hybrid density functionals”. In: Chemical Physics Letters 362.1 (Aug. 2002), pp. 170– 178. issn : 0009-2614. doi : 10 . 1016 / S0009 - 2614(02 ) 01053 - 9 . url : https : //www.sciencedirect.com/science/article/pii/S0009261402010539 (visited on 07/08/2025). [7] Frank Neese. “An improvement of the resolution of the identity approximation for the formation of the Coulomb matrix”. en. In: Journal of Computational Chemistry 
+
+24.14 (2003), pp. 1740–1747. issn : 1096-987X. doi : 10 . 1002 / jcc . 10318 . url :
+
+https://onlinelibrary.wiley.com/doi/abs/10.1002/jcc.10318 (visited on 07/08/2025). [8] Frank Neese et al. “Efficient, approximate and parallel Hartree–Fock and hybrid DFT calculations. A ‘chain-of-spheres’ algorithm for the Hartree–Fock exchange”. In: Chemical Physics . Moving Frontiers in Quantum Chemistry: 356.1 (Feb. 2009), pp. 98–109. issn : 0301-0104. doi : 10 . 1016 / j . chemphys . 2008 . 10 . 036 . url :
+
+https://www.sciencedirect.com/science/article/pii/S0301010408005089 
+
+(visited on 07/08/2025). [9] Benjamin Helmich-Paris et al. “An improved chain of spheres for exchange algo-rithm”. In: The Journal of Chemical Physics 155.10 (Sept. 2021), p. 104109. issn :0021-9606. doi : 10.1063/5.0058766 . url : https://doi.org/10.1063/5.0058766 
+
+(visited on 07/08/2025). 12 [10] Frank Neese. “The SHARK integral generation and digestion system”. en. In: Jour-nal of Computational Chemistry 44.3 (2023), pp. 381–396. issn : 1096-987X. doi :
+
+10.1002/jcc.26942 . url : https://onlinelibrary.wiley.com/doi/abs/10. 1002/jcc.26942 (visited on 07/08/2025). [11] A. P. Hitchcock, S. G. Urquhart, and E. G. Rightor. “Inner-shell spectroscopy of benzaldehyde, terephthalaldehyde, ethylbenzoate, terephthaloyl chloride and phos-gene: models for core excitation of poly(ethylene terephthalate)”. en. In: The Jour-nal of Physical Chemistry 96.22 (Oct. 1992), pp. 8736–8750. issn : 0022-3654, 1541-5740. doi : 10.1021/j100201a015 . url : https://pubs.acs.org/doi/abs/10. 1021/j100201a015 (visited on 05/09/2025). [12] Michael Berger and Colin Steel. “Photochemical and photophysical processes in acetophenone”. en. In: Journal of the American Chemical Society 97.17 (Aug. 1975), pp. 4817–4821. issn : 0002-7863, 1520-5126. doi : 10 . 1021 / ja00850a006 .
+
+url : https : / / pubs . acs . org / doi / abs / 10 . 1021 / ja00850a006 (visited on 07/03/2024). [13] T. J. A. Wolf et al. “Probing ultrafast ππ */n π* internal conversion in organic chromophores via K-edge resonant absorption”. en. In: Nature Communications 
+
+8.1 (June 2017), p. 29. issn : 2041-1723. doi : 10 . 1038 / s41467 - 017 - 00069 - 7 .
+
+url : https : / / www . nature . com / articles / s41467 - 017 - 00069 - 7 (visited on 02/15/2024). [14] Axel D Becke. “Density-functional thermochemistry. III. The role of exact ex-change”. In: The Journal of chemical physics 98.7 (1993), pp. 5648–5652. [15] Chengteh Lee, Weitao Yang, and Robert G Parr. “Development of the Colle-Salvetti correlation-energy formula into a functional of the electron density”. In: Physical review B 37.2 (1988), p. 785. [16] Stefan Grimme et al. “A consistent and accurate ab initio parametrization of den-sity functional dispersion correction (DFT-D) for the 94 elements H-Pu”. In: The Journal of chemical physics 132.15 (2010), p. 154104. [17] RHWJ Ditchfield, Warren J Hehre, and John A Pople. “Self-consistent molecular-orbital methods. IX. An extended Gaussian-type basis for molecular-orbital studies of organic molecules”. In: The Journal of Chemical Physics 54.2 (1971), pp. 724– 728. [18] Christoph Bannwarth et al. “Hole–hole Tamm–Dancoff-approximated density func-tional theory: A highly efficient electronic structure method incorporating dynamic and static correlation”. In: The Journal of Chemical Physics 153.2 (July 2020), p. 024110. issn : 0021-9606. doi : 10.1063/5.0003985 . url : https://doi.org/ 10.1063/5.0003985 (visited on 09/14/2024). [19] Jimmy K Yu et al. “Ab initio nonadiabatic molecular dynamics with hole–hole Tamm–Dancoff approximated density functional theory”. In: Journal of Chemical Theory and Computation 16.9 (2020), pp. 5499–5511. [20] Florian Weigend and Reinhart Ahlrichs. “Balanced basis sets of split valence, triple zeta valence and quadruple zeta valence quality for H to Rn: Design and assessment of accuracy”. In: Physical Chemistry Chemical Physics 7.18 (2005), pp. 3297–3305. [21] Axel D Becke. “Density-functional exchange-energy approximation with correct asymptotic behavior”. In: Physical review A 38.6 (1988), p. 3098. 13 [22] Axel D Becke. “A new mixing of Hartree-Fock and local density-functional theo-ries”. In: Journal of chemical Physics 98.2 (1993), pp. 1372–1377. [23] Eugene Wigner. “On the quantum correction for thermodynamic equilibrium”. In: 
+
+Physical review 40.5 (1932), p. 749. [24] Lorenz S Cederbaum, W Domcke, and Jochen Schirmer. “Many-body theory of core holes”. In: Physical Review A 22.1 (1980), p. 206. [25] M Ben-Nun and Todd J Martınez. “Nonadiabatic molecular dynamics: Validation of the multiple spawning method for a multidimensional problem”. In: The Journal of chemical physics 108.17 (1998), pp. 7244–7257. [26] M. Ben-Nun, Jason Quenneville, and Todd J. Mart´ ınez. “Ab Initio Multiple Spawn-ing: Photochemistry from First Principles Quantum Molecular Dynamics”. In: Jour-nal of Physical Chemistry A 104.22 (2000), pp. 5161–5175. doi : 10.1021/jp994174i .
+
+url : http://pubs.acs.org/doi/abs/10.1021/jp994174i .[27] Stefan Seritan et al. “TeraChem: Accelerating electronic structure and ab initio molecular dynamics with graphical processing units”. In: The Journal of chemical physics 152.22 (2020), p. 224110. [28] Stefan Seritan et al. “TeraChem: A graphical processing unit-accelerated electronic structure package for large-scale ab initio molecular dynamics”. In: Wiley Interdis-ciplinary Reviews: Computational Molecular Science 11.2 (2021), e1494. [29] Benjamin G. Levine et al. “Implementation of ab initio multiple spawning in the Molpro quantum chemistry package”. In: Chemical Physics . Ultrafast Photoinduced Processes in Polyatomic Molecules 347.1 (May 2008), pp. 3–16. issn : 0301-0104. 
+
+doi : 10.1016/j.chemphys.2008.01.014 . url : https://www.sciencedirect. com/science/article/pii/S0301010408000190 (visited on 09/29/2025). [30] Jianwei Sun, Adrienn Ruzsinszky, and John P Perdew. “Strongly constrained and appropriately normed semilocal density functional”. In: Physical review letters 115.3 (2015), p. 036402. [31] Diptarka Hait and Martin Head-Gordon. “Orbital optimized density functional the-ory for electronic excited states”. In: The journal of physical chemistry letters 12.19 (2021), pp. 4517–4529. [32] Leonardo A Cunha et al. “Relativistic orbital-optimized density functional theory for accurate core-level spectroscopy”. In: The journal of physical chemistry letters 
+
+13.15 (2022), pp. 3438–3449. [33] Evgeny Epifanovsky et al. “Software for the frontiers of quantum chemistry: An overview of developments in the Q-Chem 5 package”. In: The Journal of chemical physics 155.8 (2021), p. 084801. [34] Maximilien A Ambroise and Frank Jensen. “Probing basis set requirements for cal-culating core ionization and core excitation spectroscopy by the ∆ self-consistent-field approach”. In: Journal of chemical theory and computation 15.1 (2018), pp. 325– 337. [35] Frank Jensen. “Unifying general and segmented contracted basis sets. Segmented polarization consistent basis sets”. In: Journal of chemical theory and computation 
+
+10.3 (2014), pp. 1074–1085. 14
