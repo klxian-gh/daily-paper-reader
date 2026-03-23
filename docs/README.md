@@ -6,26 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-22
-- 运行时间：2026-03-22 20:08:44 UTC
+- 最新运行日期：2026-03-23
+- 运行时间：2026-03-23 20:28:30 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日聚焦超快X射线吸收光谱技术，成功捕捉到Norrish I型光化学反应的微观演化路径。
-研究通过极高时间分辨率揭示了分子断裂与重组的瞬态细节，为理解复杂光反应机制提供了关键证据。
-建议关注超快探测技术在实时监测化学键动态领域的应用，感受分子级“慢动作回放”的科学魅力。
-- 详情：[/202603/22/README](/202603/22/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202603/23/README](/202603/23/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Elucidating Norrish Type-I reactive pathways by ultrafast X-ray absorption spectroscopy](/202603/22/2603.18339v1-elucidating-norrish-type-i-reactive-pathways-by-ultrafast-x-ray-absorption-spectroscopy)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：利用从头算模拟阐明反应路径
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
