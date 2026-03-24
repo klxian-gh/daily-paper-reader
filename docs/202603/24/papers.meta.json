@@ -1,0 +1,93 @@
+{
+  "label": "2026-03-24",
+  "date": "2026-03-24",
+  "generated_at": "2026-03-24T20:33:42",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202603/24/2603.21323v1-machine-learned-leftmost-hessian-eigenvectors-for-robust-transition-state-finding",
+      "section": "quick",
+      "title_en": "Machine-Learned Leftmost Hessian Eigenvectors for Robust Transition State Finding",
+      "authors": "Guanchen Wu, Chung-Yueh Yuan, Kareem Hegazy, Samuel M. Blau, Teresa Head-Gordon",
+      "date": "2026-03-22",
+      "pdf": "https://arxiv.org/pdf/2603.21323v1",
+      "score": "7.0",
+      "evidence": "机器学习驱动的反应坐标过渡态搜索",
+      "tldr": "本研究针对过渡态（TS）寻找中Hessian矩阵计算成本高昂的挑战，提出了一种基于机器学习的优化器。该工具能直接预测最左侧Hessian特征向量（LMHE）来近似反应坐标，从而在不进行完整二阶计算的情况下实现稳健的TS收敛。通过引入不确定性量化机制，该方法在保证计算效率的同时提升了对复杂几何结构的鲁棒性，为高通量化学反应发现提供了兼具速度与精度的解决方案。",
+      "tags": "query:qmmm",
+      "abstract_en": "The reliable determination of transition states (TSs) benefits from second-order information for robust convergence and validation, but the computational expense of Hessians prohibits their routine use in TS optimization. Here, we present a machine-learning-driven TS optimizer that directly predicts the leftmost Hessian eigenvector (LMHE), the critical mode that locally approximates the reaction coordinate encompassing the TS. We demonstrate that our LMHE optimizer recovers TS solutions at the same rate as full Hessian optimizers, and more robustly from degraded initial guess geometries, thereby eliminating the excessively long wall times characteristic of full-Hessian approaches and reducing total gradient evaluations compared to standard quasi-Newton methods. We further improve accuracy and robustness using uncertainty quantification for identifying occasional LMHE prediction failures, that then falls back to a full Hessian update from the machine learned potential at that optimization step, avoiding expensive active learning. Overall our methodology and semi-automated workflow delivers second-order stability at first-order computational expense to provide a highly efficient engine for high-throughput reaction discovery.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.18274v1-sbml4md-a-computational-platform-for-system-bath-modeling-via-molecular-dynamics-powered-by-machine-learning",
+      "section": "quick",
+      "title_en": "sbml4md: A computational platform for System-Bath Modeling via Molecular Dynamics powered by Machine Learning",
+      "authors": "Kwanghee Park, Seiji Ueno, Yoshitaka Tanimura",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.18274v1",
+      "score": "6.0",
+      "evidence": "从分子动力学轨迹提取参数",
+      "tldr": "本研究推出了 sbml4md 软件，这是一种利用机器学习从分子动力学（MD）轨迹中提取多模非谐布朗（MAB）模型参数的新算法。该平台旨在为分层运动方程（HEOM）框架提供精确参数，以模拟分子液体的非线性振动光谱。通过机器学习捕捉非谐性、分子间耦合及浴相关函数，sbml4md 减少了经验拟合的需求，实现了在现实条件下对复杂环境的高效、可扩展建模。",
+      "tags": "query:qmmm",
+      "abstract_en": "We introduce sbml4md, a newly developed algorithm implemented as a software package to extract parameters of multimode anharmonic Brownian (MAB) models from molecular dynamics (MD) trajectories for simulating nonlinear vibrational spectra of intramolecular modes of molecular liquids. By leveraging machine learning (ML) techniques to capture vibrational anharmonicity, intermolecular couplings, and bath correlation functions for each mode, sbml4md obviates empirical fitting and enables the modeling of environments with spatial and temporal heterogeneity. This work provides a set of parameters specifically tailored for the Hierarchical Equations of Motion (HEOM) framework, enabling numerically \"exact\" simulations of nonlinear vibrational spectra. Building upon our previous implementation for intramolecular vibrational modes [Park, Jo, and Tanimura, J. Chem. Phys. 163, 214104 (2025)], the present code enhances optimization efficiency by explicitly accounting for intermolecular vibrational contributions. This extension enables sbml4md to broaden the applicability of HEOM-based dynamical modeling by seamlessly integrating classical MD approaches, thereby providing a flexible and scalable framework for simulating both linear and nonlinear spectra under realistic conditions with minimal empirical input. The accompanying ML code, written in Python, is provided as supporting material.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.20493v1-a-unified-machine-learning-framework-for-ab-initio-multiscale-modeling-of-liquids",
+      "section": "quick",
+      "title_en": "A unified machine learning framework for ab initio multiscale modeling of liquids",
+      "authors": "Anna T. Bui, Stephen J. Cox",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.20493v1",
+      "score": "6.0",
+      "evidence": "基于量子力学能量训练的MLIP用于多尺度建模",
+      "tldr": "本研究提出一个结合机器学习原子间势（MLIPs）与神经经典密度泛函理论（neural cDFT）的统一框架，实现了从第一性原理出发的液体多尺度建模。该方法利用MLIPs生成微观密度分布来训练neural cDFT，不仅显著提升了计算效率，还能准确预测水和二氧化碳的体相热力学、相图及受限环境下的复杂行为，为流体研究提供了从微观到宏观的透明路径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Understanding and predicting the behavior of liquid matter across length scales, using only the microscopic interactions encoded in the Schrödinger equation, remains a central challenge in the physical sciences. Achieving this goal requires not only an accurate and efficient description of intermolecular forces but also a consistent framework that bridges the micro-, meso-, and macroscales. Here, by combining machine-learned interatomic potentials (MLIPs) with neural classical density functional theory (neural cDFT), we present such a framework. The underlying idea is simple: MLIPs trained on quantum-mechanical energies and forces are used to generate inhomogeneous microscopic density profiles, which in turn serve as the training data for neural cDFT. The resulting ab initio neural cDFT is not only significantly more computationally efficient than molecular simulations, but also provides a conceptually transparent route to the thermodynamics of both homogeneous and inhomogeneous systems. We demonstrate the approach for both water and carbon dioxide using several exchange-correlation functionals. Beyond accurately reproducing bulk equations of state and liquid-vapor phase diagrams, ab initio neural cDFT predicts, from first principles, how confinement modifies liquid-vapor coexistence in water. It also captures complex behavior in supercritical carbon dioxide such as the Fisher-Widom and Widom lines. Ab initio neural cDFT establishes a general first-principles route to multiscale modeling of fluids within a single unified conceptual framework.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.21890v1--girsanov-a-generalized-method-to-construct-markov-state-models-from-non-equilibrium-and-multiensemble-biased-simulations",
+      "section": "quick",
+      "title_en": "$π$-Girsanov: A Generalized Method to Construct Markov State Models from Non-Equilibrium and Multiensemble Biased Simulations",
+      "authors": "Mingyuan Zhang, Yong Wang, Bettina G. Keller, Hao Wu",
+      "date": "2026-03-23",
+      "pdf": "https://arxiv.org/pdf/2603.21890v1",
+      "score": "6.0",
+      "evidence": "从偏置分子动力学模拟中构建马尔可夫状态模型",
+      "tldr": "本研究提出 π-Girsanov 方法，旨在从偏置增强采样分子动力学模拟中构建马尔可夫状态模型（MSM）。该方法通过将平稳密度的重加权与相关函数的重加权分离，有效解决了多系综和非平衡偏置轨迹下的动力学估计难题。在解析势能面和生物分子模型上的测试表明，该方法显著提升了动力学重加权的准确性与适用范围，加强了增强采样与动力学建模的联系。",
+      "tags": "query:qmmm",
+      "abstract_en": "We introduce $π$-Girsanov, a new method for constructing Markov state models from biased enhanced-sampling molecular dynamics simulations based on Girsanov reweighting. The key idea behind this new method is to separate the reweighting stationary density from the reweighting of the correlation function. We evaluate the effectiveness of this approach on several analytical potentials and on a model biomolecular system, comparing its performance with the original method. Our results show that $π$-Girsanov not only improves the estimation in a single-ensemble setting, but also resolves key challenges in estimating transition matrices from multiensemble and non-equilibrium biased trajectories. Overall, $π$-Girsanov represents a substantial advance in kinetic reweighting, strengthening the connection between enhanced sampling techniques and Markov state modeling.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.21906v1-ollosc-unified-and-efficient-density-functional-approximation-to-correct-delocalization-error-in-molecules-and-periodic-materials",
+      "section": "quick",
+      "title_en": "olLOSC: Unified and efficient density functional approximation to correct delocalization error in molecules and periodic materials",
+      "authors": "Yichen Fan, Jacob Z. Williams, Weitao Yang",
+      "date": "2026-03-23",
+      "pdf": "https://arxiv.org/pdf/2603.21906v1",
+      "score": "6.0",
+      "evidence": "分子的量子性质与密度泛函理论",
+      "tldr": "针对密度泛函理论（DFT）中普遍存在的离域误差（如带隙低估和电荷过度离域），本文在lrLOSC基础上提出了olLOSC方法。该方法利用无轨道电子线性响应计算曲率，实现了对分子和周期性材料离域误差的统一修正。olLOSC在保持高精度的同时显著提升了计算效率，为跨分子、材料及界面的高效DFT应用提供了稳健的解决方案。",
+      "tags": "query:qmmm",
+      "abstract_en": "Density functional theory (DFT) is the most promising method for calculating quantum properties of molecules and materials at moderate and large scales. However, commonly used density functional approximations (DFAs) have systematic delocalization error, as demonstrated by underestimated band gaps, over-delocalized charges, and energy level misalignment at interfaces, which limits its quantitative prediction. Extensive efforts, such as the $GW$ approximation to many-body perturbation theory, system-specific tuning of DFA parameters, and correction functionals have been developed to address delocalization error. However, an accurate, efficient, and unified solution to describe total energy, charge density and band structure for both finite systems and materials is still not available. Building on the linear-response localized orbital scaling correction (lrLOSC), we introduce olLOSC: a localized orbital scaling correction with curvature calculated by orbital-free electronic linear response. olLOSC has comparable accuracy to lrLOSC, but is much more computationally efficient. olLOSC corrects delocalization error - especially underestimated gaps, but also the total energy - both in molecules and in materials with small and moderate band gaps, within the same orbital-free approximation. Critically, with a a unified approximation, olLOSC opens the path for robust and efficient DFT applications across molecules, materials, and interfaces.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.22099v1-overcoming-sampling-limitations-using-machine-learned-interatomic-potentials-the-case-of-water-in-salt-electrolytes",
+      "section": "quick",
+      "title_en": "Overcoming sampling limitations using machine-learned interatomic potentials: the case of water-in-salt electrolytes",
+      "authors": "Luca Brugnoli, Mathieu Salanne, A. Marco Saitta, Alessandra Serva, Arthur France-Lanord",
+      "date": "2026-03-23",
+      "pdf": "https://arxiv.org/pdf/2603.22099v1",
+      "score": "6.0",
+      "evidence": "机器学习势能克服从头算分子动力学的采样限制",
+      "tldr": "本研究探讨了利用机器学习原子间势（MACE）模拟高浓度电解质（21m LiTFSI 水盐体系）的有效性。针对从头算分子动力学在采样时间尺度上的局限，研究对比了基础模型、微调及从头训练策略。结果表明，机器学习模型能显著提升采样效率，与实验结构因子高度吻合，且微调基础模型在数据效率和处理难采样构型方面优于从头训练，为长时演化的高浓度电解质建模提供了可靠方案。",
+      "tags": "query:qmmm",
+      "abstract_en": "Machine-learned interatomic potentials hold the promise to enable the modeling of highly concentrated liquids over meaningful timescales, far from reach for current ab initio electronic structure methods. Here we evaluate the performances of various MACE potentials in modeling a $21 m$ water-in-salt electrolyte based on lithium bis(trifluoromethanesulfonyl)imide. We test out-of-the-box foundation models, as well as both fine tuning and from scratch training strategies. Our simulations demonstrate that surrogate models allow to overcome sampling limitations of ab initio molecular dynamics, reaching an excellent agreement with experimental observables such as the structure factor. We also demonstrate the benefit of fine tuning a foundation model over training from scratch: in terms of data efficiency, but most importantly as a means to provide information regarding configurations hard to sample, such as short Li$^+$--Li$^+$ distances. Finally, we show that depending on the reference exchange-correlation functional, empirical dispersion correction schemes can be detrimental. All in all, our work shows that machine-learned interatomic potentials are a good fit for the modeling of highly concentrated electrolytes over long timescales.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

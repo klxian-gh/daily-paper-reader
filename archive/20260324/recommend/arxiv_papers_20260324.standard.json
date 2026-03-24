@@ -1,0 +1,242 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-24T20:32:52.370242+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.21323v1",
+      "title": "Machine-Learned Leftmost Hessian Eigenvectors for Robust Transition State Finding",
+      "abstract": "The reliable determination of transition states (TSs) benefits from second-order information for robust convergence and validation, but the computational expense of Hessians prohibits their routine use in TS optimization. Here, we present a machine-learning-driven TS optimizer that directly predicts the leftmost Hessian eigenvector (LMHE), the critical mode that locally approximates the reaction coordinate encompassing the TS. We demonstrate that our LMHE optimizer recovers TS solutions at the same rate as full Hessian optimizers, and more robustly from degraded initial guess geometries, thereby eliminating the excessively long wall times characteristic of full-Hessian approaches and reducing total gradient evaluations compared to standard quasi-Newton methods. We further improve accuracy and robustness using uncertainty quantification for identifying occasional LMHE prediction failures, that then falls back to a full Hessian update from the machine learned potential at that optimization step, avoiding expensive active learning. Overall our methodology and semi-automated workflow delivers second-order stability at first-order computational expense to provide a highly efficient engine for high-throughput reaction discovery.",
+      "authors": [
+        "Guanchen Wu",
+        "Chung-Yueh Yuan",
+        "Kareem Hegazy",
+        "Samuel M. Blau",
+        "Teresa Head-Gordon"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-22T17:08:27+00:00",
+      "link": "https://arxiv.org/pdf/2603.21323v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Machine-learned transition state finding for reaction coordinates",
+      "llm_evidence_cn": "机器学习驱动的反应坐标过渡态搜索",
+      "llm_evidence": "机器学习驱动的反应坐标过渡态搜索",
+      "canonical_evidence": "机器学习驱动的反应坐标过渡态搜索",
+      "llm_tldr_en": "A machine-learning optimizer for transition states that predicts Hessian eigenvectors to find reaction pathways.",
+      "llm_tldr_cn": "一种通过预测Hessian特征向量来寻找反应路径的机器学习过渡态优化器。",
+      "llm_tldr": "一种通过预测Hessian特征向量来寻找反应路径的机器学习过渡态优化器。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.18274v1",
+      "title": "sbml4md: A computational platform for System-Bath Modeling via Molecular Dynamics powered by Machine Learning",
+      "abstract": "We introduce sbml4md, a newly developed algorithm implemented as a software package to extract parameters of multimode anharmonic Brownian (MAB) models from molecular dynamics (MD) trajectories for simulating nonlinear vibrational spectra of intramolecular modes of molecular liquids. By leveraging machine learning (ML) techniques to capture vibrational anharmonicity, intermolecular couplings, and bath correlation functions for each mode, sbml4md obviates empirical fitting and enables the modeling of environments with spatial and temporal heterogeneity. This work provides a set of parameters specifically tailored for the Hierarchical Equations of Motion (HEOM) framework, enabling numerically \"exact\" simulations of nonlinear vibrational spectra. Building upon our previous implementation for intramolecular vibrational modes [Park, Jo, and Tanimura, J. Chem. Phys. 163, 214104 (2025)], the present code enhances optimization efficiency by explicitly accounting for intermolecular vibrational contributions. This extension enables sbml4md to broaden the applicability of HEOM-based dynamical modeling by seamlessly integrating classical MD approaches, thereby providing a flexible and scalable framework for simulating both linear and nonlinear spectra under realistic conditions with minimal empirical input. The accompanying ML code, written in Python, is provided as supporting material.",
+      "authors": [
+        "Kwanghee Park",
+        "Seiji Ueno",
+        "Yoshitaka Tanimura"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-18T20:45:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.18274v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "parameters from molecular dynamics trajectories",
+      "llm_evidence_cn": "从分子动力学轨迹提取参数",
+      "llm_evidence": "从分子动力学轨迹提取参数",
+      "canonical_evidence": "从分子动力学轨迹提取参数",
+      "llm_tldr_en": "A platform to extract system-bath modeling parameters from MD trajectories using machine learning.",
+      "llm_tldr_cn": "一个利用机器学习从分子动力学轨迹中提取系统-浴模型参数的平台。",
+      "llm_tldr": "一个利用机器学习从分子动力学轨迹中提取系统-浴模型参数的平台。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.20493v1",
+      "title": "A unified machine learning framework for ab initio multiscale modeling of liquids",
+      "abstract": "Understanding and predicting the behavior of liquid matter across length scales, using only the microscopic interactions encoded in the Schrödinger equation, remains a central challenge in the physical sciences. Achieving this goal requires not only an accurate and efficient description of intermolecular forces but also a consistent framework that bridges the micro-, meso-, and macroscales. Here, by combining machine-learned interatomic potentials (MLIPs) with neural classical density functional theory (neural cDFT), we present such a framework. The underlying idea is simple: MLIPs trained on quantum-mechanical energies and forces are used to generate inhomogeneous microscopic density profiles, which in turn serve as the training data for neural cDFT. The resulting ab initio neural cDFT is not only significantly more computationally efficient than molecular simulations, but also provides a conceptually transparent route to the thermodynamics of both homogeneous and inhomogeneous systems. We demonstrate the approach for both water and carbon dioxide using several exchange-correlation functionals. Beyond accurately reproducing bulk equations of state and liquid-vapor phase diagrams, ab initio neural cDFT predicts, from first principles, how confinement modifies liquid-vapor coexistence in water. It also captures complex behavior in supercritical carbon dioxide such as the Fisher-Widom and Widom lines. Ab initio neural cDFT establishes a general first-principles route to multiscale modeling of fluids within a single unified conceptual framework.",
+      "authors": [
+        "Anna T. Bui",
+        "Stephen J. Cox"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci",
+        "cond-mat.other",
+        "cond-mat.stat-mech",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-20T20:46:21+00:00",
+      "link": "https://arxiv.org/pdf/2603.20493v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "MLIPs trained on quantum-mechanical energies for multiscale modeling",
+      "llm_evidence_cn": "基于量子力学能量训练的MLIP用于多尺度建模",
+      "llm_evidence": "基于量子力学能量训练的MLIP用于多尺度建模",
+      "canonical_evidence": "基于量子力学能量训练的MLIP用于多尺度建模",
+      "llm_tldr_en": "A framework bridging quantum interactions to multiscale liquid modeling using machine-learned potentials.",
+      "llm_tldr_cn": "一个利用机器学习势能将量子相互作用桥接到多尺度液体建模的框架。",
+      "llm_tldr": "一个利用机器学习势能将量子相互作用桥接到多尺度液体建模的框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21890v1",
+      "title": "$π$-Girsanov: A Generalized Method to Construct Markov State Models from Non-Equilibrium and Multiensemble Biased Simulations",
+      "abstract": "We introduce $π$-Girsanov, a new method for constructing Markov state models from biased enhanced-sampling molecular dynamics simulations based on Girsanov reweighting. The key idea behind this new method is to separate the reweighting stationary density from the reweighting of the correlation function. We evaluate the effectiveness of this approach on several analytical potentials and on a model biomolecular system, comparing its performance with the original method. Our results show that $π$-Girsanov not only improves the estimation in a single-ensemble setting, but also resolves key challenges in estimating transition matrices from multiensemble and non-equilibrium biased trajectories. Overall, $π$-Girsanov represents a substantial advance in kinetic reweighting, strengthening the connection between enhanced sampling techniques and Markov state modeling.",
+      "authors": [
+        "Mingyuan Zhang",
+        "Yong Wang",
+        "Bettina G. Keller",
+        "Hao Wu"
+      ],
+      "primary_category": "physics.bio-ph",
+      "categories": [
+        "physics.bio-ph"
+      ],
+      "published": "2026-03-23T12:16:06+00:00",
+      "link": "https://arxiv.org/pdf/2603.21890v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Markov state models from biased molecular dynamics simulations",
+      "llm_evidence_cn": "从偏置分子动力学模拟中构建马尔可夫状态模型",
+      "llm_evidence": "从偏置分子动力学模拟中构建马尔可夫状态模型",
+      "canonical_evidence": "从偏置分子动力学模拟中构建马尔可夫状态模型",
+      "llm_tldr_en": "Introduces a reweighting method to construct Markov state models from enhanced-sampling MD simulations.",
+      "llm_tldr_cn": "提出了一种从增强采样分子动力学模拟中构建马尔可夫状态模型的新方法。",
+      "llm_tldr": "提出了一种从增强采样分子动力学模拟中构建马尔可夫状态模型的新方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21906v1",
+      "title": "olLOSC: Unified and efficient density functional approximation to correct delocalization error in molecules and periodic materials",
+      "abstract": "Density functional theory (DFT) is the most promising method for calculating quantum properties of molecules and materials at moderate and large scales. However, commonly used density functional approximations (DFAs) have systematic delocalization error, as demonstrated by underestimated band gaps, over-delocalized charges, and energy level misalignment at interfaces, which limits its quantitative prediction. Extensive efforts, such as the $GW$ approximation to many-body perturbation theory, system-specific tuning of DFA parameters, and correction functionals have been developed to address delocalization error. However, an accurate, efficient, and unified solution to describe total energy, charge density and band structure for both finite systems and materials is still not available. Building on the linear-response localized orbital scaling correction (lrLOSC), we introduce olLOSC: a localized orbital scaling correction with curvature calculated by orbital-free electronic linear response. olLOSC has comparable accuracy to lrLOSC, but is much more computationally efficient. olLOSC corrects delocalization error - especially underestimated gaps, but also the total energy - both in molecules and in materials with small and moderate band gaps, within the same orbital-free approximation. Critically, with a a unified approximation, olLOSC opens the path for robust and efficient DFT applications across molecules, materials, and interfaces.",
+      "authors": [
+        "Yichen Fan",
+        "Jacob Z. Williams",
+        "Weitao Yang"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-03-23T12:27:46+00:00",
+      "link": "https://arxiv.org/pdf/2603.21906v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum properties of molecules and density functional theory",
+      "llm_evidence_cn": "分子的量子性质与密度泛函理论",
+      "llm_evidence": "分子的量子性质与密度泛函理论",
+      "canonical_evidence": "分子的量子性质与密度泛函理论",
+      "llm_tldr_en": "A unified density functional approximation to correct delocalization errors in molecular quantum calculations.",
+      "llm_tldr_cn": "一种统一的密度泛函近似方法，用于修正分子量子计算中的离域误差。",
+      "llm_tldr": "一种统一的密度泛函近似方法，用于修正分子量子计算中的离域误差。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22099v1",
+      "title": "Overcoming sampling limitations using machine-learned interatomic potentials: the case of water-in-salt electrolytes",
+      "abstract": "Machine-learned interatomic potentials hold the promise to enable the modeling of highly concentrated liquids over meaningful timescales, far from reach for current ab initio electronic structure methods. Here we evaluate the performances of various MACE potentials in modeling a $21 m$ water-in-salt electrolyte based on lithium bis(trifluoromethanesulfonyl)imide. We test out-of-the-box foundation models, as well as both fine tuning and from scratch training strategies. Our simulations demonstrate that surrogate models allow to overcome sampling limitations of ab initio molecular dynamics, reaching an excellent agreement with experimental observables such as the structure factor. We also demonstrate the benefit of fine tuning a foundation model over training from scratch: in terms of data efficiency, but most importantly as a means to provide information regarding configurations hard to sample, such as short Li$^+$--Li$^+$ distances. Finally, we show that depending on the reference exchange-correlation functional, empirical dispersion correction schemes can be detrimental. All in all, our work shows that machine-learned interatomic potentials are a good fit for the modeling of highly concentrated electrolytes over long timescales.",
+      "authors": [
+        "Luca Brugnoli",
+        "Mathieu Salanne",
+        "A. Marco Saitta",
+        "Alessandra Serva",
+        "Arthur France-Lanord"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-23T15:30:39+00:00",
+      "link": "https://arxiv.org/pdf/2603.22099v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine-learned potentials to overcome sampling limitations of ab initio molecular dynamics",
+      "llm_evidence_cn": "机器学习势能克服从头算分子动力学的采样限制",
+      "llm_evidence": "机器学习势能克服从头算分子动力学的采样限制",
+      "canonical_evidence": "机器学习势能克服从头算分子动力学的采样限制",
+      "llm_tldr_en": "Evaluates machine-learned potentials for modeling electrolytes with quantum-level accuracy.",
+      "llm_tldr_cn": "评估用于电解质建模的机器学习势能，达到量子级精度并克服采样限制。",
+      "llm_tldr": "评估用于电解质建模的机器学习势能，达到量子级精度并克服采样限制。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

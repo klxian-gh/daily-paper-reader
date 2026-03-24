@@ -1,0 +1,339 @@
+Title: Overcoming sampling limitations using machine-learned interatomic potentials: the case of water-in-salt electrolytes
+
+URL Source: https://arxiv.org/pdf/2603.22099v1
+
+Published Time: Tue, 24 Mar 2026 02:32:37 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+## Overcoming sampling limitations using machine-learned interatomic potentials: the case of water-in-salt electrolytes 
+
+Luca Brugnoli, 1 Mathieu Salanne, 2, 3, 4 A. Marco Saitta, 5 Alessandra Serva, 2, 3, ∗ and Arthur France-Lanord 1, † 
+
+> 1
+
+Sorbonne Université, Muséum National d’Histoire Naturelle, UMR CNRS 7590, Institut de Minéralogie, de Physique des Matériaux et de Cosmochimie, IMPMC, F-75005 Paris, France 
+
+> 2
+
+Sorbonne Université, CNRS, Physicochimie des Électrolytes et Nanosystèmes Interfaciaux, F-75005 Paris, France 
+
+> 3
+
+Réseau sur le Stockage Electrochimique de l’Energie (RS2E), FR CNRS 3459, 80039 Amiens Cedex, France 
+
+> 4
+
+CNRS@CREATE, Singapore 138601, Singapore 
+
+> 5
+
+Laboratoire de Physique de L’École Normale Supérieure de Paris, CNRS, ENS & Université PSL, Sorbonne Université, Université de Paris, 75005 Paris, France 
+
+Machine-learned interatomic potentials hold the promise to enable the modeling of highly concentrated liq-uids over meaningful timescales, far from reach for current ab initio electronic structure methods. Here we evaluate the performances of various MACE potentials in modeling a 21 m water-in-salt electrolyte based on lithium bis(trifluoromethanesulfonyl)imide. We test out-of-the-box foundation models, as well as both fine tun-ing and from scratch training strategies. Our simulations demonstrate that surrogate models allow to overcome sampling limitations of ab initio molecular dynamics, reaching an excellent agreement with experimental ob-servables such as the structure factor. We also demonstrate the benefit of fine tuning a foundation model over training from scratch: in terms of data efficiency, but most importantly as a means to provide information re-garding configurations hard to sample, such as short Li +–Li + distances. Finally, we show that depending on the reference exchange-correlation functional, empirical dispersion correction schemes can be detrimental. All in all, our work shows that machine-learned interatomic potentials are a good fit for the modeling of highly concentrated electrolytes over long timescales. 
+
+I. INTRODUCTION 
+
+Aqueous electrolytes offer the potential to reduce the environmental toll of lithium-ion batteries and to significantly increase their safety regarding fire hazards. Unfortunately, common aqueous electrolytes degrade upon the application of voltages larger than water’s electrochemical stability window (1.23 V). Water-in-salt electrolytes [1] (WiSEs) demon-strated early on their ability in overcoming this limitation. These are concentrated solutions in which there is more salt than water both in terms of volume and mass. The first device relying on a WiSE, which demonstrated stability up to 3 V, made use of a 21 m aqueous solution of a hydrophilic salt, lithium bis(trifluoromethanesulfonyl)imide (LiTFSI). This mixture has become the canonical example allowing to extend the electrochemical stability window of aqueous lithium electrolytes. At such high concentration, this mixture significantly departs from the ideal, dilute solution: ion pairing and solvent depletion generate a heterogeneous liquid where water-rich and anion-rich regions have been identified from both atomistic simulations and scattering experiments.[2, 3] Overall, the highly concentrated LiTFSI aqueous electrolyte has become a staple for understanding solvation, ion transport mechanisms, and intermediate-range ordering in WiSEs. In addition, these phenomena have been related to properties such as structure, diffusion, viscosity, and conductivity, using numerical simulations such as molecular dynamics (MD) [4, 5]. However, a consensus has not been reached yet regarding either the Li + solvation partitioning between water and bis(trifluoromethanesulfonyl)imide (TFSI −), or the length scale of structural heterogeneity. In particular, estimates of these quantities are not fully consistent across different simulation or characterization techniques [2, 3]. Recently de-veloped phenomenological models, based on ion crowding, clustering, and gelation, both in the bulk [6, 7] or at an interface [8] have been successfully reproducing trends observed in experimental or simulation setups, such as changes in activity as a function of salt concentration. They therefore allow to rationalize such phenomena in terms of simple model ingredients. Phenomenological models rely however on parameters, whose values must be constrained using molecular simulations. Classical MD simulations have been largely employed to investigate LiTFSI WiSEs from a microscopic perspective, probing phenomena such as Li + coordination, contact and solvent-separated ion pairs, as well as phase separation at the nanoscale, which correlates with sluggish solvent dynamics [2, 4]. Ion transport and viscosity [5, 9] have also been investigated, as sufficiently long timescales, in the range of tens of nanoseconds, can be reached using classical empirical potentials. Although inexpensive to use, these interaction models have some downsides: first, their empirical nature does not warrant any transferability. In essence, some properties could be in good agreement with experimental findings, while others could show large disagreement [10]. Second, these models rely on static topological elements (bonds, angles,   
+
+> ∗alessandra.serva@sorbonne-universite.fr
+> †arthur.france-lanord@cnrs.fr
+> arXiv:2603.22099v1 [physics.chem-ph] 23 Mar 2026
+
+2dihedrals), which prevent the investigation of reactivity. This is a showstopper if one wishes for instance to investigate the degradation of WiSEs under a voltage bias or in alkaline conditions [11]. These limitations motivate benchmarks on reference data. Ab initio MD (AIMD) simulations based on density func-tional theory (DFT) provide such a reference; with appropriately validated exchange-correlation functionals, these simula-tions yield meaningful results for the structural and dynamical properties of molecular liquids. They show excellent trans-ferability and enable the modeling of reactivity: in that sense, they allow going beyond empirical potentials. For LiTFSI WiSE, AIMD has been used as a means to probe solvation patterns [12–15], spectroscopic signatures [13], nanoscopic structuration [14], diffusivity [15], and intermediate-range order through the evaluation of the structure factor [15]. Un-fortunately, the unfavorable algorithmic complexity of quantum chemistry methods prevents the application of AIMD to large system sizes or to long timescales. This is particularly important for LiTFSI WiSE: large simulation boxes are needed to probe intermediate- and long-range order, and the high viscosity and slow ion exchange dynamics require the sampling of trajectories over extended timescales. These limitations lead to simulations performed on too small simulation boxes, for too short simulation times, or using parameters controlling simulation accuracy set to too loose values. As we will discuss later on, we argue that the short simulation time bottleneck can be appreciated when attempting to compare computed and experimental structure factors [15]: there is significant disagreement in features at low wavenumber due to reorganization processes too slow to probe. Dependence on the method – either the electronic structure method itself, or in the narrower context of DFT, the choice of exchange-correlation functional – is nontrivial. Generalized gradient approximation (GGA) functionals and meta-GGAs differ in their description of hydrogen bonding and ion pairing, and the treatment of dispersion can change equilibrium density and ionic association propensities [16]. In this context, Goloviznina et al. [14] reported polymer-like Li–Li nanochains with short Li–Li bonds in BLYP-D3 simulations of a 128-pair cell, emphasizing that rare motifs can appear and must be assessed against reference choices and finite-size effects. Whether such motifs persist under alternative functionals, whether they survive longer sampling, and how they impact structure factors and transport remain open questions. These uncertainties complicate the use of AIMD alone as a production tool for dynamics properties, but they make it a valuable anchor point for training and validating interatomic potentials – if the reference model is documented. In this context, machine-learned interatomic potentials (MLIPs) aim to reproduce a chosen reference model at a frac-tion of its computational cost, enabling nanosecond-to-microsecond sampling while retaining a direct link to electronic-structure labels [10]. Their reliability is bounded by data coverage: configurations that are rare in short AIMD, such as short distances of same-charge ions, or large density fluctuations, can dominate extrapolation behavior in long trajecto-ries. Model expressivity also constitutes a bound on the accuracy MLIPs can reach on reference data. While short-range interactions are well captured using modern architectures [17], long-range physics are only starting to be considered and incorporated into MLIPs [18, 19]. Since finite-cutoff models do not automatically recover dispersion or electrostatic tails, which influence properties such as density, compressibility, and dipole correlation functions, correction strategies should be included and validated following the same lines as the MLIP itself. MLIPs have been used a few times to model WiSEs. Wang et al. [20] trained deep potentials [21] on LiTFSI aqueous solutions (up to 25 .6m), to investigate how concentration affects redox levels, and ultimately the electrochemical stability window. More recently, Okuno [22] used moment tensor potentials [23] to model WiSEs with two different salts, including LiTFSI; the focus was on solvation structure and exchanges using simulations at fixed density, as well as diffusion. Cao 
+
+et al. [24] used deep potentials to investigate the solvation and transport properties of an aqueous ZnCl 2 electrolyte with variable concentration, reaching up to 30m. Overall, many key questions remain: are MLIPs able to reproduce experimental properties such as density, diffusion coefficients, as well as the structure factor? Are results obtained from typically short AIMD simulations biased due to an insufficient sampling of this highly viscous system? What does that entail regarding generating an appropriate dataset for MLIP training? Here, we are attempting to answer these questions by focusing on a particular class of MLIPs: MACE, an O(3)-equivariant message-passing architecture that incorporates high body-order correlations and shallow networks, which has been shown to reach low force errors and high transferability[25]. Beyond single-system, application-focused training, the MACE architecture has been used a series of so-called foundation models [26, 27]: pre-trained models that cover a broad range of elements and are released in named families trained on large DFT datasets at specified levels of theory. These models can be used directly as baselines, or adapted by fine-tuning to a target chemistry of interest and reference data – potentially using a different electronic structure method. This allows us to investigate the dependence on small, correlated datasets extracted from AIMD, and to explore if relying on an initial foundation model, either fine-tuned or used out-of-the-box, leads to significantly different behaviors compared to models obtained by training from-scratch. This is particularly interesting for WiSEs, since validation is not necessarily directly accessible through AIMD, due to the high viscosity of the system. After training a series of models either from scratch (TfS) and through fine-tuning (FT) (as depicted in Figure 1b), we first evaluate their propensity compared to foundation (F) models to generate meaningful MD simulations of a 20.9 m LiTFSI WiSE (Figure 1a). We demonstrate that TfS models can lead to unphysical results due to datasets not covering rare configurations, such as short-range Li +-Li + repulsion (see Figure 1c). Then, we move to investigating their capacity at reproducing the experimental density and diffusion coefficients, and discuss the effects of including corrections to dispersion interactions such as D3 [28]. Our results demonstrate that here, the choice of reference exchange-correlation 3AIMD Training from scratch Fine-tuning (a) (b) (c) AIMD db train train    
+
+> TFSI -Li +H2O
+> FIG. 1. (a) Snapshot of the 20.9 m LiTFSI water-in-salt electrolyte. The bottom panel shows the molecular depictions used throughout: TFSI −, Li +, and H 2O; (b) Workflows of the two different training strategies, training from scratch (TfS) and fine-tuning (FT); (c) Occurrence of unphysical Li-Li dimers over a time span of 1 ns for three different models. A snapshot of such a dimer is displayed in the bottom panel.
+
+(XC) functional is critical. After selecting four models based on these results, we then test these models on reproducing the experimental structure factor, compare to results obtained using short AIMD trajectories, and evaluate the influence of increased sampling time. This effect is also evaluated on the coordination of Li +. This allows us to solve discrepancies between the AIMD and experimental structure factor: we show that converging features at low wavenumbers requires long trajectories. Finally, we evaluate the performance of different models in reproducing the experimental shear viscosity, for which significant sampling time is required. All together, our study offers a few key takeaways on using MLIPs to model WiSEs. First, foundation models should not be used out-of-the-box, as their performances are hard to anticipate. Second, we show the value of fine-tuning both for reducing the amount of data required for training, and as a simple solution to capture the correct physics in regions of configuration space hard to sample. Third, different XC functional lead to qualitatively different agreement with experimental data. Fourth, the inclusion of dispersion correction schemes should be validated. Finally, quantitative agreement with experimental data is achievable, but requires sampling times larger than what is currently reasonably reachable using AIMD; a corollary to this last point is that training on short AIMD trajectories can lead to MLIPs able to reproduce the correct experimental trends using subsequent long dynamics. Overall, our results show that carefully-designed MLIPs can accurately capture the physics of water-in-salt electrolytes.  
+
+> II. COMPUTATIONAL APPROACH
+
+Our objective is to study the 20.9 m LiTFSI–H 2O mixture at 300 K; for that purpose, we used previously-reported AIMD trajectories as a starting point for dataset construction [14]. These trajectories were generated using a GGA XC functional (BLYP with D3 corrections). Here, we recompute energies and forces for the same set of configurations, at the meta-GGA level using the revised and regularised strongly constrained and appropriately normed (r 2SCAN) functional, which improves the description of hydrogen bonding and ion pairing in condensed aqueous solutions [29–31]. We then benchmarked public MACE foundation models on this chemistry, and built task-specific models by both fine-tuning and training from scratch. Benchmarking of the various models was then achieved by computing a range of properties using MD simulations.  
+
+> A. System composition and cells
+
+Two periodic and cubic boxes were used: a larger cell ("Li 128 "), containing 128 LiTFSI pairs and 340 H 2O molecules (3068 atoms), and "Li 64 ", exactly twice smaller (1534 atoms). Both boxes are on the higher end of what is achievable using density functional theory. Unless specified, the density and diffusivity were evaluated using the Li 128 box, while viscosity was estimated from simulations performed using the smaller cell. Box vectors for initial configurations were set to reproduce the experimental density at 21 m of 1 .7126 g cm −3[32]; volumes were subsequently allowed to relax in NPT runs (see below). 4 
+
+> B. Electronic structure reference data
+
+All electronic structure calculations were performed using CP2K/QUICKSTEP version 9.1 [33, 34], which employs a hybrid Gaussian and plane wave (GPW) scheme. We used Goedecker-Teter-Hutter pseudopotentials [35–37] throughout. The SCF convergence criterion was set to 10 −7 Ha. Single point calculations on the configurations extracted from the Li 64 and Li 128 trajectories of Goloviznina et al. [14] were performed using a molecularly optimized, TZV2P-GTH-SCAN basis set[38], and a plane wave expansion cutoff of 1200 Ry (relative density cutoff of 70 Ry), to obtain well-converged atomic forces. Configurations exhibiting SCF convergence issues were discarded, as well as those showing any atomic force component exceeding 10 eV Å −1. Unless stated otherwise, a total of 1245 configurations were used for FT and TfS procedures, comprising 926 configurations from Li 64 and 119 configurations from Li 128 . The test set was constructed using an independent trajectory from the ones used for training, and consists of 200 Li 64 configurations. To provide an electronic-structure reference independent of the trajectories used for dataset construction, we also per-formed a separate AIMD simulation of the Li 128 cell using the r 2SCAN functional with no dispersion correction. For this simulation, we used a DZVP-MOLOPT-SR-GTH basis set [38], and plane wave cutoff of 900 Ry, (relative density cutoff of 70 Ry). MD simulations in the Born–Oppenheimer approximation were performed with a 0.5 fs time step, targetting the NVT ensemble at 300 K using a Nosé–Hoover thermostat with a 0.1 ps time constant. The starting configuration was identical to the pre-equilibrated structure used for all machine learning MD (MLMD) runs (see Section 1 of the SI). After 5 ps of equilibration, 15 ps of production trajectory were collected and used for structural analysis. At odds with what Goloviznina et al. reported earlier [14], no Li + nanochains form in this trajectory. We investigated this phenomenon using various XC functionals: results are discussed in Section S3 of the SI.  
+
+> C. Machine-Learned Interatomic Potentials
+
+We employed MACE [39, 40], an equivariant, many-body message-passing neural network that constructs atomic ener-gies from high-order (up to 4-body) equivariant messages while enforcing O(3) symmetry via spherical harmonics/Wigner D-matrices. The architecture achieves state-of-the-art force accuracy with two message-passing layers. As baselines, we screened publicly released MACE foundation checkpoints from the MACE -FOUNDATIONS environment [27, 41]. This covers the MPTrj-based MACE -MP -0 line (including the successive 0 A/0 B/0 B2/0 B3 releases), MACE -MPA -0 (trained on a larger dataset combining MPTrj and sAlex), MACE -OMAT -0 (OMAT dataset), and MatPES-based models at different reference levels ( MACE -MATPES -PBE -0 and MACE -MATPES -R2SCAN -0). These families primarily differ by the train-ing dataset and by the underlying electronic-structure level used for labels, namely PBE+U for MP /MPA /OMAT , PBE for 
+
+> MATPES
+
+-PBE , and r 2SCAN for MATPES -R2SCAN . When available, multiple capacity variants (e.g., small/medium/large) were considered within a given family. Within the MPTrj line, the 0 A/0 B/0 B2/0 B3 releases share the same overall training corpus and reference level but incorporate successive robustness and stability updates documented by the developers. 
+
+Training protocols. All models were trained using an energy and force loss, with weights reported in the SI. We used a multi-head replay strategy for fine-tuning foundation models, and conventional train/validation splits (90/10) stratified by configuration source. Hyperparameters (cutoff radius, channels, Lmax , number of layers, learning rate schedule, batch size) and other details concerning the training are listed in Tables S2-S3. We report the mean absolute error (MAE) and root mean square error (RMSE) for forces and energies; the primary selection metric is the force RMSE on the held-out test set. 
+
+Dispersion. Semi-local DFT reference models and finite-cutoff MLIPs do not recover the long-range London disper-sion tail by construction, and dispersion corrections (e.g., Grimme D3/D4) are therefore widely used in condensed-phase simulations to improve the description of both solid and liquid phases [28, 42]. In this work, dispersion was treated as a modeling choice: in addition to "bare" trajectories (the interactions being predicted using MACE only, trained on bare DFT data), we generated "D3-corrected" trajectories by adding a Grimme D3 term with Becke–Johnson damping (D3(BJ)) on top of the MACE model [43]. This choice was primarily pragmatic and aimed at consistency across the screened model set, since the same D3(BJ) overlay can be applied uniformly within our workflow. For r 2SCAN-based descriptions, dispersion-corrected variants exist (with D4 or rVV10 being often adopted), but dispersion is not guaranteed to yield systematic improvements. In fact, D3 and rVV10 corrections applied to SCAN were shown to lead to overbinding in hydrogen-bonded molecular systems [44–46]; accordingly, we do not assume a priori that D3-corrected trajectories are universally closer to experiments than bare ones [47–49]. Conversely, dispersion corrections have been reported [50, 51] to improve densities and related properties for MLIPs trained on dispersion-free semilocal datasets in disordered ionic and glassy systems, motivating us to asses the sensitivity of the results also for PBE-based foundation models.  
+
+> D. Machine learning molecular dynamics
+
+All MLMD simulations were performed using the LAMMPS simulation package [52]. Dynamics were integrated using the velocity-Verlet scheme, with a time step of 0.5 fs. Temperature was controlled with a chain of Nosé–Hoover thermostats [53, 54], using a damping constant of 50 fs. NPT simulations for density equilibration were performed for the Li 128 box at 300 K and 1 atm, using an isotropic Nosé–Hoover barostat with a damping constant of 0.5 ps. We used 5the MACE–LAMMPS interface [55], with TorchScript-exported model files; representative input templates and element mappings are provided in the SI. The LAMMPS pair_style dispersion/d3 implementation [56] of the D3 correction scheme was used. We used a global cutoff of 16 Å, along with a coordination-number cutoff of 10 Å.  
+
+> E. Structural analysis
+
+Structural observables were computed for a small set of models, and compared against ab initio and experimental references where available. Partial radial distribution functions (RDFs, gαβ (r)) were evaluated for key pairs, including Li–Li and Li–O tot , where O tot denotes oxygen atoms from both water molecules and the TFSI − anion. Coordination numbers were obtained by integrating the corresponding RDFs up to the first minimum. Total X-ray structure factors, 
+
+S(q), were computed from the trajectories using a Debye-scattering-based implementation and standard X-ray form-factor weighting, as implemented in the TRAVIS program [57]. To enable a direct comparison to short AIMD trajectories, structural properties for MLMD were evaluated both over the first 20 ps and over a later and longer time window (1–2 ns), while AIMD derived quantities were averaged over 15 ps, after the initial 5 ps of equilibration. Trajectory inspection and molecular visualization were performed with VMD [58].  
+
+> F. Transport properties
+
+Self-diffusion. Self-diffusion coefficients were extracted from the long-time slope of the mean-squared displacement (MSD) computed from unwrapped trajectories. For TFSI and H 2O, the MSDs of the N and O atoms, respectively, were tracked. For each trajectory, an initial equilibration interval of 200 ps was discarded, and diffusion coefficients were fitted over the diffusive regime. Uncertainties were estimated by dividing each analysed trajectory segment ( ≥1 ns) into five contiguous blocks of equal length and reporting the mean and block-to-block variability [59]. Finite-size effects were corrected using the Yeh–Hummer analytical equation, using the simulation cell length and the experimental viscosity (32 mPa ·s) [1, 60, 61]. 
+
+Nernst–Einstein conductivity. The Nernst–Einstein conductivity σNE was computed from the (finite-size corrected) self-diffusion coefficients of Li + and TFSI − using stoichiometric charges, as detailed in the SI. 
+
+Viscosity. Shear viscosity was computed from NVT trajectories using a Green–Kubo stress autocorrelation ap-proach [62, 63]. For each selected model, 20 ns trajectories of the Li 64 box were analysed. The stress autocorrelation function was evaluated up to a maximum lag time of 1000 ps, and the resulting viscosity estimates were averaged over 5 stress-tensor components and block-averaged to estimate uncertainties (full details and convergence checks are given in the SI).  
+
+> III. RESULTS AND DISCUSSION
+
+In Figure 2, we compare FT and TfS results through error density maps (panels a,d, and c,f) and learning curves (panels b,e) for both atomic forces and energies. Both models share the same architecture (from the OMAT-medium foundation model), but FT starts from pretrained weights, whereas TfS starts from random initialization, highlighting the practical gain from pretraining in the case of this system. FT was initialized from the r 2SCAN-based checkpoint MACE -MATPES -
+
+> R
+
+2SCAN -OMAT -FT to match the r 2SCAN flavour of the labels used in this work. Data-efficiency was assessed on Li 64 -only datasets, using a fixed validation set (200 configurations) and training set sizes N ranging from 1 to 500 configurations. For each N, three replicas were trained for FT and TfS using the same randomly drawn subsets (paired comparison), while the plotted points and error bars report the mean and replica-to-replica variability, respectively. In the small-data regime, the TfS force RMSE decreases steeply with increasing N, whereas FT starts at substantially lower force errors and improves more gradually (Figure 2e). On the held-out test set, the FT model achieves RMSEs of 33.22 meV Å −1 for forces and 1.451 meV atom −1 for en-ergies (Figure 2c,f), whereas the TfS model reaches 30.36 meV Å −1 and 0.308 meV atom −1, respectively (Figure 2a,d). The force error maps (Figure 2a,c) show the absence of significant outliers in the predicted values. For energies, errors are plotted against |EDFT − ⟨ EDFT ⟩| , and TfS displays both a lower RMSE and a narrower vertical spread across the sam-pled range (Figure 2b,f). A key difference between the two protocols is the force loss weight: FT required wF = 200 to effectively adapt the pretrained parameters, whereas in TfS, we set wF = 10 (see SI, Tables S2 and S3). This twenty-fold difference tilts the FT optimisation more strongly toward forces at the expense of energies, which probably accounts for the higher FT energy RMSE. As a consequence, the learning curves in Figure 2 compare training strategies, each with its respectively optimal hyperparameters, rather than architectures under a single fixed loss. In addition, the FT energy learn-ing curve is non-monotonic at small-to-intermediate N (Figure 2b); we did not apply a two-stage schedule that reweights the loss toward energies once force convergence is approached, in order to keep the comparison as controlled as possible. The residual energy gap may also reflect the fact that FT retains parameter correlations from the pretraining domain, 6  
+
+> FIG. 2. (a,d) Log–log density plots of absolute prediction errors for force components, and per-atom energies as a function of the corresponding r 2SCAN reference magnitude for the FT model, evaluated on the same test set. (b,e) Learning curves of RMSE versus training-set size Nfor forces (b), and energies (e), comparing FT (purple) and TfS (orange). Points are averages over three independent replicas. Dashed lines indicate the RMSE obtained when using the largest training-set size in this sweep. (c,f) Same as (a,d), but for the TfS model.
+
+which can slow absolute energy calibration on a system-specific dataset. Beyond the Li 64 -only learning curves, we also trained FT and TfS models on an expanded dataset combining 926 Li 64 configurations with 119 Li 128 configurations, and this increased diversity produced a further, modest reduction of test errors relative to the Li 64 -only N = 500 endpoint, without a qualitative change in the forces and energy error hierarchy. In short NVT MD test runs, unphysical Li–Li dimers at separations of 1.4–1.5 Å started to form using the TfS model trained exclusively on Li 64 data, within the first few hundred picoseconds (Figure 1c, "TfS" bar). Visual inspection of the dimers reveals that each Li–Li pair is embedded in a pseudo-octahedral cage of approximately six water molecules (Figure 1c, bottom panel), suggesting that the artefact is stabilised by a cooperative effect: the potential energy surface develops a spurious attractive well for Li–Li at short range, while the surrounding Li–O(H 2O) coordination shell remains energetically reasonable, yielding an overall local minimum that traps the dimer once formed. Although analytical pair repulsion was active during training ( pair_repulsion = True ), the universal ZBL potential for Li–Li ( Z = 3) provides only modest repulsion at the relevant distances: approximately 1 .3 eV at 1 .5 Å and less than 0 .25 eV at 2 .3 Å. This seems to be insufficient to compensate for the spurious attractive interaction in the MACE potential energy surface, possibly amplified by the favorable solvation shell. The origin of this effect can be deduced from the pair distance distributions of the training data (Figure S1): the Li 64 dataset contains no Li–Li distances below approximately 2.8 Å, leaving the short-range interactions unconstrained during training from scratch. By contrast, the Li 128 dataset populates the ∼ 2.2 − 2.8 Å range, providing the seemingly necessary information that a TfS model requires to avoid the creation of such dimers. Including the Li 128 data in training eliminates the dimer artefact entirely. Most importantly, none of the FT models (including one trained on only 50 Li 64 configurations) exhibited Li–Li dimers: the pretrained foundation checkpoints tested seemingly provide information regarding some interaction ranges not covered in our AIMD datasets. In fact, when analyzing the distribution of Li-Li distances of one of these foundation datasets ( MATPES ), short distances are covered (Figure S1). For the subsequent screening and production simulations we therefore retained two TfS variants, TFS _C128_ LMAX 1(OMAT /MATPES -like complexity) and TFS _C64_ LMAX 3 (reduced capacity with roughly halved channels and lmax = 3), together with FT _MATPES -R2SCAN and FT _MATPES -R2SCAN _S50. Having established the force and energy accuracy of the shortlisted models and verified that fine-tuning prevents the Li–Li dimer artifact across data regimes, we turn to the assessment of thermodynamic, structural, and transport properties extracted from MD simulations. Figure 3 reports the equilibrium mass density obtained from 5 ns NPT trajectories of the Li 128 system, and provides a first assessment of model fidelity. Overall, bare models generally underestimate the experimental density, while D3-corrected ones systematically overshoot ρ, which is consistent with a more cohesive effective interaction. The OMAT 
+
+foundation model is a clear outlier, yielding a substantially underestimated density even with a D3 correction, indicating 70.8 1.0 1.2 1.4 1.6 1.8    
+
+> ρ[g cm −3 ]
+> TfS_C128_LMAX1
+> TfS_C64_LMAX3
+> FT_MATPES-R2SCAN
+> FT_MATPES-R2SCAN_S50
+> F_MATPES-PBE-OMAT-FT
+> F_MATPES-R2SCAN-OMAT-FT
+> F_MP-0A-MEDIUM
+> F_MP-0A-SMALL
+> F_MP-0B-MEDIUM
+> F_MP-0B-SMALL
+> F_MP-0B2-MEDIUM
+> F_MP-0B2-SMALL
+> F_MP-0B3-MEDIUM
+> F_MPA-0-MEDIUM
+> F_OMAT-0-MEDIUM
+> ± 2% exp.
+> Exp. ρ= 1.712 g cm −3
+> bare
+> D3-corrected
+> TfS
+> FT
+> Foundation
+
+FIG. 3. Mean mass density ρ (g cm −3) of the 20.9 m LiTFSI WiSE. Results are shown for multiple MACE-based potentials, includ-ing FT, TfS, and foundation (F) models. Blue squares and red diamonds correspond to bare and D3-corrected models, respectively. Horizontal error bars indicate the estimated uncertainty from the finite sampling time. The vertical black line marks the experimental density. 
+
+a strong mismatch between that checkpoint and the present WiSE chemistry. The r 2SCAN-based MATPES foundation checkpoint ( F_MATPES -R2SCAN -OMAT -FT ) reproduces the experimental density closely in the bare variant, while its D3-corrected counterpart overshoots, showing that an a posteriori dispersion term is not automatically beneficial when the underlying short-range ML interaction is already consistent with an r 2SCAN reference. Fine-tuning this r 2SCAN foundation model on the WiSE dataset shifts the predicted density away from experiment (both for the full-data FT and for TfS), whereas the few-shot fine-tuned model ( FT _MATPES -R2SCAN _S50) remains closer to the foundation model estimate, consistent with partial retention of the foundation prior at low data. Overall, Figure 3 highlights that comparable fitting errors do not guarantee an accurate equation of state, and motivates using density as an explicit down-selection criterion before structural and transport validation. Figure 4 summarizes transport properties estimates from NVT trajectories run at the experimental density, reporting self-diffusion coefficients and the corresponding Nernst–Einstein conductivity estimate σNE . The Yeh-Hummer correction to the diffusion coefficients is ∆D = 5.62 × 10 −12 m2 s−1, which is small compared with DH2O but amounts to 10–15 % of DLi + and can exceed 30 % for TFSI − in the experimental range. Experimental PFG-NMR self-diffusion coefficients for the 20–21 m LiTFSI WiSE have been reported by Borodin et al. [2] (at 293 K) and by Li et al. [9] (at 303 K); the shaded bands in Figure 4 bracket the ranges spanned by these two studies ( DLi ≈ 0.4–0 .5, DTFSI ≈ 0.17–0 .2, and DH2O ≈ 0.8–1 .2, all in units of 10 −10 m2 s−1). From these experimental diffusion ranges we derive a Nernst–Einstein conductivity estimate of σ exp NE ≈ 11–13 mS cm −1. The actual conductivity range, derived from impedance spectroscopy experiments, ( σexp ≈ 8–10 mS cm −1) collects measurements from Suo et al. [1], Ding et al. [61], and Borodin et al [2]. Consistent with our observations on density, most foundation models predict markedly slower ion dynamics (and therefore lower σNE ), whereas the WiSE-specific FT and TfS models cluster closer to the experimental diffusion ranges simultaneously for Li +, TFSI −, and H 2O, and mechanically yield σNE values nearer to the experimental Nernst-Einstein range. We note that σNE neglects ion–ion cross-correlations and therefore constitutes an upper bound to the true ionic conductivity; the gap between the NE-derived and impedance bands in Figure 4 ( ∼30%) is consistent with the degree of ion correlation expected in highly concentrated WiSEs [5]. The transport properties calculated using D3-corrected models are reported in the SI (Figure S3). Comparing bare and D3-corrected variants does not reveal a single universal shift applicable to every model, although dispersion often seems to slows down diffusion by increasing cohesive interactions. Importantly, these transport comparisons are performed in NVT at a fixed, experimental volume, while different models (and their D3-corrected counterparts) exhibit different equilibrium densities (Figure 3). As a result, each model is effectively probed at a different internal pressure. Taken together, the combined density and transport validation tests motivate focusing subsequent experiments on structural properties (RDFs and X-ray S(q)) on the WiSE-adapted models ( FT _MATPES -R2SCAN , FT _MATPES -R2SCAN _S50, TFS _C64_ LMAX 3, 
+
+TFS _C128_ LMAX 1), while retaining one foundation model (F_ MATPES -R2SCAN -OMAT -FT ) for comparison. We now turn our focus to structural validation through the X-ray structure factor S(q) and selected radial distribution functions. In Figure 5a, the experimental S(q) (black points) is compared to three computational results estimated from trajectories initialized from the same configuration: a short, 20 ps AIMD simulation, and two simulations using the 
+
+FT _MATPES -R2SCAN model (20 ps and 2 ns). To quantify the agreement between computed and experimental structure factors we adopt the crystallographic R-factor, defined as 80.2 0.4 0.6                               
+
+> DLi (×10 10 m2s1)
+> TfS_C128-LMAX1
+> TfS_C64-LMAX3
+> FT_MATPES-R2SCAN
+> FT_MATPES-R2SCAN-S50
+> F_MATPES-PBE-OMAT-FT
+> F_MATPES-R2SCAN-OMAT-FT
+> F_MP-0A-MEDIUM
+> F_MP-0B-MEDIUM
+> F_MP-0B-SMALL
+> F_MP-0B2-MEDIUM
+> F_MP-0B2-SMALL
+> F_MP-0B3-MEDIUM
+> F_MPA-0-MEDIUM
+> F_OMAT-0-MEDIUM
+> 0.1 0.2
+> DTFSI (×10 10 m2s1)
+> 0.5 1.0 1.5
+> DH2O(×10 10 m2s1)
+> 510 15
+> NE (mS cm 1)
+> Li exp TFSI exp H O exp exp (NE) exp (Impedance) bare TfS FT Foundation
+
+FIG. 4. Transport properties computed using bare models. From left to right: diffusion coefficients ( DLi , DTFSI , DH2O), and Nernst-Einstein conductivity ( σNE ). Shaded bands correspond to the experimental ranges. 
+
+R =
+
+vuuuut
+
+# ∑
+
+> i
+
+Scalc (qi) − Sexp (qi)2
+
+# ∑
+
+> i
+
+Sexp (qi)2 , (1) where the sums run over a uniform grid ( ∆q = 0.05 Å −1, q ∈ [0.5, 10 ] Å−1) onto which both curves are interpolated; this ensures that every spectral region contributes with equal weight regardless of the original sampling density. The R-factor values are reported alongside each model label in the legends of panels (a), (e), and (f). Features at wavenumbers greater than 2 Å −1 are well represented, and show only small variations. The two most discriminating features in this panel are the first maximum ( q ≃ 1 Å −1), and the shoulder following it ( q ≃ 1.5 Å −1). A pairwise decomposition of the structure factor, with comparison to experiments, attributes the first maximum to TFSI −-TFSI − and TFSI −-H 2O interactions [64]. The two simulations based on short dynamics give a first maximum at a too high wavenumber. For these simulations, the shoulder is either too low (AIMD), or too shallow (FT model). Longer sampling using the FT model resolves both issues: the peak is shift to the correct position (the intensity is still slightly too large), and the shoulder accurately matches the experimental signal. An analysis (Figure S9) shows that a box size of roughly 27 Å(corresponding to 64 ion pairs) is needed to resolve this shoulder, consistent with its nanoscale origin. The low-wavenumber features ( q → 0) also show strong time-dependence; the results obtained with the FT model and 2 ns of sampling have an excellent agreement with the experimental data. These observations are consistent with the notion that slow structural relaxation and long-lived ion-association patterns can lead to biased time averages from short simulations in viscous or persistent solvated-ion environments, where equilibration and sampling strategy matter [65]. In this context, the 20 ps AIMD curve in Figure 5a is best read as a pseudo-reference starting from the same configuration rather than a fully converged, equilibrium estimate. In fact, there is a measurable memory effect from the equilibration procedure used (such as using a classical analytical potential for pre-equilibration dynamics) for MD short with respect to the inherent dynamics of the system [65], which reduces the value of such simulations for a comparison to experimental data. The four right-hand panels of Figure 5 compare, on long timescales (4 to 5 ns), the Li-Li and Li-O RDFs (panels c,d) and the structure factor (panels e,f) computed using the four selected models, either with or without D3-corrections. Across all models, gLi −O(total )(r) exhibits a sharp first-shell peak near r ≈ 2 Å and a broad second-shell feature around 4 Å, with only modest model-to-model variation in peak positions and heights. By contrast, the Li-Li correlations show visibly larger differences among models, particularly in the position and depth of the minima and in the relative intensity of the oscillations between about 3 and 7 Å. In the corresponding bare S(q) panel (Figure 5c), the three trained models show remarkable agreement with the experimental reference, while F_MATPES _R2SCAN _OMAT _FT displays slightly different 90.2                                   
+
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> S(q)
+> (a)
+> Exp.
+> AIMD (20 ps) ( R=0.062)
+> FT (20 ps) ( R=0.054)
+> FT (2 ns) ( R=0.032)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> g(r)
+> (c)
+> bare
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> S(q)
+> (e)
+> bare
+> Exp.
+> F ( R=0.088)
+> TfS ( R=0.031)
+> FT-S50 ( R=0.033)
+> FT ( R=0.032)
+> 012345678910
+> q(Å 1)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> | S(q)|
+> (b)
+> 012345678
+> r (Å)
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> g(r)
+> (d)
+> D3
+> Li O(total)
+> 18×Li Li
+> 012345678910
+> q(Å 1)
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> 1.2
+> 1.4
+> S(q)
+> (f)
+> D3
+> Exp.
+> F ( R=0.065)
+> TfS ( R=0.041)
+> FT-S50 ( R=0.044)
+> FT ( R=0.042)
+> 1.0 1.5 2.0
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+
+FIG. 5. Structural analysis. (a) Time- and model-dependence X-ray structure factor S(q), comparing the experimental reference (black symbols, from Ref. [64]) with estimates obtained from short (20 ps) and long (2 ns) MD trajectories.Legend labels report the 
+
+R-factor (defined in the text) for each computed curve. The abbreviation FT refers to the fine-tuned FT_MATPES-R2SCAN model throughout. (b) Absolute deviation |∆S(q)| = |Ssim (q) − Sexp (q)| for the three simulated curves shown in (a); the inset magnifies the 
+
+q = 1–2 −1 region. (c,d) Radial distribution functions (RDFs, g(r)) for Li–O(total) (solid lines, oxygen atoms from both H 2O and TFSI −) and Li–Li (dashed lines, scaled by a factor of 18 for visibility), for (c) bare and (d) D3-corrected trajectories. (e,f) Total X-ray S(q) from long-time MLMD trajectories for four selected models compared to experiment: (e) bare, (f) D3-corrected MLMD. Legend labels indicate the model abbreviation and the corresponding R-factor. In panels (e) and (f), F denotes the foundation model (F_MATPES-R2SCAN-OMAT-FT), TfS the trained-from-scratch model (TfS_C128_LMAX1), FT-S50 the few-shot fine-tuned model (FT_MATPES-R2SCAN_S50, 50 configurations), and FT the fully fine-tuned model (FT_MATPES-R2SCAN). TABLE I. Lithium first-shell coordination numbers (CN) split into water oxygen (O w) and anion oxygen (O TFSI ), as well as O total ,reported for bare and D3-corrected models. Long-window values correspond to the model set of Figure 5(e,f); the last two rows quantify time-window sensitivity for the few-shot model FT _MATPES -R2SCAN _S50 .Bare D3-corrected Model CN(O w) CN(O TFSI ) CN(O tot ) CN(O w) CN(O TFSI ) CN(O tot )AIMD (20 ps) † 2.23 2.02 4.31 2.36 2.01 4.37 
+
+> F
+
+_MATPES _PBE _OMAT _FT 1.93 2.12 4.05 2.15 1.97 4.12 
+
+> F
+
+_MATPES _R2SCAN _OMAT _FT 2.06 2.04 4.09 2.23 1.91 4.14 
+
+> TFS
+
+_C128_ L1 2.38 1.87 4.25 2.52 1.86 4.38 
+
+> FT
+
+_MATPES -R2SCAN 2.31 1.94 4.26 2.47 1.94 4.41 
+
+> FT
+
+_MATPES -R2SCAN _S50 short 2.25 1.93 4.18 2.53 1.77 4.31 
+
+> FT
+
+_MATPES -R2SCAN _S50 long 2.50 1.73 4.23 2.73 1.64 4.37  
+
+> †
+
+The AIMD reference is limited to 20 ps and is included only as a short-time electronic-structure benchmark 
+
+peak amplitude pattern in the low-to-intermediate q oscillations. Including D3 corrections (Figure 5d,f) has a comparatively small effect on the Li-Li and Li-O RDFs, but a pronounced impact on the structure factor, particularly at low wavenumber. The first peak of the Li-O g(r) remains nearly unchanged, and the overall oscillation pattern for Li-Li is preserved, but small shifts in the dashed curves indicate that dispersion can slightly affect ion-ion correlations. It is important to note however that since the Li-Li signal is very low, these effects, as well as variations across models for the bare case, could be due to sampling effects. Regarding the S(q), a plausible explanation for the variations noted is that low-q scattering probes large length scales and is therefore sensitive to long-wavelength density fluctuations and compressibility-like responses, which are precisely the degrees of freedom most affected by how long-range interactions are represented. Here the dispersion overlay is intrinsically long-range, but is applied with a finite cutoff (16 Å in the MLMD simulations). Any truncation artefact can feed into the low-q regime and become visually dominant, even if the local structure is mostly unchanged. Overall, these results suggest that for the present setup, bare models provide a more faithful representation of structural characteristics than D3-corrected ones. 10 An analysis of the Li + coordination environment offers insights consistent with what was deduced previously. In Table I, we compare the coordination numbers (CN) of Li by oxygen (from water, from TFSI, and from both), for all models mentioned above, as well as for a PBE foundation baseline ( F_MATPES _PBE _OMAT _FT ). Fine-tuning and training-from-scratch strategies bring CN(O tot ) close to the 20 ps AIMD reference, but the coordination by the anion appears to be more sensitive. In the long-time comparison, the foundation models seem to underestimate CN(O tot ), mainly through a lower CN(O w) contribution. A detailed comparison of the trained models with the reference AIMD is however pointless: as we can see in the lower panel of Table I, CN(O tot ) can appear nearly converged on short timescales, while the first solvation shell speciation continues to drift on nanosecond-long sampling. From 20 ps to ∼5 ns, CN(O tot )changes only from 4.185 to 4.231 (bare) and from 4.307 to 4.373 (D3), yet the partition shifts markedly toward higher CN(O w) and lower CN(O TFSI ). This suggests that exchange between water-coordinated and anion-coordinated motifs is slower to converge than the total first-shell occupancy in this concentrated, viscous electrolyte. Therefore, we cannot base our analysis of the performances of the models on agreement with the AIMD data. Ideally, we would compare the models with coordination numbers deduced from spectroscopy experiments, although extracting this information is challenging [66]. As a final test, we estimated the shear viscosity using three models: F_MATPES _R2SCAN _OMAT _FT , FT _MATPES -
+
+> R
+
+2SCAN , and TFS _C128_ L1. The predicted viscosities can be directly compared to the experimental value [1, 61], 
+
+ηexp ≈ 32 mPa·s. For the bare models, we obtain η = 48 ±16 mPa·s ( F_MATPES _R2SCAN _OMAT _FT ), η = 34 ±10 mPa·s (FT _MATPES -R2SCAN , the closest to the experimental value), and η = 23 ± 14 mPa·s ( TFS _C128_ L1). Within the statistical uncertainty, all three estimates are very close to the experimental value. A box-size check using the foundation model indicates that finite-size effects are within the statistical uncertainty at the present level of sampling: using the Li 128 
+
+box, we obtain η = 48 ± 17 mPa·s, very close to the Li 64 estimate (see Table S4). For the same model, including the D3 correction increases the viscosity to η = 105 ± 20 mPa·s, suggesting that the added long-range attraction overestimates cohesive interactions and slows down relaxation; this supports our previous findings.  
+
+> IV. CONCLUSIONS
+
+We benchmarked various MACE MLIPs for the 20.9 m LiTFSI WiSE by comparing pretrained foundation models, fine-tuned models, and models trained from scratch. Benchmarking was performed by comparing properties – both structural and dynamics –, extracted from MD simulations, to experimentally determined values. Reference data was obtained using the r 2SCAN XC functional, by re-evaluating energies and forces of configurations extracted from pre-existing AIMD trajectories. A central result is that fine-tuning provides robustness beyond what is captured by energy and force error metrics alone. While FT and TfS errors approach a similar plateau in the high-data regime, TfS models trained only on Li 64 configurations seem to be able to only poorly extrapolate in regions of configuration space not sampled. This for instance leads to the formation of unphysical Li +–Li + dimers at distances lower than 1.6 Å. In contrast, FT models inherit from the foundation datasets they were pre-trained on, which, even for models fine-tuned with a handful of configurations, leads to robustness with respect to such situations. This difference in robustness becomes decisive when moving from error metrics on held-out sets to long MD trajectories. In this sense, fine-tuning allows to overcome an important limitation in the sampling capacity of AIMD. Over all the benchmarks considered, the three trained models we test all the way (a TfS model, and two FT models, either in the low- or high-data regimes) perform almost similarly. In particular, they are all able to reproduce the experi-mental structure factor admirably well. This shows that one can obtain a very accurate model by fine-tuning from a small set of reference structures. Here, including a D3 analytical correction for dispersion interactions leads to a systematic worsening of the agreement with the experiments. We want to stress that this is certainly due to relying on r 2SCAN training data, a meta-GGA; we would probably not have obtained such results with GGA reference data. These results however show that one should carefully check for the choice of reference functional, and for the effect of any correction added a posteriori .These MLIP models allow to overcome limited time-sampling inherent to AIMD. For highly viscous liquids such as WiSEs, this is an important restriction. For instance, it is hard to tell a priori if the disagreements between the experimental structure factor and its estimation from short AIMD trajectories, both reported here or in the literature [15], are due to insufficient sampling, or to inaccurate physical models. Using MLIPs, we are able to answer this question, showing that the correct experimental signal can be recovered from nanosecond-long MLMD trajectories. This becomes more critical when an experimental reference is lacking: for instance, regarding the Li + speciation. Our results show that estimates obtained from short and long timescales differ; while the overall coordination by oxygen is consistent with short-time AIMD estimates, the actual partitioning between water and TFSI changes. Properly equilibrat-ing viscous electrolytes or tightly-bound solvation shells is a known problem [65], and MLIPs allow to reach simulation times for which memory from the structure generation method or from the classical potential used for pre-equilibration is lost. This strategy can be applied in future works to study other relevant families of ion concentrated liquids, such as localized high-concentration electrolytes or high entropy electrolytes that have recently been introduced. 11 
+
+ACKNOWLEDGMENTS 
+
+The authors thank Rocio Semino for fruitful discussions and Kateryna Goloviznina for providing AIMD simulation results. This work was granted access by GENCI to the HPC resources of CINES, IDRIS, and TGCC under the allo-cations A0160901387, A0170814184, and A0180901387. This work was supported by the French National Research Agency under the France 2030 program (Grant No. ANR-22-PEBA-0002), and by the by the Ile-de-France Region in the framework of Domaine d’Intérêt Majeur DIM MaTerRE. 
+
+DATA AND SOFTWARE AVAILABILITY 
+
+Trained models, input scripts, and raw data will be uploaded upon publication of this manuscript. 
+
+NOTES 
+
+Conflicts of interest: none. 
+
+[1] L. Suo, O. Borodin, T. Gao, M. Olguin, J. Ho, X. Fan, C. Luo, C. Wang, and K. Xu, Water-in-salt electrolyte enables high-voltage aqueous lithium-ion chemistries, Science 350 , 938 (2015). [2] O. Borodin, L. Suo, F. Gobet, M. Ren, F. Wang, A. Faraone, J. Peng, M. Olguin, M. Schroeder, M. S. Ding, M. Gobet, S. Kurilin, A. DeMuro, J. Vatamanu, X. Fan, T. Gao, N. Eidson, C. Wang, and K. Xu, Liquid structure with nano-heterogeneity promotes cationic transport in concentrated electrolytes, ACS Nano 11 , 10462 (2017). [3] G. Horwitz, N. Shpigel, A. Stefanski, V. Geringer, D. Aurbach, and O. Borodin, The nanostructure of water-in-salt electrolytes revisited: Effect of the anion size, ACS Nano 15 , 11564 (2021). [4] W. Zhang and E. J. Maginn, Water-in-salt litfsi aqueous electrolytes (1): Structural, transport, and dynamic properties from molecular dynamics simulations, The Journal of Physical Chemistry B 125 , 4501 (2021). [5] W. Zhang and E. J. Maginn, Water-in-salt litfsi aqueous electrolytes (2): Transport properties and li + dynamics based on molecular dynamics simulations, The Journal of Physical Chemistry B 125 , 13246 (2021). [6] M. McEldrew, Z. A. H. Goodwin, S. Bi, M. Z. Bazant, and A. A. Kornyshev, Theory of ion aggregation and gelation in super-concentrated electrolytes, The Journal of Chemical Physics 152 , 234506 (2020). [7] M. McEldrew, Z. A. H. Goodwin, S. Bi, A. A. Kornyshev, and M. Z. Bazant, Ion Clusters and Networks in "Water-in-Salt Electrolytes" (2021), arXiv:2103.04782 [physics]. [8] M. McEldrew, Z. A. H. Goodwin, M. Z. Bazant, and A. A. Kornyshev, Theory of the double layer in water-in-salt electrolytes, The Journal of Physical Chemistry Letters 9, 5840 (2018). [9] Z. Li, R. Bouchal, T. Mendez-Morales, A.-L. Rollet, C. Rizzi, S. Le Vot, F. Favier, B. Rotenberg, O. Borodin, O. Fontaine, et al. ,Transport properties of li-tfsi water-in-salt electrolytes, The Journal of Physical Chemistry B 123 , 10514 (2019). [10] R. Jinnouchi and S. Minami, Machine learning force fields in electrochemistry: From fundamentals to applications, ACS Nano 
+
+19 , 22600 (2025). [11] A. France-Lanord, F. Pietrucci, A. M. Saitta, J.-M. Tarascon, A. Grimaud, and M. Salanne, Chemical decomposition of the tfsi anion under aqueous basic conditions, PRX Energy 1, 013005 (2022). [12] T. Malaspina, G. Colherinhas, S. E. Weitzner, B. C. Wood, and E. E. Fileti, Unraveling local structures of salt-in-water and water-in-salt electrolytes via ab initio molecular dynamics, Journal of Molecular Liquids 383 , 122097 (2023). [13] P. Wróbel, P. Kubisiak, and A. Eilmes, Ab initio molecular dynamics simulations of aqueous litfsi solutions–structure, hydrogen bonding, and ir spectra, The Journal of Physical Chemistry B 128 , 1001 (2024). [14] K. Goloviznina, A. Serva, and M. Salanne, Formation of polymer-like nanochains with short li–li bonds in water-in-salt elec-trolytes, Journal of the American Chemical Society 146 , 8142 (2024). [15] R. Singh, X. Lin, Y. Zhang, E. J. Maginn, P. T. Cummings, and J. I. Siepmann, Structure and dynamics of water-in-salt litfsi elec-trolytes from first-principles molecular dynamics simulations, The Journal of Chemical Physics 163 , 10.1063/5.0288152 (2025). [16] J. W. Furness, A. D. Kaplan, J. Ning, J. P. Perdew, and J. Sun, Accurate and numerically efficient r2scan meta-generalized gradient approximation, The Journal of Chemical Physics 152 , 244103 (2020). [17] R. Jacobs, D. Morgan, S. Attarian, J. Meng, C. Shen, Z. Wu, C. Y. Xie, J. H. Yang, N. Artrith, B. Blaiszik, et al. , A practical guide to machine learning interatomic potentials–status and future, Current Opinion in Solid State and Materials Science 35 , 101214 (2025). [18] D. M. Anstine and O. Isayev, Machine learning interatomic potentials and long-range physics, The Journal of Physical Chemistry A 127 , 2417 (2023). [19] F. Grasselli, K. Rossi, S. de Gironcoli, and A. Grisafi, Long-range electrostatics in atomistic machine learning: a physical per-spective, arXiv preprint arXiv:2602.11071 (2026). [20] F. Wang, Y. Sun, and J. Cheng, Switching of Redox Levels Leads to High Reductive Stability in Water-in-Salt Electrolytes, Journal of the American Chemical Society 145 , 4056 (2023). [21] L. Zhang, J. Han, H. Wang, R. Car, and W. E, Deep potential molecular dynamics: a scalable model with the accuracy of quantum mechanics, Physical review letters 120 , 143001 (2018). [22] Y. Okuno, Structures and ion transport properties of hydrate-melt electrolytes: A machine-learning potential molecular dynamics study, The Journal of Physical Chemistry B 129 , 3639 (2025). 12 
+
+[23] A. V. Shapeev, Moment tensor potentials: A class of systematically improvable interatomic potentials, Multiscale Modeling & Simulation 14 , 1153 (2016). [24] C. Cao, A. Kingan, R. C. Hill, J. Kuang, L. Wang, C. Zhang, M. R. Carbone, H. van Dam, S. Yoo, S. Yan, et al. , Resolving the solvation structure and transport properties of aqueous zinc electrolytes from salt-in-water to water-in-salt using neural network potential, PRX Energy 4, 023004 (2025). [25] I. Batatia, D. P. Kovács, G. N. C. Simm, C. Ortner, and G. Csányi, Mace: Higher order equivariant message passing neural networks for fast and accurate force fields, arXiv (2022), arXiv:2206.07697 [physics.chem-ph]. [26] I. Batatia, P. Benner, Y. Chiang, et al. , A foundation model for atomistic materials chemistry, The Journal of Chemical Physics 
+
+163 , 184110 (2025). [27] A. Developers, mace-foundations: Mace foundation models (mp, omat, matpes), https://github.com/ACEsuit/ mace-foundations (2026), gitHub repository, accessed 2026-03-21. [28] S. Grimme, J. Antony, S. Ehrlich, and H. Krieg, A consistent and accurate ab initio parametrization of density functional dispersion correction (dft-d) for the 94 elements h-pu, The Journal of chemical physics 132 , doi.org/10.1063/1.3382344 (2010). [29] J. Sun, R. C. Remsing, Y. Zhang, Z. Sun, A. Ruzsinszky, H. Peng, Z. Yang, A. Paul, U. Waghmare, X. Wu, et al. , Accurate first-principles structures and energies of diversely bonded systems from an efficient density functional, Nature chemistry 8, 831 (2016). [30] M. Chen, H.-Y. Ko, R. C. Remsing, M. F. Calegari Andrade, B. Santra, Z. Sun, A. Selloni, R. Car, M. L. Klein, J. P. Perdew, et al. ,Ab initio theory and modeling of water, Proceedings of the National Academy of Sciences 114 , 10846 (2017). [31] A. D. Kaplan, R. Liu, J. Qi, T. W. Ko, B. Deng, J. Riebesell, G. Ceder, K. A. Persson, and S. P. Ong, A Foundational Potential Energy Surface Dataset for Materials (2025), arXiv:2503.04070 [cond-mat]. [32] W. J. R. Gilbert, J. Safarov, D. L. Minnick, M. A. Rocha, E. P. Hassel, and M. B. Shiflett, Density, Viscosity, and Vapor Pressure Measurements of Water + Lithium Bis(trifluoromethylsulfonyl)imide Solutions, Journal of Chemical & Engineering Data 62 ,2056 (2017). [33] T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, 
+
+et al. , Cp2k: An electronic structure and molecular dynamics software package-quickstep: Efficient and accurate electronic structure calculations, The Journal of Chemical Physics 152 (2020). [34] J. VandeVondele, M. Krack, F. Mohamed, M. Parrinello, T. Chassaing, and J. Hutter, Quickstep: Fast and accurate density functional calculations using a mixed gaussian and plane waves approach, Computer Physics Communications 167 , 103 (2005). [35] S. Goedecker, M. Teter, and J. Hutter, Separable dual-space gaussian pseudopotentials, Physical Review B 54 , 1703 (1996). [36] C. Hartwigsen, S. Gœdecker, and J. Hutter, Relativistic separable dual-space gaussian pseudopotentials from h to rn, Physical Review B 58 , 3641 (1998). [37] M. Krack, Pseudopotentials for h to kr optimized for gradient-corrected exchange-correlation functionals, Theoretical Chemistry Accounts 114 , 145 (2005). [38] J. VandeVondele and J. Hutter, Gaussian basis sets for accurate calculations on molecular systems in gas and condensed phases, The Journal of chemical physics 127 , 10.1063/1.2770708 (2007). [39] I. Batatia, D. P. Kovács, G. N. C. Simm, C. Ortner, and G. Csányi, MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields (2023), arXiv:2206.07697 [stat]. [40] D. P. Kovács, I. Batatia, E. S. Arany, and G. Csányi, Evaluation of the MACE force field architecture: From medicinal chemistry to materials science, The Journal of Chemical Physics 159 , 044118 (2023). [41] MACE developers, Foundation models, https://mace-docs.readthedocs.io/en/latest/guide/foundation_models. html (2026), mACE documentation (Read the Docs), accessed 2026-03-21. [42] L. Ruiz Pestana, O. Marsalek, T. E. Markland, and T. Head-Gordon, The quest for accurate liquid water properties from first principles, The Journal of Physical Chemistry Letters 9, 5009 (2018). [43] S. Grimme, S. Ehrlich, and L. Goerigk, Effect of the damping function in dispersion corrected density functional theory, Journal of computational chemistry 32 , 1456 (2011). [44] J. Brandenburg, J. Bates, J. Sun, and J. Perdew, Benchmark tests of a strongly constrained semilocal functional with a long-range dispersion correction, Physical Review B 94 , 115144 (2016). [45] J. Wiktor, F. Ambrosio, and A. Pasquarello, Note: Assessment of the scan+ rvv10 functional for the structure of liquid water, The Journal of chemical physics 147 , 10.1063/1.5006146 (2017). [46] J. Hermann and A. Tkatchenko, Electronic exchange and correlation in van der waals systems: Balancing semilocal and nonlocal energy contributions, Journal of chemical theory and computation 14 , 1361 (2018). [47] S. Ehlert, U. Huniar, J. Ning, J. W. Furness, J. Sun, A. D. Kaplan, J. P. Perdew, and J. G. Brandenburg, r 2scan-d4: Dispersion corrected meta-generalized gradient approximation for general chemical applications, The Journal of Chemical Physics 154 ,061101 (2021). [48] F. Belleflamme and J. Hutter, Radicals in aqueous solution: Assessment of density-corrected scan functional, Physical Chemistry Chemical Physics 25 , 20817 (2023). [49] S. Dasgupta, E. Lambros, J. P. Perdew, and F. Paesani, Elevating density functional theory to chemical accuracy for water simula-tions through a density-corrected many-body formalism, Nature Communications 12 , 6359 (2021). [50] M. Bertani and A. Pedone, Atomic Structure of Na4P2S7 Glass Solid Electrolyte: Fine-Tuning Machine Learning Potentials for Enhanced Accuracy, The Journal of Physical Chemistry C 129 , 12697 (2025). [51] A. Pedone, M. Bertani, and M. Benassi, Revisiting machine learning potentials for silicate glasses: The missing role of dispersion interactions, Journal of Chemical Theory and Computation 21 , 4769 (2025). [52] A. P. Thompson, H. M. Aktulga, R. Berger, D. S. Bolintineanu, W. M. Brown, P. S. Crozier, P. J. In’t Veld, A. Kohlmeyer, S. G. Moore, T. D. Nguyen, et al. , Lammps-a flexible simulation tool for particle-based materials modeling at the atomic, meso, and continuum scales, Computer physics communications 271 , 108171 (2022). [53] S. Nosé, A unified formulation of the constant temperature molecular dynamics methods, The Journal of chemical physics 81 , 511 (1984). [54] W. G. Hoover, Canonical dynamics: Equilibrium phase-space distributions, Physical review A 31 , 1695 (1985). 13 
+
+[55] MACE developers, Mace documentation: Running mace models in lammps, https://mace-docs.readthedocs.io/en/ latest/guide/lammps.html , accessed: 2026-03-21. [56] LAMMPS Developers, LAMMPS documentation: pair_style dispersion/d3 , https://docs.lammps.org/pair_ dispersion_d3.html (2026), accessed: 2026-03-21. [57] M. Brehm and B. Kirchner, Travis – a free analyzer and visualizer for monte carlo and molecular dynamics trajectories, Journal of Chemical Information and Modeling 51 , 2007 (2011). [58] W. Humphrey, A. Dalke, and K. Schulten, Vmd: Visual molecular dynamics, Journal of Molecular Graphics 14 , 33 (1996). [59] H. Flyvbjerg and H. G. Petersen, Error estimates on averages of correlated data, The Journal of Chemical Physics 91 , 461 (1989). [60] I.-C. Yeh and G. Hummer, System-size dependence of diffusion coefficients and viscosities from molecular dynamics simulations with periodic boundary conditions, The Journal of Physical Chemistry B 108 , 15873 (2004). [61] M. S. Ding, A. von Cresce, and K. Xu, Conductivity, viscosity, and their correlation of a super-concentrated aqueous electrolyte, The Journal of Physical Chemistry C 121 , 2149 (2017). [62] B. Hess, Determining the shear viscosity of model liquids from molecular dynamics simulations, The Journal of Chemical Physics 
+
+116 , 209 (2002). [63] E. J. Maginn, R. A. Messerly, D. J. Carlson, D. R. Roe, and J. R. Elliot, Best practices for computing transport properties 1. self-diffusivity and viscosity from equilibrium molecular dynamics [article v1. 0], Living Journal of Computational Molecular Science 1, 6324 (2019). [64] Y. Zhang, N. H. C. Lewis, J. Mars, G. Wan, N. J. Weadock, C. J. Takacs, M. R. Lukatskaya, H.-G. Steinrück, M. F. Toney, A. Tokmakoff, and E. J. Maginn, Water-in-Salt LiTFSI Aqueous Electrolytes. 1. Liquid Structure from Combined Molecular Dynamics Simulation and Experimental Studies, The Journal of Physical Chemistry B 125 , 4501 (2021). [65] E. Crabb, A. France-Lanord, G. Leverick, R. Stephens, Y. Shao-Horn, and J. C. Grossman, Importance of equilibration method and sampling for ab initio molecular dynamics simulations of solvent–lithium-salt systems in lithium-oxygen batteries, Journal of Chemical Theory and Computation 16 , 7255 (2020). [66] S.-D. Han, R. D. Sommer, P. D. Boyle, Z.-B. Zhou, V. G. Young Jr, O. Borodin, and W. A. Henderson, Electrolyte solvation and ionic association: part ix. structures and raman spectroscopic characterization of lifsi solvates, Journal of The Electrochemical Society 169 , 110544 (2022).

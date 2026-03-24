@@ -1,0 +1,785 @@
+Title: Machine-Learned Leftmost Hessian Eigenvectors for Robust Transition State Finding
+
+URL Source: https://arxiv.org/pdf/2603.21323v1
+
+Published Time: Tue, 24 Mar 2026 01:27:27 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# Machine-Learned Leftmost Hessian Eigenvectors for Robust Transition State Finding 
+
+Guanchen Wu 1, Chung-Yueh Yuan 1,5, Kareem Hegazy 4,7, Samuel M. Blau 6,and Teresa Head-Gordon 1−3,5
+
+> 1
+
+Kenneth S. Pitzer Theory Center and Department of Chemistry, 2Department of Bioengineering, 3Department of Chemical and Biomolecular Engineering, 4Department of Statistics, University of California, Berkeley, CA, 94720 USA 
+
+> 5
+
+Chemical Sciences Division and 6Energy Technologies Area, Lawrence Berkeley National Laboratory, Berkeley, CA, 94720 USA 
+
+> 7
+
+International Computer Science Institute, Berkeley, CA 94704 USA corresponding author: thg@berkeley.edu 
+
+Abstract 
+
+The reliable determination of transition states (TSs) benefits from second-order informa-tion for robust convergence and validation, but the computational expense of Hessians prohibits their routine use in TS optimization. Here, we present a machine-learning-driven TS optimizer that directly predicts the leftmost Hessian eigenvector (LMHE), the critical mode that locally approximates the reaction coordinate encompassing the TS. We demonstrate that our LMHE optimizer recovers TS solutions at the same rate as full Hessian optimizers, and more robustly from degraded initial guess geometries, thereby eliminating the excessively long wall times characteristic of full-Hessian approaches and reducing total gradient evaluations compared to standard quasi-Newton methods. We further improve accuracy and robustness using uncertainty quantification for identifying occasional LMHE prediction failures, that then falls back to a full Hessian update from the machine learned potential at that optimization step, avoiding expensive active learning. Overall our methodology and semi-automated workflow delivers second-order stability at first-order computational expense to provide a highly efficient engine for high-throughput reaction discovery. 
+
+# 1 Introduction 
+
+Understanding reaction chemistry and predicting kinetics requires a detailed knowledge of the potential energy surface (PES), especially the location and characterization of transition states (TSs). Mathematically defined as first-order saddle points on the PES, TSs represent the highest energy point along the minimum energy path connecting reactants to products of an elementary reaction. They are characterized by having exactly one negative eigenvalue in the Hessian matrix, corresponding to a single imaginary vibrational frequency. Unlike equilibrium structures which can be determined by optimizing along descent directions, locating saddle 1
+
+> arXiv:2603.21323v1 [physics.chem-ph] 22 Mar 2026
+
+points is a more complex optimization as it requires maximizing the energy along a single specific mode, the reaction coordinate, while simultaneously minimizing it along all other degrees of freedom. The central challenge in TS optimization is correctly identifying this single ascent direction. The success of a TS optimization often depends crucially on the quality of the curvature infor-mation from the Hessian matrix, as it provides the necessary geometric guidance to distinguish the reaction coordinate from orthogonal conformational or non-reactive modes. Second-order methods utilize the full Hessian matrix to explicitly identify the mode with the most negative curvature as the local approximation of the reaction coordinate. While robust, calculating the exact Hessian at every optimization step using ab initio methods such as density functional theory (DFT) is prohibitively expensive for most practical applications. Consequently, modern geometry optimization on the ab initio PES typically relies on quasi-Newton (QN) methods to construct cheaper approximate Hessians using only gradient infor-mation. While the Broyden-Fletcher-Goldfarb-Shanno (BFGS) algorithm is arguably the most widely used approach for minimization, its standard formulation enforces a positive-definite Hessian, making it inherently unsuitable for locating saddle points which require indefinite Hessians 1–4 . To address this, other update schemes capable of handling indefinite curvature have been developed, such as Powell-symmetric Broyden (PSB) 5,6 , symmetric rank one (SR1) 7,Murtagh-Sargent-Powell (MSP) 8,9 and TS-BFGS 10,11 methods 12 . These QN methods attempt to recover curvature information solely from the optimization trajectory history (i.e. coordi-nate and gradient changes). However, this reconstruction is often inaccurate, particularly at the beginning of the optimization or in flat regions, leading to convergence to an unintended TS rather than the target reaction-product pair, or failure to find the saddle point at all. To mitigate this, more advanced QN strategies have been developed to better recover the transition mode. Some approaches calculate an exact full Hessian at the first step to ensure a good starting point, though this information decays over time. Others periodically employ iter-ative diagonalization (e.g. Jacobi-Davidson) to actively locate the leftmost eigenvector during the run 13–17 . While this strategy represents a significant improvement over history-only meth-ods, robustness remains a critical challenge. Furthermore, iterative diagonalization introduces a new computational cost: determining the eigenvector via finite difference requires multiple auxiliary gradient evaluations. This cost prevents applying diagonalization at every optimiza-tion step such that standard optimizers apply diagonalization only intermittently and rely on history-based updates in between, limiting robust and rapid convergence. The reliance on these fragile TS optimizations also limits the efficacy of broader reaction path search workflows as well. Even when employing established double- and single-ended interpolation methods such as the Nudged Elastic Band (NEB) 18,19 , Quadratic Synchronous Transit (QST) 20 , or the Growing String Method (GSM) 21 , a subsequent local optimization is typically required to pinpoint the exact saddle point. As a result, despite the availability of these global search strategies, the final location of the TS often remains a bottleneck, requiring significant user involvement and trial-and-error when Hessian information is absent. Recent advances in geometric deep learning have presented a potential solution to TS op-timization. Machine learning interatomic potentials (MLIPs) have demonstrated the ability to achieve near quantum-chemical accuracy, and as demonstrated by Yuan et al., the analyt-ical full Hessian can be obtained from these potentials via automatic differentiation, offering a significant computational speedup over ab initio methods 22 . Nevertheless, this second-order MLIP approach is not without computational bottlenecks. The calculation of exact second-order derivatives via automatic differentiation necessitates the construction and retention of 2extensive computational graphs. While feasible, this process remains significantly more compu-tationally intensive than simple gradient evaluations, imposing a substantial memory and time overhead if performed at every optimization step. In this work, we propose a novel ML architecture and TS optimization strategy to solve this key dilemma between robustness and computational efficiency. Our approach leverages the fun-damental insight that the critical curvature information required for efficient TS optimization is encapsulated primarily in the leftmost Hessian eigenvector (LMHE), the vector corresponding to the most negative eigenvalue, which locally approximates the reaction coordinate and defines the ascent direction for TS optimization. We train a MLIP model to predict this vector directly from coordinates. But because TS modes often involve concerted, non-local atomic motions, they pose a unique challenge for learning the LMHE using standard local message-passing neu-ral networks (MPNNs). To capture these motional dependencies efficiently, we introduce a novel E(3)-equivariant architecture that couples a message passing encoder with an induced global attention decoder that avoids the prohibitive quadratic scaling of standard full attention. The resulting learned LMHE is used to guide the geometry optimization within a restricted-step partitioned rational function optimization (RS-PRFO) framework 23–25 , and failure modes identified through uncertainty quantification provides an occasional correction using a full Hes-sian update to improve success rates. Our LMHE approach is implemented in the user-friendly Sella optimization software package 26 , and is tested across 240 organic combustion from the Sella benchmark set 26 . We show our method achieves the robustness of second-order methods at a fraction of the computational cost, thereby replacing expensive full Hessian calculations or iterative diagonalization at each optimization step, aided by a workflow that semi-automates the success in TS convergence. 
+
+# 2 Methods 
+
+2.1 Data Preparation for energies, gradients, Hessians, and LMHE 
+
+All energy and gradient evaluations were conducted on the PES defined by the NewtonNet MPNN model 27 trained on conformations from the original Transition1x (T1x) dataset 28 , aug-mented with one million structures from the ANI-1x dataset 29 , and described in previous work 22 . This choice of MLIP is motivated by two factors. First, the NewtonNet model is fine-tuned on an augmented T1x dataset which contains extensive reactivity data, explicitly sampling reaction pathways and saddle points rather than just equilibrium geometries. As demonstrated by Yuan et al., this specialized training regime accurately reproduces the to-pography of the reference DFT PES around TSs, making the NewtonNet MLIP model highly effective for TS finding 22 . Second, the differentiable nature of the NewtonNet MLIP enables the calculation of exact Hessians via automatic differentiation, and allows us to include a rigorous full Hessian baseline in our benchmarks, which would otherwise be prohibitively expensive to compute with ab initio methods such as DFT. The dataset for training the LMHE predictors was generated using the fine-tuned Newton-Net model 22,27 . For each structure in the training data, the full Hessian was computed via automatic differentiation 22 . The six (or five for linear molecules) trivial eigenvectors corre-sponding to overall translation and rotation were removed through projection. The LMHE was then identified from the remaining non-trivial modes. To prevent data leakage, the dataset was partitioned into training, validation, and test sets based on chemical composition, strictly 3following the partitioning strategy used for the NewtonNet fine-tuning 22 for consistency. 
+
+2.2 Eigenvector-Informed Hessian Update Scheme 
+
+To integrate the machine-learned LMHE into the TS optimization, a modified QN Hessian updating scheme was developed. This approach leverages the predicted eigenvector to construct a more accurate approximate Hessian at each optimization step. The geometry updates were then performed within a RS-PRFO framework 23–25 , as implemented in the Sella optimizer 17 .In the notation that follows, all vectors are assumed to be column vectors. At optimization step k, the approximate Hessian for the subsequent step, H(k+1) , is constructed by incorporating the predicted leftmost eigenvector, v(k+1) 1 . The Hessian is decomposed into components parallel (∥) and perpendicular ( ⊥) to this eigenvector: 
+
+H(k+1) = H(k+1)  
+
+> ∥
+
++ H(k+1)  
+
+> ⊥
+
+. (1) The parallel component is constructed from the eigenvector and its corresponding eigenvalue, 
+
+λ(k+1) 1 :
+
+H(k+1)  
+
+> ∥
+
+= λ(k+1) 1
+
+v(k+1) 1 v(k+1) 1T
+
+v(k+1) 1T
+
+v(k+1) 1
+
+. (2) The leftmost eigenvalue, λ(k+1) 1 , is estimated using the Rayleigh-Ritz quotient: 
+
+λ(k+1) 1 = yTv(k+1) 1
+
+sTv(k+1) 1
+
+, (3) where s = x(k+1) − x(k) is a vector representing the change in atomic coordinates and y =
+
+g(k+1) − g(k) is the corresponding vector representing the change in gradients. The perpendicular component of the Hessian is updated in the subspace orthogonal to 
+
+v(k+1) 1 . This is achieved using a projection matrix, P⊥:
+
+P⊥ = I − v(k+1) 1 v(k+1) 1T
+
+v(k+1) 1T
+
+v(k+1) 1
+
+, (4) where I is the identity matrix. The perpendicular components of the coordinate change ( s⊥), gradient change ( y⊥), and the previous Hessian ( H(k) 
+
+> ⊥
+
+) are then calculated: 
+
+s⊥ = P⊥s, y⊥ = P⊥y, H(k) 
+
+> ⊥
+
+= P⊥H(k)P⊥. (5) By explicitly partitioning out the transition mode (the H∥ component), the optimization problem in the remaining ( N −1) dimensional subspace is effectively a minimization problem, for which QN updates are well-established and robust. Thus, the perpendicular Hessian component is updated using a standard QN formula: 
+
+H(k+1)  
+
+> ⊥
+
+= QN( H(k) 
+
+> ⊥
+
+, s⊥, y⊥). (6) While Eq. 6 is compatible with various QN formulations, this work employs the TS-adapted Broyden-Fletcher-Goldfarb-Shanno method (TS-BFGS) 10,11 . Unlike the standard BFGS up-date, which requires a positive-definite Hessian, the TS-BFGS formulation is designed to be 4compatible with indefinite approximate Hessians. This provides the necessary flexibility for the perpendicular components to possess negative eigenvalues, thereby allowing the full ap-proximate Hessian to temporarily contain multiple negative eigenvalues during optimization. A complete mathematical description of this update is provided in Supplementary Appendix 1. To ensure that the predicted eigenvector corresponds to the lowest eigenvalue of the com-posite Hessian H(k+1) , the estimated eigenvalue λ(k+1) 1 is constrained. If λ(k+1) 1 is greater than the lowest eigenvalue of the perpendicular Hessian ( λ(k+1)  
+
+> ⊥1
+
+), it is adjusted as follows: 
+
+λ(k+1) 1 = λ(k+1)  
+
+> ⊥1
+
+− 1. (7) For the first optimization step, we initialize the Hessian as: 
+
+H(0) = I − 2v(0) 1 v(0) 1T
+
+v(0) 1T
+
+v(0) 1
+
+. (8) This specific construction for the initial Hessian is chosen to precondition the optimizer by immediately incorporating the machine-learned leftmost eigenvector. The resulting H(0) matrix has an eigenvalue of −1 along the predicted eigenvector v(0) 1 and eigenvalues of +1 for all modes in the orthogonal subspace. This initialization provides the RS-PRFO framework with a Hessian that already possesses the correct qualitative structure of a TS (i.e. one negative mode) and aligns this mode with the predicted leftmost eigenvector, offering a significant advantage over a default positive-definite guess (e.g. the identity matrix) which lacks any imaginary frequency. 
+
+2.3 Transition State Optimization 
+
+The performance of the TS optimizers is evaluated by the Sella benchmark dataset 26 . This dataset contains 500 organic molecules (7 to 25 atoms) in configurations that approximate TS geometries of different reactions, among which 265 are closed-shell. As 25 of these reactions are also present in the T1x dataset, they were excluded from our analysis leaving 240 reactions for analysis. All TS optimizations and intrinsic reaction coordinate (IRC) calculations for the Sella bench-mark dataset were performed in Cartesian coordinates using the Sella optimizer 17 , implemented using the Atomic Simulation Environment (ASE) 30 . These optimizations were conducted on the NewtonNet PES, defined by the same model used for the augmented T1x data preparation (Section 2.1). The Sella implementation was modified to allow for the provision of an external Hessian matrix at each optimization step. The Sella framework involves iterative diagonalization using the Rayleigh–Ritz procedure with a modified Jacobi–Davidson method (JD0, or Olsen’s method), a finite difference step size of 10 −4 ˚A, and a convergence threshold of 0.1 17 . The trust radius of RS-PRFO is initialized to 0.1 and adjusted based on the ratio between the predicted and actual energy changes; the radius is increased by a factor of 1.15 when this ratio is below 1.035 and decreased by a factor of 0.65 when it exceeds 5.0. The IRC is located by performing energy minimization within a trust radius of 0 .1 ˚ A/amu −1/2 in mass-weighted coordinates 31 . A maximum of 1000 steps was imposed for both the TS optimization and the IRC search. To evaluate the optimization results, reactants and products were compared by testing for graph isomorphism. Molecular connectivity graphs, including atom indexing, were generated using Open Babel 32 and compared using the VF2 algorithm 33 .52.4 Ensemble Consistency Check 
+
+We employ an ensemble-based consistency check to govern a fallback mechanism to the exact Hessian from automatic differentiation when prediction uncertainty is high. To facilitate this ensemble approach, we trained five independent instances of the 10.1 M parameter model with our proposed architecture, initialized with distinct random seeds, while the single-model optimizer utilizes one of these instances. The specific training details and hyper-parameters are provided in Supplementary Table S1. At each optimization step, the LMHE is predicted by all N = 5 models in the ensemble, denoted as {v(1) 1 , . . . , v(N )1 }. Each predicted vector is normalized to unit length. The final predicted eigenvector, ¯ v1, is computed as the normalized mean of these ensemble members. Due to the sign ambiguity of eigenvectors (i.e. v and −v are equivalent), we quantify consensus using a sign-invariant metric based on the mean outer product matrix ¯Q:¯Q = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+v(i)1 v(i)T 
+
+> 1
+
+. (9) The prediction uncertainty, σ, is defined as: 
+
+σ = 1 − λmax ( ¯Q), (10) where λmax ( ¯Q is the largest eigenvalue of ¯Q. This formulation naturally accounts for the sign ambiguity, as the outer product vv T is invariant to the transformation v 7 → − v. The uncertainty metric σ ranges from 0 (perfect consensus, where all predictions are collinear) to a value approaching 1 (maximal disagreement). If σ exceeds a predefined threshold τ , the prediction is considered unreliable. In such cases, the optimizer reverts to calculating the exact Hessian via automatic differentiation for that specific step. Conversely, if σ is below τ , the normalized mean vector ¯ v1 is utilized as the consensus prediction in the update scheme described in Section 2.2. 
+
+# 3 Results 
+
+3.1 GotenNet and Global Attention Architecture 
+
+The prediction of the LMHE is geometrically analogous to predicting atomic forces, as both tasks require the output to transform equivariantly with the rotation and translation of the molecule. Our method utilizes an E(3)-equivariant neural network trained to predict the LMHE directly from atomic coordinates using a sequential encoder-decoder architecture shown in Fig-ure 1. The encoder, GotenNet 34 , serves as an efficient equivariant MPNN to capture spatial infor-mation without the computational overhead often associated with irreducible representations connected via Clebsch-Gordon (CG) coefficients to ensure that molecular features rotate cor-rectly with the molecule. While theoretically rigorous, these tensor product operations are computationally intensive and scale poorly, while GotenNet employs an attention mechanism that utilizes inner products of high-degree steerable features to capture angular dependencies and spatial relationships instead of explicit CG transforms. This approach allows the network to learn rich, equivariant representations essential for predicting vector quantities like the LMHE 6×N                         
+
+> zr
+> GotenNet Encoder
+> Global Attention
+> +
+> EQFF
+> +
+> Readout
+> v1
+> (a) Framework
+> hi,˜X(l)
+> i
+> Global Aggregation
+> hIα,˜X(l), I α
+> EQFF
+> +
+> Global Broadcast
+> hi,˜X(l)
+> i
+> (b) Global Attention
+> hIαhi
+> LN
+> Wqa
+> Wka
+> •
+> softmax( ·)
+> Wva
+> •
+> ˜X(l)
+> i
+> LN
+> W(l)
+> vva
+> •
+> ∑
+> i∈N (·)∑
+> i∈N (·)
+> Woa Wvoa
+> +
+> LN LN
+> hIα˜X(l), I α
+> (c) Global Aggregation
+> hihIα
+> LN LN
+> Wqb Wkb
+> •
+> Wvb
+> ˜X(l), I α˜X(l)
+> i
+> LN LN
+> W(l)
+> vkb Wvqb
+> •
+> W(l)
+> vvb
+> ••
+> +
+> softmax( ·)
+> ∑
+> α∈P (·)∑
+> α∈P (·)Wob Wvob
+> ++
+> LN LN
+> hiX(l)
+> i
+> (d) Global Broadcast
+
+Figure 1: GotenNet-GA model architecture used for transition state searches with the learned LMHE. 
+
+(a) The macroscopic framework, comprising a GotenNet encoder, a global interaction module, and a readout. (b) Architecture of the Global Attention block, illustrating its internal mechanism and explicitly incorporating the encompassing residual connection shown in (a). (c) The Global Aggrega-tion block which maps features from the physical graph nodes to the latent inducing points. (d) The Global Broadcast block, which propagates the updated global context from inducing points back to the physical nodes. In the figure, + denotes addition, · denotes dot product, P denotes aggregation with summation, N denotes the set of all real nodes in the graph, P denotes the set of all inducing points, and LN denotes layer normalization. 
+
+while maintaining a small computational overhead. This efficiency is particularly critical for our iterative TS optimization workflow, where the model must be inferred repeatedly to guide the geometry updates. While atomic forces are largely determined by local environments, the LMHE often describes a collective motion of atoms across the entire molecule and is therefore an inherently non-local feature. Mathematically, this non-locality is a consequence of eigen-decomposition. Standard MPNN-based MLIPs, which rely on the assumption of locality to update atomic features, are constrained in capturing the long-range dependencies necessary to describe this concerted mo-tion. To bridge this gap, we developed an architecture that couples the GotenNet encoder with a specialized E(3)-equivariant global attention decoder (Figure 1). Unlike standard MPNNs that diffuse information slowly through local neighbors, this decoder leverages an induced set attention mechanism to aggregate local atomic features into a set of global inducing points, allowing the model to effectively capture the context in the entire molecule before broadcasting it back to the atomic level 35 . This architecture ensures that the prediction is informed by global context without incurring the quadratic computational cost of conventional full atten-tion mechanisms while ensuring that the entire architecture is E(3)-equivariant. The complete mathematical formulation of this decoder architecture is provided in Supplementary Appendix 2, and a formal proof demonstrating its E(3)-equivariance is presented in Supplementary Ap-pendix 3. 73.2 Machine-Learned Leftmost Hessian Eigenvectors 
+
+We trained two variants of our GotenNet-GA model with approximately 2.1 M and 10.1 M parameters on an augmented T1x 28 dataset described in Methods Section 2.1. To evaluate the efficacy of the proposed architecture, we also trained two baseline models using the standard GotenNet architecture, explicitly constructed to match these parameter counts. The specific training details and hyper-parameters are provided in Supplementary Table S1. This controlled comparison allows us to isolate performance gains attributable to the global attention decoder, distinct from general scaling effects. We evaluated the errors of the models using the root mean square (RMS) sine value between the predicted and ground truth eigenvectors. Sine values are chosen to account for the sign ambiguity of eigenvectors, where 0 indicates perfect alignment and 1 indicates orthogonality (the worst possible alignment).     
+
+> Table 1: Root mean square sine value for leftmost Hessian eigenvectors on the augmented T1x dataset. The comparison includes baseline GotenNet models and our proposed architecture with global attention (GotenNet-GA) at both Small (S, ∼2.1 M parameters) and Medium (M, ∼10.1 M parameters) parameter scales.
+
+Subsets GotenNet S GotenNet M GotenNet-GA S GotenNet-GA M
+
+Train 0.33 0.26 0.37 0.29 Validation 0.52 0.48 0.50 0.46 
+
+Test 0.53 0.49 0.51 0.47 
+
+The quantitative benefit of explicitly modeling global context is evident in Table 1. At the small scale ( ∼2.1 M parameters), the GotenNet-GA S architecture reduces the test error, and this performance advantage persists as model capacity increases at the medium scale, GotenNet-GA M with 10.1 M parameters, achieving the lowest RMS error of 0.47. Notably, the gap between training and test performance is consistently narrower for our proposed GotenNet-GA architecture, supporting the idea that explicit modeling of global context facilitates more robust generalization to unseen reactions. 
+
+3.3 Transition State Optimizations using LMHE 
+
+We integrated the learned LMHE into the Sella optimizer 17 using the RS-PRFO framework 23–25 .Within the PRFO framework the leftmost eigenvector of the Hessian v1 locally approximating the reaction coordinate serves as the ascending direction along the PES for the TS search. This predicted vector v1 is utilized into a specialized Hessian update scheme (detailed in Section 2.2), providing a rigorous curvature guidance at every step of optimization. To systematically evaluate the LMHE approach, we benchmarked the TS optimizer on 240 reactions from the Sella benchmark set 26 . The initial TS geometries for these reactions were regenerated using KinBot with reaction templates 36 , which also define the intended reactant and product states. After each optimization, we followed the intrinsic reaction coordinate (IRC) from the resulting TS to determine the minimum energy path connecting the reactant and product wells. Outcomes are classified as intended (the IRC connects the exact KinBot target states), partially intended (only one of the two target state is matched), unintended (a valid TS is found, but connects to an alternative pathway), no reaction (optimization collapsed to a local minimum), or TS error (failure to converge). 8We compare our single inference LMHE method against two established baselines: the stan-dard algorithm implemented in Sella 17 , which serves as a state-of-the-art QN method using iterative diagonalization, and a Full Hessian reference method where the exact Hessian is com-puted at every step via automatic differentiation of the MLIP. Our single inference LMHE approach demonstrates performance for intended and partially intended reactions as good as the Hessian and the QN baseline TS optimzers as seen in Figure 2. However, the single-inference model introduces a specific vulnerability: when the optimization trajectory enters regions of the PES that differ significantly from the training data, the predicted eigenvector may become inaccurate, leading to incorrect geometry updates. This leads to a higher rate of convergence failures compared to the baselines, as the single model lacks the ability to self-diagnose unreli-able LMHE predictions (Figure 2). 0    
+
+> 50
+> 100
+> 150
+> 200
+> 250
+> Mean Reaction count at Noise=0.00 pm
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Intended Partially intended Unintended No reaction TS error
+> Optimization method
+
+Figure 2: Comparison of predictions of different TS optimizers against 240 Sella benchmark reactions. 
+
+The performance of the LMHE approach against the general QN baseline (TS-BFGS) and full Hessian TS optimization methods is quantified by comparing the predicted reaction paths obtained through IRC calculations against the exact reactant and product states defined by KinBot templates. Outcomes are classified as intended (the IRC connects the exact target states), partially intended (only one target state is matched), unintended (a valid TS is found, but connects to an alternative pathway), no reaction (optimization collapsed to a local minimum), or TS error (failure to converge). The single model LMHE strategy exhibits a higher failure rate due to inaccurate LMHE predictions. The LMHE ensemble consistency check identifies unreliable predictions, triggering a fallback to exact Hessian calculations and reducing failure rates to levels that are competitive with the performance of the full Hessian optimization, and significantly outperforming the standard QN baseline. 
+
+9To mitigate convergence failures caused by inaccurate eigenvector guidance, we implemented an ensemble consistency check which effectively neutralizes this failure mode. As illustrated in Supplementary Figure S1, predictions exhibiting higher ensemble variance σ among five independently trained models are statistically more likely to be inaccurate. By utilizing this variance as a real-time proxy for uncertainty, the optimizer can dynamically detect unreliable predictions. When the ensemble disagreement σ exceeds a predefined threshold, the optimizer triggers a fallback to an exact Hessian calculation with automatic differentiation at that step only. As observed in Supplementary Figure S2, the ensemble check is largely insensitive to the value of the variance threshold, and hence we utilize an intermediate value of 0.065. As seen in Figure 2, the LMHE-ensemble approach now outperforms the baselines in reducing failure rates while retaining the high success count of TS optimizations using the single inference LMHE approach. 0 1 5 10 15     
+
+> Noise level (pm)
+> 20
+> 40
+> 60
+> 80
+> 100
+> Intended count (0.95 CI)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.065) 01510 15
+> Noise level (pm)
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> TS failure count (0.95 CI)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+
+Figure 3: Comparison of the Robustness of TS Optimizers for 240 test combustion reactions. (a) The count of intended TS optimizations is plotted against the amplitude of random Gaussian noise applied to the initial geometries. The LMHE optimizer exhibits significantly more intended counts compared to the standard TS-BFGS QN method, maintaining high success rates comparable to the full Hessian approach even at high noise levels. (b) The number of TS optimization runs failing to converge is plotted against noise level. The single model LMHE strategy exhibits a higher failure rate due to inaccurate LMHE predictions. The LMHE ensemble consistency check identifies unreliable predictions, triggering a fallback to exact Hessian calculations and reducing failure rates to levels competitive with the full Hessian and QN baselines. Shaded regions represent the 95% confidence interval derived from 10 independent noise realizations. 
+
+To investigate TS optimizer robustness, we systematically degraded the initial guess TS structures by introducing random Gaussian noise ranging from 0 to 15 pm to the Cartesian atomic positions to test the optimizers’ capability to recover the intended TS from degraded starting geometries. Figure 3a shows that both the single inference and ensemble LMHE meth-ods demonstrate robustness against structural noise comparable to the expensive full Hessian method for intended TS recovery rates. As the initial geometry degrades, the standard QN optimizer struggles to recover the correct ascent direction even with iterative diagonalization, leading to a rapid decline in the recovery rate for the intended TS. Even so Figure 3b shows that the single inference LMHE model still has higher failure rates, while the ensemble-LMHE approach is the best tradeoff for robustness and accuracy. As observed in Supplementary Figure 10 S3, the ensemble check is largely insensitive to the value of the variance threshold, and hence again we utilize an intermediate value of 0.065. 0 5 10 15 20 25 30         
+
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> Percentage (%)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> 464
+> Wall time (s) 025 50 75 100 125 150 175 200
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> Percentage (%)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> 961
+> Total number of gradient calculations
+
+Figure 4: Wall time and number of gradient evaluation comparisons between TS optimizers. (a) The distribution of wall times required for converged optimizations across all noise levels. While the standard QN method is the fastest, the full Hessian method suffers from a heavy tail due to the high cost of exact second-derivative calculations. The LMHE achieves a favorable balance, significantly reducing the computational cost relative to the full Hessian approach while providing the curvature information necessary for robust convergence compared to the QN baseline. (b) The distribution of total gradient calculations required for converged optimizations. While the full Hessian method re-quires the fewest evaluations due to exact curvature information, among the approximate methods both LMHE approaches require fewer total gradient evaluations than the standard QN method. To ensure comparability, the data includes only those optimization where all optimizers successfully re-covered the intended TS from the same initial geometry. 
+
+While the single inference and ensemble-LMHE matches the full Hessian’s robustness, it does so at a fraction of the computational cost. Figure 4a illustrates the wall-time distribution for converged optimizations. The full Hessian method suffers from a ”heavy tail,” reflecting the expense of calculating second derivatives for every step. Both of our LMHE TS optimizers eliminates this tail, shifting the distribution significantly toward lower wall time values. The single-inference strategy defines the efficiency ceiling of our method, yielding the most com-pact time distribution by relying exclusively on rapid model predictions. Our ensemble-checked method effectively matches this performance, closely tracking the Single-Inference wall-time profile. This confirms that the ensemble-checked strategy does not simply recreate the full Hessian method via frequent fallbacks. Instead, it retains the high speed of the single-inference base for the vast majority of the trajectory, limiting expensive exact curvature calculations to rare, high-uncertainty regions. Finally, our method demonstrates a superior scalability regard-ing gradient evaluations, consistently reducing the total count of gradient evaluations compared to the QN baseline by eliminating the need for iterative diagonalization (Figure 4b). Although the standard QN method yields faster wall times, this occurs because the computational cost of the inference of our leftmost eigenvector predictor exceeds that of the inexpensive gradient evaluations on the MLIP PES used here. For completeness, Supplementary Figure S4, com-pares the computational cost for the ensemble check approach for various values of the variance threshold. 11 4 Conclusion 
+
+We have presented a novel strategy for TS optimization that effectively bridges the gap be-tween the robustness of second-order methods and the computational efficiency of first-order approaches. By directly predicting the LMHE which serves as the local approximation of the reaction coordinate, we demonstrated that a machine-learning model can provide the critical curvature information required for saddle point location without the prohibitive cost of DFT calculations nor the expense of automatic differentiation of the MLIP to create Hessians at each optimization step. The central contribution of this study is the development of a robust optimizer that effec-tively integrates geometric deep learning with PRFO algorithms. Crucial to this success was addressing the geometric distinction between local atomic forces and the non-local nature of the LMHE. We showed that standard equivariant MPNNs, which rely on local diffusion of infor-mation, are insufficient for capturing the collective atomic motions characteristic of transition modes. The introduction of a scalable E(3)-equivariant global attention decoder was found to reduce both the prediction error and generalization gap by enabling the model to aggregate and broadcast information across the entire molecular graph. Benchmarks on the Sella dataset reveal that LMHE optimization scheme is highly resilient to structural noise. Our approach recovers intended TS from degraded initial guesses with a success rate comparable to exact Hessian methods, yet does so with a wall-time distribution significantly faster than full Hessian methods. Furthermore, the implementation of an ensemble consistency check addresses the ”black box” reliability issue common in machine learning. By using ensemble variance as a proxy for uncertainty, the optimizer dynamically identifies unreliable predictions and selectively falls back to the higher fidelity second order method, ensuring convergence stability. Ultimately, this methodology offers a scalable pathway for high-throughput reaction discovery, minimizing the need for human intervention in refining TS guesses. 
+
+# References 
+
+[1] C. G. Broyden. The convergence of a class of double-rank minimization algorithms 1. general considerations. IMA Journal of Applied Mathematics, 6(1):76–90, 03 1970. [2] R. Fletcher. A new approach to variable metric algorithms. Comput. J., 13:317–322, 1970. [3] Donald Goldfarb. A family of variable-metric methods derived by variational means. Mathematics of computation, 24(109):23–26, 1970. [4] David F Shanno. Conditioning of quasi-newton methods for function minimization. Mathematics of computation, 24(111):647–656, 1970. [5] Michael JD Powell. A new algorithm for unconstrained optimization. In Nonlinear programming, pages 31–65. Elsevier, 1970. [6] Michael James David Powell. Convergence properties of a class of minimization algorithms. In Nonlinear programming 2, pages 1–27. Elsevier, 1975. [7] Bruce A Murtagh and Roger WH Sargent. Computational experience with quadratically convergent minimisation methods. The Computer Journal, 13(2):185–194, 1970. 12 [8] Josep Maria Bofill. Updated hessian matrix and the restricted step method for locating transition structures. Journal of Computational Chemistry, 15(1):1–11, 1994. [9] Josep Maria Bofill and M´ oanica Comajuan. Analysis of the updated hessian matrices for locating transition structures. Journal of computational chemistry, 16(11):1326–1338, 1995. [10] Josep Maria Bofill. Remarks on the updated hessian matrix methods. International journal of quantum chemistry, 94(6):324–332, 2003. [11] Josep Maria Anglada and Josep Maria Bofill. How good is a broyden–fletcher–goldfarb– shanno-like update hessian formula to locate transition structures? specific reformulation of broyden–fletcher–goldfarb–shanno for optimizing saddle points. Journal of computational chemistry, 19(3):349–362, 1998. [12] John E Dennis Jr and Robert B Schnabel. Numerical methods for unconstrained optimization and nonlinear equations. SIAM, 1996. [13] Gerard LG Sleijpen and Henk A Van der Vorst. A jacobi–davidson iteration method for linear eigenvalue problems. SIAM review, 42(2):267–293, 2000. [14] Jeppe Olsen, Poul Jørgensen, and Jack Simons. Passing the one-billion limit in full configuration-interaction (fci) calculations. Chemical Physics Letters, 169(6):463–472, 1990. [15] Andreas Stathopoulos, Yousef Saad, and Charlotte F Fischer. Robust preconditioning of large, sparse, symmetric eigenvalue problems. Journal of computational and applied mathematics, 64(3):197–215, 1995. [16] Gerard LG Sleijpen and Henk A Van der Vorst. The jacobi-davidson method for eigenvalue problems as an accelerated inexact newton scheme. In IMACS Conference proceedings, 1995. [17] Eric D Hermes, Khachik Sargsyan, Habib N Najm, and Judit Z´ ador. Accelerated saddle point refinement through full exploitation of partial hessian diagonalization. Journal of chemical theory and computation, 15(11):6536–6549, 2019. [18] Hannes J´ onsson, Greg Mills, and Karsten W Jacobsen. Nudged elastic band method for finding minimum energy paths of transitions. In Classical and quantum dynamics in condensed phase simulations, pages 385–404. World Scientific, 1998. [19] Graeme Henkelman, Blas P Uberuaga, and Hannes J´ onsson. A climbing image nudged elastic band method for finding saddle points and minimum energy paths. The Journal of chemical physics, 113(22):9901–9904, 2000. [20] Niranjan Govind, Max Petersen, George Fitzgerald, Dominic King-Smith, and Jan Andzelm. A generalized synchronous transit method for transition state location. Computational materials science, 28(2):250–258, 2003. [21] Baron Peters, Andreas Heyden, Alexis T Bell, and Arup Chakraborty. A growing string method for determining transition states: Comparison to the nudged elastic band and string methods. The Journal of chemical physics, 120(17):7877–7886, 2004. 13 [22] Eric C. Y. Yuan, Anup Kumar, Xingyi Guan, Eric D. Hermes, Andrew S. Rosen, Judit Z´ ador, Teresa Head-Gordon, and Samuel M. Blau. Analytical ab initio hessian from a deep learning potential for transition state optimization. Nature Communications, 15(1):8865, 2024. [23] Ajit Banerjee, Noah Adams, Jack Simons, and Ron Shepard. Search for stationary points on surfaces. The Journal of Physical Chemistry, 89(1):52–57, 1985. [24] Josep Maria Anglada and Josep Maria Bofill. A reduced-restricted-quasi-newton–raphson method for locating and optimizing energy crossing points between two potential energy surfaces. Journal of computational chemistry, 18(8):992–1003, 1997. [25] Emili Besal´ u and Josep Maria Bofill. On the automatic restricted-step rational-function-optimization method. Theoretical Chemistry Accounts, 100(5):265–274, 1998. [26] Eric D Hermes, Khachik Sargsyan, Habib N Najm, and Judit Z´ ador. Sella, an open-source automation-friendly molecular saddle point optimizer. Journal of Chemical Theory and Computation, 18(11):6974–6988, 2022. [27] Mojtaba Haghighatlari, Jie Li, Xingyi Guan, Oufan Zhang, Akshaya Das, Christopher J. Stein, Farnaz Heidar-Zadeh, Meili Liu, Martin Head-Gordon, Luke Bertels, Hongxia Hao, Itai Leven, and Teresa Head-Gordon. Newtonnet: a newtonian message passing network for deep learning of interatomic potentials and forces. Digital Discovery, 1:333–343, 2022. [28] Mathias Schreiner, Arghya Bhowmik, Tejs Vegge, Jonas Busk, and Ole Winther. Transi-tion1x - a dataset for building generalizable reactive machine learning potentials. Scientific Data, 9(1):779, 2022. [29] Justin S. Smith, Roman Zubatyuk, Benjamin Nebgen, Nicholas Lubbers, Kipton Barros, Adrian E. Roitberg, Olexandr Isayev, and Sergei Tretiak. The ani-1ccx and ani-1x data sets, coupled-cluster and density functional theory properties for molecules. Scientific Data, 7(1):134, 2020. [30] Ask Hjorth Larsen, Jens Jørgen Mortensen, Jakob Blomqvist, Ivano E Castelli, Rune Christensen, Marcin Du lak, Jesper Friis, Michael N Groves, Bjørk Hammer, Cory Hargus, et al. The atomic simulation environment—a python library for working with atoms. Journal of Physics: Condensed Matter, 29(27):273002, 2017. [31] Klaus M¨ uller and Leo D Brown. Location of saddle points and minimum energy paths by a constrained simplex optimization procedure. Theoretica chimica acta, 53(1):75–93, 1979. [32] Noel M. O’Boyle, Michael Banck, Craig A. James, Chris Morley, Tim Vandermeer-sch, and Geoffrey R. Hutchison. Open babel: An open chemical toolbox. Journal of Cheminformatics, 3(1):33, 2011. [33] Pasquale Foggia, Carlo Sansone, and Mario Vento. An improved algorithm for matching large graphs. In 3rd IAPR-TC15 workshop on graph-based representations in pattern recognition, 01 2001. [34] Sarp Aykent and Tian Xia. Gotennet: Rethinking efficient 3d equivariant graph neural networks. In The Thirteenth International Conference on Learning Representations, 2025. 14 [35] Juho Lee, Yoonho Lee, Jungtaek Kim, Adam Kosiorek, Seungjin Choi, and Yee Whye Teh. Set transformer: A framework for attention-based permutation-invariant neural net-works. In Kamalika Chaudhuri and Ruslan Salakhutdinov, editors, Proceedings of the 36th International Conference on Machine Learning, volume 97 of Proceedings of Machine Learning Research, pages 3744–3753. PMLR, 09–15 Jun 2019. [36] Ruben Van de Vijver and Judit Z´ ador. Kinbot: Automated stationary point search on potential energy surfaces. Computer Physics Communications, 248:106947, 2020. [37] Guanchen Wu, Eric Yuan, Kareem Hegazy, Samuel Blau, and Teresa Head-Gordon. Data for machine-learned leftmost hessian eigenvectors for robust transition state finding, Mar 2026. [38] Mario Geiger and Tess Smidt. e3nn: Euclidean neural networks, 2022. 
+
+# Data Availability 
+
+All data 37 including the training, validation, and test datasets for the LMHE predictors, as well as the initial transition state guess structures, ground truth reactants and products, optimized transition states, and corresponding predicted reactants and products with their coordinates, are available at https://doi.org/10.6084/m9.figshare.31791964 . Source data for Figs. 2 to 4 is available with this manuscript. Source data are provided in this paper. 
+
+# Code Availability 
+
+The codebase is comprised of several publicly available packages and tools that contribute to the project. The core framework developed for this study, including the implementation and training scripts for the GotenNet and GotenNet-GA models, model checkpoints, TS optimiza-tion scripts, and the Jupyter notebooks for evaluating ensemble consistency and analyzing optimization results, is accessible at https://github.com/THGLab/LMHE-TSopt . The TS op-timizations were driven by the Sella optimization framework 17 , which is available with com-prehensive documentation at https://github.com/zadorlab/sella . NewtonNet 27 , another integral part of the project, is also publicly available. Specifically, the HessianCalculator branch (https://github.com/THGLab/NewtonNet/tree/HessianCalculator ) was utilized to ensure compatibility with the find-tuned models established in our previous work 22 . The parameters for this fine-tuned NewtonNet model 22 are publicly available at https://github.com/THGLab/ MLHessian-TSopt . Finally, our primary repository directly includes modified components from GotenNet 34 with original code accessible at https://github.com/sarpaykent/GotenNet , as well as the spherical harmonics implementation extracted from the e3nn library 38 (https: //github.com/e3nn/e3nn ). 
+
+# Acknowledgment 
+
+E.C.-Y.Y. and T.H-G. thank the CPIMS program, Office of Science, Office of Basic Energy Sci-ences, Chemical Sciences Division of the U.S. Department of Energy under Contract DE-AC02-05CH11231 for support. This work used computational resources provided by the National 15 Energy Research Scientific Computing Center (NERSC), a U.S. Department of Energy Office of Science User Facility operated under Contract DE-AC02-05CH11231, and the Lawrencium computational cluster resource provided by the IT Division at the Lawrence Berkeley National Laboratory (Supported by the Director, Office of Science, Office of Basic Energy Sciences, of the U.S. Department of Energy under Contract No. DE-AC02-05CH11231). 
+
+# Author contributions 
+
+G.W. and T.H.G. designed the LMHE method and wrote the manuscript. G.W. carried out all training and implemented and executed all workflows. All authors discussed the results and provided edits to the manuscript. 
+
+# Competing interests 
+
+The authors declare no competing interests. 16 Supplementary Information: Machine-Learned Leftmost Hessian Eigenvectors for Robust Transition State Finding 
+
+Guanchen Wu 1, Chung-Yueh Yuan 1,5, Kareem Hegazy 4,7, Samuel M. Blau 6,and Teresa Head-Gordon 1−3,5
+
+> 1
+
+Kenneth S. Pitzer Theory Center and Department of Chemistry, 2Department of Bioengineering, 3Department of Chemical and Biomolecular Engineering, 4Department of Statistics, University of California, Berkeley, CA, 94720 USA 
+
+> 5
+
+Chemical Sciences Division and 6Energy Technologies Area, Lawrence Berkeley National Laboratory, Berkeley, CA, 94720 USA 
+
+> 7
+
+International Computer Science Institute, Berkeley, CA 94704 USA corresponding author: thg@berkeley.edu 
+
+# Figures 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> Sine value
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Uncertainty
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.10 Zoomed View
+
+Figure S1: Correlation between uncertainty and prediction error. A scatter plot of the ensemble uncertainty metric versus the sine value (error) of the predicted leftmost eigenvector relative to the ground truth. To maintain visual clarity, the results of 2,000 configurations were randomly sampled from the full augmented T1x test set. The positive correlation demonstrates that higher variance among the ensemble members serves as a reliable indicator of inaccurate predictions. 
+
+10    
+
+> 50
+> 100
+> 150
+> 200
+> 250
+> Mean Reaction count at Noise=0.00 pm
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.100)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Leftmost (w/ ensemble consistency, thresold=0.030)
+> Intended Partially intended Unintended No reaction TS error
+> Optimization method
+
+Figure S2: Ensemble check variation in variance threshold. The single model LMHE strategy ex-hibits a higher failure rate due to inaccurate LMHE predictions. The LMHE ensemble consistency check identifies unreliable predictions, triggering a fallback to exact Hessian calculations and reducing failure rates to levels that are competitive with the performance of the full Hessian optimization, and significantly outperforming the standard QN baseline. The ensemble consistency approach is largely insensitive to values of the threshold. 
+
+20 1 5 10 15     
+
+> Noise level (pm)
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120
+> Intended count (0.95 CI)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.100)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Leftmost (w/ ensemble consistency, thresold=0.030) 01510 15
+> Noise level (pm)
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> TS failure count (0.95 CI)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.100)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Leftmost (w/ ensemble consistency, thresold=0.030)
+
+Figure S3: Comparison of the Robustness of TS Optimizers for 240 test combustion reactions. (a) The count of intended TS optimizations is plotted against the amplitude of random Gaussian noise applied to the initial geometries. The LMHE optimizer exhibits significantly more intended counts compared to the standard TS-BFGS QN method, maintaining high success rates comparable to the full Hessian approach even at high noise levels. (b) The number of TS optimization runs failing to converge is plotted against noise level. The single model LMHE strategy exhibits a higher failure rate due to inaccurate LMHE predictions. The LMHE ensemble consistency check identifies unreliable predictions, triggering a fallback to exact Hessian calculations and reducing failure rates to levels competitive with the full Hessian and QN baselines. Shaded regions represent the 95% confidence interval derived from 10 independent noise realizations. 
+
+30 5 10 15 20 25 30         
+
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> Percentage (%)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.100)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Leftmost (w/ ensemble consistency, thresold=0.030)
+> 595
+> Wall time (s) 025 50 75 100 125 150 175 200
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> Percentage (%)
+> QN (TS-BFGS)
+> Full Hessian
+> Leftmost (w/o ensemble consistency)
+> Leftmost (w/ ensemble consistency, thresold=0.100)
+> Leftmost (w/ ensemble consistency, thresold=0.065)
+> Leftmost (w/ ensemble consistency, thresold=0.030)
+> 961
+> Total number of gradient calculations
+
+Figure S4: Wall time and number of gradient evaluation comparisons between TS optimizers. (a) The distribution of wall times required for converged optimizations across all noise levels. While the standard QN method is the fastest, the full Hessian method suffers from a heavy tail due to the high cost of exact second-derivative calculations. The LMHE achieves a favorable balance, significantly reducing the computational cost relative to the full Hessian approach while providing the curvature information necessary for robust convergence compared to the QN baseline. (b) The distribution of total gradient calculations required for converged optimizations. While the full Hessian method re-quires the fewest evaluations due to exact curvature information, among the approximate methods both LMHE approaches require fewer total gradient evaluations than the standard QN method. To ensure comparability, the data includes only those optimization where all optimizers successfully re-covered the intended TS from the same initial geometry. 
+
+4Tables 
+
+Table S1: Hyper-parameters for the augmented T1x dataset. The specific hyper-parameters used to train our encoder-decoder architecture (GotenNet-GA) and the baseline (GotenNet) models at two scales: Small (S, ∼2.1 M parameters) and Medium (M, ∼10.1 M parameters). The five independent models trained for the ensemble-based TS optimizer, including the model used for the single-model optimizer, all utilize the same hyper-parameters as the GotenNet-GA M model. 
+
+Hyper-parameters GotenNet-GA S GotenNet-GA M GotenNet S GotenNet M
+
+Optimizer RAdamW RAdamW RAdamW RAdamW Learning rate scheduling Reduce on plateau Maximum learning rate 1e −4 1e −4 1e −4 1e −4Learning rate decay 0.8 0.8 0.8 0.7 Learning rate patience 5 5 5 5Loss function 1 − (Cosine Similarity) 2
+
+Gradient clipping 5.0 5.0 5.0 5.0 Batch size 64 64 64 64 Early stopping Minimizing validation loss Early stopping patience 25 25 25 25 Maximum number of epochs 1000 1000 1000 1000 Dropout rate 0.1 0.1 0.1 0.1 Node dimension ( dne ) 128 256 128 256 GotenNet edge dimension 128 256 128 256 GotenNet edge refinement dimension 128 256 128 256 Maximum degree ( Lmax ) 2 2 2 2Number of GotenNet layers 2 4 4 5Number of global attention layers 2 1 − −
+
+Number of radial basis functions 32 32 32 32 Number of inducing points ( M ) 16 16 − −
+
+Number of Attention Heads 8 8 8 8Cutoff radius 5.0 5.0 5.0 5.0 5Appendices 
+
+Appendix 1. TS-BFGS Formulation 
+
+As introduced in Section 4.3 in the main text, the perpendicular component of the Hessian, 
+
+H(k+1)  
+
+> ⊥
+
+, is updated using a standard QN formula. Generally, the QN update function takes the form H(k+1) = QN( H(k), s, y)., where s = x(k+1) − x(k) and y = g(k+1) − g(k). In our method, this update is applied in the projected subspace, i.e. H(k+1)  
+
+> ⊥
+
+= QN( H(k) 
+
+> ⊥
+
+, s⊥, y⊥). For clarity in the descriptions of the standard algorithms in Appendix , the ⊥ subscript is omitted. This work utilizes the TS-BFGS method 1,2 . The formulation adopted in this work is given by: 
+
+|H(k)| =
+
+> d
+
+X
+
+> i
+
+|λ(k) 
+
+> i
+
+|v(k) 
+
+> i
+
+v(k)T 
+
+> i
+
+, (1) 
+
+M = yy T + |H(k)|ss T|H(k)|, (2) 
+
+j = y − H(k)s, (3) 
+
+u = Ms sTMs , (4) 
+
+E = uj T + ju T − uj Tsu T, (5) 
+
+H(k+1) = H(k) + E, (6) where d is the number of dimensions in H(k), and λ(k) 
+
+> i
+
+and v(k) 
+
+> i
+
+are the eigenvalues and eigen-vectors of H(k).
+
+Appendix 2. Global Attention Decoder Architecture 
+
+As introduced in the main text, the decoder is composed of global attention layers designed to capture context in the entire molecule, built upon the induced set attention mechanism 3. As is done in GotenNet, we denote the tensors on each node into two types of features: scalar features 
+
+h ∈ Rdne invariant under transformations, and high-degree steerable features ˜X(l) ∈ Rdne ×(2 l+1) 
+
+whose transformations depend on their degree l, where dne denotes node embedding dimension. In each induced set attention layer, there are M inducing points, where M is a hyper-parameter. Each inducing point consists of trainable scalar parameters hI ∈ Rdne . First we aggregate information from graph nodes into inducing points through attention. For inducing point α and graph node i, we compute the query ( q) and key ( k) representations: 
+
+qα = Wqa hIα, ki = Wka hi, (7) where Wqa , Wka ∈ Rdne ×dne are learnable matrices. A softmax attention is subsequently ap-plied: 
+
+aαi = exp( qT 
+
+> α
+
+ki/√dne )
+
+P 
+
+> j∈N
+
+exp( qT 
+
+> α
+
+kj /√dne ), (8) where N is the set of all nodes in the graph. We compute the value ( v and ˜V(l)) representation: 
+
+vi = Wva hi, ˜V(l) 
+
+> i
+
+= W(l) 
+
+> vva
+
+˜X(l) 
+
+> i
+
+, (9) where Wva , W(l) 
+
+> vva
+
+∈ Rdne ×dne are learnable matrices. Here, W(l) 
+
+> vva
+
+is degree-specific, and uniform weights are applied across spatial dimensions under the same degree to preserve equivariance. 6The attention outputs are then computed: 
+
+hattn α = X
+
+> i∈N
+
+aαi vi, ˜X(l), attn α = X
+
+> i∈N
+
+aαi ˜V(l) 
+
+> i
+
+. (10) Subsequently, the features of the inducing points are updated: 
+
+hIα ← hIα + Woa hattn α , ˜X(l), I α ← Wvoa ˜X(l), attn α , (11) where Woa , Wvoa ∈ Rdne ×dne are learnable matrices, and Wvoa is shared across degrees. The updated features are then passed through an equivariant feed-forward (EQFF) layer 4:
+
+hIα, ˜X(l), I α ← EQFF( hIα, ˜X(l), I α ). (12) Second, we update the features on graph nodes with the aggregated information on inducing points through another attention layer. The query, key and value representations of graph node 
+
+i and inducing point α are computed: 
+
+qi = Wqb hi, kα =Wkb hIα, vα = Wvb hIα,
+
+˜Q(l) 
+
+> i
+
+= Wvqb ˜X(l) 
+
+> i
+
+, ˜K(l) 
+
+> α
+
+=W(l) 
+
+> vkb
+
+˜X(l), I α , ˜V(l) 
+
+> α
+
+= W(l) 
+
+> vvb
+
+˜X(l), I α , (13) where Wqb , Wkb , Wvb , Wvqb , W(l)
+
+> vkb
+
+, W(l) 
+
+> vvb
+
+∈ Rdne ×dne are learnable matrices. Wvqb is shared across degrees while W(l) 
+
+> vkb
+
+and W(l) 
+
+> vvb
+
+are degree-specific. The softmax attention is subsequently computed: 
+
+wiα = qT 
+
+> i
+
+kα +
+
+> Lmax
+
+X
+
+> l=1
+
+˜Q(l)T 
+
+> i
+
+˜K(l) 
+
+> α
+
+,aiα = exp( wiα /p(Lmax + 1) · dne )
+
+P 
+
+> β∈P
+
+exp( wiβ /p(Lmax + 1) · dne ),
+
+(14) where ˜Q(l) 
+
+> i
+
+and ˜K(l) 
+
+> α
+
+are flattened into one dimensional vectors, Lmax is a hyper-parameter defining the maximum degree we include in the model, and P is the set of all inducing points. The attention output is then computed: 
+
+hattn i = X
+
+> α∈P
+
+aiα vα, ˜X(l), attn i = X
+
+> α∈P
+
+aiα ˜V(l) 
+
+> α
+
+. (15) Subsequently, the features of the graph nodes: 
+
+hi ← hi + Wob hattn i , ˜X(l) 
+
+> i
+
+← ˜X(l) 
+
+> i
+
++ Wvob ˜X(l), attn i , (16) where Wob , Wvob ∈ Rdne ×dne are learnable matrices, and Wvob is shared across degrees. The updated features are then passed through an equivariant feed-forward (EQFF) layer 4:
+
+hi, ˜X(l) 
+
+> i
+
+← EQFF( hi, ˜X(l) 
+
+> i
+
+). (17) 
+
+Appendix 3. Equivariance Proof of GotenNet-GA Model 
+
+We demonstrate that the proposed architecture is equivariant under the Euclidean group E(3). The goal is to show that the model’s output, the LMHE v1 transforms physically under the 7group actions, being invariant to translation and equivariant to orthogonal transformations (rotations and reflections). Since the GotenNet encoder is inherently E(3)-equivariant, we focus this proof on demonstrating that the global attention decoder preserves these symmetry properties. The global attention decoder is constructed exclusively from four operations: linear projections, attention mechanisms, feature aggregation, and EQFF blocks. The EQFF block is adopted from GotenNet and its equivariance has been rigorously established in prior work 4.Therefore, it suffices to demonstrate the equivariance of the remaining three operations: linear projections, attention, and aggregation. 
+
+Translation Invariance . The GotenNet encoder generates node features hi and ˜X(l)
+
+> i
+
+derived exclusively from relative coordinate vectors rij = ri − rj and atomic numbers 4, both remaining invariant under a global translation. Consequently, the input features to the decoder are invariant with respect to global translation. Since the decoder operations operate solely on these internal features without re-introducing absolute coordinates, the outputs of the decoder inherits this translation invariance. 
+
+Orthogonal Equivariance . We next prove equivariance under the orthogonal group O(3). Let g ∈ O(3) be an arbitrary orthogonal transformation. The scalar features h can be considered as zero-degree features ˜X(0) . For the features ˜X(l), we employ a flattened column vector notation 
+
+x(l) ∈ Rdne (2 l+1) to facilitate the analysis. The group action on this flattened vector is defined by the block-diagonal matrix D(l)(g) : 
+
+D(l)(g) = Idne ⊗ D(l)(g), (18) where Idne is the identity matrix of dimension dne and D(l)(g) is the Wigner D-matrix of degree 
+
+l for the transformation g (accounting for parity if g includes reflection). The transformed feature vector is x(l)′
+
+= D(l)(g)x(l).
+
+Linear Projections: The decoder employs degree-specific linear projections parameterized by weights W ∈ Rdne ×dne . In our vectorized formalism, this operation is expressed as W =
+
+W ⊗ I2l+1 . We verify that this operation commutes with the group action: 
+
+D(l)(g)W = ( Idne ⊗ D(l)(g))( W ⊗ I2l+1 )= ( Idne W) ⊗ (D(l)(g)I2l+1 )= ( WI dne ) ⊗ (I2l+1 D(l)(g)) = ( W ⊗ I2l+1 )( Idne ⊗ D(l)(g)) = WD (l)(g).
+
+(19) Since the operators commute, the projected query ( q), key ( k), and value ( v) vectors transform equivariantly according to D(l)(g). 
+
+Attention Mechanism : The attention logits (Eq. 14) utilize the inner product of flattened feature vectors of each degree q(l)T
+
+k(l). Under the transformation g:(q(l)′
+
+)Tk(l)′
+
+= ( D(l)(g)q(l))T(D(l)(g)k(l))= q(l)T
+
+D(l)(g)TD(l)(g)k(l), (20) where matrix D(l)(g) is orthogonal: 
+
+D(l)(g)TD(l)(g) = Idne ⊗ (D(l)(g)TD(l)(g)) = Idne ⊗ I2l+1 = I. (21) 8Thus, the inner product is preserved, ensuring that the attention weights a remain invariant scalars. 
+
+Feature Aggregation: The attention output is a linear combination of value vectors weighted by invariant attention weights. The aggregated output under transformation g is: 
+
+x(l),attn ′
+
+= X a(D(l)(g)v(l)) = D(l)(g)
+
+X av(l)
+
+
+
+= D(l)(g)x(l),attn . (22) This confirms that the output features of the global attention preserve O(3)-equivariance. 
+
+# References 
+
+[1] Josep Maria Bofill. Remarks on the updated hessian matrix methods. International journal of quantum chemistry, 94(6):324–332, 2003. [2] Josep Maria Anglada and Josep Maria Bofill. How good is a broyden–fletcher–goldfarb– shanno-like update hessian formula to locate transition structures? specific reformulation of broyden–fletcher–goldfarb–shanno for optimizing saddle points. Journal of computational chemistry, 19(3):349–362, 1998. [3] Juho Lee, Yoonho Lee, Jungtaek Kim, Adam Kosiorek, Seungjin Choi, and Yee Whye Teh. Set transformer: A framework for attention-based permutation-invariant neural net-works. In Kamalika Chaudhuri and Ruslan Salakhutdinov, editors, Proceedings of the 36th International Conference on Machine Learning, volume 97 of Proceedings of Machine Learning Research, pages 3744–3753. PMLR, 09–15 Jun 2019. [4] Sarp Aykent and Tian Xia. Gotennet: Rethinking efficient 3d equivariant graph neural networks. In The Thirteenth International Conference on Learning Representations, 2025. 9
