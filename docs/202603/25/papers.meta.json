@@ -1,0 +1,93 @@
+{
+  "label": "2026-03-25",
+  "date": "2026-03-25",
+  "generated_at": "2026-03-25T20:56:24",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202603/25/2603.16061v2-pfpmm-a-hybrid-approach-combining-a-universal-neural-network-potential-with-classical-force-fields-for-large-scale-reactive-simulations",
+      "section": "deep",
+      "title_en": "PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations",
+      "authors": "Yu Miyazaki, Atsuhiro Tomita, Akihide Hayashi, So Takamoto, Mizuki Takemoto, Hodaka Mori",
+      "date": "2026-03-17",
+      "pdf": "https://arxiv.org/pdf/2603.16061v2",
+      "score": "8.0",
+      "evidence": "结合神经网络势与分子力学的混合方法用于反应模拟",
+      "tldr": "本研究针对通用机器学习势（uMLIP）在处理大规模凝聚相系统时计算效率不足的问题，提出了 PFP/MM 混合方法。该方法将高精度的 PFP 神经网络势与高效的经典分子力学（MM）相结合，实现了兼具近 DFT 精度与大规模模拟能力。通过对丙氨酸二肽、极性溶剂中的亲核加成以及细胞色素 P450 酶促反应的模拟，验证了其在复杂化学反应和生物系统中的适用性，为大规模反应动力学研究提供了新工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Universal machine-learning interatomic potentials (uMLIPs) enable reactive molecular simulations with near-DFT accuracy, yet applying them efficiently to large, realistic condensed-phase systems remains computationally demanding. Here we present PFP/MM, a hybrid approach that combines a uMLIP, PreFerred Potential (PFP), with molecular mechanics (MM) to enable both large-scale and long-time simulations that are challenging for uMLIP-only calculations. Using an alanine dipeptide in explicit water, we achieve multi-ns/day enhanced sampling and obtain a Ramachandran plot consistent with established basins. For an intramolecular nucleophilic addition reaction in a polar solvent environment, we reproduce the expected solvent-induced stabilization in the free-energy profile. We further apply the approach to a cytochrome P450 Compound I hydroxylation reaction and obtain a free-energy landscape consistent with the accepted reaction mechanism. These results demonstrate that uMLIP-based reactive simulations can be applied to diverse condensed-phase processes in large, realistic environments.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.17582v1-quantum-field-approaches-to-chemical-systems",
+      "section": "quick",
+      "title_en": "Quantum Field Approaches to Chemical Systems",
+      "authors": "Reza Karimpour, Matteo Gori, Alexandre Tkatchenko",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17582v1",
+      "score": "6.0",
+      "evidence": "大型分子复合物及环境的量子场论方法",
+      "tldr": "本文综述了量子场论（QFT）在化学体系中的应用。针对传统量子物质理论在处理大规模分子时计算成本高及忽略场量子效应的局限，QFT 为研究真空中及腔体、溶剂等环境下的分子相互作用提供了新视角。研究涵盖了腔体对化学反应的调控、量子场诱导的新型相互作用、数百万原子体系的粗粒化模拟以及新颖的性质标度律，为化学理论的未来发展奠定了基础。",
+      "tags": "query:qmmm",
+      "abstract_en": "Quantum-matter theory (QMT), based on the Schrödinger or Dirac equations, is firmly established for both intra- and intermolecular interactions. However, there are two key issues with QMT. First, its applicability to large molecular complexes is hindered by the relatively high computational cost of the calculations required to achieve high accuracy. Second, fields are also quantum objects that produce many intriguing effects beyond standard QMT approaches to molecular systems. This review focuses on recent developments in quantum-field theory (QFT) approaches to both covalent and non-covalent interactions for molecules in vacuum and subject to environments such as cavities and solvents. QFT provides a rich playground for novel chemical theories and insights. For example, chemical reactions and van der Waals interactions can be manipulated by cavities, boundaries, and optical excitations; novel interactions emerge when molecules interact with quantized fields; systems with millions of atoms could soon be treated with coarse-grained QFT formalisms; and unexpected scaling laws for atomic and molecular properties can emerge when QFT is applied to sets of chemical systems. This review sets the stage for an exciting QFT-driven path for further development of chemical theory.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.20467v1-goal-oriented-learning-of-stochastic-dynamical-systems-using-error-bounds-on-path-space-observables",
+      "section": "quick",
+      "title_en": "Goal-oriented learning of stochastic dynamical systems using error bounds on path-space observables",
+      "authors": "Joanna Zou, Han Cheng Lie, Youssef Marzouk",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.20467v1",
+      "score": "6.0",
+      "evidence": "具有误差保证的分子动力学系统反应速率学习",
+      "tldr": "针对随机动力系统高保真模拟成本高且传统代理模型在路径相关观测值上缺乏误差保证的问题，本文提出了一种面向目标的学习框架。研究者推导了路径空间观测值的误差界限，并将其转化为一种新型变分损失函数。通过利用Frechet导数推导解析梯度，该方法在过阻尼朗之万系统中显著提升了首达时间等统计量的预测精度，并增强了模型对数据分布偏移的鲁棒性。",
+      "tags": "query:qmmm",
+      "abstract_en": "The governing equations of stochastic dynamical systems often become cost-prohibitive for numerical simulation at large scales. Surrogate models of the governing equations, learned from data of the high-fidelity system, are routinely used to predict key observables with greater efficiency. However, standard choices of loss function for learning the surrogate model fail to provide error guarantees in path-dependent observables, such as reaction rates of molecular dynamical systems. This paper introduces an error bound for path-space observables and employs it as a novel variational loss for the goal-oriented learning of a stochastic dynamical system. We show the error bound holds for a broad class of observables, including mean first hitting times on unbounded time domains. We derive an analytical gradient of the goal-oriented loss function by leveraging the formula for Frechet derivatives of expected path functionals, which remains tractable for implementation in stochastic gradient descent schemes. We demonstrate that surrogate models of overdamped Langevin systems developed via goal-oriented learning achieve improved accuracy in predicting the statistics of a first hitting time observable and robustness to distributional shift in the data.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.21942v1-suiren-10-technical-report-a-family-of-molecular-foundation-models",
+      "section": "quick",
+      "title_en": "Suiren-1.0 Technical Report: A Family of Molecular Foundation Models",
+      "authors": "Junyi An, Xinyu Lu, Yun-Fei Shi, Li-Cheng Xu, Nannan Zhang, Chao Qu, Yuan Qi, Fenglei Cao",
+      "date": "2026-03-23",
+      "pdf": "https://arxiv.org/pdf/2603.21942v1",
+      "score": "6.0",
+      "evidence": "在密度泛函理论数据集上预训练以进行量子性质预测",
+      "tldr": "Suiren-1.0是一系列分子基础模型，旨在精确建模有机系统。该系列包含Suiren-Base、Suiren-Dimer和Suiren-ConfAvg三个变体，通过SE(3)等变架构和空间自监督学习，在7000万个DFT样本上进行预训练。研究引入了构象压缩蒸馏（CCD）技术，将复杂的3D结构表征转化为高效的2D构象平均表征。该模型在量子属性预测和分子相互作用等任务上达到了SOTA水平，并已开源。",
+      "tags": "query:qmmm",
+      "abstract_en": "We introduce Suiren-1.0, a family of molecular foundation models for the accurate modeling of diverse organic systems. Suiren-1.0 comprising three specialized variants (Suiren-Base, Suiren-Dimer, and Suiren-ConfAvg) is integrated within an algorithmic framework that bridges the gap between 3D conformational geometry and 2D statistical ensemble spaces. We first pre-train Suiren-Base (1.8B parameters) on a 70M-sample Density Functional Theory dataset using spatial self-supervision and SE(3)-equivariant architectures, achieving robust performance in quantum property prediction. Suiren-Dimer extends this capability through continued pre-training on 13.5M intermolecular interaction samples. To enable efficient downstream application, we propose Conformation Compression Distillation (CCD), a diffusion-based framework that distills complex 3D structural representations into 2D conformation-averaged representations. This yields the lightweight Suiren-ConfAvg, which generates high-fidelity representations from SMILES or molecular graphs. Our extensive evaluations demonstrate that Suiren-1.0 establishes state-of-the-art results across a range of tasks. All models and benchmarks are open-sourced.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.22810v1-universal-and-efficient-graph-neural-networks-with-dynamic-attention-for-machine-learning-interatomic-potentials",
+      "section": "quick",
+      "title_en": "Universal and efficient graph neural networks with dynamic attention for machine learning interatomic potentials",
+      "authors": "Shuyu Bi, Zhede Zhao, Qiangchao Sun, Tao Hu, Xionggang Lu, Hongwei Cheng",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.22810v1",
+      "score": "6.0",
+      "evidence": "具有近量子精度的分子动力学机器学习原子间势能",
+      "tldr": "本研究提出MLANet，一种高效稳健的图神经网络框架，旨在解决机器学习原子间势能模型在精度、效率与稳定性之间的平衡难题。通过引入双路径动态注意力机制和多视角池化策略，MLANet在保持近量子力学精度的同时，显著降低了计算开销。实验证明其在有机分子、无机晶体及二维材料等多种体系中表现优异，且支持稳定的长时分子动力学模拟，为大规模高精度原子模拟提供了实用工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "The core of molecular dynamics simulation fundamentally lies in the interatomic potential. Traditional empirical potentials lack accuracy, while first-principles methods are computationally prohibitive. Machine learning interatomic potentials (MLIPs) promise near-quantum accuracy at linear cost, but existing models still face challenges in efficiency and stability. We presents Machine Learning Advances Neural Network (MLANet), an efficient and robust graph neural network framework. MLANet introduces a dual-path dynamic attention mechanism for geometry-aware message passing and a multi-perspective pooling strategy to construct comprehensive system representations. This design enables highly accurate modeling of atomic environments while achieving exceptional computational efficiency, making high-fidelity simulations more accessible. Tested across a wide range of datasets spanning diverse systems, including organic molecules (e.g., QM7, MD17), periodic inorganic materials (e.g., Li-containing crystals), two-dimensional materials (e.g., bilayer graphene, black phosphorus), surface catalytic reactions (e.g., formate decomposition), and charged systems, MLANet maintains competitive prediction accuracy while its computational cost is markedly lower than mainstream equivariant models, and it enables stable long-time molecular dynamics simulations. MLANet provides an efficient and practical tool for large-scale, high-accuracy atomic simulations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/25/2603.23266v1-on-the-fly-lifting-of-coarse-reaction-coordinate-paths-to-full-dimensional-transition-path-ensembles",
+      "section": "quick",
+      "title_en": "On-the-Fly Lifting of Coarse Reaction-Coordinate Paths to Full-Dimensional Transition Path Ensembles",
+      "authors": "Christof Schütte, Alexander Sikorski, Jakob Kresse, Marcus Weber",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23266v1",
+      "score": "6.0",
+      "evidence": "将粗粒度反应坐标路径提升为全维度过渡路径系综",
+      "tldr": "针对高维随机系统模拟成本高的问题，本文提出一种即时“提升”（lifting）策略，将低维反应坐标（CV）路径转化为全维过渡路径系。该方法首先利用粗粒度模型生成参考路径，再通过引导原始动力学并结合Girsanov重采样进行偏差修正，实现了从廉价粗路径到真实全维路径的高效转换。该方法不仅加速了稀有事件的统计估算，还通过随机最优控制理论降低了方差，为复杂系统的动力学研究提供了新工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Effective dynamics on a low-dimensional collective-variable (CV) or latent space can be simulated far more cheaply than the underlying high-dimensional stochastic system, but exploiting such coarse predictions requires lifting: turning a coarse CV trajectory into dynamically consistent full-dimensional states and path ensembles, without relying on global sampling of invariant or conditional fiber measures. We present a local, on-the-fly lifting strategy based on guided full-system trajectories. First an effective model in CV space is used to obtain a coarse reference trajectory. Then, an ensemble of full-dimensional trajectories is generated from a guided version of the original dynamics, where the guidance steers the trajectory to track the CV reference path. Because guidance biases the path distribution, we correct it via pathwise Girsanov reweighting, yielding a correct-by-construction importance-sampling approximation of the conditional law of the uncontrolled dynamics. We further connect the approach to stochastic optimal control, clarifying how coarse models can inform variance-reducing guidance for rare-event quantities. Numerical experiments demonstrate that inexpensive coarse transition paths can be converted into realistic full-system transition pathways (including barrier crossings and detours) and can accelerate estimation of transition pathways and statistics while providing minimal bias through weighted ensembles.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

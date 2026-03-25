@@ -1,0 +1,251 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-25T20:55:06.684400+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2603.16061v2",
+      "title": "PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations",
+      "abstract": "Universal machine-learning interatomic potentials (uMLIPs) enable reactive molecular simulations with near-DFT accuracy, yet applying them efficiently to large, realistic condensed-phase systems remains computationally demanding. Here we present PFP/MM, a hybrid approach that combines a uMLIP, PreFerred Potential (PFP), with molecular mechanics (MM) to enable both large-scale and long-time simulations that are challenging for uMLIP-only calculations. Using an alanine dipeptide in explicit water, we achieve multi-ns/day enhanced sampling and obtain a Ramachandran plot consistent with established basins. For an intramolecular nucleophilic addition reaction in a polar solvent environment, we reproduce the expected solvent-induced stabilization in the free-energy profile. We further apply the approach to a cytochrome P450 Compound I hydroxylation reaction and obtain a free-energy landscape consistent with the accepted reaction mechanism. These results demonstrate that uMLIP-based reactive simulations can be applied to diverse condensed-phase processes in large, realistic environments.",
+      "authors": [
+        "Yu Miyazaki",
+        "Atsuhiro Tomita",
+        "Akihide Hayashi",
+        "So Takamoto",
+        "Mizuki Takemoto",
+        "Hodaka Mori"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "cond-mat.soft",
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-17T02:10:23+00:00",
+      "link": "https://arxiv.org/pdf/2603.16061v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "hybrid approach combining neural network potential with molecular mechanics for reactive simulations",
+      "llm_evidence_cn": "结合神经网络势与分子力学的混合方法用于反应模拟",
+      "llm_evidence": "结合神经网络势与分子力学的混合方法用于反应模拟",
+      "canonical_evidence": "结合神经网络势与分子力学的混合方法用于反应模拟",
+      "llm_tldr_en": "Introduces PFP/MM, a hybrid ML-potential/MM method for large-scale reactive molecular simulations.",
+      "llm_tldr_cn": "提出PFP/MM混合方法，结合机器学习势与分子力学进行大规模反应模拟。",
+      "llm_tldr": "提出PFP/MM混合方法，结合机器学习势与分子力学进行大规模反应模拟。",
+      "llm_tags": [
+        "query:qmmm:composite"
+      ],
+      "matched_query_tag": "query:qmmm:composite",
+      "matched_query_text": "Papers central to 使用QM/MM手段研究糖苷转移酶催化反应机理的论文, especially work that connects or combines: combined quantum mechanics and molecular mechanics simulation; glycosyltransferase enzyme catalysis mechanism; catalytic reaction mechanism and pathway; QM/MM molecular dynamics simulations; enzymatic catalytic cycle and kinetics; QM/MM computational studies of glycoside hydrolase mechanisms; QM/MM studies on the catalytic mechanism of glycosyltransferases; quantum chemical investigation of glycosyltransferase enzymes.",
+      "matched_requirement_id": "req-composite-qmmm",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.17582v1",
+      "title": "Quantum Field Approaches to Chemical Systems",
+      "abstract": "Quantum-matter theory (QMT), based on the Schrödinger or Dirac equations, is firmly established for both intra- and intermolecular interactions. However, there are two key issues with QMT. First, its applicability to large molecular complexes is hindered by the relatively high computational cost of the calculations required to achieve high accuracy. Second, fields are also quantum objects that produce many intriguing effects beyond standard QMT approaches to molecular systems. This review focuses on recent developments in quantum-field theory (QFT) approaches to both covalent and non-covalent interactions for molecules in vacuum and subject to environments such as cavities and solvents. QFT provides a rich playground for novel chemical theories and insights. For example, chemical reactions and van der Waals interactions can be manipulated by cavities, boundaries, and optical excitations; novel interactions emerge when molecules interact with quantized fields; systems with millions of atoms could soon be treated with coarse-grained QFT formalisms; and unexpected scaling laws for atomic and molecular properties can emerge when QFT is applied to sets of chemical systems. This review sets the stage for an exciting QFT-driven path for further development of chemical theory.",
+      "authors": [
+        "Reza Karimpour",
+        "Matteo Gori",
+        "Alexandre Tkatchenko"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "quant-ph"
+      ],
+      "published": "2026-03-18T10:36:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.17582v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum field theory approaches to large molecular complexes and environments",
+      "llm_evidence_cn": "大型分子复合物及环境的量子场论方法",
+      "llm_evidence": "大型分子复合物及环境的量子场论方法",
+      "canonical_evidence": "大型分子复合物及环境的量子场论方法",
+      "llm_tldr_en": "Reviews quantum field theory developments for chemical systems, addressing computational costs for large molecular complexes.",
+      "llm_tldr_cn": "综述了化学系统的量子场论进展，解决了大型分子复合物的计算成本问题。",
+      "llm_tldr": "综述了化学系统的量子场论进展，解决了大型分子复合物的计算成本问题。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.20467v1",
+      "title": "Goal-oriented learning of stochastic dynamical systems using error bounds on path-space observables",
+      "abstract": "The governing equations of stochastic dynamical systems often become cost-prohibitive for numerical simulation at large scales. Surrogate models of the governing equations, learned from data of the high-fidelity system, are routinely used to predict key observables with greater efficiency. However, standard choices of loss function for learning the surrogate model fail to provide error guarantees in path-dependent observables, such as reaction rates of molecular dynamical systems. This paper introduces an error bound for path-space observables and employs it as a novel variational loss for the goal-oriented learning of a stochastic dynamical system. We show the error bound holds for a broad class of observables, including mean first hitting times on unbounded time domains. We derive an analytical gradient of the goal-oriented loss function by leveraging the formula for Frechet derivatives of expected path functionals, which remains tractable for implementation in stochastic gradient descent schemes. We demonstrate that surrogate models of overdamped Langevin systems developed via goal-oriented learning achieve improved accuracy in predicting the statistics of a first hitting time observable and robustness to distributional shift in the data.",
+      "authors": [
+        "Joanna Zou",
+        "Han Cheng Lie",
+        "Youssef Marzouk"
+      ],
+      "primary_category": "stat.ME",
+      "categories": [
+        "stat.ME",
+        "cs.LG",
+        "math.DS"
+      ],
+      "published": "2026-03-20T19:52:47+00:00",
+      "link": "https://arxiv.org/pdf/2603.20467v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Learning reaction rates of molecular dynamical systems with error guarantees",
+      "llm_evidence_cn": "具有误差保证的分子动力学系统反应速率学习",
+      "llm_evidence": "具有误差保证的分子动力学系统反应速率学习",
+      "canonical_evidence": "具有误差保证的分子动力学系统反应速率学习",
+      "llm_tldr_en": "Introduces a loss function for learning stochastic dynamics to predict reaction rates accurately.",
+      "llm_tldr_cn": "引入了一种学习随机动力学的损失函数，以准确预测反应速率。",
+      "llm_tldr": "引入了一种学习随机动力学的损失函数，以准确预测反应速率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21942v1",
+      "title": "Suiren-1.0 Technical Report: A Family of Molecular Foundation Models",
+      "abstract": "We introduce Suiren-1.0, a family of molecular foundation models for the accurate modeling of diverse organic systems. Suiren-1.0 comprising three specialized variants (Suiren-Base, Suiren-Dimer, and Suiren-ConfAvg) is integrated within an algorithmic framework that bridges the gap between 3D conformational geometry and 2D statistical ensemble spaces. We first pre-train Suiren-Base (1.8B parameters) on a 70M-sample Density Functional Theory dataset using spatial self-supervision and SE(3)-equivariant architectures, achieving robust performance in quantum property prediction. Suiren-Dimer extends this capability through continued pre-training on 13.5M intermolecular interaction samples. To enable efficient downstream application, we propose Conformation Compression Distillation (CCD), a diffusion-based framework that distills complex 3D structural representations into 2D conformation-averaged representations. This yields the lightweight Suiren-ConfAvg, which generates high-fidelity representations from SMILES or molecular graphs. Our extensive evaluations demonstrate that Suiren-1.0 establishes state-of-the-art results across a range of tasks. All models and benchmarks are open-sourced.",
+      "authors": [
+        "Junyi An",
+        "Xinyu Lu",
+        "Yun-Fei Shi",
+        "Li-Cheng Xu",
+        "Nannan Zhang",
+        "Chao Qu",
+        "Yuan Qi",
+        "Fenglei Cao"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.AI"
+      ],
+      "published": "2026-03-23T12:59:43+00:00",
+      "link": "https://arxiv.org/pdf/2603.21942v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "pre-trained on Density Functional Theory dataset for quantum property prediction",
+      "llm_evidence_cn": "在密度泛函理论数据集上预训练以进行量子性质预测",
+      "llm_evidence": "在密度泛函理论数据集上预训练以进行量子性质预测",
+      "canonical_evidence": "在密度泛函理论数据集上预训练以进行量子性质预测",
+      "llm_tldr_en": "A molecular foundation model pre-trained on DFT data for accurate quantum property prediction.",
+      "llm_tldr_cn": "一种在DFT数据上预训练的分子基础模型，用于精确的量子性质预测。",
+      "llm_tldr": "一种在DFT数据上预训练的分子基础模型，用于精确的量子性质预测。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.22810v1",
+      "title": "Universal and efficient graph neural networks with dynamic attention for machine learning interatomic potentials",
+      "abstract": "The core of molecular dynamics simulation fundamentally lies in the interatomic potential. Traditional empirical potentials lack accuracy, while first-principles methods are computationally prohibitive. Machine learning interatomic potentials (MLIPs) promise near-quantum accuracy at linear cost, but existing models still face challenges in efficiency and stability. We presents Machine Learning Advances Neural Network (MLANet), an efficient and robust graph neural network framework. MLANet introduces a dual-path dynamic attention mechanism for geometry-aware message passing and a multi-perspective pooling strategy to construct comprehensive system representations. This design enables highly accurate modeling of atomic environments while achieving exceptional computational efficiency, making high-fidelity simulations more accessible. Tested across a wide range of datasets spanning diverse systems, including organic molecules (e.g., QM7, MD17), periodic inorganic materials (e.g., Li-containing crystals), two-dimensional materials (e.g., bilayer graphene, black phosphorus), surface catalytic reactions (e.g., formate decomposition), and charged systems, MLANet maintains competitive prediction accuracy while its computational cost is markedly lower than mainstream equivariant models, and it enables stable long-time molecular dynamics simulations. MLANet provides an efficient and practical tool for large-scale, high-accuracy atomic simulations.",
+      "authors": [
+        "Shuyu Bi",
+        "Zhede Zhao",
+        "Qiangchao Sun",
+        "Tao Hu",
+        "Xionggang Lu",
+        "Hongwei Cheng"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-24T05:14:33+00:00",
+      "link": "https://arxiv.org/pdf/2603.22810v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning interatomic potentials for molecular dynamics with near-quantum accuracy",
+      "llm_evidence_cn": "具有近量子精度的分子动力学机器学习原子间势能",
+      "llm_evidence": "具有近量子精度的分子动力学机器学习原子间势能",
+      "canonical_evidence": "具有近量子精度的分子动力学机器学习原子间势能",
+      "llm_tldr_en": "Introduces a graph neural network for efficient and accurate machine learning interatomic potentials.",
+      "llm_tldr_cn": "引入了一种图神经网络，用于高效且准确的机器学习原子间势能。",
+      "llm_tldr": "引入了一种图神经网络，用于高效且准确的机器学习原子间势能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.23266v1",
+      "title": "On-the-Fly Lifting of Coarse Reaction-Coordinate Paths to Full-Dimensional Transition Path Ensembles",
+      "abstract": "Effective dynamics on a low-dimensional collective-variable (CV) or latent space can be simulated far more cheaply than the underlying high-dimensional stochastic system, but exploiting such coarse predictions requires lifting: turning a coarse CV trajectory into dynamically consistent full-dimensional states and path ensembles, without relying on global sampling of invariant or conditional fiber measures. We present a local, on-the-fly lifting strategy based on guided full-system trajectories. First an effective model in CV space is used to obtain a coarse reference trajectory. Then, an ensemble of full-dimensional trajectories is generated from a guided version of the original dynamics, where the guidance steers the trajectory to track the CV reference path. Because guidance biases the path distribution, we correct it via pathwise Girsanov reweighting, yielding a correct-by-construction importance-sampling approximation of the conditional law of the uncontrolled dynamics. We further connect the approach to stochastic optimal control, clarifying how coarse models can inform variance-reducing guidance for rare-event quantities. Numerical experiments demonstrate that inexpensive coarse transition paths can be converted into realistic full-system transition pathways (including barrier crossings and detours) and can accelerate estimation of transition pathways and statistics while providing minimal bias through weighted ensembles.",
+      "authors": [
+        "Christof Schütte",
+        "Alexander Sikorski",
+        "Jakob Kresse",
+        "Marcus Weber"
+      ],
+      "primary_category": "math.DS",
+      "categories": [
+        "math.DS"
+      ],
+      "published": "2026-03-24T14:30:11+00:00",
+      "link": "https://arxiv.org/pdf/2603.23266v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Lifting coarse reaction-coordinate paths to full-dimensional transition path ensembles",
+      "llm_evidence_cn": "将粗粒度反应坐标路径提升为全维度过渡路径系综",
+      "llm_evidence": "将粗粒度反应坐标路径提升为全维度过渡路径系综",
+      "canonical_evidence": "将粗粒度反应坐标路径提升为全维度过渡路径系综",
+      "llm_tldr_en": "Presents a strategy to reconstruct full-dimensional reaction paths from coarse collective-variable trajectories.",
+      "llm_tldr_cn": "提出了一种从粗粒度集体变量轨迹重建全维度反应路径的策略。",
+      "llm_tldr": "提出了一种从粗粒度集体变量轨迹重建全维度反应路径的策略。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
