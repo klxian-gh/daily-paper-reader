@@ -1,0 +1,205 @@
+Title: Reaching for the performance limit of hybrid density functional theory for molecular chemistry
+
+URL Source: https://arxiv.org/pdf/2603.23466v1
+
+Published Time: Wed, 25 Mar 2026 01:35:51 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Reaching for the performance limit of hybrid density functional theory for molecular chemistry 
+
+## Jiashu Liang 1* and Martin Head-Gordon 1,2* 
+
+> 1*
+
+Kenneth S. Pitzer Center for Theoretical Chemistry, Department of Chemistry, University of California at Berkeley, Berkeley, CA, 94720, USA. 
+
+> 2
+
+Chemical Sciences Division, Lawrence Berkeley National Laboratory, Berkeley, CA, 94720, USA. *Corresponding author(s). E-mail(s): jsliang@berkeley.edu; mhg@cchem.berkeley.edu; 
+
+Abstract 
+
+Density functional theory (DFT) offers an exceptional balance between accuracy and efficiency, but practical density functional approximations face an unavoid-able trade-off among simplicity, accuracy, and transferability. A systematic protocol is therefore needed to develop functionals that are reliably most accurate within a chosen application domain. Here we present such a protocol by combin-ing constraint enforcement, flexible functional forms, and modern optimization. Applying this strategy to the range-separated hybrid (RSH) meta-GGA frame-work, we obtain the carefully optimized and appropriately constrained hybrid (COACH) functional. Across broad molecular benchmarks, COACH improves both accuracy and transferability relative to leading RSH meta-GGAs, including 
+
+ωB97M-V, while retaining the computational practicality of its rung. Finally, our analysis of the remaining trade-offs and saturation behavior suggests that further systematic progress will likely require the incorporation of genuinely nonlocal information. 
+
+# 1 Introduction 
+
+Density functional theory (DFT) is a cornerstone of molecular and materials sim-ulation because it balances computational cost and accuracy [1]. In principle, the Kohn–Sham formulation provides an exact description of ground-state properties as 1 
+
+> arXiv:2603.23466v1 [physics.chem-ph] 24 Mar 2026 Fig. 1 Impossible triangle of Simplicity, Accuracy, and Transferability in density functional approx-imation development. The blue arrow represents climbing Jacob’s Ladder, and the orange arrow represents specialized DFAs on a specific rung that are optimized for targeted applications but may sacrifice broader transferability. The red circle represents the target functional in this work.
+
+a functional of the electron density [2, 3]. However, there exists an impossible triangle in density functional approximation (DFA) development (Figure 1): simplicity, accu-racy, and transferability cannot be satisfied simultaneously. Simplicity corresponds to computational efficiency. Even if the exact exchange–correlation (XC) functional were available, its complexity would likely limit practical advantages over advanced wavefunction methods. For example, the exact functional is not fully differentiable, as manifested in the flat-plane conditions [4], which can be viewed as the price of inte-grating away all but one electron degree of freedom. Jacob’s Ladder [5] (introduced in Figure 1) provides a useful 5-rung density functional approximations (DFAs) hier-archy from simplest to most sophisticated that improves accuracy and transferability at increased computational cost. Within a given rung, however, there will always be a trade-off between transferability and accuracy. There exists a point beyond which accuracy and transferability cannot be improved simultaneously. This points defines the performance limit of a given functional framework. The real challenge is how to reach this point, which remains a central focus of DFT research. Here, we present a protocol to reach the performance limit, and we apply this protocol to develop the carefully optimized and appropriately constrained hybrid (COACH) functional. To demonstrate our protocol, we choose the hybrid meta-generalized-gradient approximations (hmGGA) form (rung 4) as the target level of simplicity for the fol-lowing reasons: First, it is the most widely used functional form in chemistry, as present-day double hybrids (DH, rung 5) suffer from more practical problems [6–8]. Second, Jacob’s Ladder holds in most cases (the best higher-rung functionals out-perform those below), except that hmGGAs have not consistently surpassed hybrid GGAs for electric field properties, excitation energies, and vibrational frequencies [8, 9]. Given the vast functional space available for hmGGA[10], it remains possible to discover more transferable and accurate functionals within this rung. For transferabil-ity, long-range Hartree-Fock exchange complicates plane-wave implementations and can introduce pathologies at some metallic Fermi levels; therefore, we do not target 2periodic metals or plane-wave implementations. Moreover, magnetic response proper-ties require current-DFT for a rigorous treatment, and excitation properties involve new errors from the adiabatic approximation, both of which are beyond the present scope. Accordingly, this work focuses on transferability across molecular ground-state properties evaluated with localized basis sets. There are two complementary philosophies guiding DFA development. Non-empirical functionals enforce exact constraints and recover known limits with minimal reliance on empirical data. For example, the mGGA SCAN [11] satisfies 17 exact con-straints and achieves good accuracy for both molecular and solid-state systems. The strength of non-empirical functionals lies in their reliability and broad transferability, as they are grounded in fundamental physical principles. However, their constraint-based design can limit flexibility and thus accuracy in chemical applications [1]. In contrast, semi-empirical functionals, pioneered by Becke [12–14], introduce flexible expansions with coefficients trained to high-quality data. This approach has produced many leading DFAs across rungs, including B97M-V [15], M06-L [16], ωB97X-V [17], 
+
+ωB97M-V [10], and CF22D [18], which excel within their training domains. By most measures, ωB97M-V [10] is today’s most accurate hybrid (rung 4) functional [8]. Nonetheless, ωB97M-V (and other existing semi-empirical functionals) underperform when systems deviate substantially from their training data, as clearly demonstrated in our recent GSCDB137 benchmark [8]. These observations motivate a synthesis of the two philosophies: enforce constraints and select physically meaningful variables to ensure transferability, while adopting flexible functional forms and modern optimization techniques to achieve high accu-racy. Our protocol has four pillars: train and validate on a large, diverse, and balanced database (we employ Ref. 8) to discourage overfitting; adopt a highly flexible but structured functional form to explore a broad region of functional space; enforce exact constraints analytically where possible and numerically where necessary; and employ best-subset selection algorithms to improve accuracy without serious overfitting. These strategies are detailed in the Supplementary Information and resulted in our carefully optimized and appropriately constrained hybrid (COACH) functional. In the follow-ing section, we demonstrate that COACH has reached the performance limit of the conventional DFT framework by substantially improving accuracy and transferabil-ity relative to leading range-separated hybrid (RSH) mGGAs, particularly ωB97M-V, across broad molecular test domains. 
+
+# 2 Results 
+
+## 2.1 Design of the COACH functional 
+
+COACH is a RSH [19–21] mGGA with B97-type inhomogeneity corrections, where the only approximations are contained in the exchange ( x) correlation ( c) energy. The COACH exchange ( x) energy is constructed from semi-local (SL), and exact (HF) contributions, where the latter is range-separated into short-range (sr) and long-range (lr) contributions, 
+
+Ex = ESL  
+
+> x, sr
+
++ cHF 
+
+> x, sr
+
+EHF  
+
+> x, sr
+
++ cHF 
+
+> x, lr
+
+EHF 
+
+> x, lr
+
+, (1) 3with cHF  
+
+> x, lr
+
+= 1 (long-range corrected). The correlation energy is evaluated from SL same-spin (ss) and opposite-spin (os) contributions, and a non-local term describing the dispersion (disp) energy [22, 23], 
+
+Ec = ESL  
+
+> c, ss
+
++ ESL  
+
+> c, os
+
++ Edisp  
+
+> c
+
+. (2) Each of the semi-local xc terms take the form of 
+
+ESL  
+
+> x(c)
+
+=
+
+Z
+
+ebase  
+
+> x(c)
+
+Fcorr gx(c) dr, (3) where ebase  
+
+> x(c)
+
+is a uniform-electron-gas (UEG) based energy density and Fcorr is a correc-tion factor that enforces physical constraints. On the other hand, gx(c) is an additional correction factor that will be designed using training and validation data, whose gen-eral form is a 2-dimensional expansions in bounded, dimensionless variables, u and 
+
+vgxσ =
+
+> M
+
+X
+
+> i=0
+> N
+
+X
+
+> j=0
+
+cx,ij fi(u)fj (v). (4) 
+
+u and v depend on the electron density gradient and kinetic energy density, respec-tively, fi(u) is an ith order term (e.g. ui for simple polynomials) and cx,ij are linear coefficients to be appropriately determined. As limits for the expansions, we set 
+
+M = 11 and N = 7 (289 linear parameters total including cHF 
+
+> x, sr
+
+). Our optimization protocol is briefly summarized in the Methods and fully elabo-rated in the SI. In accordance with our design philosophy, this protocol systematically covers the key ingredients of functional construction, including the choice of base forms, nonlinear parameters, dimensionless variables, and polynomial expansion bases, together with the strategy used to design experiments and determine the final selec-tions. The protocol is intended to be general rather than specific to COACH alone and can in principle be used to train high-performing mGGAs, hybrid functionals, and double hybrids for a chosen target domain. In this work, COACH serves as an illustrative example of how this philosophy and protocol can be used to approach the performance limit of a specific functional framework. The final COACH functional is the design point that satisfies the chosen set of enforced constraints and numerical-stability targets while achieving the lowest over-all mean error. It contains 73 optimized linear parameters and 3 optimized nonlinear parameters, all fully documented in the SI. In the following subsections, we compare the constraints satisfied by COACH and the level of error achievable for chemi-cal energy differences and molecular properties against other “best-of-breed” hybrid functionals. 
+
+## 2.2 Constraints 
+
+The design of non-empirical density functionals is guided as far as possible by physical constraints. In the design of COACH, we examined which of the 17 commonly cited mGGA exact constraints[11] can be satisfied within a RSH mGGA framework with-out degrading the quality of chemical predictions. While a detailed analysis is given 4Table 1 Exact constraints and satisfaction status for SCAN, COACH, ωB97M-V, and CF22D. Here, Y indicates fully satisfied and P indicates partially satisfied. Condition SCAN COACH ωB97M-V CF22D total number fully satisfied 17 11 6 4total number fully + partially satisfied 17 13 10 6X01: negativity Y Y YX02: spin-scaling Y Y Y YX03: uniform density scaling Y P PX04: 4th order gradient expansion Y P PX05: non-uniform density scaling Y Y P PX06: spin-polarized tight 2e density bound Y YC07: non-positivity YC08: 2nd order gradient expansion YC09: uniform scaling (high density limit) Y YC10: uniform scaling (low density limit) Y Y Y YC11: zero correlation for 1e densities Y YC12: non-uniform density scaling Y Y P PXC13: size-extensivity Y Y Y YXC14: general Lieb-Oxford bound Y Y YXC15: no low-density spin-polarization dependence Y Y Y YXC16: static linear response of UEG YXC17: Lieb-Oxford bound for 2e densities Y
+
+in the SI, Table 1 compares the constraint satisfaction of SCAN, COACH, ωB97M-V [10] (the parent functional form), and CF22D [18]. Relative to ωB97M-V, we were able to increase the number of fully satisfied constraints in COACH by incorporat-ing several physically motivated design choices. Specifically, COACH satisfies X05 by adopting SCAN’s non-uniform scaling correction for exchange and satisfies C09 and C12 by using SCAN correlation ( α = 1) as the base correlation functional. In addition, COACH satisfies X06 and C11 through numerical enforcement on dense grids using the more physically informative kinetic-energy-density-related variable β. These addi-tions, together with the constraint-aware training protocol described in the SI, make COACH a semi-empirical functional that satisfies more physical constraints than any existing semi-empirical functional. Importantly, improved constraint satisfaction does not by itself guarantee superior accuracy. The limited form of approximate function-als mean that there may be a tradeoff between constraint satisfaction and the level of chemical accuracy. Rather, constraint satisfaction is intended to reduce unphysical behavior and to mitigate overfitting by restricting the functional to physically admissi-ble regions of its variable domain. In this sense, COACH is expected to be transferable across chemically diverse applications, even though COACH retains a much more highly flexible parameterization (73 linear parameters) relative to ωB97M-V (12 linear parameters). 
+
+## 2.3 Performance on Diverse chemical systems 
+
+Figure 2 summarizes category-resolved performance using normalized error ratios (NERs) for BH (barrier heights), EF (electric-field response), FREQ (vibrational 5Fig. 2 Category-resolved performance of COACH and comparison functionals. Values are normalized error ratios (NERs) for BH, EF, FREQ, ISO, INC, NC, TC, TM, BigNC, and the overall mean; lower values indicate better performance. NERs are defined as the mean absolute error (MAE) relative to the average of MAEs of the 2nd-4th best functional in each dataset, following the GSCDB137 definition [8]. BigNC is evaluated on the L14 and vL11 large-complex benchmarks [24] using PBE0-D4 MAEs as standard errors (L14: 0.68 kcal/mol; vL11: 1.05 kcal/mol). The OPT column reports the root mean square of per-molecule RMSDs between optimized and reference geometries in units of Angstroms (W4-11-GEOM and SE sets). 
+
+frequencies), ISO (isomerization energies), INC (intramolecular noncovalent interac-tions), NC (noncovalent interactions), TC (thermochemistry), TM (transition-metal chemistry), BigNC (large noncovalent systems), and the overall mean. The figure also reports geometry-optimization performance (OPT) as the root mean square (RMS) of the per-molecule RMS deviations between optimized and reference geometries in units of Angstroms. NERs follow the GSCDB137 definition, i.e., errors normalized by dataset-specific standard errors [8]. BigNC and OPT are not parts of GSCDB137. For BigNC, we use the L14 and vL11 large-complex benchmarks [24] and define the standard errors as the mean absolute errors (MAEs) of PBE0-D4 on each set (L14: 0.68 kcal/mol; vL11: 1.05 kcal/mol). The OPT category includes the W4-11-GEOM [25] and SE [26] sets. The XYZ files, reference data, and evaluation metrics for these sets are available at https://github.com/JiashuLiang/GSCDB. We compare COACH with two representative modern functionals, ωB97M-V and CF22D, and with two widely used traditional hybrids, PBE0 and B3LYP. To describe noncovalent interactions in larger systems (BigNC), we apply D4 dispersion corrections to PBE0 and B3LYP, and we include the D4-ATM three-body term for ωB97M-V using the parameters of ωB97M-D4 (this is essential for good results on BigNC). The only exception is CF22D, which uses its own fixed dispersion counterpart. Figure 3 provides a compact visualization for selected categories. COACH achieves the lowest overall mean NER (0.93), representing a 13% improve-ment over ωB97M-V (1.07), and it substantially outperforms CF22D, B3LYP-D4, and PBE0-D4. Notably, COACH is the only functional with an overall mean NER below one, indicating that it consistently approaches the best performance attainable within this class of hybrid functionals across most data sets. The traditional hybrids B3LYP-D4 and PBE0-D4 perform poorly for TC and NC relative to ωB97M-V and CF22D, where modern functionals have been more heavily trained, whereas their relative underperformance is less pronounced for TM, where training is also more limited. At the same time, B3LYP-D4 and PBE0-D4 can per-form comparably or even better for EF and FREQ, underscoring the need for careful training and validation of new semi-empirical functionals. Relative to ωB97M-V(3B-D4) and CF22D, the largest gains of COACH occur for EF and BigNC, and COACH also leads in BH, ISO, NC, TC, and TM. On 6Fig. 3 Radar comparison of selected category-level NERs (EF, FREQ, NC, TC, TM, BigNC) for COACH and representative functionals. Smaller radii indicate lower NERs and better performance. 
+
+BigNC in particular, CF22D and the original ωB97M-V (NER=3.32) perform very poorly because they do not include an explicit three-body dispersion contribution, highlighting the importance of the D4-ATM correction in accurately describing large noncovalent complexes. The only category in which COACH is not best-in-class is FREQ, where the difference is small. For geometry optimization, COACH and 
+
+ωB97M-V perform best, although errors remain low for all functionals. We note that all data sets shown above, except for OPT, were used either for training or for functional design selection, which could raise questions regarding trans-ferability. However, as discussed in the Introduction, our objective is transferability within a clearly defined domain—molecular ground-state properties accessible to RSH mGGAs. The combined GSCDB137 and BigNC benchmarks were constructed to cover such target domain. Therefore, we expect COACH to exhibit genuine transferability rather than narrow overfitting. To further assess robustness, we tested COACH on the more diverse GDB9-W1-F12 atomization-energy dataset [27], which contains 3366 molecules with W1-F12 refer-ence values. Using the def2-TZVP basis set, COACH achieves a mean absolute error of 1.25 kcal/mol, representing approximately a one-third improvement over M06-2X (MAE = 1.84 kcal/mol), the best-performing functional reported in the original study (even better than ωB87M-V). In addition, COACH yields a mean signed error (MSE) of 0.02 kcal/mol and a standard deviation (SD) of 1.55 kcal/mol, both improved rela-tive to M06-2X (MSE = -1.03 kcal/mol, SD = 2.13 kcal/mol). These results indicate that the accuracy improvement of COACH arises not only from a greatly reduced sys-tematic bias in atomic-energy predictions, but also from an overall reduction in error dispersion across the dataset. 7Overall, the heatmap and radar plot indicate that COACH achieves broad and balanced improvements versus existing functionals, rather than gains concentrated in a single category. 
+
+## 2.4 Grid and basis convergence 
+
+Grid sensitivity is a major practical challenge for (hybrid) mGGAs. During COACH development (see SI for details), we adopted the numerically stable dimensionless vari-able β to avoid the extreme grid sensitivity associated with the α indicator in SCAN. We further control γc,ss to mitigate oscillatory behavior in derivatives along potential-energy curves that can arise in B97-type forms. Most importantly, we explicitly enforce numerical grid-sensitivity constraints between a large grid (99,590) and an ultra-large grid (200,974) during optimization; here (99 , 590) denotes 99 radial shells and 590 angular (Lebedev) points per shell. Details are provided in the SI. For the final assessment, we evaluated COACH on GSCDB137 using two grid setups, (75,302) and (99,590). Only seven reactions show an energy difference larger than 0.5 kcal/mol; six of these correspond to atomic energies, and the remaining case is from 3d4dIPSS, which also involves only single atoms. Therefore, COACH can be safely used with the medium grid (75,302) for most applications, although we recommend (99,590) because our training constraint guarantees grid errors below 0.015 kcal/mol at this resolution. The only exception is the V30 set, which describes frequencies of molecular dimers. When the vibrational frequencies are computed by finite differences using (75,302), 115 out of 275 frequencies differ by more than 10 cm −1. We also tested analytical frequencies, for which 44 out of 331 frequencies differ by more than 10 cm −1;however, a small number of very large deviations (greater than 100 cm −1) still occur, especially for the lowest frequencies corresponding to the noncovalent interactions. We also examined basis-set convergence across the Ahlrichs def2, Dunning correlation-consistent (cc), and Jensen polarization-consistent (pc) families [28–30]. Figure 4 reports NERs for the energy and property benchmarks (TAE W4-17nonMR, MB16-43, S66, and HR46) and for the remaining test sets (MOR13, TMB11, and TMD10), as well as an optimization (OPT) benchmark. For transition-metal sets, only def2 results are shown because the cc and pc families do not cover all required elements. Overall, COACH performs best with the def2 family. Notably, def2-TZVPD can yield similar or even better performance than def2-QZVPPD (possibly due to the beneficial error cancellation), making def2-TZVPD an attractive practical choice with substantially reduced computational cost. We do not recommend double-ζ basis sets for energy or property calculations because they produce substantially larger errors, although they may be used for geometry optimization with caution, as the root-mean-squared deviations of geometries remain below 0.02 ˚ A. COACH is compatible with the pc family, since (aug)-pc-3 can achieve results comparable to def2-QZVPPD. In contrast, we do not recommend the cc family: COACH with aug-cc-pVQZ can under-perform def2-TZVPD across all tested sets. This trend is consistent with the design goals of these basis families, with cc optimized primarily for post-HF methods and pc developed specifically for DFT. 8Fig. 4 Basis-set convergence of COACH across the Ahlrichs def2, Jensen polarization-consistent (pc), and Dunning correlation-consistent (cc) families. Top: NERs for TAE W4-17nonMR, MB16-43, S66, and HR46 using the basis sets def2-QZVPPD, def2-QZVPP, def2-TZVPD, def2-TZVP, def2-SVPD, def2-SVP, pc-3, aug-pc-3, aug-pc-2, pc-2, aug-pc-1, pc-1, aug-cc-pVQZ, cc-pVQZ, aug-cc-pVTZ, cc-pVTZ, aug-cc-pVDZ, and cc-pVDZ. Bottom: NERs for MOR13, TMB11, and TMD10, and performance on the OPT benchmark, using def2-QZVPPD, def2-QZVPP, def2-TZVPD, def2-TZVP, def2-SVPD, and def2-SVP. Except for OPT, all panels report NER values. 
+
+# 3 Conclusions and Future Direction 
+
+Guided by the impossible triangle, we aimed to develop a protocol that achieves the best possible balance between accuracy and transferability within a fixed level of sim-plicity. The resulting RSH mGGA functional, COACH, emerges as the best hybrid functional for chemistry today, based on extensive benchmarking on GSCDB137 and additional datasets. We believe that COACH’s performance approaches the limit within its design space (RSH mGGAs), and more broadly, the limit of the traditional semi-local hybrid DFT framework. One reason is that the exploration of this class of functionals effectively reduces to a two-dimensional optimization problem in the density-gradient norm and the kinetic energy density. We have systematically tested all physically motivated design choices that could plausibly yield improvements and explored a functional space estimated to be 10 76 times larger than that of ωB97M-V, which was generally considered to be the best existing hybrid functional. We therefore expect that any further general improve-ment within this framework will be smaller than our improvement over ωB97M-V. In addition, we have observed a clear tradeoff among different data categories dur-ing training: for example, improving EF performance through weight adjustments or alternative design choices consistently increases the overall mean NER. 9To facilitate further progress, we also release the complete COACH training pro-tocol. Researchers can use this framework to enforce customized sets of physical constraints and to explore optimal functional designs tailored to specific objectives. The protocol is not restricted to RSH mGGAs and can be applied to other rungs of Jacob’s Ladder, including mGGAs and double hybrids, as well as to specialized functionals targeting particular applications such as Nuclear Magnetic Resonance properties or solid-state systems. Nevertheless, our results suggest that further systematic improvement in accuracy and transferability will likely require going beyond the semi-local (or hybrid) paradigm. Hybrid density functionals are limited in accuracy by several factors that include the delocalization error (e.g. failure to be exact for 1-electron systems) [31], and the strong correlation error (fractional spin breakdown when multiple electron configurations are comparably important in the ground state) [32]. Higher accuracy for molecules that are not strongly correlated may be achieved by additional non-locality in the exchange-correlation functional. The traditional double-hybrid route[6] remains very promising, if several existing practical problems [8] can be resolved. Alternatively, non-local functionals provide another promising future direction that is far less extensively explored (see SI for further comments), and synergizes with development of local hybrid functionals [33] and neural network functionals [34]. Strong correlation via DFT remains a frontier with promising approaches [35, 36] and room for new ideas. 
+
+# 4 Methods 
+
+We summarize the key protocol elements here; full derivations, constraint assessments, numerical procedures, and data/weighting tables are provided in the Supplementary Information (SI). 
+
+Optimization and constraints. 
+
+We fit the linear coefficients by weighted least squares using a base-functional linearization: 
+
+L = 12 ∥Ac − b∥2 , Ak,l = √wkFk,l , bk = √wkETo-fit  
+
+> k
+
+, (5) with c collecting all linear coefficients, ( cx,ij . We employ best-subset selection with mixed-integer optimization (MIO) to control sparsity [37] using the Gurobi solver [38]: min 
+
+> c,z
+
+12 ∥Ac − b∥2 s.t. Qc ≤ t, −M U zl ≤ cl ≤ M U zl, X
+
+> l
+
+zl ≤ s, z l ∈ { 0, 1}. (6) We scan s = 24–80 and enforce numerical constraints (e.g., boundedness, one-electron/self-correlation, and Lieb–Oxford-type bounds). A grid-sensitivity constraint restricts energy differences between (250,974)/SG-1 and (99,590)/SG-1 grids to ≤
+
+0.015 kcal/mol for selected high-sensitivity cases. Full constraint definitions, mesh strategies, and solver settings are provided in the SI. 10 Design experiments, nonlinear parameters, and final choice. 
+
+We performed a structured exploration of functional-design options, including: exchange non-uniform scaling correction (on/off), correlation base functional (SCAN vs PW92), same-spin self-correlation correction (on/off), τ -indicator choices ( β vs 
+
+w) for exchange, same-spin, and opposite-spin terms; polynomial-family choices (linear/Legendre/Chebyshev) for both u and v (β/w) expansions, and numerical-constraint settings. To reduce cost while preserving coverage, we used an orthogonal 
+
+L36 design and evaluated candidates by the mean normalized error ratio (NER) over Gold-Standard Chemical Database (GSCDB). We then refined key factors with full factorial tests and assessed the effect of numerical-constraint sets and grid-sensitivity thresholds. In parallel, we optimized nonlinear parameters that affect the functional form and dispersion: the range-separation parameter ω, the VV10 damping parame-ter b (with C fixed), and the same-spin gradient nonlinearity γc,ss , including tests of alternative finite-domain transformations [39], γx and γc,os were retained from prior functionals. The full factor list, thresholds, and nonlinear-parameter scans are provided in the SI. 
+
+Supplementary information. 
+
+• SI.pdf : Complete derivations, detailed assessments of constraint satisfaction, numerical procedures, design experiments, and comprehensive data and weighting tables. 
+
+• raw data.xlsx : Performance of the COACH functional on all benchmark sets. 
+
+• The XYZ geometries, reference values, and evaluation metrics for all benchmark sets are available at https://github.com/JiashuLiang/GSCDB. 
+
+• The full training protocol is publicly available at https://github.com/JiashuLiang/ COACH and can be used to develop and optimize other density functionals. 
+
+Acknowledgements. This work was supported by the Director, Office of Science, Office of Basic Energy Sciences, of the U.S. Department of Energy through the Gas Phase Chemical Physics Program, under Contract No. DE-AC02-05CH11231. We thank Gurobi Optimization, LLC for providing the Gurobi Academic License used in this work. We respectfully honor the memory of Axel D. Becke, whose foundational contri-butions to molecular density-functional theory include the multicenter partitioning scheme for numerical integration, the pioneering development of hybrid DFT, and the three-parameter hybrid framework that gave rise to B3LYP. His influence continues to be felt throughout modern functional development, especially in the B97 family and the many semiempirical functionals derived from it, including the present work, for which we remain deeply grateful. 
+
+# Conflict of interest 
+
+M.H-G. is a part owner of Q-Chem Inc., whose software was used in the calculations reported here. 11 References 
+
+[1] Mardirossian, N., Head-Gordon, M.: Thirty years of density functional theory in computational chemistry: An overview and extensive assessment of 200 den-sity functionals. Mol. Phys. 115 (19), 2315–2372 (2017) https://doi.org/10.1080/ 00268976.2017.1333644 [2] Hohenberg, P., Kohn, W.: Inhomogeneous electron gas. Physical review 136 (3B), 864 (1964) [3] Kohn, W., Sham, L.J.: Self-consistent equations including exchange and correla-tion effects. Phys. Rev. 140 (4A), 1133 (1965) [4] Yang, X.D., Patel, A.H., Miranda-Quintana, R.A., Heidar-Zadeh, F., Gonz´ alez-Espinoza, C.E., Ayers, P.W.: Communication: Two types of flat-planes conditions in density functional theory. The Journal of Chemical Physics 145 (3) (2016) [5] Perdew, J.P., Ruzsinszky, A., Tao, J., Staroverov, V.N., Scuseria, G.E., Csonka, G.I.: Prescription for the design and selection of density functional approxima-tions: More constraint satisfaction with fewer fits. J. Chem. Phys. 123 (6), 062201 (2005) https://doi.org/10.1063/1.1904565 [6] Martin, J.M., Santra, G.: Empirical double-hybrid density functional theory: A ‘third way’in between wft and dft. Isr. J. Chem. 60 (8-9), 787–804 (2020) [7] Liu, X., Spiekermann, K.A., Menon, A., Green, W.H., Head-Gordon, M.: Revis-iting a large and diverse data set for barrier heights and reaction energies: best practices in density functional theory calculations for chemical kinetics. Physical Chemistry Chemical Physics 27 (25), 13326–13339 (2025) [8] Liang, J., Head-Gordon, M.: Gold-standard chemical database 137 (gscdb137): A diverse set of accurate energy differences for assessing and developing density functionals. Journal of Chemical Theory and Computation 21 (24), 12601–12621 (2025) [9] Liang, J., Feng, X., Hait, D., Head-Gordon, M.: Revisiting the performance of time-dependent density functional theory for electronic excitations: Assessment of 43 popular and recently developed functionals from rungs one to four. Journal of chemical theory and computation 18 (6), 3460–3473 (2022) [10] Mardirossian, N., Head-Gordon, M.: ωb97m-v: A combinatorially optimized, range-separated hybrid, meta-gga density functional with vv10 nonlocal cor-relation. J. Chem. Phys. 144 (21), 214110 (2016) https://doi.org/10.1063/1. 4952647 [11] Sun, J., Ruzsinszky, A., Perdew, J.P.: Strongly constrained and appropriately normed semilocal density functional. Phys. Rev. Lett. 115 (3), 036402 (2015) 12 https://doi.org/10.1103/physrevlett.115.036402 [12] Becke, A.D.: Density-functional thermochemistry. iii. the role of exact exchange. J. Chem. Phys. 98 (7), 5648–5652 (1993) https://doi.org/10.1063/1.464913 [13] Becke, A.D.: Density-functional thermochemistry. III. The role of exact exchange. The Journal of Chemical Physics 98 (7), 5648–5652 (1993) https://doi.org/10.1063/1.464913 https://pubs.aip.org/aip/jcp/article-pdf/98/7/5648/19277469/5648 1 online.pdf [14] Becke, A.D.: Density-functional thermochemistry. v. systematic optimization of exchange-correlation functionals. The Journal of chemical physics 107 (20), 8554– 8560 (1997) [15] Mardirossian, N., Head-Gordon, M.: Mapping the genome of meta-generalized gradient approximation density functionals: The search for b97m-v. J. Chem. Phys. 142 (7), 074111 (2015) https://doi.org/10.1063/1.4907719 [16] Zhao, Y., Truhlar, D.G.: A new local density functional for main-group thermo-chemistry, transition metal bonding, thermochemical kinetics, and noncovalent interactions. J. Chem. Phys. 125 (19), 194101 (2006) https://doi.org/10.1063/1. 2370993 [17] Mardirossian, N., Head-Gordon, M.: ωb97x-v: A 10-parameter, range-separated hybrid, generalized gradient approximation density functional with nonlocal cor-relation, designed by a survival-of-the-fittest strategy. Phys. Chem. Chem. Phys. 
+
+16 (21), 9904 (2014) https://doi.org/10.1039/c3cp54374a [18] Liu, Y., Zhang, C., Liu, Z., Truhlar, D.G., Wang, Y., He, X.: Supervised learning of a chemistry functional with damped dispersion. Nature Computational Science 
+
+3(1), 48–58 (2023) [19] Gill, P.M., Adamson, R.D., Pople, J.A.: Coulomb-attenuated exchange energy density functionals. Molecular Physics 88 (4), 1005–1009 (1996) [20] Leininger, T., Stoll, H., Werner, H.-J., Savin, A.: Combining long-range configu-ration interaction with short-range density functionals. Chemical physics letters 
+
+275 (3-4), 151–160 (1997) [21] Iikura, H., Tsuneda, T., Yanai, T., Hirao, K.: A long-range correction scheme for generalized-gradient-approximation exchange functionals. The Journal of Chemical Physics 115 (8), 3540–3544 (2001) [22] Vydrov, O.A., Van Voorhis, T.: Nonlocal van der waals density functional: The simpler the better. J. Chem. Phys. 133 (24), 244103 (2010) https://doi.org/10. 1063/1.3521275 13 [23] Caldeweyher, E., Ehlert, S., Hansen, A., Neugebauer, H., Spicher, S., Ban-nwarth, C., Grimme, S.: A generally applicable atomic-charge dependent london dispersion correction. The Journal of chemical physics 150 (15) (2019) [24] Lao, K.U.: Canonical coupled cluster binding benchmark for nanoscale nonco-valent complexes at the hundred-atom scale. The Journal of Chemical Physics 
+
+161 (23), 234103 (2024) https://doi.org/10.1063/5.0230456 [25] Karton, A., Spackman, P.R.: Evaluation of density functional theory for a large and diverse set of organic and inorganic equilibrium structures. Journal of Computational Chemistry 42 (22), 1590–1601 (2021) [26] Lazzari, F., Di Grande, S., Crisci, L., Mendolicchio, M., Barone, V.: Molecular structures with spectroscopic accuracy at dft cost by the templating synthon approach and the pcs141 database. The Journal of Chemical Physics 162 (11) (2025) [27] Karton, A.: A highly diverse and accurate database of 3366 total atomization energies calculated at the ccsd (t)/cbs level by means of w1-f12 theory. Chemical Physics Letters 868 , 142030 (2025) [28] Weigend, F., Ahlrichs, R.: Balanced basis sets of split valence, triple zeta valence and quadruple zeta valence quality for h to rn: Design and assessment of accuracy. Phys. Chem. Chem. Phys. 7(18), 3297 (2005) https://doi.org/10.1039/b508541a [29] Dunning, T.H.: Gaussian basis sets for use in correlated molecular calculations. i. the atoms boron through neon and hydrogen. J. Chem. Phys. 90 (2), 1007–1023 (1989) https://doi.org/10.1063/1.456153 [30] Jensen, F.: Polarization consistent basis sets. iii. the importance of diffuse func-tions. J. Chem. Phys. 117 (20), 9234–9240 (2002) https://doi.org/10.1063/1. 1515484 [31] Bryenton, K.R., Adeleke, A.A., Dale, S.G., Johnson, E.R.: Delocalization error: The greatest outstanding challenge in density-functional theory. Wiley Interdis-ciplinary Reviews: Computational Molecular Science 13 (2), 1631 (2023) [32] Cohen, A.J., Mori-S´ anchez, P., Yang, W.: Fractional spins and static correla-tion error in density functional theory. The Journal of chemical physics 129 (12), 121104 (2008) [33] Maier, T.M., Arbuznikov, A.V., Kaupp, M.: Local hybrid functionals: Theory, implementation, and performance of an emerging new tool in quantum chemistry and beyond. Wiley Interdisciplinary Reviews: Computational Molecular Science 
+
+9(1), 1378 (2019) 14 [34] Luise, G., Huang, C.-W., Vogels, T., Kooi, D.P., Ehlert, S., Lanius, S., Gies-bertz, K.J., Karton, A., Gunceler, D., Stanley, M., et al.: Accurate and scalable exchange-correlation with deep learning. arXiv preprint arXiv:2506.14665 (2025) [35] Gagliardi, L., Truhlar, D.G., Li Manni, G., Carlson, R.K., Hoyer, C.E., Bao, J.L.: Multiconfiguration pair-density functional theory: A new way to treat strongly correlated systems. Accounts of chemical research 50 (1), 66–73 (2017) [36] Su, N.Q., Li, C., Yang, W.: Describing strong correlation with fractional-spin correction in density functional theory. Proceedings of the National Academy of Sciences 115 (39), 9678–9683 (2018) [37] Bertsimas, D., King, A., Mazumder, R.: Best subset selection via a modern optimization lens. The annals of statistics, 813–852 (2016) [38] Gurobi Optimization, LLC: Gurobi Optimizer Reference Manual (2025). https: //www.gurobi.com [39] Matito, E.: Modern Density Functional Approximations are Ill-Designed to Compute Vibrational Properties. Invited lecture at WATOC 2025 (22nd World Association of Theoretical and Computational Chemists International Congress), Oslo, Norway. June 22–27, 2025 (2025) 15

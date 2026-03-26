@@ -1,0 +1,959 @@
+Title: Physics-Informed Long-Range Coulomb Correction for Machine-learning Hamiltonians
+
+URL Source: https://arxiv.org/pdf/2603.20007v1
+
+Published Time: Mon, 23 Mar 2026 01:04:45 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+## Physics-Informed Long-Range Coulomb Correction for Machine-learning Hamiltonians 
+
+Yang Zhong, 1, ∗ Xiwen Li, 1 Xingao Gong, 1 and Hongjun Xiang 1, †
+
+> 1
+
+Key Laboratory of Computational Physical Sciences (Ministry of Education), Institute of Computational Physical Sciences, State Key Laboratory of Surface Physics, and Department of Physics, Fudan University, Shanghai, 200433, China. 
+
+Machine-learning electronic Hamiltonians achieve orders-of-magnitude speedups over density-functional theory, yet current models omit long-range Coulomb interactions that govern physics in polar crystals and heterostructures. We derive closed-form long-range Hamiltonian matrix el-ements in a nonorthogonal atomic-orbital basis through variational decomposition of the electro-static energy, deriving a variationally consistent mapping from the electron density matrix to effec-tive atomic charges. We implement this framework in HamGNN-LR, a dual-channel architecture combining E(3)-equivariant message passing with reciprocal-space Ewald summation. Benchmarks demonstrate that physics-based long-range corrections are essential: purely data-driven attention mechanisms fail to capture macroscopic electrostatic potentials. Benchmarks on polar ZnO slabs, CdSe/ZnS heterostructures, and GaN/AlN superlattices show two- to threefold error reductions and robust transferability to systems far beyond training sizes, eliminating the characteristic staircase artifacts that plague short-range models in the presence of built-in electric fields. 
+
+I. INTRODUCTION 
+
+Accurate electronic-structure calculations underpin condensed-matter physics and materials science. Despite the success of density functional theory (DFT) [1, 2], self-consistent field (SCF) iterations entail prohibitive com-putational cost for large or complex systems. Machine-learning electronic Hamiltonians offer a transformative alternative [3–8]: by mapping atomic configurations di-rectly to Hamiltonian matrix elements, these models bypass the SCF loop and achieve orders-of-magnitude speedups while preserving first-principles accuracy. Yet prevailing approaches invoke the nearsightedness princi-ple [9], confining information flow to local atomic neigh-borhoods. This approximation breaks down in systems governed by long-range Coulomb interactions, includ-ing polar crystals, low-dimensional materials, and het-erostructures, in which charge transfer, built-in electric fields, and macroscopic polarization arise from electro-static interactions that extend far beyond any local cut-off. In the development of machine-learning interatomic potentials, long-range interactions have been incorpo-rated through charge equilibration [10], Gaussian charge representations [11], Ewald summation for 1/r Coulomb tails [12], Fourier convolutions [13], and reciprocal-space neural networks [14]. These techniques target scalar po-tential energy surfaces and do not extend to electronic Hamiltonian matrices, which are tensorial matrix quan-tities constrained by E(3) equivariance and time-reversal symmetry. The mathematical structure required to en-code long-range physics in Hamiltonians thus differs fun-damentally from that in potential models. We present a rigorous framework for incorporating long-range Coulomb interactions into Machine-learning   
+
+> ∗yzhong@fudan.edu.cn
+> †hxiang@fudan.edu.cn
+
+electronic Hamiltonians in a nonorthogonal atomic-orbital (NAO) basis. Through variational decomposition of the electrostatic energy into short- and long-range con-tributions, we derive closed-form expressions for long-range Hamiltonian matrix elements that ensure exact consistency between the Hamiltonian and total energy. This reciprocal-space formulation enables efficient evalu-ation via rapidly convergent k-space sums and systematic treatment of polar crystals and heterostructures. 
+
+II. RESULTS 
+
+We decompose the total energy as Etot = Esr + Elr ,isolating the slowly convergent Coulomb tail into areciprocal-space contribution [15]. With cutoff wave vec-tor kc and Gaussian smoothing width σ, the long-range electrostatic energy is 
+
+Elr = 12ϵ0V
+
+∑
+
+> 0<|k|<k c
+
+1
+
+k2 exp( −σ2k2/2) |S(k)|2 , (1) where V is the unit-cell volume, ϵ0 the vacuum permittiv-ity, and S(k) = ∑ 
+
+> i
+
+Qi exp( ik · τi) is the structure factor of net atomic charges Qi at site i. To evaluate Eq. (1), we require the net atomic charges Qi = Zi − qi, where qi
+
+is the electronic population on atom i. We obtain qi by integrating the electron density ρ(r) against a spatially localized weight function centered on atom i, following density-based population analysis [16, 17]: 
+
+qi =
+
+∫
+
+Wi(r − τi) ρ(r) d r.
+
+In a nonorthogonal atomic-orbital (NAO) basis, ρ(r) = ∑ 
+
+> μν
+
+Pμν ϕ∗
+
+> μ
+
+(r) ϕν (r), so qi = ∑ 
+
+> μν
+
+Pμν Wi,μν with orbital-projected weight-matrix elements 
+
+Wi,μν ≡
+
+∫
+
+Wi(r − τi) ϕ∗
+
+> μ
+
+(r) ϕν (r) d r = ∂q i
+
+∂P μν 
+
+.
+
+> arXiv:2603.20007v1 [physics.comp-ph] 20 Mar 2026
+
+2Since Zi is constant, we have ∂Q i/∂P μν = −Wi,μν . The long-range Hamiltonian matrix elements follow from the chain rule: 
+
+Hlr ,μν = ∂E lr 
+
+∂P μν 
+
+= ∑
+
+> i
+
+∂E lr 
+
+∂Q i
+
+∂Q i
+
+∂P μν 
+
+, (2) where ∂E lr /∂Q i is obtained by differentiating |S(k)|2;since ∂S/∂Q i = exp( ik · τi), the cross terms yield 
+
+2 Re[ S(k) exp( −ik · τi)] (Appendix A). For a real-valued NAO basis, always available when time-reversal symme-try holds, Wi,μν is real. Substituting into Eq. (2) and converting to atomic units ( 4πϵ 0 = 1 ) yields the closed-form result: 
+
+Hlr ,μν = − 4πV
+
+∑
+
+> 0<|k|<k c
+
+exp( −σ2k2/2) 
+
+k2
+
+× Re 
+
+[
+
+S(k) ∑
+
+> i
+
+exp( −ik · τi)Wi,μν 
+
+]
+
+.
+
+(3) Equation (3) couples the macroscopic field carried by 
+
+S(k) to the orbital-projected weight matrix Wi,μν , en-suring variational consistency— Hlr ,μν = ∂E lr /∂P μν —by construction. The Ewald self-interaction energy 
+
+Eself ∝ ∑ 
+
+> i
+
+Q2 
+
+> i
+
+[18, 19] generates a spatially local cor-rection ∂E self /∂P μν ∝ ∑ 
+
+> i
+
+Qi Wi,μν that lies within the short-range receptive field and is absorbed into 
+
+Hsr (Appendix A 5). Expanding S(k) = ∑ 
+
+> j
+
+Qj eik·τj
+
+shows that the bracketed factor in Eq. (3) reduces to Re [∑  
+
+> i,j
+
+Qj Wi,μν e−ik·(τi−τj )], a pairwise sum whose phases depend solely on relative displacements τi − τj .This structure is directly exploited by the Ewald atten-tion module described below. Guided by this analytic form, we construct HamGNN-LR (Fig. 1), a dual-channel architecture separating short-and long-range physics. The short-range channel em-ploys E(3)-equivariant message passing for local bonding and orbital hybridization [7, 20], producing equivariant node features hsr  
+
+> i
+
+. The long-range channel—an Ewald at-tention module —operates in reciprocal space to capture macroscopic electrostatic correlations beyond the real-space cutoff, and ultimately evaluates Hlr via Eq. (3). The two channels are merged through a gated residual connection hlr  
+
+> i
+
+← (1 − α) hsr  
+
+> i
+
++ α EquivariantNonlin( hlr  
+
+> i
+
+)
+
+with learnable gate α, ensuring that the long-range cor-rection is introduced as a small perturbation to the short-range baseline during early training. The Ewald attention module is designed to repro-duce the pairwise phase structure km · (τi − τj ) that appears in Eq. (3). We sample a discrete set of wave vectors {km} with |km| < k c from the reciprocal lat-tice. For each km, invariant scalar components of the node features are projected into query and key vectors, to which rotary position encoding (RoPE) [21] is applied with phase θj,m = km · τj . The resulting inner prod-uct ⟨˜qi,m , ˜kj,m ⟩ depends solely on the relative displace-ment phase km · (τi − τj ), exactly matching the Ewald HamGNN-LR Architecture Input Graph Data Graph Embedding & Basis Expansion Short-Range Layers (×N) Iterative Message Passing Ewald Attention Block Long-Range (LR) Interactions Feature Decoding Layer Effective Charges: Weight Matrix: Ewald Summation Layer Structure Factor Long-Range Hamiltonian: Final Hamiltonian Prediction Initial Node/Edge Features ( , )h eij                                              
+
+> 00Spherical Harmonics & Radial Basis
+> Ylm rhhheYiilljlij l()( ) ( ) ( ) (,,,,)1Conv hhhilr isr sr j←EwaldAttn( ,{ })
+> efhheYij lr ilr jlr ij sr
+> pair lr _(,,,),
+> WfheiWilr ij lr
+> ,(,)
+>  
+
+# +
+
+Hsr      
+
+> Hfhesr sr SR ij SR
+> 
+
+  i ,
+
+H lr              
+
+> SQijjNj()exp( )kk
+> 1
+> 
+> HHHsr lr total E(3) Convolution Ewald Attention Layer Pair Interaction LR Block Construction
+
+Hsr                                
+
+> efhheij liljlij l()()()( ) (,,)111pair Pair Interaction
+> Qfhiilr Q←()(,)heisr ij sr HVw k SeWiiii
+> lr, ,( ) Re ()4
+> kkk
+
+FIG. 1. Architecture of HamGNN-LR for predicting Htotal =
+
+Hsr + Hlr . Short-range E(3)-equivariant message passing con-structs Hsr from local environments. An Ewald attention module captures long-range correlations in reciprocal space with O(N |K| ) cost, linear in system size N for fixed sampled wave vectors |K| , and decodes ionic charges Qi and weight ma-trices Wi,μν . The decoded charges are neutralized ( Qj 7 → ˜Qj )and, together with the weight matrices Wi,μν , substituted into the analytic correction Hlr [Eq. (3)]. 
+
+summation kernel. The value vectors carry full equivari-ant content and are aggregated via linearized attention— first summing over atoms at each km, then over wave vectors—yielding O(N |K| ) complexity, linear in system size N for a fixed reciprocal grid, versus O(N 2) for stan-dard all-pairs attention. The aggregated features hlr  
+
+> i
+
+in-herit E(3) equivariance because only invariant scalars participate in RoPE and attention weights, while the equivariant value vectors pass through unrotated. From the updated long-range node features hlr  
+
+> i
+
+, the module decodes effective ionic charges Qi via an invari-ant readout. Since network-predicted charges need not satisfy global neutrality, we apply a zero-mean projec-tion ˜Qj = Qj − N −1 ∑ 
+
+> k
+
+Qk before Ewald summation, defining the structure factor 
+
+S(km) = 1
+
+N
+
+> N
+
+∑
+
+> j=1
+
+˜Qj exp( i km · τj ), (4) where the 1/N prefactor renders S(km) an inten-sive quantity consistent with the 1/V normalization in Eq. (1). Long-range edge features elr  
+
+> ij
+
+are constructed 3by concatenating node features of the two endpoints and coupling them to spherical-harmonic embeddings of the bond direction via Clebsch–Gordan tensor products, in-jecting directional information while preserving equiv-ariance. The weight matrices Wi,μν are then decoded from the node features (onsite elements) and edge fea-tures (offsite elements). Finally, ˜Qj and Wi,μν are substi-tuted into Eq. (3) to yield Hlr , giving the total prediction 
+
+Hμν = Hsr ,μν + Hlr ,μν .Unlike prior reciprocal-space attention schemes [12, 22–24], which target scalar energy predictions, this con-struction is grounded in the analytic Hamiltonian ex-pression [Eq. (3)], preserves E(3) equivariance at every stage, and scales linearly in N . Additional implemen-tation details—including Q/K/V projections, the RoPE convention, linearized aggregation, and the gated resid-ual connection—are given in Appendix B. To disentangle the effect of the explicit long-range cor-rection from that of increased network capacity, we re-strict all models to a single interaction layer, confin-ing the receptive field to minimal local neighborhoods. We compare four variants that systematically include or exclude two key ingredients: the physics-based Hlr 
+
+[Eq. (3)] and the Ewald attention module: (i) SR , a short-range baseline with neither; (ii) LR-loc , which evaluates Hlr via Eq. (3) but decodes Qi and Wi,μν 
+
+from the short-range node and edge features alone, with-out Ewald attention; (iii) LR-EA (full HamGNN-LR), which first extracts long-range features through Ewald attention, decodes Qi and Wi,μν from the resulting long-range node and edge features, and evaluates Hlr ; and (iv) EA , which incorporates Ewald attention to aug-ment node features but omits the physics-based Hlr 
+
+term, relying entirely on the network to learn long-range effects in a data-driven manner. Table I reports Hamiltonian mean absolute error (MAE) on three po-lar/heterostructure systems—ZnO slab, GaN/AlN su-perlattice, and CdSe/ZnS heterostructure—each split 60%/20%/20% for training/validation/test. Incorporating the physics-based correction proves de-cisive. In CdSe/ZnS, LR-EA reduces test MAE from 3.279 meV (SR) to 1.058 meV—a threefold improvement—while even LR-loc, which lacks reciprocal-space feature extraction, reaches 1.292 meV; in GaN/AlN, LR-EA similarly reduces test MAE from 3.646 meV to 1.162 meV. By contrast, EA—equipped with Ewald attention but lacking the analytic Hamilto-nian term—yields 3.158 meV in CdSe/ZnS and 3.598 meV in GaN/AlN, essentially identical to the short-range baseline. In all three tested systems, EA provides negligi-ble improvement, confirming that data-driven attention alone, without the physics-based Hamiltonian correction, is insufficient to capture macroscopic electrostatic effects within a single-layer architecture. Both LR-loc and LR-EA reduce errors by factors of two to three, demonstrat-ing that the explicit, variationally consistent Hlr is the es-sential ingredient; Ewald attention further enhances ac-curacy by providing long-range-aware features for decod-ing Qi and Wi,μν . Nevertheless, the truncated Coulomb tail is recovered by the physics-based correction rather than by the attention mechanism per se.                                               
+
+> TABLE I. Hamiltonian MAE (meV) for single-layer mod-els on three polar/heterostructure systems. SR: short-range baseline; LR-loc: long-range correction [Eq. (3)] with local decoding; LR-EA: full HamGNN-LR (correction + Ewald at-tention); EA: Ewald attention only, without physics-based
+> Hlr .System Split SR LR-loc LR-EA EA ZnO slab Train 1.278 0.685 0.596 1.099 Test 1.336 0.747 0.635 1.153 GaN/AlN Train 3.623 1.462 1.184 3.556 Test 3.646 1.313 1.162 3.598 CdSe/ZnS Train 3.380 1.311 1.057 3.231 Test 3.279 1.292 1.058 3.158 30 60 90 120 150
+> Total slab thickness ( Å)
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> Mean absolute error (meV)
+> (a)
+> SR
+> LR
+> 40 60 80 100 120 140
+> Total slab thickness ( Å)
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> Mean absolute error (meV)
+> (b)
+> SR
+> LR
+> FIG. 2. Hamiltonian MAE of single-layer SR (red cir-cles) and LR (blue squares) models versus layer thickness for (a) GaN/AlN superlattices and (b) polar ZnO slabs. In (a), SR error grows with superlattice period and saturates at
+> ∼140 Å; in (b), SR error rises with slab thickness before lev-eling off. The LR model [Eq. (3)] maintains uniformly low errors across all thicknesses.
+
+To examine size dependence, we evaluate single-layer SR and LR models as a function of layer thickness in GaN/AlN superlattices and polar ZnO slabs (Fig. 2). In both systems, SR error rises with thickness: in GaN/AlN it grows with superlattice period and satu-rates at ∼140 Å; in ZnO it increases with slab thick-ness before leveling off. The macroscopic built-in field, originating from bound polarization charges at interfaces (GaN/AlN) or spontaneous polarization along the c axis (ZnO), produces an electrostatic potential that grows lin-early beyond the single-layer receptive field. The LR model maintains uniformly low errors across all thick-nesses, with only a mild increase at the largest sizes; even at maximum thickness, LR error remains below SR error at minimum thickness. This confirms that reciprocal-space Ewald correction in Eq. (3) successfully restores the macroscopic electrostatic potential discarded by real-space truncation. We next benchmark HamGNN-LR against three repre-sentative short-range models—DeepH-E3 [6], DeePTB-4O (Target) O (Prediction) Zn (Target) Zn (Prediction) P (Polarization)                            
+
+> (a) 810 12
+> 025 50 75 100 125 z (Å)
+> −34 −33 −32 −31
+> 025 50 75 100 125 z (Å)
+> 025 50 75 100 125 z (Å)
+> 025 50 75 100 125 z (Å)
+> Average Onsite Energy (eV)
+> Short-Range (DeepH-E3) Short-Range (DeepTB-E3) Short-Range (HamGNN) Long-Range (HamGNN-LR) (b) (f) (g) (h) (c) (d) (e)
+
+FIG. 3. Real-space onsite energy and band structure of the 56-layer polar ZnO slab. (a) Structural schematic; red arrow denotes spontaneous polarization P. (b)–(e) Spatially resolved average onsite Hamiltonian matrix elements along z for (b) DeepH-E3, (c) DeePTB-E3, (d) short-range HamGNN, and (e) HamGNN-LR. Open symbols: DFT reference; solid lines: model predictions. Shaded regions in (b)–(d) highlight staircase discontinuities arising from finite receptive fields; these artifacts are absent in (e) owing to the long-range correction. (f)–(h) Band structures along Γ–K–M –Γ for (f) short-range HamGNN, (g) HamGNN-LR, and (h) DFT reference. Dashed red lines mark the Fermi level. HamGNN-LR closely reproduces DFT bands, whereas the short-range model exhibits visible deviations near the band gap. 
+
+E3 [8], and HamGNN [7, 20]—all using three interac-tion layers. Beyond standard train/test evaluation on ZnO slabs, we perform a stringent size-extrapolation test: models trained on thinner slabs predict the Hamiltonian of a 56-layer ZnO slab far outside the training distribu-tion (Table II). 
+
+TABLE II. Hamiltonian MAE (meV) for three-layer models on ZnO slabs. “ZnO (thick)” denotes size extrapolation to a 56-layer (147.25 Å) slab unseen during training.                 
+
+> Split DeepH-E3 DeePTB-E3 HamGNN HamGNN-LR Train 0.462 1.940 0.397 0.291
+> Test 0.578 2.450 0.538 0.349
+> ZnO (thick) 1.525 2.383 1.565 0.473
+
+On the standard test set, HamGNN-LR achieves the lowest error (0.349 meV), a 35% reduction over HamGNN (0.538 meV) and 40% over DeepH-E3 (0.578 meV). This confirms that the long-range correction yields substan-tial gains even when the receptive field already spans three interaction layers. The advantage is most pro-nounced under size extrapolation: errors of all short-range models increase sharply—to 1.525 meV ( +164%) for DeepH-E3 and 1.565 meV ( +191%) for HamGNN— whereas HamGNN-LR reaches only 0.473 meV ( +36%). This robust extrapolation stems directly from Eq. (3): Ewald summation analytically captures the macroscopic spontaneous-polarization field along the c axis, whose spatial extent grows linearly with slab thickness. No practically feasible number of message-passing layers can reproduce this behavior. Figure 3 provides a microscopic view of the long-range correction on the 56-layer ZnO slab. In the DFT ref-erence, onsite energies of both O and Zn atoms vary nearly linearly along z, reflecting the macroscopic elec-trostatic potential gradient generated by the spontaneous polarization. All three short-range models [Figs. 3(b)– (d)] exhibit characteristic staircase artifacts: within each receptive-field window local chemistry is captured cor-rectly, but the model cannot account for the electrostatic potential increment ∆ϕ accumulated beyond the cutoff radius. The step width corresponds to the effective range of three message-passing layers, and the cumulative mis-match grows with z, consistent with the increasing er-rors reported in Table II. HamGNN-LR [Fig. 3(e)] elimi-nates these artifacts entirely. Ewald summation restores the continuous linear potential gradient by incorporat-ing the small-|k| components of S(k) that encode the macroscopic charge distribution. This advantage is mir-5rored in reciprocal space. The short-range band structure [Fig. 3(f)] misplaces both valence- and conduction-band edges and distorts their curvature, yielding an underes-timated band gap and spurious splittings of low-lying subbands along the high-symmetry path. In contrast, HamGNN-LR [Fig. 3(g)] closely reproduces the DFT ref-erence [Fig. 3(h)]: band extrema, near-gap ordering, and curvature at Γ and M are all faithfully captured, con-firming that long-range Ewald correction is essential for quantitative band-structure accuracy in polarized slabs. 
+
+III. CONCLUSION 
+
+We have derived closed-form, variationally consistent long-range Hamiltonian matrix elements [Eq. (3)] in a nonorthogonal atomic-orbital basis and implemented them within HamGNN-LR, a framework that incorpo-rates macroscopic Coulomb fields into Machine-learning electronic Hamiltonians. Single-layer ablation demon-strates that the explicit long-range correction is deci-sive in polar and heterostructure systems, whereas data-driven attention alone fails to reproduce long-range elec-trostatic effects. HamGNN-LR maintains low errors un-der size extrapolation to thick ZnO slabs outside the training distribution. Analysis of real-space onsite en-ergy profiles traces the staircase artifacts of short-range models to truncated built-in fields and confirms that the long-range correction restores continuous potential gradients. These results demonstrate that analytical, variationally consistent long-range Coulomb corrections are essential for accurate, cross-scale Machine-learning electronic-structure predictions in polar materials and heterostructures. The framework opens a pathway to-ward accurate, large-scale electronic-structure modeling of interfaces, superlattices, and other systems in which long-range electrostatic effects are dominant. 
+
+[1] R. O. Jones, Density functional theory: Its origins, rise to prominence, and future, Rev. Mod. Phys. 87 , 897 (2015). [2] A. D. Becke, Perspective: Fifty years of density-functional theory in chemical physics, J. Chem. Phys. 
+
+140 , 18A301 (2014). [3] K. T. Schütt, M. Gastegger, A. Tkatchenko, K.-R. Müller, and R. J. Maurer, Unifying machine learning and quantum chemistry with a deep neural network for molecular wavefunctions, Nat. Commun. 10 , 5024 (2019). [4] O. T. Unke, S. Chmiela, M. Gastegger, K. T. Schütt, H. E. Sauceda, and K.-R. Müller, SE(3)-equivariant pre-diction of molecular wavefunctions and electronic densi-ties, Adv. Neural Inf. Process. Syst. 34 , 14434 (2021). [5] H. Li, Z. Wang, N. Zou, M. Ye, R. Xu, X. Gong, W. Duan, and Y. Xu, Deep-learning density functional theory Hamiltonian for efficient ab initio electronic-structure calculation, Nat. Comput. Sci. 2, 367 (2022). [6] X. Gong, H. Li, N. Zou, R. Xu, W. Duan, and Y. Xu, General framework for E(3)-equivariant neural network representation of density functional theory Hamiltonian, Nat. Commun. 14 , 2848 (2023). [7] Y. Zhong, H. Yu, M. Su, X. Gong, and H. Xiang, Trans-ferable equivariant graph neural networks for the Hamil-tonians of molecules and solids, npj Comput. Mater. 9,182 (2023). [8] Z. Zhouyin, Z. Gan, M. Liu, S. K. Pandey, L. Zhang, and Q. Gu, Learning local equivariant representa-tions for quantum operators, in International Con-ference on Learning Representations (ICLR) (2025) arXiv:2407.06053 [cond-mat.mtrl-sci]. [9] E. Prodan and W. Kohn, Nearsightedness of electronic matter, Proc. Natl. Acad. Sci. U.S.A. 102 , 11635 (2005). [10] T. W. Ko, J. A. Finkler, S. Goedecker, and J. Behler, A fourth-generation high-dimensional neural network po-tential with accurate electrostatics including non-local charge transfer, Nat. Commun. 12 , 398 (2021). [11] L. Zhang, H. Wang, M. C. Muniz, A. Z. Panagiotopoulos, R. Car, and W. E, Deep potential long-range, J. Chem. Phys. 156 , 124107 (2022). [12] A. Kosmala, J. Gasteiger, N. Gao, and S. Günnemann, Ewald-based long-range message passing for molecular graphs, in Proceedings of the 40th International Con-ference on Machine Learning (ICML) , Proceedings of Machine Learning Research, Vol. 202 (PMLR, 2023) pp. 17544–17563. [13] A. Grisafi and M. Ceriotti, Incorporating long-range physics in atomic-scale machine learning, J. Chem. Phys. 
+
+151 , 204105 (2019). [14] H. Yu, L. Hong, S. Chen, X. Gong, and H. Xiang, Cap-turing long-range interaction with reciprocal space neural network (2022), arXiv:2211.16684 [cond-mat.mtrl-sci]. [15] P. P. Ewald, Die berechnung optischer und elektrostatis-cher gitterpotentiale, Ann. Phys. 369 , 253 (1921). [16] F. L. Hirshfeld, Bonded-atom fragments for describing molecular charge densities, Theoret. Chim. Acta 44 , 129 (1977). [17] A. D. Becke, A multicenter numerical integration scheme for polyatomic molecules, J. Chem. Phys. 88 , 2547 (1988). [18] A. Y. Toukmaji and J. A. Board, Ewald summation tech-niques in perspective: A survey, Comput. Phys. Com-mun. 95 , 73 (1996). [19] S. W. de Leeuw, J. W. Perram, and E. R. Smith, Simu-lation of electrostatic systems in periodic boundary con-ditions. I. Lattice sums and dielectric constants, Proc. R. Soc. Lond. A 373 , 27 (1980). [20] Y. Zhong, R. Wang, X. Gong, and H. Xiang, A uni-versal spin–orbit-coupled Hamiltonian model for accel-erated quantum material discovery, Nat. Mach. Intell. 10.1038/s42256-026-01196-x (2026), arXiv:2504.19586 [cond-mat.mtrl-sci]. [21] J. Su, Y. Lu, S. Pan, A. Murtadha, B. Wen, and Y. Liu, Roformer: Enhanced transformer with rotary po-sition embedding, Neurocomputing 568 , 127063 (2024), arXiv:2104.09864 [cs.CL]. [22] J. T. Frank, S. Chmiela, K.-R. Müller, and O. T. Unke, Euclidean fast attention: Machine learning global atomic representations at linear cost (2024), arXiv:2412.08541 6
+
+[cs.LG]. [23] E. Qu, B. M. Wood, A. S. Krishnapriyan, and Z. W. Ulissi, A recipe for scalable attention-based MLIPs: un-locking long-range accuracy with all-to-all node attention (2026), arXiv:2603.06567 [physics.chem-ph]. [24] A. Caruso, J. Venturin, L. Giambagli, E. Rolando, F. Noé, and C. Clementi, Extending the RANGE of graph neural networks: Relaying attention nodes for global encoding (2025), arXiv:2502.13797 [cs.LG]. 
+
+Appendix A: Derivation of the Long-Range Hamiltonian Correction 
+
+This appendix provides a self-contained derivation of the long-range Hamiltonian matrix elements Hlr ,μν 
+
+stated in Eq. (3). The strategy is as follows. The reciprocal-space electrostatic energy Elr depends on the density matrix Pμν only through the net atomic charges 
+
+{Qi}. Applying the variational principle Hlr ,μν =
+
+∂E lr /∂P μν therefore reduces, via the chain rule, to eval-uating two factors: (i) the density-matrix sensitivity 
+
+∂Q i/∂P μν , which encodes how atomic charges respond to changes in the density matrix, and (ii) the electrostatic response ∂E lr /∂Q i, which gives the long-range potential at each atomic site. We derive each factor in turn and then combine them into a closed-form expression. 
+
+1. Variational Framework and Chain Rule 
+
+The long-range electrostatic energy with Gaussian-smoothed reciprocal-space cutoff is [Eq. (1)] 
+
+Elr = 12ϵ0V
+
+∑
+
+> 0<|k|<k c
+
+1
+
+k2 e−σ2k2/2 ∣∣S(k)∣∣2, (A1) where V is the unit-cell volume, ϵ0 the vacuum permittiv-ity, σ the Gaussian smoothing width, and the structure factor 
+
+S(k) = ∑
+
+> i
+
+Qi eik·τi (A2) encodes the net atomic charges Qi ≡ Zi − qi (Zi: nuclear charge; qi: electronic population) at positions τi. We as-sume overall charge neutrality, ∑ 
+
+> i
+
+Qi = 0 , a prerequisite for the convergence of the Ewald sum in periodic systems and for the well-definedness of S(k) at small |k|.Because Elr depends on Pμν only through {Qi}, the variational principle yields 
+
+Hlr ,μν = ∂E lr 
+
+∂P μν 
+
+= ∑
+
+> i
+
+∂E lr 
+
+∂Q i
+
+︸ ︷︷ ︸ 
+
+> electrostatic response
+
+∂Q i
+
+∂P μν 
+
+︸ ︷︷ ︸ 
+
+> density-matrix sensitivity
+
+.
+
+(A3) This equation serves as the roadmap for the remainder of the derivation. We evaluate the right-hand factor first (Sec. A 2), then the left-hand factor (Sec. A 3), and finally assemble the result (Sec. A 4). 
+
+2. Density-Matrix Sensitivity: ∂Q i/∂P μν 
+
+In a nonorthogonal atomic-orbital (NAO) basis 
+
+{ϕμ(r)}, the single-particle density matrix Pμν deter-mines the electron density 
+
+ρ(r) = ∑
+
+> μν
+
+Pμν ϕ∗
+
+> μ
+
+(r) ϕν (r). (A4) The electronic population on atom i is obtained by pro-jecting ρ(r) onto a spatially localized weight function 
+
+Wi(r − τi) [16, 17]: 
+
+qi =
+
+∫
+
+Wi(r − τi) ρ(r) d r = ∑
+
+> μν
+
+Pμν Wi,μν , (A5) where the second equality follows from substituting Eq. (A4) and defining the orbital-projected weight-matrix elements 
+
+Wi,μν ≡
+
+∫
+
+Wi(r − τi) ϕ∗
+
+> μ
+
+(r) ϕν (r) d r. (A6) Because Qi = Zi − qi and Zi is independent of Pμν , the desired sensitivity is 
+
+∂Q i
+
+∂P μν 
+
+= − ∂q i
+
+∂P μν 
+
+= −Wi,μν . (A7) For a real-valued NAO basis—which can always be cho-sen when time-reversal symmetry holds— Wi,μν is real, a property that will be used when simplifying the final expression. 
+
+3. Electrostatic Response: ∂E lr /∂Q i
+
+To evaluate the second factor in Eq. (A3), we differ-entiate |S(k)|2 = S(k) S∗(k) with respect to Qi. The product rule gives 
+
+∂|S|2
+
+∂Q i
+
+= ∂S ∂Q i
+
+S∗ + S ∂S ∗
+
+∂Q i
+
+. (A8) From Eq. (A2), ∂S/∂Q i = eik·τi and ∂S ∗/∂Q i = e−ik·τi .Substituting and using z + z∗ = 2 Re( z) with z ≡
+
+S(k) e−ik·τi :
+
+∂|S(k)|2
+
+∂Q i
+
+= 2 Re [S(k) e−ik·τi ]. (A9) Differentiating Eq. (A1) and noting that the factor 12 in 
+
+Elr cancels with the factor of 2 from Eq. (A9), we obtain 
+
+∂E lr 
+
+∂Q i
+
+= 1
+
+ϵ0V
+
+∑
+
+> 0<|k|<k c
+
+e−σ2k2/2
+
+k2 Re [S(k) e−ik·τi ]. (A10) 7Physically, this quantity equals the long-range compo-nent of the electrostatic potential at site i, generated by the Gaussian-smoothed charge distribution of all other atoms in reciprocal space. 
+
+4. Assembly and Final Result 
+
+We now substitute Eqs. (A7) and (A10) into the chain rule [Eq. (A3)]: 
+
+Hlr ,μν = − 1
+
+ϵ0V
+
+∑
+
+> 0<|k|<k c
+
+e−σ2k2/2
+
+k2
+
+× Re 
+
+[
+
+S(k) ∑
+
+> i
+
+e−ik·τi Wi,μν 
+
+]
+
+.
+
+(A11) Because Wi,μν is real (Sec. A 2), it can be moved inside the Re[ · · · ] operator, and the sum over atoms i can be performed under the same sign: 
+
+Hlr ,μν = − 1
+
+ϵ0V
+
+∑
+
+> 0<|k|<k c
+
+e−σ2k2/2
+
+k2
+
+× Re 
+
+[
+
+S(k) ∑
+
+> i
+
+e−ik·τi Wi,μν 
+
+]
+
+.
+
+(A12) Converting to Hartree atomic units ( 4πϵ 0 = 1 , hence 
+
+1/ϵ 0 = 4 π) yields the final closed-form expression: 
+
+Hlr ,μν = − 4πV
+
+∑
+
+> 0<|k|<k c
+
+e−σ2k2/2
+
+k2
+
+× Re 
+
+[
+
+S(k) ∑
+
+> i
+
+e−ik·τi Wi,μν 
+
+]
+
+,
+
+(A13) which is Eq. (3) of the main text. By construction, 
+
+Hlr ,μν = ∂E lr /∂P μν , ensuring variational consistency be-tween the long-range energy and Hamiltonian. 
+
+a. Pairwise phase structure. Expanding S(k) =∑ 
+
+> j
+
+Qj eik·τj in Eq. (A13), the argument of Re[ · · · ] be-comes 
+
+∑
+
+> i,j
+
+Qj Wi,μν e−ik·(τi−τj ), (A14) a sum over atom pairs (i, j ) whose phase depends solely on the relative displacement τi − τj . This translational-invariant pairwise structure is the key property exploited by the Ewald attention module (Appendix B). 
+
+5. Ewald Self-Interaction Correction 
+
+The reciprocal-space Ewald sum in Eq. (A1) implicitly includes the unphysical interaction of each point charge with its own Gaussian screening cloud [18, 19]. This self-interaction must be subtracted. We derive the corre-sponding Hamiltonian correction by the same variational chain-rule procedure used above. 
+
+a. Self-interaction energy. The Gaussian screening cloud centered on atom i has the normalized charge den-sity 
+
+ρscr  
+
+> i
+
+(r) = Qi
+
+(2 πσ 2)3/2 exp 
+
+(
+
+− |r − τi|2
+
+2σ2
+
+)
+
+. (A15) The electrostatic potential of this distribution, evaluated at its own center r = τi, is 
+
+ϕself  
+
+> i
+
+= 14πϵ 0
+
+∫ ρscr  
+
+> i
+
+(r)
+
+|r − τi| d3r = Qi
+
+4πϵ 0
+
+√ 2
+
+π
+
+1
+
+σ , (A16) where the radial integral ∫ ∞ 
+
+> 0
+
+r e −r2/(2 σ2) dr = σ2 has been used. The total self-interaction energy, with the factor of 12 to avoid double counting, is 
+
+Eself = 12
+
+∑
+
+> i
+
+Qi ϕself  
+
+> i
+
+= 14πϵ 0
+
+1
+
+√2π σ 
+
+∑
+
+> i
+
+Q2 
+
+> i
+
+. (A17) 
+
+b. Variational Hamiltonian correction. Differentiat-ing Eq. (A17) with respect to Qi gives ∂E self /∂Q i =2Qi/(4 πϵ 0
+
+√2π σ ). Applying the chain rule Hself ,μν =∑
+
+> i
+
+(∂E self /∂Q i) ( ∂Q i/∂P μν ) with ∂Q i/∂P μν = −Wi,μν 
+
+[Eq. (A7)] yields, after conversion to Hartree atomic units (4πϵ 0 = 1 ), 
+
+Hself ,μν = − 2
+
+√2π σ 
+
+∑
+
+> i
+
+Qi Wi,μν . (A18) 
+
+c. Locality and absorption into Hsr . In contrast to the reciprocal-space sum in Hlr ,μν [Eq. (A13)], the self-interaction correction Eq. (A18) is spatially local : Wi,μν 
+
+is nonvanishing only for orbitals μ, ν within the com-pact support of the weight function centered on atom i,so Hself ,μν contributes only to onsite and near-neighbor matrix elements. The complete variationally consistent long-range Hamiltonian is 
+
+Hlr,full  
+
+> μν
+
+= Hlr ,μν − Hself ,μν . (A19) Because Hself ,μν lies entirely within the receptive field of the short-range message-passing network, it can equiva-lently be absorbed into the short-range channel Hsr dur-ing training. In either case, variational consistency is maintained: Hα,μν = ∂E α/∂P μν holds for each compo-nent α ∈ { sr , lr , self } independently, so 
+
+Htot ,μν = Hsr ,μν + Hlr ,μν − Hself ,μν = ∂E tot 
+
+∂P μν 
+
+(A20) is guaranteed by construction. 
+
+Appendix B: Algorithmic Details of the Ewald Attention Module 
+
+This appendix specifies the Ewald attention module introduced in the main text. The module takes E(3)-equivariant node features {hi}Ni=1 produced by short-range message passing, extracts long-range correlations 8in reciprocal space, and outputs (i) updated long-range node features hlr  
+
+> i
+
+, (ii) effective ionic charges Qi, and (iii) orbital-projected weight matrices Wi,μν , which are substituted into Eq. (3) to yield Hlr . The computation proceeds in five stages: reciprocal-grid setup (Sec. B 1), equivariant feature projection (Sec. B 2), rotary posi-tion encoding (Sec. B 3), linearized aggregation and fea-ture update (Sec. B 4), and decoding and Hlr assembly (Sec. B 5). Throughout, we adopt the following notation: N is the number of atoms in the periodic cell, τj the position of atom j, C ∈ R3×3 the real-space lattice matrix, and d
+
+the feature dimension.  
+
+> 1. Reciprocal Grid and Base Weights
+
+The reciprocal lattice vectors are B = 2π(C−1)⊤.We enumerate all reciprocal-lattice points satisfying 0 <
+
+|km| < k c to form the discrete wave-vector set K =
+
+{km}Mm=1 , where kc is determined by an energy cutoff 
+
+Ecut .Each wave vector carries a scalar base weight w(km)
+
+that modulates its contribution to the attention. We support two choices: 
+
+w(km) = 
+
+
+
+1
+
+|km|2 exp 
+
+(
+
+− σ2|km|2
+
+2
+
+)
+
+, (Ewald) Softplus (MLP (|km|2)), (adaptive) (B1) where σ is the Gaussian smoothing width. The Ewald form reproduces the standard reciprocal-space kernel; the adaptive form allows the network to learn |k|-dependent modulations while remaining positive by construction.  
+
+> 2. Equivariant Feature Projection
+
+A central design requirement is that the attention module preserves E(3) equivariance end to end. We achieve this by separating the roles of queries/keys (which determine how much information flows) from val-ues (which carry what information flows): • Queries and keys are derived from the invariant 
+
+(l = 0 ) scalar component x(0)  
+
+> j
+
+of the equivariant node feature hj :
+
+qj = SiLU (x(0)  
+
+> j
+
+WQ
+
+), kj = SiLU (x(0)  
+
+> j
+
+WK
+
+), (B2) with learnable matrices WQ, WK ∈ Rd0×d and SiLU activation for improved expressiveness and numerical stability under subsequent rotary encod-ing. Because qj and kj depend only on scalars, they are invariant under rotation and can be freely combined with position-dependent phases (Sec. B 3) without breaking equivariance. • Values are taken directly from the full equivariant feature: vj = hj . No position encoding is applied to values, so their equivariant transformation prop-erties are preserved throughout aggregation. This separation ensures that attention weights are rota-tionally invariant scalars, while the aggregated output inherits equivariance from the value channel alone.  
+
+> 3. Rotary Position Encoding and Ewald Phase Recovery
+
+To inject spatial information into the attention weights, we apply rotary position encoding (RoPE) [21] to queries and keys, extending RoPE from discrete se-quence positions to continuous real-space phases defined by the reciprocal lattice. 
+
+a. Definition. For each atom j and wave vector km,we define the scalar phase θj,m = km · τj . The fea-ture vector of even dimension d is partitioned into d/ 2
+
+two-dimensional blocks, each rotated by θj,m . Con-cretely, the block-diagonal rotation matrix Rd(θ) =diag (R(θ), . . . , R(θ)) with 2 × 2 blocks 
+
+R(θ) = 
+
+(cos θ − sin θ
+
+sin θ cos θ
+
+)
+
+(B3) is applied to produce encoded queries and keys: 
+
+˜qj,m = Rd(θj,m ) qj , ˜kj,m = Rd(θj,m ) kj . (B4) All d/ 2 blocks share the same physical phase θj,m , be-cause km · τj is a single scalar. Equivalently, each 2D block can be viewed as multiplying the complex number 
+
+qj, 1 + i q j, 2 by eiθ j,m .
+
+b. Sign convention. Both queries and keys use the 
+
+same sign for the phase angle. This choice is essential: if one were to negate the phase for keys (as in some Ro-Former variants), the resulting inner product would de-pend on km · (τi + τj ), which is not translationally invari-ant and does not match the Ewald pairwise structure. 
+
+c. Recovery of the Ewald relative phase. The inner product of encoded query and key evaluates to 
+
+〈˜qi,m , ˜kj,m 
+
+〉 = q⊤ 
+
+> i
+
+Rd(θj,m − θi,m ) kj , (B5) where we used the orthogonality Rd(θ)⊤ = Rd(−θ). The effective rotation angle is 
+
+θj,m − θi,m = km · (τj − τi) = −km · (τi − τj ), (B6) so the inner product reduces to a linear combination of 
+
+cos [km · (τi − τj )] and sin [km · (τi − τj )], with coefficients determined by components of qi and kj in each 2D block. This is precisely the relative-displacement phase km ·(τi −
+
+τj ) that appears in the pairwise expansion of Eq. (3) [cf. Eq. (A14)], confirming that the RoPE-based attention kernel reproduces the Ewald summation phase structure while respecting translational invariance. 9 
+
+> 4. Linearized Aggregation and Feature Update
+
+a. Reciprocal-space context matrix. Standard all-pairs attention scales as O(N 2). We instead adopt linearized attention, factorizing the computation as 
+
+Q(K⊤V), which reduces the cost to O(N ) per wave vec-tor and O(N |K| ) overall. For each km, we first aggregate all atoms into a global context matrix Cm ∈ Rd×dv :
+
+Cm = w(km)
+
+N
+
+> N
+
+∑
+
+> j=1
+
+˜kj,m ⊗ vj , (B7) where w(km) is the base weight [Eq. (B1)] and the outer product ˜kj,m ⊗ vj contracts over the key dimension while retaining equivariant structure in the value dimension. 
+
+b. Per-node feature extraction. Each atom i re-trieves its long-range feature by contracting its query with the context matrices and summing over wave vec-tors: 
+
+hlr  
+
+> i
+
+= 1
+
+√d
+
+∑
+
+> km∈K
+
+C⊤ 
+
+> m
+
+˜qi,m , (B8) with the standard 1/√d scaling. Because the contraction 
+
+C⊤ 
+
+> m
+
+˜qi,m involves an invariant query and the equivariant value content stored in Cm, the output hlr  
+
+> i
+
+inherits E(3) equivariance from the value channel. Note that the attention weight in Eq. (B7) uses only the base weight w(km) and does not depend on the charge-dependent structure factor S(km). The module thus serves as a feature extractor : it produces long-range-aware node representations from which charges and weight matrices are decoded in a subsequent step (Sec. B 5). 
+
+c. Gated residual connection. The short-range and long-range channels are fused via a gated residual: 
+
+hlr  
+
+> i
+
+← (1 − α) hsr  
+
+> i
+
++ α EquivariantNonlin( hlr  
+
+> i
+
+), (B9) where α ∈ [0 , 1] is a learnable scalar gate initialized near zero. This design mirrors the energy decomposition 
+
+Etot = Esr +Elr at the feature level: the short-range base-line is preserved intact while the long-range correction enters perturbatively, ensuring stable early training and automatic suppression in nonpolar systems. Because the nonlinearity acts channel-wise without mixing angular-momentum components, hlr  
+
+> i
+
+retains E(3) equivariance.    
+
+> 5. Decoding and Hlr Assembly
+
+The updated node features hlr  
+
+> i
+
+are decoded into all quantities required by Eq. (3). 
+
+a. Effective ionic charges. A scalar charge Qi ∈ R
+
+is obtained by extracting the l = 0 component of hlr 
+
+> i
+
+followed by a linear layer. Global neutrality is enforced by a zero-mean projection: 
+
+˜Qj = Qj − 1
+
+N
+
+> N
+
+∑
+
+> k=1
+
+Qk. (B10) 
+
+b. Long-range edge features. For each pair (i, j )
+
+within the real-space neighbor cutoff, we construct edge features by concatenating the node features of both end-points and coupling them to the spherical-harmonic em-bedding of the bond direction ˆrij = ( τj − τi)/|τj − τi|
+
+via a Clebsch–Gordan tensor product: 
+
+elr  
+
+> ij
+
+= (hlr  
+
+> i
+
+⊕ hlr 
+
+> j
+
+) ⊗ Y (l)(ˆ rij ), (B11) where ⊕ denotes concatenation and ⊗ the Clebsch– Gordan product coupling the irreducible representations of the node features with those of the spherical harmon-ics Y (l). Under rotation, both inputs transform as SO(3) irreps, and the coupling ensures that elr  
+
+> ij
+
+transforms ac-cordingly, preserving equivariance. 
+
+c. Weight matrices. The orbital-projected weight matrices Wi,μν are decoded from node features (onsite elements with both μ, ν on atom i) and edge features (offsite elements with μ on i and ν on neighbor j). Both decoders respect equivariance constraints imposed by the angular-momentum quantum numbers of the orbitals. 
+
+d. Structure factor and Hlr . With ˜Qj and Wi,μν in hand, we compute the structure factor at each sampled wave vector, 
+
+S(km) = 1
+
+N
+
+> N
+
+∑
+
+> j=1
+
+˜Qj exp( i km · τj ), (B12) where the 1/N prefactor renders S(km) an inten-sive quantity consistent with the 1/V normalization in Eq. (1). The long-range Hamiltonian correction follows by direct substitution into Eq. (3): 
+
+Hlr ,μν = − 4πV
+
+∑
+
+> 0<|km|<k c
+
+e−σ2k2
+
+> m/2
+
+k2
+
+> m
+
+× Re 
+
+[
+
+S(km) ∑
+
+> i
+
+e−ikm·τi Wi,μν 
+
+]
+
+,
+
+(B13) evaluated analytically once ˜Qj and Wi,μν are provided by the network. The total predicted Hamiltonian, 
+
+Hμν = Hsr ,μν + Hlr ,μν , (B14) completes the dual-channel pipeline.

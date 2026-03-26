@@ -6,40 +6,44 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-25
-- 运行时间：2026-03-25 20:56:14 UTC
+- 最新运行日期：2026-03-26
+- 运行时间：2026-03-26 20:18:28 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：1
-- 速读区：5
+- 本次总论文数：7
+- 精读区：0
+- 速读区：7
 
 ### 今日简报（AI）
-今日深度解析 PFP/MM 混合势能技术，并速览 Suiren-1.0 分子大模型等 6 项前沿成果。
-核心突破在于 PFP/MM 方法成功融合通用神经网络势与经典力场，攻克了大规模反应体系的高效模拟难题。
-建议重点关注分子基础模型与混合模拟技术，这是提升复杂化学系统预测精度的关键路径。
-- 详情：[/202603/25/README](/202603/25/README)
+今日速览 7 篇文献，聚焦机器学习势能函数在表面催化与分子模拟中的精度突破。
+重点推荐通过微调通用模型加速催化过渡态搜索，以及引入物理信息修正哈密顿量的长程库仑相互作用。
+建议关注如何利用微调技术将通用大模型转化为特定化学反应的精准预测工具。
+- 详情：[/202603/26/README](/202603/26/README)
 
 ### 精读区论文标签
-1. [PFP/MM: A Hybrid Approach Combining a Universal Neural Network Potential with Classical Force Fields for Large-Scale Reactive Simulations](/202603/25/2603.16061v2-pfpmm-a-hybrid-approach-combining-a-universal-neural-network-potential-with-classical-force-fields-for-large-scale-reactive-simulations)  
-   标签：评分：8.0/10、query:qmmm
-   evidence：结合神经网络势与分子力学的混合方法用于反应模拟
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Quantum Field Approaches to Chemical Systems](/202603/25/2603.17582v1-quantum-field-approaches-to-chemical-systems)  
+1. [Fine-tuning universal machine learning potentials for transition state search in surface catalysis](/202603/26/2603.24482v1-fine-tuning-universal-machine-learning-potentials-for-transition-state-search-in-surface-catalysis)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：催化反应中的过渡态搜索
+2. [Physics-Informed Long-Range Coulomb Correction for Machine-learning Hamiltonians](/202603/26/2603.20007v1-physics-informed-long-range-coulomb-correction-for-machine-learning-hamiltonians)  
    标签：评分：6.0/10、query:qmmm
-   evidence：大型分子复合物及环境的量子场论方法
-2. [Goal-oriented learning of stochastic dynamical systems using error bounds on path-space observables](/202603/25/2603.20467v1-goal-oriented-learning-of-stochastic-dynamical-systems-using-error-bounds-on-path-space-observables)  
+   evidence：机器学习电子哈密顿量与量子化学研究
+3. [Multiscale theory, modelling, and simulation of hemicellulose and lignin in solution](/202603/26/2603.20057v1-multiscale-theory-modelling-and-simulation-of-hemicellulose-and-lignin-in-solution)  
    标签：评分：6.0/10、query:qmmm
-   evidence：具有误差保证的分子动力学系统反应速率学习
-3. [Suiren-1.0 Technical Report: A Family of Molecular Foundation Models](/202603/25/2603.21942v1-suiren-10-technical-report-a-family-of-molecular-foundation-models)  
+   evidence：植物细胞壁成分的多尺度建模与生物分子模拟
+4. [Analytic Gradients and Geometry Optimization for Orbital-Optimized Pair Coupled Cluster Doubles](/202603/26/2603.20419v1-analytic-gradients-and-geometry-optimization-for-orbital-optimized-pair-coupled-cluster-doubles)  
    标签：评分：6.0/10、query:qmmm
-   evidence：在密度泛函理论数据集上预训练以进行量子性质预测
-4. [Universal and efficient graph neural networks with dynamic attention for machine learning interatomic potentials](/202603/25/2603.22810v1-universal-and-efficient-graph-neural-networks-with-dynamic-attention-for-machine-learning-interatomic-potentials)  
+   evidence：分子结构优化的解析梯度
+5. [Entropy and Information is Transferred from Peripherical Sites to the Catalytic Sites of Enzymes](/202603/26/2603.20469v1-entropy-and-information-is-transferred-from-peripherical-sites-to-the-catalytic-sites-of-enzymes)  
    标签：评分：6.0/10、query:qmmm
-   evidence：具有近量子精度的分子动力学机器学习原子间势能
-5. [On-the-Fly Lifting of Coarse Reaction-Coordinate Paths to Full-Dimensional Transition Path Ensembles](/202603/25/2603.23266v1-on-the-fly-lifting-of-coarse-reaction-coordinate-paths-to-full-dimensional-transition-path-ensembles)  
+   evidence：酶催化位点的信息传递
+6. [Data Curation for Machine Learning Interatomic Potentials by Determinantal Point Processes](/202603/26/2603.22160v1-data-curation-for-machine-learning-interatomic-potentials-by-determinantal-point-processes)  
    标签：评分：6.0/10、query:qmmm
-   evidence：将粗粒度反应坐标路径提升为全维度过渡路径系综
+   evidence：使用昂贵的量子力学方法标记训练数据
+7. [Reaching for the performance limit of hybrid density functional theory for molecular chemistry](/202603/26/2603.23466v1-reaching-for-the-performance-limit-of-hybrid-density-functional-theory-for-molecular-chemistry)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：提高分子化学中密度泛函理论的准确性
 
 
 <div class="dpr-home-promo-card">
