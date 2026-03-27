@@ -6,44 +6,50 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-26
-- 运行时间：2026-03-26 20:18:28 UTC
+- 最新运行日期：2026-03-27
+- 运行时间：2026-03-27 20:25:35 UTC
 - 运行状态：成功
-- 本次总论文数：7
+- 本次总论文数：9
 - 精读区：0
-- 速读区：7
+- 速读区：9
 
 ### 今日简报（AI）
-今日速览 7 篇文献，聚焦机器学习势能函数在表面催化与分子模拟中的精度突破。
-重点推荐通过微调通用模型加速催化过渡态搜索，以及引入物理信息修正哈密顿量的长程库仑相互作用。
-建议关注如何利用微调技术将通用大模型转化为特定化学反应的精准预测工具。
-- 详情：[/202603/26/README](/202603/26/README)
+今日速览 9 篇 AI4S 前沿进展，聚焦深度学习在反应动力学与势函数构建中的关键突破。
+重点关注利用可解释 AI 识别反应坐标的新方法，以及通过 SO(3) 等变神经网络解决长程相互作用的建模难题。
+建议深入了解 ABACUS 框架下的异构计算优化，探索如何加速复杂体系的实时电子动力学模拟。
+- 详情：[/202603/27/README](/202603/27/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Fine-tuning universal machine learning potentials for transition state search in surface catalysis](/202603/26/2603.24482v1-fine-tuning-universal-machine-learning-potentials-for-transition-state-search-in-surface-catalysis)  
+1. [Deep learning of committor and explainable artificial intelligence analysis for identifying reaction coordinates](/202603/27/2603.25237v1-deep-learning-of-committor-and-explainable-artificial-intelligence-analysis-for-identifying-reaction-coordinates)  
    标签：评分：7.0/10、query:qmmm
-   evidence：催化反应中的过渡态搜索
-2. [Physics-Informed Long-Range Coulomb Correction for Machine-learning Hamiltonians](/202603/26/2603.20007v1-physics-informed-long-range-coulomb-correction-for-machine-learning-hamiltonians)  
+   evidence：识别过渡路径的反应坐标
+2. [An SO(3)-equivariant reciprocal-space neural potential for long-range interactions](/202603/27/2603.18389v2-an-so3-equivariant-reciprocal-space-neural-potential-for-long-range-interactions)  
    标签：评分：6.0/10、query:qmmm
-   evidence：机器学习电子哈密顿量与量子化学研究
-3. [Multiscale theory, modelling, and simulation of hemicellulose and lignin in solution](/202603/26/2603.20057v1-multiscale-theory-modelling-and-simulation-of-hemicellulose-and-lignin-in-solution)  
+   evidence：分子系统中长程相互作用的神经原子间势
+3. [A Unified Heterogeneous Implementation of Numerical Atomic Orbitals-Based Real-Time TDDFT within the ABACUS Package](/202603/27/2603.21835v1-a-unified-heterogeneous-implementation-of-numerical-atomic-orbitals-based-real-time-tddft-within-the-abacus-package)  
    标签：评分：6.0/10、query:qmmm
-   evidence：植物细胞壁成分的多尺度建模与生物分子模拟
-4. [Analytic Gradients and Geometry Optimization for Orbital-Optimized Pair Coupled Cluster Doubles](/202603/26/2603.20419v1-analytic-gradients-and-geometry-optimization-for-orbital-optimized-pair-coupled-cluster-doubles)  
+   evidence：加速力评估和哈密顿量构建
+4. [Autotuning T-PaiNN: Enabling Data-Efficient GNN Interatomic Potential Development via Classical-to-Quantum Transfer Learning](/202603/27/2603.24752v1-autotuning-t-painn-enabling-data-efficient-gnn-interatomic-potential-development-via-classical-to-quantum-transfer-learning)  
    标签：评分：6.0/10、query:qmmm
-   evidence：分子结构优化的解析梯度
-5. [Entropy and Information is Transferred from Peripherical Sites to the Catalytic Sites of Enzymes](/202603/26/2603.20469v1-entropy-and-information-is-transferred-from-peripherical-sites-to-the-catalytic-sites-of-enzymes)  
+   evidence：从经典到量子的迁移学习用于原子间势能
+5. [Implementation of the multigrid Gaussian-Plane-Wave algorithm with GPU acceleration in PySCF](/202603/27/2603.24881v1-implementation-of-the-multigrid-gaussian-plane-wave-algorithm-with-gpu-acceleration-in-pyscf)  
    标签：评分：6.0/10、query:qmmm
-   evidence：酶催化位点的信息传递
-6. [Data Curation for Machine Learning Interatomic Potentials by Determinantal Point Processes](/202603/26/2603.22160v1-data-curation-for-machine-learning-interatomic-potentials-by-determinantal-point-processes)  
+   evidence：GPU加速的高斯平面波密度拟合用于高效Fock构建
+6. [Decoding the Electronic and Structural Fingerprints of Single-Atom Catalysts via DFT-Assisted XANES Analysis](/202603/27/2603.25179v1-decoding-the-electronic-and-structural-fingerprints-of-single-atom-catalysts-via-dft-assisted-xanes-analysis)  
    标签：评分：6.0/10、query:qmmm
-   evidence：使用昂贵的量子力学方法标记训练数据
-7. [Reaching for the performance limit of hybrid density functional theory for molecular chemistry](/202603/26/2603.23466v1-reaching-for-the-performance-limit-of-hybrid-density-functional-theory-for-molecular-chemistry)  
+   evidence：基于DFT的催化计算框架
+7. [Complementary Eigen-Zundel Interpretation Reconciles Thermodynamics and Spectroscopy of Excess Protons in Aqueous HF Solutions](/202603/27/2603.25371v1-complementary-eigen-zundel-interpretation-reconciles-thermodynamics-and-spectroscopy-of-excess-protons-in-aqueous-hf-solutions)  
    标签：评分：6.0/10、query:qmmm
-   evidence：提高分子化学中密度泛函理论的准确性
+   evidence：质子共享的从头算分子动力学
+8. [Enabling ab initio geometry optimization of strongly correlated systems with transferable deep quantum Monte Carlo](/202603/27/2603.25381v1-enabling-ab-initio-geometry-optimization-of-strongly-correlated-systems-with-transferable-deep-quantum-monte-carlo)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：化学过程的从头算几何优化
+9. [Automating Computational Chemistry Workflows via OpenClaw and Domain-Specific Skills](/202603/27/2603.25522v1-automating-computational-chemistry-workflows-via-openclaw-and-domain-specific-skills)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：自动化计算化学工作流和分子动力学案例研究
 
 
 <div class="dpr-home-promo-card">

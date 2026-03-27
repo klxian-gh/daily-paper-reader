@@ -1,0 +1,379 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-27T20:24:30.672906+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 9,
+    "quick_skim_target": 11,
+    "quick_selected": 9
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.25237v1",
+      "title": "Deep learning of committor and explainable artificial intelligence analysis for identifying reaction coordinates",
+      "abstract": "In complex molecular systems, the reaction coordinate (RC) that characterizes transition pathways is essential to understand underlying molecular mechanisms. This review surveys a framework for identifying the RC by applying deep learning to the committor, which provides the most reliable measure of the progress along a transition path. The inputs to the neural network are collective variables (CVs) expressed as functions of atomic coordinates of the system, and the corresponding RC is predicted as the output by training the network on the committor as the learning target. Because deep learning models typically operate in a black-box manner, it is difficult to determine which input variables govern the predictions. The incorporation of eXplainable Artificial Intelligence (XAI) techniques enables quantitative assessment of the contributions of individual input variables to the predictions. This approach allows the identification of CVs that play dominant roles and demonstrates that the committor distribution on the surface using important CVs is separated by well-defined boundaries. The framework provides an explainable deep learning strategy for assigning a molecular mechanism from the RC and is applicable to a wide range of complex molecular systems.",
+      "authors": [
+        "Toshifumi Mori",
+        "Kei-ichi Okazaki",
+        "Kang Kim",
+        "Nobuyuki Matubayasi"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.soft"
+      ],
+      "published": "2026-03-26T09:42:08+00:00",
+      "link": "https://arxiv.org/pdf/2603.25237v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "identifying reaction coordinates for transition pathways",
+      "llm_evidence_cn": "识别过渡路径的反应坐标",
+      "llm_evidence": "识别过渡路径的反应坐标",
+      "canonical_evidence": "识别过渡路径的反应坐标",
+      "llm_tldr_en": "Uses deep learning to identify reaction coordinates and understand complex molecular mechanisms.",
+      "llm_tldr_cn": "利用深度学习识别反应坐标，以理解复杂的分子反应机理。",
+      "llm_tldr": "利用深度学习识别反应坐标，以理解复杂的分子反应机理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.18389v2",
+      "title": "An SO(3)-equivariant reciprocal-space neural potential for long-range interactions",
+      "abstract": "Long-range electrostatic and polarization interactions play a central role in molecular and condensed-phase systems, yet remain fundamentally incompatible with locality-based machine-learning interatomic potentials. Although modern SO(3)-equivariant neural potentials achieve high accuracy for short-range chemistry, they cannot represent the anisotropic, slowly decaying multipolar correlations governing realistic materials, while existing long-range extensions either break SO(3) equivariance or fail to maintain energy-force consistency. Here we introduce EquiEwald, a unified neural interatomic potential that embeds an Ewald-inspired reciprocal-space formulation within an irreducible SO(3)-equivariant framework. By performing equivariant message passing in reciprocal space through learned equivariant k-space filters and an equivariant inverse transform, EquiEwald captures anisotropic, tensorial long-range correlations without sacrificing physical consistency. Across periodic and aperiodic benchmarks, EquiEwald captures long-range electrostatic behavior consistent with ab initio reference data and consistently improves energy and force accuracy, data efficiency, and long-range extrapolation. These results establish EquiEwald as a physically principled paradigm for long-range-capable machine-learning interatomic potentials.",
+      "authors": [
+        "Lingfeng Zhang",
+        "Taoyong Cui",
+        "Dongzhan Zhou",
+        "Lei Bai",
+        "Sufei Zhang",
+        "Luca Rossi",
+        "Mao Su",
+        "Wanli Ouyang",
+        "Pheng-Ann Heng"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.AI"
+      ],
+      "published": "2026-03-19T01:16:11+00:00",
+      "link": "https://arxiv.org/pdf/2603.18389v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "neural interatomic potential for long-range interactions in molecular systems",
+      "llm_evidence_cn": "分子系统中长程相互作用的神经原子间势",
+      "llm_evidence": "分子系统中长程相互作用的神经原子间势",
+      "canonical_evidence": "分子系统中长程相互作用的神经原子间势",
+      "llm_tldr_en": "An SO(3)-equivariant neural potential that accurately models long-range electrostatic interactions in molecules.",
+      "llm_tldr_cn": "一种SO(3)等变神经势，可精确模拟分子中的长程静电相互作用。",
+      "llm_tldr": "一种SO(3)等变神经势，可精确模拟分子中的长程静电相互作用。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21835v1",
+      "title": "A Unified Heterogeneous Implementation of Numerical Atomic Orbitals-Based Real-Time TDDFT within the ABACUS Package",
+      "abstract": "We present a unified heterogeneous computing framework for real-time time-dependent density functional theory (RT-TDDFT) based on numerical atomic orbitals (NAOs), implemented in the ABACUS package. We introduce three co-designed abstraction layers, including unified data containers, unified linear algebra operators, and unified grid integration interfaces. These layers collectively accelerate the two most demanding parts of NAO-based RT-TDDFT: explicit real-time wavefunction propagation and real-space grid operations such as Hamiltonian construction and force evaluation under external fields. We validate the method by computing optical properties for systems ranging from finite molecules to periodic solids, showing excellent agreement with standard benchmarks. Performance evaluations on bulk silicon demonstrate that a single GPU can achieve substantial wall-clock speedup over a fully utilized dual-socket CPU node. Furthermore, distributed multi-GPU strong-scaling tests confirm high parallel efficiency over tens of GPUs. This work establishes a high-performance, portable platform for large-scale first-principles simulations of ultrafast electron dynamics.",
+      "authors": [
+        "Taoni Bao",
+        "Yuanbo Li",
+        "Zichao Deng",
+        "Haotian Zhao",
+        "Denghui Lu",
+        "Yike Huang",
+        "Chao Lian",
+        "Lixin He",
+        "Mohan Chen"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-23T11:21:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.21835v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerating force evaluation and Hamiltonian construction",
+      "llm_evidence_cn": "加速力评估和哈密顿量构建",
+      "llm_evidence": "加速力评估和哈密顿量构建",
+      "canonical_evidence": "加速力评估和哈密顿量构建",
+      "llm_tldr_en": "Presents a heterogeneous computing framework for real-time TDDFT to accelerate quantum calculations.",
+      "llm_tldr_cn": "提出了一种异构计算框架，用于加速实时时变密度泛函理论的量子计算。",
+      "llm_tldr": "提出了一种异构计算框架，用于加速实时时变密度泛函理论的量子计算。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.24752v1",
+      "title": "Autotuning T-PaiNN: Enabling Data-Efficient GNN Interatomic Potential Development via Classical-to-Quantum Transfer Learning",
+      "abstract": "Machine-learned interatomic potentials (MLIPs), particularly graph neural network (GNN)-based models, offer a promising route to achieving near-density functional theory (DFT) accuracy at significantly reduced computational cost. However, their practical deployment is often limited by the large volumes of expensive quantum mechanical training data required. In this work, we introduce a transfer learning framework, Transfer-PaiNN (T-PaiNN), that substantially improves the data efficiency of GNN-MLIPs by leveraging inexpensive classical force field data. The approach consists of pretraining a PaiNN MLIP architecture on large-scale datasets generated from classical molecular simulations, followed by fine-tuning (dubbed autotuning) using a comparatively small DFT dataset. We demonstrate the effectiveness of autotuning T-PaiNN on both gas-phase molecular systems (QM9 dataset) and condensed-phase liquid water. Across all cases, T-PaiNN significantly outperforms models trained solely on DFT data, achieving order-of-magnitude reductions in mean absolute error while accelerating training convergence. For example, using the QM9 data set, error reductions of up to 25 times are observed in low-data regimes, while liquid water simulations show improved predictions of energies, forces, and experimentally relevant properties such as density and diffusion. These gains arise from the model's ability to learn general features of the potential energy surface from extensive classical sampling, which are subsequently refined to quantum accuracy. Overall, this work establishes transfer learning from classical force fields as a practical and computationally efficient strategy for developing high-accuracy, data-efficient GNN interatomic potentials, enabling broader application of MLIPs to complex chemical systems.",
+      "authors": [
+        "Vivienne Pelletier",
+        "Vedant Bhat",
+        "Daniel J. Rivera",
+        "Steven A. Wilson",
+        "Christopher L. Muhich"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.LG"
+      ],
+      "published": "2026-03-25T19:22:56+00:00",
+      "link": "https://arxiv.org/pdf/2603.24752v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Classical-to-quantum transfer learning for interatomic potentials",
+      "llm_evidence_cn": "从经典到量子的迁移学习用于原子间势能",
+      "llm_evidence": "从经典到量子的迁移学习用于原子间势能",
+      "canonical_evidence": "从经典到量子的迁移学习用于原子间势能",
+      "llm_tldr_en": "A transfer learning framework that uses classical force field data to improve quantum-accurate ML potentials.",
+      "llm_tldr_cn": "提出一种迁移学习框架，利用经典力场数据提升量子精度机器学习势能的训练效率。",
+      "llm_tldr": "提出一种迁移学习框架，利用经典力场数据提升量子精度机器学习势能的训练效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.24881v1",
+      "title": "Implementation of the multigrid Gaussian-Plane-Wave algorithm with GPU acceleration in PySCF",
+      "abstract": "We introduce a GPU-accelerated multigrid Gaussian-Plane-Wave density fitting (FFTDF) approach for efficient Fock builds and nuclear gradient evaluations within Kohn-Sham density functional theory, as implemented in the GPU4PySCF module of PySCF. Our CUDA kernels employ a grid-based parallelization strategy for contracting Gaussian basis function pairs and achieve up to 80% of the FP64 peak performance on NVIDIA GPUs, with no loss of efficiency for high angular momentum (up to f-shell) functions. Benchmark calculations on molecules and solids with up to 1536 atoms and 20480 basis functions show up to 25x speedup on an H100 GPU relative to the CPU implementation on a 28-core shared memory node. For a 256-water cluster, the ground-state energy and nuclear gradients can be computed in ~30 seconds on a single H100 GPU. This implementation serves as an open-source foundation for many applications, such as ab initio molecular dynamics and high-throughput calculations.",
+      "authors": [
+        "Rui Li",
+        "Xing Zhang",
+        "Qiming Sun",
+        "Yuanheng Wang",
+        "Junjie Yang",
+        "Garnet Kin-Lic Chan"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph",
+        "quant-ph"
+      ],
+      "published": "2026-03-25T23:53:47+00:00",
+      "link": "https://arxiv.org/pdf/2603.24881v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "GPU-accelerated Gaussian-Plane-Wave density fitting for efficient Fock builds",
+      "llm_evidence_cn": "GPU加速的高斯平面波密度拟合用于高效Fock构建",
+      "llm_evidence": "GPU加速的高斯平面波密度拟合用于高效Fock构建",
+      "canonical_evidence": "GPU加速的高斯平面波密度拟合用于高效Fock构建",
+      "llm_tldr_en": "Introduces a GPU-accelerated algorithm in PySCF to speed up quantum chemical calculations for large systems.",
+      "llm_tldr_cn": "在PySCF中引入GPU加速算法，显著提升大规模体系的量子化学计算效率。",
+      "llm_tldr": "在PySCF中引入GPU加速算法，显著提升大规模体系的量子化学计算效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25179v1",
+      "title": "Decoding the Electronic and Structural Fingerprints of Single-Atom Catalysts via DFT-Assisted XANES Analysis",
+      "abstract": "Single-atom catalysts (SACs), composed of isolated metal atoms dispersed on solid supports, represent the ultimate expression of atomic efficiency in catalysis. Their remarkable activity and selectivity arise from local coordination environments and adjustable oxidation states, yet precise determination of these features remains an enduring challenge. Among modern characterization techniques, X-ray absorption near-edge structure (XANES) spectroscopy stands out for its sensitivity to both electronic and geometric structure, though its interpretation is often constrained by empirical comparison with bulk references. Here we introduce a density functional theory (DFT) based computational spectroscopy framework for the quantitative interpretation of Cu K-edge XANES spectra. We then employ this framework to reveal the oxidation state, coordination geometry, and hydration environment of Cu single atoms supported on cyanographene, demonstrating direct correspondence between spectral signatures and atomic-scale structure. This methodology establishes a robust and transferable route for connecting XANES features with the underlying electronic and structural characteristics of SACs, thereby advancing the rational design of atomically precise catalysts.",
+      "authors": [
+        "Petr Lazar",
+        "Michal Otyepka"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-03-26T08:49:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.25179v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "DFT-based computational framework for catalysis",
+      "llm_evidence_cn": "基于DFT的催化计算框架",
+      "llm_evidence": "基于DFT的催化计算框架",
+      "canonical_evidence": "基于DFT的催化计算框架",
+      "llm_tldr_en": "Introduces a DFT-based framework to decode electronic and structural fingerprints of catalysts.",
+      "llm_tldr_cn": "引入了一个基于DFT的计算框架，用于解码催化剂的电子和结构特征。",
+      "llm_tldr": "引入了一个基于DFT的计算框架，用于解码催化剂的电子和结构特征。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25371v1",
+      "title": "Complementary Eigen-Zundel Interpretation Reconciles Thermodynamics and Spectroscopy of Excess Protons in Aqueous HF Solutions",
+      "abstract": "Aqueous solutions of HF and HCl behave very differently at intermediate concentrations: HCl dissociates completely, whereas HF remains only partially dissociated and forms bifluoride (HF$_2^-$). This should lead to different excess-proton spectra in HF and HCl solutions, in contrast to experimental reports. Using ab initio molecular dynamics, we show that in HF the proton is not firmly bound to F$^-$, as suggested by textbook chemistry, but dynamically shared with a hydrating water molecule. This is rationalized by a modified Eigen-state description which also explains the formation of HF$_2^-$. The similar vibrational spectra of HF and HCl solutions are explained by a complementary Zundel picture in terms of almost identical excess proton transfer free-energy profiles for HF and HCl. These results reconcile thermodynamic and spectroscopic observations and provide a unified microscopic picture of excess protons in aqueous solution.",
+      "authors": [
+        "Louis Lehmann",
+        "Florian N. Brünig",
+        "Jonathan Scherlitzki",
+        "Morten Lehmann",
+        "Martin Kaupp",
+        "Beate Paulus",
+        "Roland R. Netz"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-26T12:20:07+00:00",
+      "link": "https://arxiv.org/pdf/2603.25371v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ab initio molecular dynamics of proton sharing",
+      "llm_evidence_cn": "质子共享的从头算分子动力学",
+      "llm_evidence": "质子共享的从头算分子动力学",
+      "canonical_evidence": "质子共享的从头算分子动力学",
+      "llm_tldr_en": "Uses ab initio molecular dynamics to study proton sharing and dissociation in aqueous HF solutions.",
+      "llm_tldr_cn": "利用从头算分子动力学研究了氢氟酸水溶液中的质子共享与解离。",
+      "llm_tldr": "利用从头算分子动力学研究了氢氟酸水溶液中的质子共享与解离。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25381v1",
+      "title": "Enabling ab initio geometry optimization of strongly correlated systems with transferable deep quantum Monte Carlo",
+      "abstract": "A faithful description of chemical processes requires exploring extended regions of the molecular potential energy surface (PES), which remains challenging for strongly correlated systems. Transferable deep-learning variational Monte Carlo (VMC) offers a promising route by efficiently solving the electronic Schrödinger equation jointly across molecular geometries at consistently high accuracy, yet its stochastic nature renders direct exploration of molecular configuration space nontrivial. Here, we present a framework for highly accurate ab initio exploration of PESs that combines transferable deep-learning VMC with a cost-effective estimation of energies, forces, and Hessians. By continuously sampling nuclear configurations during VMC optimization of electronic wave functions, we obtain transferable descriptions that achieve zero-shot chemical accuracy within chemically relevant distributions of molecular geometries. Throughout the subsequent characterization of molecular configuration space, the PES is evaluated only sparsely, with local approximations constructed by estimating VMC energies and forces at sampled geometries and aggregating the resulting noisy data using Gaussian process regression. Our method enables accurate and efficient exploration of complex PES landscapes, including structure relaxation, transition-state searches, and minimum-energy pathways, for both ground and excited states. This opens the door to studying bond breaking, formation, and large structural rearrangements in systems with pronounced multi-reference character.",
+      "authors": [
+        "P. Bernát Szabó",
+        "Zeno Schätzle",
+        "Frank Noé"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-26T12:31:30+00:00",
+      "link": "https://arxiv.org/pdf/2603.25381v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ab initio geometry optimization of chemical processes",
+      "llm_evidence_cn": "化学过程的从头算几何优化",
+      "llm_evidence": "化学过程的从头算几何优化",
+      "canonical_evidence": "化学过程的从头算几何优化",
+      "llm_tldr_en": "Combines deep-learning VMC with cost-effective estimation of energies and forces for PES exploration.",
+      "llm_tldr_cn": "结合深度学习变分蒙特卡洛与低成本能量/力估算，用于势能面探索。",
+      "llm_tldr": "结合深度学习变分蒙特卡洛与低成本能量/力估算，用于势能面探索。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25522v1",
+      "title": "Automating Computational Chemistry Workflows via OpenClaw and Domain-Specific Skills",
+      "abstract": "Automating multistep computational chemistry tasks remains challenging because reasoning, workflow specification, software execution, and high-performance computing (HPC) execution are often tightly coupled. We demonstrate a decoupled agent-skill design for computational chemistry automation leveraging OpenClaw. Specifically, OpenClaw provides centralized control and supervision; schema-defined planning skills translate scientific goals into executable task specifications; domain skills encapsulate specific computational chemistry procedures; and DPDispatcher manages job execution across heterogeneous HPC environments. In a molecular dynamics (MD) case study of methane oxidation, the system completed cross-tool execution, bounded recovery from runtime failures, and reaction network extraction, illustrating a scalable and maintainable approach to multistep computational chemistry automation.",
+      "authors": [
+        "Mingwei Ding",
+        "Chen Huang",
+        "Yibo Hu",
+        "Yifan Li",
+        "Zitian Lu",
+        "Xingtai Yu",
+        "Duo Zhang",
+        "Wenxi Zhai",
+        "Tong Zhu",
+        "Qiangqiang Gu",
+        "Jinzhe Zeng"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-03-26T14:56:51+00:00",
+      "link": "https://arxiv.org/pdf/2603.25522v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "automating computational chemistry workflows and molecular dynamics case studies",
+      "llm_evidence_cn": "自动化计算化学工作流和分子动力学案例研究",
+      "llm_evidence": "自动化计算化学工作流和分子动力学案例研究",
+      "canonical_evidence": "自动化计算化学工作流和分子动力学案例研究",
+      "llm_tldr_en": "A framework for automating computational chemistry tasks, including molecular dynamics simulations.",
+      "llm_tldr_cn": "一种用于自动化计算化学任务（包括分子动力学模拟）的框架。",
+      "llm_tldr": "一种用于自动化计算化学任务（包括分子动力学模拟）的框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

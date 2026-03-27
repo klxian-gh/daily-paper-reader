@@ -1,0 +1,1808 @@
+Title: Deep learning of committor and explainable artificial intelligence analysis for identifying reaction coordinates
+
+URL Source: https://arxiv.org/pdf/2603.25237v1
+
+Published Time: Fri, 27 Mar 2026 00:48:05 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Deep learning of committor and explainable artificial intelligence analysis for identifying reaction coordinates 
+
+Toshifumi Mori, 1, 2, 3, a) Kei-ichi Okazaki, 4, 5, b) Kang Kim, 6, c) and Nobuyuki Matubayasi 6, d) 
+
+> 1)
+
+Department of Molecular Engineering, Graduate School of Engineering, Kyoto University, Kyoto 615-8510, Japan 
+
+> 2)
+
+Institute for Materials Chemistry and Engineering, Kyushu University, Kasuga, Fukuoka 816-8580, Japan 
+
+> 3)
+
+Interdisciplinary Graduate School of Engineering Sciences, Kyushu University, Kasuga, Fukuoka 816-8580, Japan 
+
+> 4)
+
+Research Center for Computational Science, Institute for Molecular Science, Okazaki, Aichi 444-8585, Japan 
+
+> 5)
+
+Graduate Institute for Advanced Studies, SOKENDAI, Okazaki, Aichi 444-8585, Japan 
+
+> 6)
+
+Division of Chemical Engineering, Department of Materials Engineering Science, Graduate School of Engineering Science, The University of Osaka, Toyonaka, Osaka 560-8531, Japan 
+
+(Dated: 27 March 2026) 
+
+In complex molecular systems, the reaction coordinate (RC) that characterizes transition pathways is essential to un-derstand underlying molecular mechanisms. This review surveys a framework for identifying the RC by applying deep learning to the committor, which provides the most reliable measure of the progress along a transition path. The inputs to the neural network are collective variables (CVs) expressed as functions of atomic coordinates of the system, and the corresponding RC is predicted as the output by training the network on the committor as the learning target. Be-cause deep learning models typically operate in a black-box manner, it is di ffi cult to determine which input variables govern the predictions. The incorporation of eXplainable Artificial Intelligence (XAI) techniques enables quantitative assessment of the contributions of individual input variables to the predictions. This approach allows the identification of CVs that play dominant roles and demonstrates that the committor distribution on the surface using important CVs is separated by well-defined boundaries. The framework provides an explainable deep learning strategy for assigning a molecular mechanism from the RC and is applicable to a wide range of complex molecular systems. 
+
+TABLE OF CONTENTS 
+
+I. Introduction 1
+
+II. Methods 3A. Committor as a measure for RC optimality 3B. Cross entropy minimization 3C. Neural network model for predicting RC 4D. Input features as candidate CVs 4E. XAI analysis 5
+
+III. Applications 6A. Alanine depeptide 6B. Hyperparameter tuning 9C. Ion dissociation 10 
+
+IV. Summary and outlook 13 
+
+I. INTRODUCTION 
+
+Understanding the mechanisms of transition processes in complex molecular systems, as exemplified by protein con-
+
+> a) Electronic mail: toshi mori@moleng.kyoto-u.ac.jp
+> b) Electronic mail: keokazaki@ims.ac.jp
+> c) Electronic mail: kk@cheng.es.osaka-u.ac.jp
+> d) Electronic mail: nobuyuki@cheng.es.osaka-u.ac.jp
+
+formational changes, nucleation, and solvation e ff ects, is es-sential for characterizing the transition pathways that connect multiple stable states. However, the high dimensionality of these systems renders direct visualization and interpretation inherently di ffi cult. One widely used approach to address this challenge is the potential of mean force (PMF). 1
+
+The PMF is referred to as the free-energy landscape, and more specifically is defined as the free energy as a function of a collective variable (CV) x, which is a priori selected from the atomic coordinate space R = (r1, r2, · · · , rN ) describing the positions of N atoms: 
+
+F(x) = −kBT ln 
+
+Z
+
+e−U(R)/kBT δ[x − x(R)] dR, (1) where kB, T , and U(R) denote the Boltzmann constant, tem-perature, and potential energy of the system. Typical CVs are commonly defined in terms of interatomic distances, bond an-gles, and dihedral angles that characterize molecular confor-mation changes. For example, the radial distribution function 
+
+g(r) with respect to the interatomic distance r can be inter-preted as a PMF. Calculating the PMF in molecular dynamics (MD) simulations of complex molecular systems is a central challenge, and various sampling methods, including umbrella sampling, 2 the replica exchange method, 3 and metadynam-ics, 4 have been developed to address the high computational cost associated with exhaustive configurational sampling. 5–8 
+
+The term “collective variable” is often used interchangeable with “order parameter”, but the latter typically refer to a CV that distinguishes between reactant and product states. Fur-thermore, “reaction coordinate” can be regarded as an order 
+
+> arXiv:2603.25237v1 [physics.chem-ph] 26 Mar 2026
+
+2parameter that characterizes the dynamical progress from re-actant to product states. 9 Specifically, within the framework of transition state theory, when a saddle point on the PMF corre-sponds the transition state (TS), the selected CV serves as the reaction coordinate (RC). 9 In this case, transitions from reac-tant to product states necessarily proceed via barrier crossing along the RC. However, identifying an appropriate CV that is truly relevant to the RC among many candidate CVs is inher-ently nontrivial. A critical issue is that the free-energy bar-rier on the PMF may depend on the selection of CVs. 1,10,11 
+
+This highlights the necessity of rigorously examining whether a given PMF can correctly capture the TS. The committor analysis is a statistical approach for iden-tifying the RC from transition paths sampled in MD simu-lations. 12–17 Here, states A and B denote reactant and prod-uct states, respectively, separated by the TS. The committor 
+
+p∗
+
+> B
+
+(R) is defined as the probability of trajectories, initiated from an arbitrary configuration R with velocities randomly drawn from the Maxwell–Boltzmann distribution, that reaches state B prior to A. If the initial configuration R locates at the TS, the probabilities of reaching A and B are equal, yielding 
+
+p∗ 
+
+> B
+
+= 1/2. In other words, the TS can be characterized as the set of configurations exhibiting p∗ 
+
+> B
+
+= 1/2. In practice, the committor analysis requires evaluating the distribution p(p∗
+
+> B
+
+)from an ensemble of configurations sampled in the vicinity of the saddle point and assessing whether the selected CV is ap-propriate based on the presence of a sharp peak at p∗ 
+
+> B
+
+= 1/2This committor distribution test has been widely applied to assess the quality of selected CVs across a variety of complex molecular systems. 18–46 
+
+The committor analysis is a reliable method; however, its trial-and-error nature, which depends strongly on physical in-tuition, limits its e ffi ciency and motivates the development of more systematic approaches. 47–50 Machine learning ap-proaches based on committor analysis for identifying RCs have attracted considerable attention and have led to the de-velopment of various methodological frameworks. Ma and Dinner introduced a genetic neural network method and ap-plied it to committor values evaluated for molecular config-urations. 51 Peters et al. developed a method based on max-imum likelihood estimation to identify the RC. 52,53 By com-bining aimless shooting, a variant of transition path sampling, with a procedure that maximizes the log-likelihood, they in-troduced a framework for quantifying the contributions of candidate CVs to the RC. The aimless shooting yields a bi-nary outcome for each trajectory initiated from a given initial configuration, generating instantaneous committor values (or observed commitments) p∗ 
+
+> B
+
+= 0 or 1, corresponding to states A and B, respectively. The committor is modeled using a sig-moidal function, pB(q) = [1 + tanh( q)] /2, and maximization of the long-likelihood based on these binary outcomes deter-mines the optimal RC. Here, q is ultimately expressed as a linear combination of the candidate CVs associated with the initial configurations. This likelihood-based optimization ap-proach has been widely applied for identifying RCs in a broad range of studies. 54–80 Other machine learning methodologies for identifying RCs that characterize transition pathways have also been developed. 81–119 Moreover, numerous review arti-cles have appeared in recent years. 120–128 
+
+Recently, we developed a deep learning framework trained on committor values p∗ 
+
+> B
+
+of configurations sampled near the saddle point region from MD simulations. 129 The schematic illustration of the work flow is shown in Fig. 1. In this ap-proach, candidate CVs are employed as input features to a neural network, and the corresponding RC is predicted as the output by training the network using p∗ 
+
+> B
+
+as the learning tar-get. The cross-entropy, which quantifies the discrepancy be-tween the sigmoidal function, pB(q) = [1 + tanh( q)] /2, and the pre-evaluated committor values p∗ 
+
+> B
+
+that vary continuously from 0 to 1, is employed as a loss function and is minimized during training. 130,131 This formulation extends the likelihood maximization in that the cross-entropy is derived from the Kullback–Leibler (KL) divergence by expressing the likeli-hood in logarithmic form. 130 
+
+Because deep learning models often behave as black-boxes, eXplainable AI (XAI) techniques are further employed to quantify the contribution of each input variable to predic-tions. 133,134 XAI can be regarded as a class of model-agnostic interpretation methods for deep learning models. As major implementations of XAI, we employed Local Interpretable Model-agnostic Explanations (LIME) 135 and the game the-ory–based framework known as Shapley Additive exPlana-tions (SHAP) 136 . XAI approach enables the identification of CVs with significant contribution, providing a representation of the TS on the free-energy landscape that is consistent with the underlying transition pathways. As an application, we in-vestigated the isomerization reaction of alanine dipeptide and identified specific dihedral angles as the primary contributor to the RC. 129 We also demonstrated that the isomerization can also be characterized by specific interatomic distances. 137 
+
+Moveover, we investigated how hyperparameters in the neural network model influences the performance and reliability of the identified RC. 132 Furthermore, we investigated the RC for NaCl ion dissociation–association process in water. In partic-ular, to describe the solvent environment surrounding the ions, we employed atom-centered symmetry functions (ACSFs), which are widely used as descriptors in machine learning po-tentials, 138–140 as input CVs to the neural network. 141 
+
+Other studies have provided interpretability for RCs iden-tified through committor based deep learning approaches. Frassek et al. reported the application of an autoencoder ar-chitecture comprising an encoder, a reconstruction decoder, and a committor decoder to obtain low-dimensional repre-sentations of RCs from a large set of input CVs. 142 Jung 
+
+et al. introduced a sampling method that determines rel-evant RCs using maximum likelihood estimation combined with deep learning, and further employed symbolic regres-sion to derive interpretable mathematical expressions repre-senting trained models. 143 Neumann and Schwierz applied a related deep learning framework to predict the RC governing magnesium binding to RNA and used permutation importance to quantify feature relevance from the input CVs. 144 Naleem 
+
+et al. investigated RCs for the committor using 17 machine learning models, including Light Gradient Boosting Machine (LGBM) based on the decision tree method 145 , and quantified input CVs contributions with SHAP. 146 Their results showed 3
+
+FIG. 1. Schematic illustration of the explainable deep learning framework for identifying RCs based on committor p∗ 
+
+> B
+
+sampling. First, MD trajectories are generated to sample the committor p∗ 
+
+> B
+
+for the target transition process. The candidate CVs, xi, are utilized as input features and mapped to the output q by a neural network model of Nlayer consisting of Nnode . The neural network is trained such that the committor p∗
+
+> B
+
+follows a sigmoidal function pB(q) = [1 + tanh( q)] /2, where q serves as the RC. Finally, XAI analysis identifies the dominant CVs contributing to the RC q, enabling evaluation of the committor p∗ 
+
+> B
+
+distribution on the corresponding free-energy landscape. Reproduced from Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 153 , 054115 (2020), 131 with the permission of AIP Publishing, K. Kawashima, T. Sato, K.-i. Okazaki, K. Kim, N. Matubayasi, and T. Mori, APL Mach. Learn 3, 016113 (2025) 132 ; licensed under a Creative Commons Attribution (CC BY) license, and T. Kikutsuji, Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 156 , 154108 (2022) 129 ; licensed under a Creative Commons Attribution (CC BY) license. 
+
+that the combination of LGBM and SHAP yielded the most rubust description of alanine dipeptide isomerization. This review introduces an explainable deep learning frame-work based on the committor for identifying the RC and its ap-plications to complex molecular systems. The structure of this review is as follows. Section II outlines the background and methodology of our explainable deep learning approach. Sec-tion III presents the applications to isomerization of alanine depeptide and ion-pair dissociation in water, and discusses the hyperparameter tuning of the neural network. Section IV pro-vides a summary and an outlook.   
+
+> II. METHODS A. Committor as a measure for RC optimality
+
+Committor p∗
+
+> B
+
+(R) is defined as a probability to reach state B prior to reaching state A from a given coordinate R in a two-state system with states A and B. A naive approach to calcu-late p∗ 
+
+> B
+
+is to perform multiple short MD simulations with ve-locities randomly generated from a Maxwell–Boltzmann dis-tribution and count the probability of reaching state B. p∗ 
+
+> B
+
+is 0 when R is near state A whereas it becomes 1 near state B. At the TS, p∗ 
+
+> B
+
+is expected to be 0.5, i.e. , there is equal chance of reaching states A and B. In high dimensional systems, it is often convenient to describe the system with a RC q that con-nects states A and B and construct a PMF along q. Ideally, the committor as a function of q, pB(q), is expected to smoothly change monotonically from 0 (at state A), pass 0.5 (at TS), and reach 1 (at state B). Thus, committor can be used as a mea-sure to evaluate the quality of the reaction coordinate q. The monotonic change of the committor as a function of a reaction coordinate has been modeled using several functions includ-ing the sigmoidal function 1 + tanh( q) /2 and error function erfc( −q)/2. 9,130 While the sigmoidal function is more popular due to the relevance with the neural network framework, the error function also has an advantage for its relationship with the Kramers–Langer–Berezhkovskii–Szabo theory. 27,49,131 
+
+In practice, obtaining a RC that shows an ideal curve of 
+
+pB(q) is often highly challenging. Thus, committor can serve as a measure to examine the quality of a given RC. From a set of points {k} with q(k) = f (R(k)) and p∗
+
+> B
+
+(k) = p∗
+
+> B
+
+(R(k)), the adequacy of a trial RC q can be examined by comparing p∗
+
+> B
+
+(k)from the ideal curve pB(k).  
+
+> B. Cross entropy minimization
+
+The discrepancy between the modeled and pre-evaluated committors along a trial reaction coordinate, denoted as 
+
+pB(q(k)) and p∗
+
+> B
+
+(k), respectively, can be assessed by comparing the pB and p∗ 
+
+> B
+
+distributions using the KL divergence DKL ,
+
+DKL 
+
+ p∗
+
+> B
+
+|| pB
+
+ =
+
+X
+
+> k
+
+X
+
+> I=A,B
+
+p∗ 
+
+> I
+
+(k) ln p∗ 
+
+> I
+
+(k)
+
+pI
+
+ q(k)
+
+=
+
+X
+
+> k
+
+(
+
+p∗
+
+> B
+
+(k) ln p∗
+
+> B
+
+(k)
+
+pB
+
+ q(k)
+
++  1 − p∗
+
+> B
+
+(k) ln 1 − p∗
+
+> B
+
+(k)1 − pB
+
+ q(k))
+
+, (2) where q(k) is a trial RC at point k, pB
+
+q(k) is the model func-tion that describe the change of pB along q, and p∗
+
+> A
+
+(k) and 
+
+pA
+
+q(k) satisfy p∗
+
+> A
+
+(k) = 1− p∗
+
+> B
+
+(k) and pA
+
+q(k) = 1− pB
+
+q(k),respectively. DKL 
+
+p∗
+
+> B
+
+|| pB
+
+ is a measure to quantify the dif-ference in the distribution of p∗ 
+
+> B
+
+from pB. DKL satisfies 
+
+DKL 
+
+p∗
+
+> B
+
+|| pB
+
+ ≥ 0 and becomes 0 only when the two distri-butions match exactly. Thus, DKL = 0 for an ideal RC, and finding an ideal RC is equivalent to minimizing Eq. (2). 
+
+DKL can be divided into the self- and cross-entropy terms 4(HS and HX, resepectively) 
+
+DKL 
+
+ p∗
+
+> B
+
+|| pB
+
+ = − H S (p∗
+
+> B
+
+) + HX(p∗
+
+> B
+
+, pB), (3) where 
+
+HS
+
+ p∗
+
+> B
+
+ = −
+
+X
+
+> k
+
+p∗
+
+> B
+
+(k) ln p∗
+
+> B
+
+(k)
+
+−
+
+X
+
+> k
+
+1 − p∗
+
+> B
+
+(k) ln 1 − p∗
+
+> B
+
+(k) (4) and 
+
+HX
+
+ p∗
+
+> B
+
+, pB
+
+ = −
+
+X
+
+> k
+
+p∗ 
+
+> B
+
+ln pB
+
+q(k)
+
+−
+
+X
+
+> k
+
+1 − p∗
+
+> B
+
+ ln h1 − pB
+
+q(k)i . (5) As the self-entropy term is invariant to changes in the trial re-action coordinate q, minimizing DKL is equivalent to mimiz-ing the cross-entropy term. The following objective function 
+
+L is thus defined to quantify the di ff erence between the mod-eled and pre-evaluated committors: 
+
+L(q) = HX(p∗
+
+> B
+
+, pB(q)) + λG(q). (6) Note that the first term is a generalization of the log-likelihood maximization. 52,53 The second term describes the penalty function applied to q so as to suppress overfitting and λ is the regularization parameter that controls the penalty term. An example is the L2 norm regularization. 131 By minimizing Eq. (6), a RC q that most closely mimic the monotonic behiv-ior, e.g. , pB(q) = 1 + tanh( q) /2, can be obtained.  
+
+> C. Neural network model for predicting RC
+
+The RC q is obtained as a function of the coordinate R.However, the mapping form R to q is nontrivial. In many cases, the system R is first described with pre-selected set of CVs. The RC is defined as a function of the CVs, either in a linear or nonlinear form. Deep neural network (DNN) model is a nonlinear mapping approach to obtain the RC from the candiate CVs. In DNN, the candidate CVs, discussed in Sec-tion II D, serves as the input features ( x) after standardization, and q is obtained as the output. A common model is the mul-tilayer perceptron model, which consists of Nlayers hidden lay-ers and Nnode nodes (Fig. 1). Further choices of the model includes the activation function (the leaky rectified linear unit (Leaky ReLU) or scaled ExponentialLinear Unit), and regu-larizations ( L1, L2, etc). These parameters, i.e. hyperparame-ters, needs to be chosen prior to optimizing the DNN model, and choosing the hyperparameters are unfortunately nontriv-ival and highly tedious. Here we only consider leaky ReLU with a leaky parameter set of 0.01, and utilize L2 regulariza-tion. The number of hidden layers were also fixed to five with 400, 200, 400, 200, and 400 nodes, and the dropout at a rate of 0.5 was set to every layer in Secs. III A and III C. The ef-fect of hyperparameters to the model result are discussed in Section III B.  
+
+> D. Input features as candidate CVs
+
+The construction of CVs used as input features is a crucial aspect of committor based machine learning for identifying RCs. In the study by Ma and Dinner on the isomerization of alanine dipeptide, pairwise distances, bond angles, and dihe-dral angles, including improper dihedrals, were employed as inputs to a genetic neural network. 51 Furthermore, to investi-gate the RC for isomerization in explicit solvents, it is neces-sary to incorporate CVs that explicitly describe solute-solvent and solvent-solvent interactions. In particular, CVs such as the solvent accessible surface area, radius of gyration, and ex-cluded volume of the solute, as well as density fields defined on spherical polar coordinate grids and energetic, force, and torque components within the solute molecule, have been con-sidered. 51 Section III A outlines our deep learning study of the isomerization reaction of alanine dipeptide. We considered 45 dihedral angles, including improper ones. To account for the periodicity of dihedral angles, both cosine and sine forms were used, generating a total of 90 CVs. Section III B further describes our study of neural network hyperparameter tuning using the alanine dipeptide in water system. In that work, the electrostatic and van der Waals potentials from solvents to solute atoms were included in addition to dihedral angles, resulting in a total of 134 CVs. Another complex molecular system in which solvent e ff ects play a central role is gas hydrate nucleation, for which a va-riety of CVs have been examined. The nucleus size is com-monly quantified using the mutually coordinated guest param-eter, which counts the number of gas molecules participating in the largest solid nucleus in the system. 147 In addition, the number of water molecules incorporated into the nucleus and the cage types of the growing nucleus are also employed as CVs. 73 Other CVs include the bond-orientational order pa-rameters proposed by Steinhardt 148 , and their variants 149 were used in similar liquid-solid nucleation systems. 60 
+
+Furthermore, the CV construction becomes challenging in solvent-mediated ion pair dissociation. M¨ ullen et al. applied the inertial likelihood maximization method, 61 an extension of the likelihood maximization that incorporating the veloc-ity, acceleration, and jerk of the inter-ion distance rion , to NaCl ion pair dissociation in water. 65 In this approach, a total of 71 candidate CVs representing water bridging structures, namely, configurations in which the O and H atoms of a wa-ter molecule simultaneously coordinate to the Na and Cl ions, respectively, were considered. It was demonstrated that the inter-ionic water density ρ and and the number of bridging wa-ters NB contribute most significantly to the RC. Specifically, the inter-ionic water density ρ is defined as 
+
+ρ = 12πσ 2
+
+!3/2 X
+
+> w
+
+exp − |rw − rmid |2
+
+2σ2
+
+!
+
+, (7) where rw denotes the center-of-mass position of the w-th water molecule and rmid is the midpoint between the Na and Cl ions. The parameter σ controls the e ff ective volume over which wa-ter molecules are counted and is chosen as rion /2. The num-ber of bridging waters NB is evaluated in two steps. First, the 5ion–water coordination function is defined as 
+
+fs−w = 1 − tanh [ a(Rs−w − b)] 2 , (8) where the subscript s denotes the ion species (Na or Cl). The distance Rs−w corresponds to the distance between the Na ion and the w-th water O atom for Na coordination, and between the Cl ion and the w-th water H atom for Cl coordination. The parameters are set to a = 3 Å −1 and b = 3.2 Å. The number of water molecules simultaneously coordinating both ions is then given by 
+
+NB =
+
+X
+
+> w
+
+min ( fNa −w, fCl −w) . (9) In particular, ρ and NB were identified as important CVs, to-gether with the interion distance rion , through analyses of the PMF. 65,70,150–156 These studies showed that the formation of water bridges lowers the dissociation free energy barrier and facilitates ion pair dissociation. Jung et al. recently employed atom-centered symme-try functions (ACSFs) as CVs to represent the solvent en-vironment in studies of ion pair dissociation. 143 ACSFs are commonly used as descriptors in machine learning poten-tials, 138–140 and quantify the distribution of neighboring atoms at specific distances and angles around a reference atom. 139 
+
+Because they are invariant under translational and rotational operations, ACSFs provide a systematic representation of lo-cal solvent environment. To represent the solvent environ-ment around the ions, two types of ACSFs, G2 
+
+> i
+
+and G5 
+
+> i
+
+for reference atom i, were employed as input variables for neural networks. 143 Here, these ACSFs are defined as 
+
+G2,Z1 
+
+> i
+
+=
+
+> |Z1|
+
+X
+
+> j,i
+
+e−η(Ri j −Rs)2
+
+· fc(Ri j ), (10) 
+
+G5,Z1,Z2 
+
+> i
+
+= 21−ζ
+
+> |Z1|
+
+X
+
+> j,i
+> |Z2|
+
+X
+
+> k,i
+
+(1 + λ cos θi jk )ζ
+
+· e−η(( Ri j −Rs)2+(Rik −Rs)2) · fc(Ri j ) · fc(Rik ), (11) respectively. Note that Ri j (Rik ) represents the distance be-tween atoms i and j (k), and θi jk denotes the angle formed by atoms j and k with atom i at the center. Z1 and Z2 represent atomic species surrounding the reference atom and the abso-lute value notation denotes their respective atomic numbers. Furthermore, the cut-o ff function is introduced as 
+
+fc(Ri j ) =
+
+
+
+0.5 · hcos πRi j /Rc
+
+ + 1i for Ri j < Rc
+
+0 for Ri j > Rc, (12) with the cut-o ff radius, Rc.The ACSF G2 
+
+> i
+
+is defined as the sum of a Gaussian func-tion weighted by the cuto ff function. The width of the Gaus-sian is determined by the parameter η, while its center can be positioned at a specific radial distance using the parame-ter Rs. This function is particularly suitable for characterizing the spherical shell environment surrounding a reference atom. The ACSF G5 
+
+> i
+
+extends G2 
+
+> i
+
+by incorporating an additional tar-get atom and including an angular component. The parameter 
+
+λ can take values of 1 or −1, shifting the maximum of the co-sine function to θi jk = 0◦ and θi jk = 180 ◦, respectively. The parameter ζ controls the angular resolution, with larger val-ues of ζ corresponding to a narrower range of nonzero con-tributions in the ACSF. Section III C outlines our explainable deep learning framework for ion pair dissociation, in which a total of 1,296 ACSFs are used as CVs. The correlations be-tween water bridging structures described by ρ and NB and the ACSFs identified by the SHAP analysis are further discussed.  
+
+> E. XAI analysis
+
+XAI was applied to interpret committor predictions ob-tained from neural network training. Because deep-learning models are highly complex, direct identification of inter-pretable features is di ffi cult. To address this issue, we em-ployed XAI techniques, LIME and SHAP, to quantify the con-tribution of each input variable to the predictions of the black-box classifier through model-agnostic interpretable models. LIME enables interpretation of the contribution of indi-vidual input variables in a black-box neural network through an interpretable surrogate model. 135 Specifically, LIME con-structs a local explanation model based on linear regression that approximates the behavior of the original model in the vicinity of the data point of interest. In this context, input variables associated with large regression coe ffi cients provide insight into the prediction. The interpretable feature ξ(x) is obtained by fitting a linear regression model g to the predic-tions of the black-box model f , represented by the neural net-work, for the input data x. This procedure is formulated as 
+
+ξ(x) = argmin g∈G (L( f, g, π x) + Ω (g)) , (13) where L( f, g, π x) denotes a loss function that quantifies the discrepancy between the predictions of f and g, and G rep-resents the class of candidate explanation models. The regu-larization term Ω(g) penalizes model complexity to promote interpretability. Specifically, L( f, g, π LIME  
+
+> x
+
+) is defined as 
+
+L( f, g, π LIME  
+
+> x
+
+) =
+
+X
+
+> z,z′∈Z
+
+πLIME  
+
+> x
+
+(z)( f (z) − g(z′)) 2, (14) where πLIME  
+
+> x
+
+denotes the proximity measure characterizing the locality around the input data x to be explained. In practice, perturbed samples z generated around x and weighted by the proximity measure are mapped onto binary variables z′ ∈ { 0, 1}M , where M denotes the number of in-put variables, to provide a human-interpretable representation, because the components of the original input space are not al-ways directly interpretable. The proximity measure is further given by 
+
+πLIME  
+
+> x
+
+(z) = exp −D(x, z)2/σ 2, (15) where D is a distance metric and σ controls the width of the neighborhood. By minimizing the object function, LIME 60.0                
+
+> -180 -90 090 180
+> ϕ(°)
+> -180
+> -90
+> 0
+> 90
+> 180
+> θ (°)
+> 2.0
+> 4.0
+> 6.0
+> 8.0
+> Probability ( ×10 -5 )
+> p∗
+> B
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> 0.0
+> -180 -90 090 180
+> ϕ(°)
+> -180
+> -90
+> 0
+> 90
+> 180
+> ψ (°)
+> 2.0
+> 4.0
+> 6.0
+> 8.0
+> Probability ( ×10 -5 )
+
+A
+
+B
+
+TS       
+
+> p∗
+> B
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> (b) (c) (a)
+
+FIG. 2. (a) Atomic indices assigned to alanine dipeptide. The three major dihedral angles, φ, ψ, and θ, are indicated. (b) Probability distribution in the ( φ, ψ ) plane. The dashed lines define state A [( −150 ◦, 0◦) ≤ (φ, ψ ) ≤ (30 ◦, 180 ◦)], state B [(30 ◦, −180 ◦) ≤ (φ, ψ ) ≤ (130 ◦, 0◦)], and the intermediate region TS [( −30 ◦, −80 ◦) ≤ (φ, ψ ) ≤ (20 ◦, −30 ◦)]. (c) Probability distribution in the ( φ, θ ) plane. In (b) and (c), points are colored according to the committer value p∗
+
+> B
+
+. as indicated by the color bar. Reproduced from T. Kikutsuji, Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 156 , 154108 (2022) 129 ; licensed under a Creative Commons Attribution (CC BY) license. 
+
+yields a local surrogate model g that approximates the behav-ior of f near x, from which the interpretable feature ξ(x) is obtained. Furthermore, SHAP, a game-theory–based method, was ap-plied. Whereas LIME assumes that local model behavior can be approximated by linear regression, SHAP enforces an ad-ditive decomposition in which the sum of individual feature contributions equals the predicted value. 136 In SHAP, an addi-tive feature attribution method provides a linear function con-sisting of binary variables: 
+
+g(z′) = ϕ0 +
+
+> M
+
+X
+
+> i=1
+
+ϕiz′ 
+
+> i
+
+. (16) Here, ϕ0 denotes the bias term, and ϕi represents the contribu-tion of the i-th feature x′ 
+
+> i
+
+, which is an interpretable representa-tion corresponding to the original input variable xi. SHAP determines the coe ffi cients ϕi using Shapley values, which originate from game theory and allocate contributions among features. 157 Note that LIME can be understood as an additive feature attribution method that provides linear models in the binary vector space in the sense that the explanation model g
+
+of LIME can be expressed by Eq. (16). Exact computation of Shapley values requires evaluation over all permutations of feature inclusion, which is generally computationally de-manding. To address this limitation, Kernel SHAP was intro-duced to approximate the Shapley values e ffi ciently. In Kernel SHAP, the coe ffi cients ϕi are obtained by solving a weighted linear regression problem, thereby quantifying the contribu-tion of each feature to the model prediction. Specifically, for Kernel SHAP, the following equations are used with Eq. (13) of the LIME algorithm: 
+
+Ω(g) = 0, (17) 
+
+πSHAP  
+
+> x
+
+(z′) = M − 1
+
+> M
+
+C|z′||z′|(M − | z′|) , (18) 
+
+L( f, g, π SHAP  
+
+> x
+
+) =
+
+X
+
+> z′∈Z
+
+πSHAP  
+
+> x
+
+(z′)  f (h−1 
+
+> x
+
+(z′)) − g(z′)2
+
+, (19) where |z′| is the number of non-zero features in z′ and hx is a mapping function of binary variables z′ into the original in-put data x. The local explanation model g(z′) approximating 
+
+f (h−1 
+
+> x
+
+(z′)) can be obtained using a weighted linear regression with Eq. (18), which di ff ers from the weight function used in LIME, as shown in Eq. (15). Note the contrast between Eqs. (15) and (18), which are used in LIME and SHAP, re-spectively. In practice, if we use SHAP’s kernel of Eq. (18) as LIME’s kernel, LIME will provide values similar to SHAP values. The choice between LIME and SHAP, or the consistent use of both, merits consideration. SHAP, developed as an additive feature attribution method and closely related to LIME, and the features identified as having large contributions by LIME and by SHAP are therefore expected to be consistent. Because LIME generates perturbed samples randomly, the resulting explanations may vary between runs. This variability can be reduced by increasing the number of generated perturbed sam-ples. SHAP o ff ers a theoretical foundation grounded in game theory. By decomposing the predicted value into contribu-tions that are fairly allocated among features, SHAP provides a more sophisticated quantification of individual contributions than LIME. However, the computational cost of SHAP in-creases exponentially with the number of features since the evaluation of Shapley values requires consideration of many feature combinations.   
+
+> III. APPLICATIONS A. Alanine depeptide
+
+Bolhuis et al. applied the committor analysis to the isomer-ization reaction of alanine dipeptide 20 . The Ramachandran plot, which represents the probability distribution of the back-bone dihedral angles φ and ψ, is commonly used to character-ize protein conformation (see Figure 2(a) for the definitions of 
+
+φ and ψ). 158 This plot can be regarded as the PMF defined in terms of two CVs, φ and ψ. In vacuum, two energetically sta-ble conformations are observed: the β-sheet structure (state A) 70    
+
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> -4 -2 024
+> p∗
+> B
+
+q
+
+> LR
+> DNN
+
+(a)      
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 00.2 0.4 0.6 0.8 1
+> P(p∗
+> B)
+
+p∗
+
+> B
+> LR
+> DNN
+
+(b)                 
+
+> FIG. 3. (a) Relationship between the committer value p∗
+> Band the RC qpredicted by LR (red) and DNN (green) for the test dataset (800 points). The black solid line denotes the sigmoidal function
+> pB(q)=[1 +tanh( q)] /2. (b) Probability distribution of the committer
+> p∗
+> Bobtained from LR (red) and DNN (green) within the range −0.2<
+> q<0.2 shown in (a). Reproduced from T. Kikutsuji, Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 156 ,154108 (2022) 129 ; licensed under a Creative Commons Attribution (CC BY) license.
+
+and the left-handed α-helix structure (state B) (see Figure 2(b) for the definitions of states A and B). However, analysis of the committor distribution obtained by sampling initial configu-rations x in the vicinity of the saddle point showed that the distribution does not exhibit a peak at p∗ 
+
+> B
+
+= 1/2, but instead is nearly uniform over the interval from 0 to 1. This behavior indicates that the saddle point on the PMF does not neces-sarily correspond to the TS. They further demonstrated that inclusion of an additional dihedral angle θ is required for the committor distribution to develop a peak at p∗ 
+
+> B
+
+= 1/2 (see Figure 2(a) for the definition of θ). Thus, although the Ra-machandran plot based on φ and ψ distinguishes states A and B, incorporation of θ is necessary to represent the RC appro-priately. We applied the explainable deep learning framework to the isomerization reaction of alanine dipeptide in vacuum. State A was defined by ( −150 ◦, 0◦) ≤ (φ, ψ ) ≤ (30 ◦, 180 ◦), whereas state B was defined by (30 ◦, −180 ◦) ≤ (φ, ψ ) ≤ (130 ◦, 0◦). An intermediate region corresponding to the expected TS, (−30 ◦, −80 ◦) ≤ (φ, ψ ) ≤ (20 ◦, −30 ◦), was also defined, from which 2,000 initial configurations were sampled using the aimless shooting. For each configuration, velocities were as-signed randomly according to the Maxwell–Boltzmann distri-bution at 300 K, and 100 trajectories of 1 ps duration were generated to evaluate the committor value p∗
+
+> B
+
+. For each ini-tial configuration, a total of 90 collective variables ( M = 90) were constructed by including both cosine and sine represen-tations of all 45 dihedral angles in the molecule (see Table I of Ref. 129 for the correspondence between CV indices and dihedral angles). Figures 2(b) and 2(c) show the distributions of the sampled configurations, colored by the committor value 
+
+p∗
+
+> B
+
+. Figure 2(c) displays the distribution obtained when φ and 
+
+θ were chosen as the collective variables. While configura-tions with p∗ 
+
+> B
+
+≈ 1/2 are broadly dispersed on the ( φ, ψ ) plane, a more distinct separatrix line emerges on the ( φ, θ ) plane. This observation indicates that θ, rather than ψ, contributes more directly to the RC, in agreement with previous findings reported by Bolhuis et al .20 
+
+A dataset comprising dihedral angles and committor val-ues from 2,000 initial configurations was divided into train-ing, validation, and test sets in a 5:1:4 ratio. For compar-ison, linear regression (LR) implemented through a single-layer perceptron was also carried out, where q is expressed as q = w0 + PMm=1 wm xm with coe ffi cients ( w0, w1, · · · , wM ), including the bias term w0. All other calculation conditions are described in the original paper. 129 
+
+The learned models of LR and DNN predict the relation-ship between the committer value p∗ 
+
+> B
+
+and the reaction co-ordinate q from the test dataset (800 samples). Figure 3(a) shows the committor value p∗ 
+
+> B
+
+as a function of q for the test dataset. In both cases, p∗ 
+
+> B
+
+follows a sigmoidal dependence, in-dicating successful learning. To further examine the behavior near q = 0, the probability distribution of p∗ 
+
+> B
+
+in the range of 
+
+−0.2 < q < 0.2 is presented in Figure 3(b). For both LR and DNN, p∗ 
+
+> B
+
+exhibits a clear peak at 1 /2. These results demon-strate that the RC q predicted by the LR and DNN models appropriately characterizes the isomerization reaction of ala-nine dipeptide. The configurations near q = 0, corresponding to pB ≈ 1/2, can be therefore regarded as the TS. We quantified the contributions of grouped input variables to the reaction coordinate q predicted by the DNN using LIME and SHAP. Specifically, the dataset of 2,000 configurations was first partitioned into three regions: 0 ≤ p∗ 
+
+> B
+
+< 0.1 (near state A), 0 .49 < p∗ 
+
+> B
+
+< 0.51 (near the TS), and 0 .9 < p∗ 
+
+> B
+
+≤ 1(near state B). Within each region, 30 configurations were ran-domly selected and analyzed using LIME and SHAP to quan-tify the contribution of each input variable to the predicted RC. Figure 4 presents the absolute values of the average fea-ture contributions obtained from LIME and SHAP across the three regions. For comparison, the absolute values of the coef-ficients ( w1, w2, · · · , w90 ) derived from the LR model are also shown in Figure 4. The feature contributions identified by LIME and SHAP exhibit trends that closely match the coef-ficients obtained from linear regression. Table II of Ref. 129 lists the five dihedral angles with the largest absolute contri-bution values. 80      
+
+> 0.05
+> 0.1
+> 0.15
+> 0.2
+> 015 30 45 60 75 90
+
+Index           
+
+> 0.9 <p∗
+> B≤1
+> 0
+> 0.05
+> 0.1
+> 0.15
+> 0.2
+> 015 30 45 60 75 90
+
+Index           
+
+> 0.49 <p∗
+> B<0.51
+> 0
+> 0.04
+> 0.08
+> 0.12
+> 0.16
+> 0.2
+> 015 30 45 60 75 90
+
+Index           
+
+> LIME
+> SHAP
+> 0≤p∗
+> B<0.1
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 015 30 45 60 75 90
+
+Index 
+
+> LR
+
+FIG. 4. Feature contribution of each CV in absolute value obtained using LIME (red) and SHAP (blue). From left to right: 0 ≤ p∗ 
+
+> B
+
+< 0.1(near state A), 0 .49 < p∗ 
+
+> B
+
+< 0.51 (near TS), and 0 .9 < p∗ 
+
+> B
+
+≤ 1 (near state B). The rightmost panel shows the absolute values of the coe ffi cients (w1, w2, · · · , w90 ) obtained from the LR model. Reproduced from T. Kikutsuji, Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 156 , 154108 (2022) 129 ; licensed under a Creative Commons Attribution (CC BY) license. 0.01 0.02 0.03 
+
+training data 
+
+0
+
+0.01 
+
+0.02 
+
+0.03 
+
+> test data
+
+vacuum / water 
+
+q2
+
+FIG. 5. Scatter plot for RMSEs between the predicted and reference 
+
+pB for the training and test data sets. Filled and open circles indicate the RMSEs using full points and those at about the TS ( −0.2 < qi <
+
+0.2), respectively. Blue and red colors are the results in vacuum and water. q2 in water shows a sign of slight overfitting, yet the RMSE against the test data is only marginally larger than the other RCs. Reproduced from K. Kawashima, T. Sato, K.-i. Okazaki, K. Kim, N. Matubayasi, and T. Mori, APL Mach. Learn 3, 016113 (2025) 132 ;licensed under a Creative Commons Attribution (CC BY) license. 
+
+Indices 57 and 54, which rank highest in the LR model, correspond to sin φ (5–7–9–11) and sin θ (6–7–8–9), respec-tively. This result indicates that the dihedral angle governing changes in φ is θ rather than ψ. As discussed above, compar-ison of Figures 2(b) and 2(c) shows that configurations with 
+
+p∗ 
+
+> B
+
+≈ 1/2 form a more distinct separatrix line on the ( φ, θ )plane than on the ( φ, ψ ) plane, consistent with this explana-tion. Both LIME and SHAP further indicate that the dihedral angles φ (Indices 11, 56, and 57) and θ (Indices 52 and 54) make substantial contributions to the DNN-based prediction model. The results obtained from LIME and SHAP are largely consistent across the three p∗ 
+
+> B
+
+regions, indicating agreement between LIME and SHAP in the present analysis. Remark-
+
+FIG. 6. Feature contributions of each CV in absolute value using SHAP for cases in (a) vacuum and (b) water. Blue lines and gray shades denote the average and variance calculated from the ten opti-mized RCs. Reproduced from K. Kawashima, T. Sato, K.-i. Okazaki, K. Kim, N. Matubayasi, and T. Mori, APL Mach. Learn 3, 016113 (2025) 132 ; licensed under a Creative Commons Attribution (CC BY) license. 
+
+ably, both LIME and SHAP reveal that the most dominant contribution shifts from φ to θ for configurations near the TS region (0 .49 < p∗ 
+
+> B
+
+< 0.51), in contrast to configurations close 9               
+
+> FIG. 7. (a) Structures within |q1|<0.2 sorted based on ψand aligned against the backbone atoms of alanine. RWB color range indicate the change of ψin the structures from -123 ◦to -50 ◦. Wa-ter molecules within 2.6 Å from H 18 is shown. Alanine dipeptide and water molecules are shown in blurry and sharp representations, respectively. (b) Correlations between the changes in CVs and pB
+> in water. Reproduced from K. Kawashima, T. Sato, K.-i. Okazaki, K. Kim, N. Matubayasi, and T. Mori, APL Mach. Learn 3, 016113 (2025) 132 ; licensed under a Creative Commons Attribution (CC BY) license.
+
+to state A (0 ≤ p∗ 
+
+> B
+
+< 0.1) or state B (0 .9 < p∗ 
+
+> B
+
+≤ 1). This dis-tinction can be interpreted as follows: near the TS, variations in θ induce a stronger influence than variations in φ, which ac-counts for the larger contribution to the conformation change. Indeed, as shown in Figure 2(c), the separatrix line defined by 
+
+p∗ 
+
+> B
+
+= 1/2 is tilted with respect to the φ axis. This geometry indicates that variations in θ are essential for barrier crossing. Such specific TS features cannot be captured by the global co-effi cients ( w1, w2, · · · , w90 ) of the LR model. Instead, they are revealed through local explanation models applied to DNN predictions using XAI techniques such as LIME and SHAP.  
+
+> B. Hyperparameter tuning
+
+As demonstrated in Sec.III A, DNN model can describe the RC quite e ff ectively. On the other hand, the hyperparameters, e.g. the number of hidden layers, nodes per hidden layer, nd regularization penalty, need to be defined prior to optimizing the DNN model. Choosing the hyperparameters can a ff ect the performance of the DNN model and is a highly tedious task, the adecuacy of the chosen hyperparameters remain am-biguous. Neumann and Schwierz 144 have applied the Keras Tuner random search hyperparameter optimization to auto-matically determine the DNN model for the magnesium bind-ing to RNA. Nevertheless, how the choice of hyperparameters aff ects the quality and outcome of the DNN model remains unexplored. Finding the appropriate set of hyperparameters thus remains highly tedious and nontrivial task. The hyperparameter tuning framework using the Bayesian optimization method with a Gaussian process was applied to the isomerization reaction of alanine dipeptide in vacuum and in water. The hyperparameter space of the DNN model for RCs in the two cases were optimized and explored. The num-ber of hidden layers ( Nlayer ), node per hidden layer ( Nnode ), and L2 regularization parameter for each hidden layer λ were chosen as the hyperparameters and determined automatically. The isomerization reactions of alanine dipeptide in vacuum and in water solution were studied. The data points with com-mittor values and CVs were collected using the transition path sampling method. The CV consists of 45 dihedral angles in cosine and sine forms following the previous section for the reaction in vacuum. The electrostatic and van der Waals (vdW) interactions from the waters to the atoms in alanine dipeptide were additionally adopted in the reaction in water. The number of CVs were thus 90 and 134 for cases in vac-uum and water, respectively. The details of the system setup and sampling procedures are described in Ref. 132. 3714 and 4590 points were generated for the reactions in vacuum and in water, respectively. States A and B were simply defined as 
+
+ϕ ≤ − 30 and ϕ ≥ 30. The hyperparameters were searched from 2 to 5 for Nlayer ,from 100 to 5000 with 100 increments for Nnode , and from 0.0001 to 0.1000 with 20 points equally spaced in a loga-rithmic scale for λ, respectively. Note that Nnode and λ were chosen separately for each hidden layer. The initial values for these parameters were chosen randomly within the explo-ration range, and 10 models were constructed using di ff erent initial seeds for each system to see where the hyperparame-ters converge. Bayesian optimization was performed for 150 trials, and DNN model was trained for a maximum of 1000 epochs using the cross-entropy function as the loss function for each hyperparameter set. Early stopping was applied when the value of the loss function did not improve for five consec-utive steps. The data was divided into training and validation sets at a ratio of 8:2 and training, validation, and into training, validation, and test sets at a ratio of 5:1:4 during hyperparam-eter training and final DNN training, respectively. The optimized hyperparameters for the reactions in vacuum and water are summarized in Table I and II of Ref. 132. In both cases, the hyperparameters from di ff erent initial seeds ended up in di ff erent optimal parameter sets, thus did not con-verge to a unique minimum. Nnode most frequently converged to 5 and 3 in vacuum and in water, resepectively. The number of nodes Nnode ranged from 100 to 5000 and di ff ered between 10 2 3 4 5 6            
+
+> rion (˚ A)
+> 010 20 30 40 50
+> F (kJ/mol)
+> 0.00.51.0
+> p∗
+> B
+> 01000 counts
+> FIG. 8. PMF F(rion ) as a function the interionic distance rion . The point with the minimum energy is set to 0 kJ /mol. Inset: Distribution of Committor p∗
+> Bevaluated for configurations sampled within the range 3 .2 Å <rion <4.3 Å. Reproduced from Ke. Okada, Ka. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys.
+> 164 , 094101 (2026), 141 with the permission of AIP Publishing.
+
+the hidden layers. The regularization parameter λ also con-verged to various values, and were generally larger in water than in vacuum. The di ff erence in λ implies that the larger number of CV candiadates as input require larger penalty to suppress overfitting. The root-mean-square errors (RMSE) between the predicted ( pB) and reference ( p∗
+
+> B
+
+) committor val-ues, shown in Fig. 5, showed that RMSE in vacuum was smaller than those in water. On the other hand, while the RM-SEs for the training data showed some variations especially in the case in water, those for the test data were comparable between the RCs, e.g., the means were about 0.004 and 0.02 in vacuum and in water, respectively. These results indicate that the RCs show similar performance despite the di ff erence in the hyperparameters. We also note that the RCs were found to be highly similar, e.g., the correlation coe ffi cients between the coordinates calculated using the data points were mostly 
+
+> 0.99 (see Figs. S4 and S9 of Ref. 132). The CVs contributing to the optimized RCs were also an-alyzed using LIME and SHAP. Fig. 6 summarizes the fea-ture contributions of CVs in vacuum and water obtained with SHAP. The features with notable contributions in vacuum were consistent with those obtained in Section III A. More-over, the RCs showed very similar trends as seen by the small variances. In water, the electrostatic potential from water on H18 , the hydrogen attached to the backbone nitrogen of C-terminal N-methylamide (Fig. 2a), were found to have large contribution as well as the torsion angles ϕ and ψ, repre-sented by indices 54 and 61. Interestingly, this resembles the solvent-derived electrostatic torque for a di ff erent path (C 7eq → αR transition) 51 . This suggests that the isomeriza-tion of a backbone of alanine dipeptide in water is induced by a water molecule interacting with the proton attached to the backbone, thereby triggering the twisting motion of the back-bone. Indeed, Fig. 7a shows that, depending on the position of the closest water to H 18 , the N-CA-C-N torsion angle is altered by the displacement of H 18 . The correlation between CVs with indices 54, 61, and 125 and pB, seen in the 3D scat-ter plot in Fig. 7b, also shows that CV 125 is correlated with pB−6 −4 −2 0 2 4 6           
+
+> q
+> 0.00.20.40.60.81.0
+> p∗
+> B
+> FIG. 9. Committor p∗
+> Bas a function of the RC qpredicted by DNN trained model using the test dataset (3,040 points). The blue curve represents the sigmoidal function, pB(q)=[1 +tanh( q)] /2. Repro-duced from Ke. Okada, Ka. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 164 , 094101 (2026), 141 with the permission of AIP Publishing.
+
+and thus contributes to the RC.  
+
+> C. Ion dissociation
+
+The association and dissociation of ion pairs in water are fundamental processes in physical chemistry, yet their RCs are complex, involving not only the interionic distance but also solvent-mediated hydration structures. This process may appear to be adequately described by the interionic distance, 
+
+rion .159–166 However, rion alone does not fully capture the un-derlying mechanism. Previous studies for NaCl ion pairs in water have shown that the committor distribution of config-urations sampled near the saddle point of the PMF defined 
+
+rion is bimodal, with peaks near p∗ 
+
+> B
+
+≈ 0 and 1. 19,35 This be-havior indicates that configurations sharing the same interi-onic distance rion can follow distinct transition pathways to-ward either association or dissociation, highlighting the es-sential role of the surrounding water structure in determining the reaction. Specifically, at the TS, a bridging configuration is expected to form in which the O and H atoms of a water molecule simultaneously coordinate to the Na and Cl ions, re-spectively. Geissler et al. proposed a mechanism in which a water molecule initially coordinating the Na ion migrates toward the Cl-ion side, thereby creating space for additional water molecules to enter. 19 Consequently, changes in the co-ordination number of water molecules near the ions at the TS are thought to facilitate activation of the dissociation process. We applied an explainable deep learning framework to identify the RC for the association and dissociation of a NaCl ion pair in TIP /4p-Ew water. Detailed MD calculations are described in our prior study. 141 The architecture of the DNN is the same as that used in Section III A. A total of 7,600 con-figurations were extracted via umbrella sampling within the interionic distance range, 3 .2Å < rion < 4.3Å. This range was chosen to cover the saddle point located at rion = 3.6 Å on the PMF defined by rion , as shown in Fig. 8. The associated state A is defined by rion < 3.2 Å, and the dissociated state B by rion > 4.3 Å. The committor value, p∗ 
+
+> B
+
+for each sampled 11 0 5 10 15 20 25 30 35 
+
+Index             
+
+> 0.000 0.005 0.010 0.015 0.020 0.025
+> SHAP value
+> G2(Na–O) G2(Na–H) G2(Cl–O) G2(Cl–H) 100 200 300 400 500 600
+
+Index               
+
+> 0.000 0.005 0.010 0.015 0.020 0.025
+> SHAP value
+> G5(O–Na–O) G5(O–Na–H) G5(H–Na–H) G5(Cl–Na–H) G5(Cl–Na–O) 700 800 900 1000 1100 1200
+
+Index          
+
+> 0.000 0.005 0.010 0.015 0.020 0.025
+> SHAP value
+> G5(O–Cl–O) G5(O–Cl–H) G5(H–Cl–H) G5(Na–Cl–H) G5(Na–Cl–O)
+
+FIG. 10. Index dependence of feature contribution of each CV evaluated by the absolute SHAP value. Reproduced from Ke. Okada, Ka. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 164 , 094101 (2026), 141 with the permission of AIP Publishing. 
+
+configuration was evaluated by assigning initial velocities ran-domly drawn from the corresponding Maxwell–Boltzmann distribution of 300 K and performing 100 independent 1 ps MD simulations. The resulting distribution of p∗ 
+
+> B
+
+is shown in the inset of Fig. 8. The committor values are biased toward 0 and 1, with no pronounced peak near 0.5, consistent with ob-servations reported in previous studies. 19,35 In this study, two types of ACSFs describing the solvent environment around the ions, G2 and G5, were employed as CVs for the neural network inputs (see definitions of ACSFs in Section II D). For 
+
+G2, the cuto ff radius was set to Rc = 10 .0 Å with η = 2.0Å−2, while for G5, η = 1.2 Å −2 was used. For G2, four atomic combinations were considered: ( i−Z1) = (Na-O), (Na-H), (Cl-O), and (Cl-H). For G5, the following 10 combinations were included: ( Z1 − i − Z2) = (O-Na-O), (O-Na-H), (H-Na-H), (Cl-Na-H), (Cl-Na-O), (O-Cl-O), (O-Cl-H), (H-Cl-H), (Na-Cl-H), and (Na-Cl-O). By systematically varying the remaining pa-rameters Rs, λ, and ζ, we generated a total of 1,296 CVs com-prising 36 G2 and 1,260 G5 CVs. Detailed definitions of the 
+
+G2 and G5 input features are provided in Table S1 of Ref. 141. The dataset was divided into training, validation, and test sets in a 5:1:4 ratio. All input variables were standardized prior to neural network training. Other computational details for DNN are described in our paper. 141 12 2 3 4 5 6
+
+rion (˚ A) 
+
+510 15 20 
+
+> G558
+
+2 3 4 5 6
+
+rion (˚ A) 
+
+0.00.20.40.6
+
+> G51217
+
+0510 15 20 25 30 35 40 
+
+> F (kJ/mol)
+
+0.0 0.2 0.4 0.6 0.8 1.0
+
+p∗
+
+> B
+
+(a) (b) 
+
+FIG. 11. Two-dimensional PMF using the interionic distance rion and 
+
+G558 (a) and G51217 (b). The point with the minimum energy is set to 0 kJ /mol, and values are color-coded according to the color bar on the right. Committer values p∗ 
+
+> B
+
+are colored according to the bottom color bar. The black lines are drawn as follows. The ranges of the x- and y-axis values were each divided into 200 grid points (forming a 200 ×
+
+200 grid), and the average committor value p∗ 
+
+> B
+
+within each grid cell was computed. After applying cubic interpolation for smoothing, contour lines corresponding to p∗ 
+
+> B
+
+= 0.5 were plotted. Reproduced from Ke. Okada, Ka. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 164 , 094101 (2026), 141 with the permission of AIP Publishing. 
+
+Figure 9 presents the learning results of the DNN for the committor, p∗
+
+> B
+
+. It is shown that the relationship between p∗
+
+> B
+
+and q for the test dataset has su ffi ciently converged to the sig-moidal function, pB(q) = [1 + tanh( q)] /2. However, the com-mittor values near q = 0 are are widely distributed between 0 and 1 and do not exhibit a clear sharp peak at p∗ 
+
+> B
+
+= 1/2. This behavior is likely due to the substantially larger num-ber of input variables compared to the alanine dipeptide case (see Section III A). It is expected to be overcome in future study through approaches such as hyperparameter tuning, as discussed in Section III B. The contribution of each input vari-able to the RC q predicted by the DNN was evaluated using SHAP. The absolute SHAP value for each index was com-puted for 100 configurations randomly sampled from the test dataset, and their average is shown in Fig. 10. Tables I and 5 10 15 20                        
+
+> G558
+> 0.015 0.020 0.025 0.030
+> ρ (˚ A−3)
+> (a) r= 0 .681
+> 0.20.40.60.8
+> G51217
+> 0.015 0.020 0.025 0.030
+> ρ (˚ A−3)
+> (b) r= 0 .154
+> 510 15 20
+> G558
+> 0123
+> NB
+> (c) r= 0 .514
+> 0.20.40.60.8
+> G51217
+> 0123
+> NB
+> (d) r=−0.439
+> 0.00.20.40.60.81.0
+> p∗
+> B
+
+FIG. 12. Distribution of committor p∗ 
+
+> B
+
+dataset in the two-dimensional surface using the combinations ( G558 , ρ ) (a), ( G51217 , ρ ) (b), ( G558 , NB)(c), and ( G51217 , NB) (d). Committer values are colored according to the bottom color bar. The r-value represents the correlation coe ffi -cient for each panel. Reproduced from Ke. Okada, Ka. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, J. Chem. Phys. 164 ,164, 094101 (2026), 141 with the permission of AIP Publishing. 
+
+II of Ref. 141 show the top five contributing factors and their corresponding absolute SHAP values for (O-Na-O) and (Na-Cl-O) descriptors, respectively. The G5 at index 58 (denoted as G558 ) shows the largest con-tribution and corresponds to the O–Na–O combination, with distance sensitivity Rs = 2.0 Å, angular sensitivity λ = −1, and ζ = 1. This indicates that water O atoms located within a spherical shell of radius Rs = 2.0 Å centered on the Na ion make a dominant contribution. Notably, Rs = 2.0 Å is nearly equal to the Lennard–Jones diameter of Na ion. In contrast, the low angular resolution ζ = 1 implies that angular depen-dence plays a minor role in characterizing the distribution of O atoms around Na ion. The G5 at index 1217 (denoted as 
+
+G51217 ) corresponding to the (Na-Cl-O) combination, exhibits a second highest contribution following the RC and is charac-terized by Rs = 4.0 Å, λ = 1, and ζ = 16. At this high angular sensitivity, the angular component 2 1−ζ (1 +cos θi jk )ζ decreases from unity and approaches zero near θi jk ≈ 60 ◦. This indicates that the dominant Na–Cl–O bond angles lie within this range, suggesting that water O atoms located in the overlapping re-gion of the hydration shells, namely, at a Na-Cl separation of 
+
+Rs = 4.0 Å that is slightly larger than the PMF saddle point distance rion = 3.6 Å, are a primary contributing factor. Based on these results, it is expected that G558 or G51217 will 13 appropriately represent the RC together with the interionic distance rion . Figure 11(a) and (b) show the two-dimensional PMFs constructed using ( rion , G558 ) and ( rion , G51217 ), respec-tively. The distribution of committers p∗ 
+
+> B
+
+are also shown on the corresponding ( rion , G558 ) and ( rion , G51217 ) planes. In these figures, the committor p∗ 
+
+> B
+
+varies continuously from the asso-ciated state A ( p∗ 
+
+> B
+
+≈ 0) to the dissociated state B ( p∗ 
+
+> B
+
+≈ 1), with the TS ( p∗ 
+
+> B
+
+= 0.5) forming a well defined separatrix line. Figure 11(a) shows that, when the interionic distance rion is fixed at the saddle point of the PMF, rion = 3.6 Å, the com-mittor increases with increasing G558 , indicating that the ar-rangement of water O atoms surrounding the Na ion plays a key role in ion pair dissociation. In contrast, Fig. 11(b) shows that, starting from the associated state ( pB ≈ 0), G51217 initially increases together with rion as the system approaches the TS (pB = 0.5). Upon crossing the separatrix line, however, G51217 
+
+decreases as the system proceeds toward the dissociated state (pB ≈ 1). This behavior implies that dissociation is associated with a reduction in the population of water O atoms simulta-neously belonging to the Na and Cl hydration shells. Thus, the two ACSFs, G558 and G51217 , identified through the SHAP analysis highlight the central role of solvent environments in the association and dissociation of NaCl ion pairs in water. Finally, we conducted a comparative analysis of the corre-lation between G558 and G51217 and ρ and NB, identified as CVs representing water bridging structures (see definitions of ρ and 
+
+NB in Section II D). 65 Figure 12 shows the distribution of the committor p∗ 
+
+> B
+
+on two-dimensional planes defined by the vari-able combinations ( G558 , ρ ) (a), ( G51217 , ρ ) (b), ( G558 , NB) (c), and ( G51217 , NB) (d). The correlation coe ffi cient, r, for each variable pair is also reported in Fig. 12. The interionic wa-ter density ρ exhibits a positive correlation with G558 and a weak negative correlation with G51217 ). Similarly, the number of bridging water molecules NB shows a positive correlation with G558 , while its correlation with G51217 is slightly stronger than that observed for ρ. Thus, increases in ρ and NB, which correlate positively with G558 and negatively with G51217 , are associated with dissociation from the associated state, consis-tent with the separatrix line observed in Fig. 11. Moreover, the committor distributions in each panel of Fig. 11 display a clear separation between associated and dissociated states. Overall, the two CVs, ρ and NB, are confirmed as key con-tributors to the RC through their correspondence with the two ACSF descriptors G558 and G51217 . 
+
+> IV. SUMMARY AND OUTLOOK
+
+In this review, we have presented an explainable deep learn-ing framework for identifying RCs in complex molecular sys-tems based on committor p∗ 
+
+> B
+
+sampling. By combining DNNs with model-agnostic interpretation techniques such as LIME and SHAP, this framework enables the identification of CVs that contribute significantly to the RC while maintaining in-terpretability. Applications to representative systems, includ-ing the isomerization of alanine dipeptide and the association and dissociation of NaCl ion pairs in water, demonstrate that the framework can successfully extract physically meaningful features governing their transition processes. Furthermore, DNN models with diverse architectures, dif-fering in the number of nodes, layers, and regularization pa-rameters, describe the RC with comparable accuracy. The CVs identified through LIME and SHAP are highly consis-tent across di ff erent models, indicating that the hypaerparam-eter space of the neural network is multimodal. This suggests that, although multiple model structures may achieve similar predictive performance, the underlying physical features that govern the transition mechanism remain robust. These results highlight the potential of the explainable deep learning framework to systematically identify relevant CVs from high-dimensional configurational spaces. Compared with conventional approaches for describing PMFs, which of-ten rely heavily on physical intuition and trial and error, the present framework provides a more data-driven strategy for constructing PMFs and interpreting the mechanism of transi-tion pathways. Nevertheless, the reliability of the identified RCs depends on the selection of candidate CVs and the per-formance of the neural network model, emphasizing the im-portance of careful feature design and appropriate hyperpa-rameter optimization. Future developments are expected to further enhance the applicability of this framework to increasingly complex sys-tems. In particular, improvements in the definition of CVs, integration with advanced sampling techniques, and the in-corporation of more advanced machine learning architectures, such as graph neural networks, 105,114,118,119 will enable the analysis of larger and more complex molecular environments. In addition, the development of methods that combine inter-pretability with automated feature generation may reduce the dependence on predefined CVs. These advances will con-tribute to a deeper understanding of rare-event mechanisms in complex molecular systems and will expand the role of explainable deep learning in theoretical and computational chemistry. 
+
+> ACKNOWLEDGMENTS
+
+The authors acknowledge Yusuke Mori, Takuma Kikutsuji, Kazushi Okada, Kyohei Kawashima, Takumi Sato, and Kenji Okada for fruitful collaborations. This work was supported by JSPS KAKENHI Grant-in-Aid Grant Nos. JP23K23858, JP25H02299, JP23K23303, JP23KK0254, JP24K21756, JP25H02464, JP25K02235, JP25K00968, JP24H01719, JP22K03550, and JP23H02622. We acknowledge support from the Fugaku Super-computing Project (Nos. JPMXP1020230325 and JPMXP1020230327) and the Data-Driven Material Re-search Project (No. JPMXP1122714694) from the Ministry of Education, Culture, Sports, Science, and Technology and by Maruho Collaborative Project for Theoretical Pharmaceu-tics. The numerical calculations were performed at Research Center of Computational Science, Okazaki Research Fa-cilities, National Institutes of Natural Sciences (Projects: 25-IMS-C052, 25-IMS-C105, 25-IMS-C227). 14 
+
+AUTHOR DECLARATIONS Conflict of Interest 
+
+The authors have no conflicts to disclose. 
+
+Data availability statement 
+
+No new data were generated or analyzed in this study; therefore, data sharing is not applicable. 
+
+> 1
+
+D. M. Zuckerman, Statistical Physics of Biomolecules: An Introduction 
+
+(CRC Press, Boca Raton, 2010). 
+
+> 2
+
+G. Torrie and J. Valleau, “Nonphysical sampling distributions in Monte Carlo free-energy estimation: Umbrella sampling,” J. Comput. Phys. 23 ,187–199 (1977). 
+
+> 3
+
+Y. Sugita and Y. Okamoto, “Replica-exchange molecular dynamics method for protein folding,” Chem. Phys. Lett. 314 , 141–151 (1999). 
+
+> 4
+
+A. Laio and M. Parrinello, “Escaping free-energy minima,” Proc. Natl. Acad. Sci. U.S.A. 99 , 12562–12566 (2002). 
+
+> 5
+
+C. Chipot, A. Pohorille, A. W. Castleman, J. P. Toennies, K. Yamanouchi, and W. Zinth, eds., Free Energy Calculations: Theory and Applications in Chemistry and Biology (Springer, Berlin, 2007). 
+
+> 6
+
+M. E. Tuckerman, Statistical Mechanics: Theory and Molecular Simula-tion , 2nd ed. (Oxford University Press, Oxford, 2023). 
+
+> 7
+
+D. Frenkel and B. Smit, Understanding Molecular Simulation: From Al-gorithms to Applications (Academic Press, Amsterdam, 2023). 
+
+> 8
+
+C. Chipot, “Free Energy Methods for the Description of Molecular Pro-cesses,” Annu. Rev. Biophys. 52 , 113–138 (2023). 
+
+> 9
+
+B. Peters, Reaction Rate Theory and Rare Events (Elsevier, Amsterdam, 2017). 
+
+> 10
+
+D. Frenkel, “Simulations: The dark side,” Eur. Phys. J. Plus 128 , 10 (2013). 
+
+> 11
+
+T. Nakamura, “Derivation of the Invariant Free-Energy Landscape Based on Langevin Dynamics,” Phys. Rev. Lett. 132 , 137101 (2024). 
+
+> 12
+
+P. G. Bolhuis, D. Chandler, C. Dellago, and P. L. Geissler, “Transition Path Sampling: Throwing Ropes Over Rough Mountain Passes, in the Dark,” Annu. Rev. Phys. Chem. 53 , 291–318 (2002). 
+
+> 13
+
+M. A. Rohrdanz, W. Zheng, and C. Clementi, “Discovering Mountain Passes via Torchlight: Methods for the Definition of Reaction Coordinates and Pathways in Complex Macromolecular Reactions,” Annu. Rev. Phys. Chem. 64 , 295–316 (2013). 
+
+> 14
+
+S. Jungblut and C. Dellago, “Pathways to self-organization: Crystalliza-tion via nucleation and growth,” Eur. Phys. J. E 39 , 77 (2016). 
+
+> 15
+
+P. V. Banushkina and S. V. Krivov, “Optimal reaction coordinates,” WIREs Comput. Mol. Sci. 6, 748–763 (2016). 
+
+> 16
+
+J. Rogal, “Reaction coordinates in complex systems-a perspective,” Eur. Phys. J. B 94 , 223 (2021). 
+
+> 17
+
+F. Pietrucci, “Strategies for the exploration of free energy landscapes: Unity in diversity and challenges ahead,” Rev. Phys. 2, 32–45 (2017). 
+
+> 18
+
+R. Du, V. S. Pande, A. Y. Grosberg, T. Tanaka, and E. S. Shakhnovich, “On the transition coordinate for protein folding,” J. Chem. Phys. 108 , 334–350 (1998). 
+
+> 19
+
+P. L. Geissler, C. Dellago, and D. Chandler, “Kinetic Pathways of Ion Pair Dissociation in Water,” J. Phys. Chem. B 103 , 3706–3710 (1999). 
+
+> 20
+
+P. G. Bolhuis, C. Dellago, and D. Chandler, “Reaction coordinates of biomolecular isomerization,” Proc. Natl. Acad. Sci. U.S.A. 97 , 5877–5882 (2000). 
+
+> 21
+
+M. F. Hagan, A. R. Dinner, D. Chandler, and A. K. Chakraborty, “Atom-istic understanding of kinetic pathways for single base-pair binding and unbinding in DNA,” Proc. Natl. Acad. Sci. U.S.A. 100 , 13922–13927 (2003). 
+
+> 22
+
+G. Hummer, “From transition paths to transition states and rate coe ffi -cients,” J. Chem. Phys. 120 , 516–523 (2004). 
+
+> 23
+
+A. C. Pan and D. Chandler, “Dynamics of Nucleation in the Ising Model,” J. Phys. Chem. B 108 , 19681–19686 (2004). 
+
+> 24
+
+W. Ren, E. Vanden-Eijnden, P. Maragakis, and W. E, “Transition pathways in complex systems: Application of the finite-temperature string method to the alanine dipeptide,” J. Chem. Phys. 123 , 134109 (2005). 
+
+> 25
+
+Y. M. Rhee and V. S. Pande, “One-Dimensional Reaction Coordinate and the Corresponding Potential of Mean Force from Commitment Probability Distribution,” J. Phys. Chem. B 109 , 6780–6786 (2005). 
+
+> 26
+
+W. E, W. Ren, and E. Vanden-Eijnden, “Transition pathways in com-plex systems: Reaction coordinates, isocommittor surfaces, and transition tubes,” Chem. Phys. Lett. 413 , 242–247 (2005). 
+
+> 27
+
+A. Berezhkovskii and A. Szabo, “One-dimensional reaction coordinates for di ff usive activated rate processes in many dimensions,” J. Chem. Phys. 
+
+122 , 014503 (2005). 
+
+> 28
+
+R. B. Best and G. Hummer, “Reaction coordinates and rates from transition paths,” Proc. Natl. Acad. Sci. U.S.A. 102 , 6732–6737 (2005). 
+
+> 29
+
+D. Moroni, P. R. ten Wolde, and P. G. Bolhuis, “Interplay between Struc-ture and Size in a Critical Crystal Nucleus,” Phys. Rev. Lett. 94 , 235703 (2005). 
+
+> 30
+
+L. Maragliano, A. Fischer, E. Vanden-Eijnden, and G. Ciccotti, “String method in collective variables: Minimum free energy paths and isocom-mittor surfaces,” J. Chem. Phys. 125 , 024106 (2006). 
+
+> 31
+
+B. Peters, “Using the histogram test to quantify reaction coordinate error,” J. Chem. Phys. 125 , 241101 (2006). 
+
+> 32
+
+D. Branduardi, F. L. Gervasio, and M. Parrinello, “From A to B in free energy space,” J. Chem. Phys. 126 , 054103 (2007). 
+
+> 33
+
+S. L. Quaytman and S. D. Schwartz, “Reaction coordinate of an enzy-matic reaction revealed by transition path sampling,” Proc. Natl. Acad. Sci. U.S.A. 104 , 12253–12258 (2007). 
+
+> 34
+
+D. Antoniou and S. D. Schwartz, “Toward Identification of the Reaction Coordinate Directly from the Transition State Ensemble Using the Kernel PCA Method,” J. Phys. Chem. B 115 , 2465–2469 (2011). 
+
+> 35
+
+A. J. Ballard and C. Dellago, “Toward the Mechanism of Ionic Dissocia-tion in Water,” J. Phys. Chem. B 116 , 13490–13497 (2012). 
+
+> 36
+
+B. C. Barnes, B. C. Knott, G. T. Beckham, D. T. Wu, and A. K. Sum, “Reaction Coordinate of Incipient Methane Clathrate Hydrate Nucleation,” J. Phys. Chem. B 118 , 13236–13243 (2014). 
+
+> 37
+
+E. Pluhaˇ rov´ a, M. D. Baer, G. K. Schenter, P. Jungwirth, and C. J. Mundy, “Dependence of the Rate of LiF Ion-Pairing on the Description of Molec-ular Interaction,” J. Phys. Chem. B 120 , 1749–1758 (2016). 
+
+> 38
+
+Q. Li, B. Lin, and W. Ren, “Computing committor functions for the study of rare events using deep learning,” J. Chem. Phys. 151 , 054112 (2019). 
+
+> 39
+
+Z. F. Brotzakis and P. G. Bolhuis, “Approximating free energy and commit-tor landscapes in standard transition path sampling using virtual interface exchange,” J. Chem. Phys. 151 , 174111 (2019). 
+
+> 40
+
+F. Manuchehrfar, H. Li, W. Tian, A. Ma, and J. Liang, “Exact Topology of the Dynamic Probability Surface of an Activated Process by Persistent Homology,” J. Phys. Chem. B 125 , 4667–4680 (2021). 
+
+> 41
+
+S. Wu, H. Li, and A. Ma, “A Rigorous Method for Identifying a One-Dimensional Reaction Coordinate in Complex Molecules,” J. Chem. The-ory Comput. 18 , 2836–2844 (2022). 
+
+> 42
+
+S. Wu, H. Li, and A. Ma, “Exact reaction coordinates for flap opening in HIV-1 protease,” Proc. Natl. Acad. Sci. U.S.A. 119 , e2214906119 (2022). 
+
+> 43
+
+M. R. Hasyim, C. H. Batton, and K. K. Mandadapu, “Supervised learning and the finite-temperature string method for computing committor func-tions and reaction rates,” J. Chem. Phys. 157 , 184111 (2022). 
+
+> 44
+
+K. Mochizuki, K.-i. Murata, and X. Zhang, “Microscopic ordering of su-percooled water on the ice basal face,” Commun. Mater. 4, 1–10 (2023). 
+
+> 45
+
+H. Li and A. Ma, “Enhanced sampling of protein conformational changes via true reaction coordinates from energy relaxation,” Nat. Commun. 16 ,786 (2025). 
+
+> 46
+
+D. T. Zhang, L. Baldauf, G. Lazarski, T. S. Van Erp, and W. Shinoda, “Membrane Pore Formation Unveiled by ∞RETIS Path Sampling: From Thinning to Flip-Flop,” J. Chem. Theory Comput. 22 , 3072–3083 (2026). 
+
+> 47
+
+B. Peters, “Recent advances in transition path sampling: Accurate reac-tion coordinates, likelihood maximisation and di ff usive barrier-crossing dynamics,” Mol. Simul. 36 , 1265–1281 (2010). 
+
+> 48
+
+W. Li and A. Ma, “Recent Developments in Methods for Identifying Re-action Coordinates,” Mol. Simul. 40 , 784–793 (2014). 
+
+> 49
+
+B. Peters, “Reaction Coordinates and Mechanistic Hypothesis Tests,” Annu. Rev. Phys. Chem. 67 , 669–690 (2016). 
+
+> 50
+
+F. Sittel and G. Stock, “Perspective: Identification of collective variables 15 
+
+and metastable states of protein dynamics,” J. Chem. Phys. 149 , 150901 (2018). 
+
+> 51
+
+A. Ma and A. R. Dinner, “Automatic Method for Identifying Reaction Co-ordinates in Complex Systems,” J. Phys. Chem. B 109 , 6769–6779 (2005). 
+
+> 52
+
+B. Peters and B. L. Trout, “Obtaining reaction coordinates by likelihood maximization,” J. Chem. Phys. 125 , 054108 (2006). 
+
+> 53
+
+B. Peters, G. T. Beckham, and B. L. Trout, “Extensions to the likelihood maximization approach for finding reaction coordinates,” J. Chem. Phys. 
+
+127 , 034109 (2007). 
+
+> 54
+
+G. T. Beckham, B. Peters, C. Starbuck, N. Variankaval, and B. L. Trout, “Surface-Mediated Nucleation in the Solid-State Polymorph Transforma-tion of Terephthalic Acid,” J. Am. Chem. Soc. 129 , 4714–4723 (2007). 
+
+> 55
+
+G. T. Beckham, B. Peters, and B. L. Trout, “Evidence for a Size Depen-dent Nucleation Mechanism in Solid State Polymorph Transformations,” J. Phys. Chem. B 112 , 7460–7466 (2008). 
+
+> 56
+
+B. Peters, “Transition-State Theory, Dynamics, and Narrow Time Scale Separation in the Rate-Promoting Vibrations Model of Enzyme Catalysis,” J. Chem. Theory Comput. 6, 1447–1454 (2010). 
+
+> 57
+
+J. Vreede, J. Juraszek, and P. G. Bolhuis, “Predicting the reaction coordi-nates of millisecond light-induced conformational changes in photoactive yellow protein,” Proc. Natl. Acad. Sci. U.S.A. 107 , 2397–2402 (2010). 
+
+> 58
+
+W. Lechner, J. Rogal, J. Juraszek, B. Ensing, and P. G. Bolhuis, “Nonlinear reaction coordinate analysis in the reweighted path ensemble,” J. Chem. Phys. 133 , 174110 (2010). 
+
+> 59
+
+B. Pan and M. S. Ricci, “Molecular Mechanism of Acid-Catalyzed Hy-drolysis of Peptide Bonds Using a Model Compound,” J. Phys. Chem. B 
+
+114 , 4389–4399 (2010). 
+
+> 60
+
+G. T. Beckham and B. Peters, “Optimizing Nucleus Size Metrics for Liq-uid–Solid Nucleation from Transition Paths of Near-Nanosecond Dura-tion,” J. Phys. Chem. Lett. 2, 1133–1138 (2011). 
+
+> 61
+
+B. Peters, “Inertial likelihood maximization for reaction coordinates with high transmission coe ffi cients,” Chem. Phys. Lett. 554 , 248–253 (2012). 
+
+> 62
+
+J. Juraszek, J. Vreede, and P. G. Bolhuis, “Transition path sampling of protein conformational changes,” Chem. Phys. 396 , 30–44 (2012). 
+
+> 63
+
+L. Xi, M. Shah, and B. L. Trout, “Hopping of Water in a Glassy Polymer Studied via Transition Path Sampling and Likelihood Maximization,” J. Phys. Chem. B 117 , 3634–3647 (2013). 
+
+> 64
+
+S. Jungblut, A. Singraber, and C. Dellago, “Optimising reaction coordi-nates for crystallisation by tuning the crystallinity definition,” Mol. Phys. 
+
+111 , 3527–3533 (2013). 
+
+> 65
+
+R. G. Mullen, J.-E. Shea, and B. Peters, “Transmission Coe ffi cients, Com-mittors, and Solvent Coordinates in Ion-Pair Dissociation,” J. Chem. The-ory Comput. 10 , 659–667 (2014). 
+
+> 66
+
+R. G. Mullen, J.-E. Shea, and B. Peters, “Easy Transition Path Sampling Methods: Flexible-Length Aimless Shooting and Permutation Shooting,” J. Chem. Theory Comput. 11 , 2421–2428 (2015). 
+
+> 67
+
+L. Lupi, B. Peters, and V. Molinero, “Pre-ordering of interfacial water in the pathway of heterogeneous ice nucleation does not lead to a two-step crystallization mechanism,” J. Chem. Phys. 145 , 211910 (2016). 
+
+> 68
+
+L. Lupi, A. Hudait, B. Peters, M. Gr¨ unwald, R. Gotchy Mullen, A. H. Nguyen, and V. Molinero, “Role of stacking disorder in ice nucleation,” Nature 551 , 218–222 (2017). 
+
+> 69
+
+H. Jung, K.-i. Okazaki, and G. Hummer, “Transition path sampling of rare events by shooting from the top,” J. Chem. Phys. 147 , 152716 (2017). 
+
+> 70
+
+M. N. Joswiak, M. F. Doherty, and B. Peters, “Ion dissolution mechanism and kinetics at kink sites on NaCl surfaces,” Proc. Natl. Acad. Sci. U.S.A. 
+
+115 , 656–661 (2018). 
+
+> 71
+
+G. D´ ıaz Leines and J. Rogal, “Maximum Likelihood Analysis of Reaction Coordinates during Solidification in Ni,” J. Phys. Chem. B 122 , 10934– 10942 (2018). 
+
+> 72
+
+K.-i. Okazaki, D. W¨ ohlert, J. Warnau, H. Jung, ¨ O. Yildiz, W. K¨ uhlbrandt, and G. Hummer, “Mechanism of the electroneutral sodium /proton an-tiporter PaNhaP from transition-path shooting,” Nat. Commun. 10 , 1742 (2019). 
+
+> 73
+
+Arjun, T. A. Berendsen, and P. G. Bolhuis, “Unbiased atomistic insight in the competing nucleation mechanisms of methane hydrates,” Proc. Natl. Acad. Sci. USA 116 , 19305–19310 (2019). 
+
+> 74
+
+M. Marriott, L. Lupi, A. Kumar, and V. Molinero, “Following the nu-cleation pathway from disordered liquid to gyroid mesophase,” J. Chem. Phys. 150 , 164902 (2019). 
+
+> 75
+
+Y. Liang, G. D´ ıaz Leines, R. Drautz, and J. Rogal, “Identification of a multi-dimensional reaction coordinate for crystal nucleation in Ni 3 Al,” J. Chem. Phys. 152 , 224504 (2020). 
+
+> 76
+
+J. R. Rogers and P. L. Geissler, “Breakage of Hydrophobic Contacts Limits the Rate of Passive Lipid Exchange between Membranes,” J. Phys. Chem. B 124 , 5884–5898 (2020). 
+
+> 77
+
+N. Schwierz, “Kinetic pathways of water exchange in the first hydration shell of magnesium,” J. Chem. Phys. 152 , 224106 (2020). 
+
+> 78
+
+L. Levintov, S. Paul, and H. Vashisth, “Reaction Coordinate and Thermo-dynamics of Base Flipping in RNA,” J. Chem. Theory Comput. 17 , 1914– 1921 (2021). 
+
+> 79
+
+R. L. Silveira, B. C. Knott, C. S. Pereira, M. F. Crowley, M. S. Skaf, and G. T. Beckham, “Transition Path Sampling Study of the Feruloyl Esterase Mechanism,” J. Phys. Chem. B 125 , 2018–2030 (2021). 
+
+> 80
+
+W. Li, “Optimizing reaction coordinate by flux maximization in the tran-sition path ensemble,” J. Chem. Phys. 156 , 054117 (2022). 
+
+> 81
+
+E. Schneider, L. Dai, R. Q. Topper, C. Drechsel-Grau, and M. E. Tuckerman, “Stochastic Neural Network Approach for Learning High-Dimensional Free Energy Surfaces,” Phys. Rev. Lett. 119 , 150601 (2017). 
+
+> 82
+
+R. T. McGibbon, B. E. Husic, and V. S. Pande, “Identification of simple re-action coordinates from complex dynamics,” J. Chem. Phys. 146 , 044109 (2017). 
+
+> 83
+
+M. M. Sultan and V. S. Pande, “Automated design of collective variables using supervised machine learning,” J. Chem. Phys. 149 , 094106 (2018). 
+
+> 84
+
+C. Wehmeyer and F. No´ e, “Time-lagged autoencoders: Deep learning of slow collective variables for molecular kinetics,” J. Chem. Phys. 148 ,241703 (2018). 
+
+> 85
+
+W. Chen and A. L. Ferguson, “Molecular enhanced sampling with autoen-coders: On-the-fly collective variable discovery and accelerated free en-ergy landscape exploration,” J. Comput. Chem. 39 , 2079–2102 (2018). 
+
+> 86
+
+J. M. L. Ribeiro, P. Bravo, Y. Wang, and P. Tiwary, “Reweighted autoen-coded variational Bayes for enhanced sampling (RAVE),” J. Chem. Phys. 
+
+149 , 072301 (2018). 
+
+> 87
+
+A. Mardt, L. Pasquali, H. Wu, and F. No´ e, “VAMPnets for deep learning of molecular kinetics,” Nat. Commun. 9, 5 (2018). 
+
+> 88
+
+A. Bittracher, R. Banisch, and C. Sch¨ utte, “Data-driven computation of molecular reaction coordinates,” J. Chem. Phys. 149 , 154103 (2018). 
+
+> 89
+
+J. Rogal, E. Schneider, and M. E. Tuckerman, “Neural-Network-Based Path Collective Variables for Enhanced Sampling of Phase Transforma-tions,” Phys. Rev. Lett. 123 , 245701 (2019). 
+
+> 90
+
+L. Bonati, V. Rizzi, and M. Parrinello, “Data-Driven Collective Variables for Enhanced Sampling,” J. Phys. Chem. Lett. 11 , 2998–3004 (2020). 
+
+> 91
+
+L. Bonati, G. Piccini, and M. Parrinello, “Deep learning the slow modes for rare events sampling,” Proc. Natl. Acad. Sci. U.S.A. 118 , e2113533118 (2021). 
+
+> 92
+
+D. Wang and P. Tiwary, “State predictive information bottleneck,” J. Chem. Phys. 154 , 134111 (2021). 
+
+> 93
+
+J. Zhang, Y.-K. Lei, Z. Zhang, X. Han, M. Li, L. Yang, Y. I. Yang, and Y. Q. Gao, “Deep reinforcement learning of transition states,” Phys. Chem. Chem. Phys. 23 , 6888–6895 (2021). 
+
+> 94
+
+F. Hooft, A. P´ erez de Alba Ort´ ız, and B. Ensing, “Discovering Collec-tive Variables of Molecular Transitions via Genetic Algorithms and Neural Networks,” J. Chem. Theory Comput. 17 , 2294–2306 (2021). 
+
+> 95
+
+T. Magrino, L. Huet, A. M. Saitta, and F. Pietrucci, “Critical Assessment of Data-Driven versus Heuristic Reaction Coordinates in Solution Chem-istry,” J. Phys. Chem. A 126 , 8887–8900 (2022). 
+
+> 96
+
+Z. Belkacemi, P. Gkeka, T. Leli` evre, and G. Stoltz, “Chasing Collective Variables Using Autoencoders and Biased Trajectories,” J. Chem. Theory Comput. 18 , 59–78 (2022). 
+
+> 97
+
+J. Baima, A. M. Goryaeva, T. D. Swinburne, J.-B. Maillet, M. Nastar, and M.-C. Marinica, “Capabilities and limits of autoencoders for extracting collective variables in atomistic materials science,” Phys. Chem. Chem. Phys. 24 , 23152–23163 (2022). 
+
+> 98
+
+L. Sun, J. Vandermause, S. Batzner, Y. Xie, D. Clark, W. Chen, and B. Kozinsky, “Multitask Machine Learning of Collective Variables for En-hanced Sampling of Rare Events,” J. Chem. Theory Comput. 18 , 2341– 2353 (2022). 
+
+> 99
+
+R. Ketkaew and S. Luber, “DeepCV: A Deep Learning Framework for Blind Search of Collective Variables in Expanded Configurational Space,” J. Chem. Inf. Model. , acs.jcim.2c00883 (2022). 16 
+
+> 100
+
+G. Lazzeri, H. Jung, P. G. Bolhuis, and R. Covino, “Molecular Free Ener-gies, Rates, and Mechanisms from Data-E ffi cient Path Sampling Simula-tions,” J. Chem. Theory Comput. 19 , 9060–9076 (2023). 
+
+> 101
+
+H. Chen, B. Roux, and C. Chipot, “Discovering Reaction Pathways, Slow Variables, and Committor Probabilities with Machine Learning,” J. Chem. Theory Comput. 19 , 4414–4426 (2023). 
+
+> 102
+
+A. N. Singh and D. T. Limmer, “Variational deep learning of equilibrium transition path ensembles,” J. Chem. Phys. 159 , 024124 (2023). 
+
+> 103
+
+S. Liang, A. N. Singh, Y. Zhu, D. T. Limmer, and C. Yang, “Probing reac-tion channels via reinforcement learning,” Mach. Learn.: Sci. Technol. 4,045003 (2023). 
+
+> 104
+
+A. France-Lanord, H. Vroylandt, M. Salanne, B. Rotenberg, A. M. Saitta, and F. Pietrucci, “Data-Driven Path Collective Variables,” J. Chem. Theory Comput. 20 , 3069–3084 (2024). 
+
+> 105
+
+J. Zhang, L. Bonati, E. Trizio, O. Zhang, Y. Kang, T. Hou, and M. Par-rinello, “Descriptor-Free Collective Variables from Geometric Graph Neu-ral Networks,” J. Chem. Theory Comput. 20 , 10787–10797 (2024). 
+
+> 106
+
+J. Zhang, O. Zhang, L. Bonati, and T. Hou, “Combining Transition Path Sampling with Data-Driven Collective Variables through a Reactivity-Biased Shooting Algorithm,” J. Chem. Theory Comput. 20 , 4523–4532 (2024). 
+
+> 107
+
+N. S. M. Herringer, S. Dasetty, D. Gandhi, J. Lee, and A. L. Ferguson, “Permutationally Invariant Networks for Enhanced Sampling (PINES): Discovery of Multimolecular and Solvent-Inclusive Collective Variables,” J. Chem. Theory Comput. 20 , 178–198 (2024). 
+
+> 108
+
+T. Fr¨ ohlking, L. Bonati, V. Rizzi, and F. L. Gervasio, “Deep learning path-like collective variable for enhanced sampling molecular dynamics,” J. Chem. Phys. 160 , 174109 (2024). 
+
+> 109
+
+P. Kang, E. Trizio, and M. Parrinello, “Computing the committor with the committor to study the transition state ensemble,” Nat. Comput. Sci. , 1–10 (2024). 
+
+> 110
+
+A. Meg´ ıas, S. Contreras Arredondo, C. G. Chen, C. Tang, B. Roux, and C. Chipot, “Iterative variational learning of committor-consistent transi-tion pathways using artificial neural networks,” Nat. Comput. Sci. 5, 592– 602 (2025). 
+
+> 111
+
+B. Liu, S. Cao, J. G. Boysen, M. Xue, and X. Huang, “Memory kernel minimization-based neural networks for discovering slow collective vari-ables of biomolecular dynamics,” Nat. Comput. Sci. 5, 562–571 (2025). 
+
+> 112
+
+R. Elangovan, S. Chatterjee, and D. Ray, “Data-driven enhanced sam-pling of mechanistic pathways,” Proc. Natl. Acad. Sci. U.S.A. 122 ,e2517169122 (2025). 
+
+> 113
+
+F. M. Dietrich and M. Salvalaglio, “On the reproducibility of free energy surfaces in machine-learned collective variable spaces,” J. Chem. Phys. 
+
+163 , 141102 (2025). 
+
+> 114
+
+Z. Pengmei, C. Lorpaiboon, S. C. Guo, J. Weare, and A. R. Dinner, “Using pretrained graph neural networks with token mixers as geometric featuriz-ers for conformational dynamics,” J. Chem. Phys. 162 , 044107 (2025). 
+
+> 115
+
+P. R. Prabhakar, D. Ray, and I. Andricioaei, “Discriminant analysis opti-mizes progress coordinate in weighted ensemble simulations of rare event kinetics,” J. Chem. Phys. 163 , 074111 (2025). 
+
+> 116
+
+J. J. Kresse, A. Sikorski, V. Sunkara, S. Chewle, and M. Weber, “Reveal-ing the Atomistic Mechanism of Rare Events in Molecular Dynamics,” J. Chem. Theory Comput. , acs.jctc.5c01906 (2026). 
+
+> 117
+
+C. Giuseppe Chen, C. Tang, A. Meg´ ıas, R. A. Talmazan, S. Contr-eras Arredondo, B. Roux, and C. Chipot, “Following the Committor Flow: A Data-Driven Discovery of Transition Pathways,” J. Chem. Theory Com-put. , acs.jctc.6c00007 (2026). 
+
+> 118
+
+S. Contreras Arredondo, C. Tang, R. A. Talmazan, A. Meg´ ıas, C. G. Chen, and C. Chipot, “Learning the committor without collective variables,” Nat. Comput. Sci. (2026), 10.1038 /s43588-026-00958-2. 
+
+> 119
+
+P. Kang, J. Zhang, E. Trizio, T. Hou, and M. Parrinello, “Committors with-out Descriptors,” J. Chem. Theory Comput. 22 , 1613–1620 (2026). 
+
+> 120
+
+Y. Wang, J. M. Lamim Ribeiro, and P. Tiwary, “Machine learning ap-proaches for analyzing and enhancing molecular dynamics simulations,” Curr. Opin. Struct. Biol. 61 , 139–145 (2020). 
+
+> 121
+
+H. Sidky, W. Chen, and A. L. Ferguson, “Machine learning for collective variable discovery and enhanced sampling in biomolecular simulation,” Mol. Phys. 118 , e1737742 (2020). 
+
+> 122
+
+F. No´ e, A. Tkatchenko, K.-R. M¨ uller, and C. Clementi, “Machine Learning for Molecular Simulation,” Annu. Rev. Phys. Chem. 71 , 361–390 (2020). 
+
+> 123
+
+M. Chen, “Collective variable-based enhanced sampling and machine learning,” Eur. Phys. J. B 94 , 211 (2021). 
+
+> 124
+
+H. Fu, H. Bian, X. Shao, and W. Cai, “Collective Variable-Based Enhanced Sampling: From Human Learning to Machine Learning,” J. Phys. Chem. Lett. , 1774–1783 (2024). 
+
+> 125
+
+S. Mehdi, Z. Smith, L. Herron, Z. Zou, and P. Tiwary, “Enhanced Sampling with Machine Learning,” Annu. Rev. Phys. Chem. 75 , 347–370 (2024). 
+
+> 126
+
+A. N. Singh, A. Das, and D. T. Limmer, “Variational Path Sampling of Rare Dynamical Events,” Annu. Rev. Phys. Chem. 76 , 639–662 (2025). 
+
+> 127
+
+T. G¨ okdemir and J. Rydzewski, “Machine learning of slow collective vari-ables and enhanced sampling via spatial techniques,” Chem. Phys. Rev. 6,011304 (2025). 
+
+> 128
+
+K. Zhu, E. Trizio, J. Zhang, R. Hu, L. Jiang, T. Hou, and L. Bonati, “En-hanced Sampling in the Age of Machine Learning: Algorithms and Appli-cations,” Chem. Rev. , 671–713 (2026). 
+
+> 129
+
+T. Kikutsuji, Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, “Explaining reaction coordinates of alanine dipeptide isomerization ob-tained from deep neural networks using Explainable Artificial Intelligence (XAI),” J. Chem. Phys. 156 , 154108 (2022). 
+
+> 130
+
+T. Mori and S. Saito, “Dissecting the Dynamics during Enzyme Cataly-sis: A Case Study of Pin1 Peptidyl-Prolyl Isomerase,” J. Chem. Theory Comput. 16 , 3396–3407 (2020). 
+
+> 131
+
+Y. Mori, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, “Learning re-action coordinates via cross-entropy minimization: Application to alanine dipeptide,” J. Chem. Phys. 153 , 054115 (2020). 
+
+> 132
+
+K. Kawashima, T. Sato, K.-i. Okazaki, K. Kim, N. Matubayasi, and T. Mori, “Investigating the hyperparameter space of deep neural network models for reaction coordinates,” APL Mach. Learn. 3, 016113 (2025). 
+
+> 133
+
+A. Adadi and M. Berrada, “Peeking Inside the Black-Box: A Survey on Explainable Artificial Intelligence (XAI),” IEEE Access 6, 52138–52160 (2018). 
+
+> 134
+
+C. Molnar, Interpretable Machine Learning (Lulu.com, Morisville, North Carolina, 2020). 
+
+> 135
+
+M. T. Ribeiro, S. Singh, and C. Guestrin, “”Why Should I Trust You?”: Explaining the Predictions of Any Classifier,” in Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (Association for Computing Machinery, San Francisco Cali-fornia, U.S.A., 2016) pp. 1135–1144. 
+
+> 136
+
+S. M. Lundberg and S.-I. Lee, “A unified approach to interpreting model predictions,” in Proceedings of the 31st international conference on neural information processing systems (Curran Associates Inc., Red Hook, NY, 2017) pp. 4768–4777. 
+
+> 137
+
+K. Okada, T. Kikutsuji, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, “Unveiling interatomic distances influencing the reaction coordinates in alanine dipeptide isomerization: An explainable deep learn-ing approach,” J. Chem. Phys. 160 , 174110 (2024). 
+
+> 138
+
+J. Behler and M. Parrinello, “Generalized Neural-Network Representa-tion of High-Dimensional Potential-Energy Surfaces,” Phys. Rev. Lett. 98 ,146401 (2007). 
+
+> 139
+
+J. Behler, “Atom-centered symmetry functions for constructing high-dimensional neural network potentials,” J. Chem. Phys. 134 , 074106 (2011). 
+
+> 140
+
+J. Behler, “Perspective: Machine learning potentials for atomistic simula-tions,” J. Chem. Phys. 145 , 170901 (2016). 
+
+> 141
+
+K. Okada, K. Okada, K.-i. Okazaki, T. Mori, K. Kim, and N. Matubayasi, “Deep learning of committor for ion dissociation and interpretable analy-sis of solvent e ff ects using atom-centered symmetry functions,” J. Chem. Phys. 164 , 094101 (2026). 
+
+> 142
+
+M. Frassek, A. Arjun, and P. G. Bolhuis, “An extended autoencoder model for reaction coordinate discovery in rare event molecular dynam-ics datasets,” J. Chem. Phys. 155 , 064103 (2021). 
+
+> 143
+
+H. Jung, R. Covino, A. Arjun, C. Leitold, C. Dellago, P. G. Bolhuis, and G. Hummer, “Machine-guided path sampling to discover mechanisms of molecular self-organization,” Nat. Comput. Sci. 3, 334–345 (2023). 
+
+> 144
+
+J. Neumann and N. Schwierz, “Artificial Intelligence Resolves Kinetic Pathways of Magnesium Binding to RNA,” J. Chem. Theory Comput. 18 ,1202–1212 (2022). 
+
+> 145
+
+G. Ke, Q. Meng, T. Finley, T. Wang, W. Chen, W. Ma, Q. Ye, and T.-Y. Liu, “LightGBM: A Highly E ffi cient Gradient Boosting Decision Tree,” in Advances in Neural Information Processing Systems , Vol. 30, edited 17 
+
+by I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vish-wanathan, and R. Garnett (Curran Associates, Inc., 2017). 
+
+> 146
+
+N. Naleem, C. R. A. Abreu, K. Warmuz, M. Tong, S. Kirmizialtin, and M. E. Tuckerman, “An exploration of machine learning models for the de-termination of reaction coordinates associated with conformational transi-tions,” J. Chem. Phys. 159 , 034102 (2023). 
+
+> 147
+
+B. C. Barnes, B. C. Knott, G. T. Beckham, D. T. Wu, and A. K. Sum, “Reaction Coordinate of Incipient Methane Clathrate Hydrate Nucleation,” J. Phys. Chem. B 118 , 13236–13243 (2014). 
+
+> 148
+
+P. J. Steinhardt, D. R. Nelson, and M. Ronchetti, “Bond-orientational order in liquids and glasses,” Phys. Rev. B 28 , 784–805 (1983). 
+
+> 149
+
+W. Lechner and C. Dellago, “Accurate determination of crystal structures based on averaged local bond order parameters,” J. Chem. Phys. 129 ,114707 (2008). 
+
+> 150
+
+Y. Yonetani, “Distinct dissociation kinetics between ion pairs: Solvent-coordinate free-energy landscape analysis,” J. Chem. Phys. 143 , 044506 (2015). 
+
+> 151
+
+Y. Yonetani, “Solvent-coordinate free-energy landscape view of water-mediated ion-pair dissociation,” Mol. Phys. 115 , 2987–2998 (2017). 
+
+> 152
+
+M. Salanne, S. Tazi, R. Vuilleumier, and B. Rotenberg, “Ca2 +-Cl- Associ-ation in Water Revisited: The Role of Cation Hydration,” ChemPhysChem 
+
+18 , 2807–2811 (2017). 
+
+> 153
+
+M. I. Oh, M. Gupta, and D. F. Weaver, “Understanding Water Structure in an Ion-Pair Solvation Shell in the Vicinity of a Water /Membrane Inter-face,” J. Phys. Chem. B 123 , 3945–3954 (2019). 
+
+> 154
+
+C. Zhang, F. Giberti, E. Sevgen, J. J. de Pablo, F. Gygi, and G. Galli, “Dissociation of salts in water under pressure,” Nat. Commun. 11 , 3037 (2020). 
+
+> 155
+
+D. Wang, R. Zhao, J. D. Weeks, and P. Tiwary, “Influence of Long-Range Forces on the Transition States and Dynamics of NaCl Ion-Pair Dissocia-tion in Water,” J. Phys. Chem. B 126 , 545–551 (2022). 
+
+> 156
+
+K. Wilke, S. Tao, S. Calero, A. Lervik, and T. S. van Erp, “NaCl Disso-ciation Explored Through Predictive Power Path Sampling Analysis,” J. Chem. Theory Comput. 21 , 4604–4614 (2025). 
+
+> 157
+
+L. S. Shapley, “17. A Value for n-Person Games,” in Contributions to the Theory of Games (AM-28), Volume II , edited by H. W. Kuhn and A. W. Tucker (Princeton University Press, 1953) pp. 307–318. 
+
+> 158
+
+G. N. Ramachandran and V. Sasisekharan, “Conformation of Polypeptides and Proteins,” in Advances in Protein Chemistry , Vol. 23, edited by C. B. Anfinsen, M. L. Anson, J. T. Edsall, and F. M. Richards (1968) pp. 283– 437. 
+
+> 159
+
+O. A. Karim and J. Andrew. McCammon, “Dynamics of a sodium chloride ion pair in water,” J. Am. Chem. Soc. 108 , 1762–1766 (1986). 
+
+> 160
+
+O. A. Karim and J. A. McCammon, “Rate constants for ion pair formation and dissociation in water,” Chem. Phys. Lett. 132 , 219–224 (1986). 
+
+> 161
+
+G. Ciccotti, M. Ferrario, J. T. Hynes, and R. Kapral, “Constrained molec-ular dynamics and the mean potential for an ion pair in a polar solvent,” Chem. Phys. 129 , 241–251 (1989). 
+
+> 162
+
+G. Ciccotti, M. Ferrario, J. T. Hynes, and R. Kapral, “Dynamics of ion pair interconversion in a polar solvent,” J. Chem. Phys. 93 , 7137–7147 (1990). 
+
+> 163
+
+E. Gu` ardia, R. Rey, and J. A. Padr´ o, “Potential of mean force by con-strained molecular dynamics: A sodium chloride ion-pair in water,” Chem. Phys. 155 , 187–195 (1991). 
+
+> 164
+
+R. Rey and E. Guardia, “Dynamical aspects of the sodium(1 +)-chloride ion pair association in water,” J. Phys. Chem. 96 , 4712–4718 (1992). 
+
+> 165
+
+D. E. Smith and L. X. Dang, “Computer simulations of NaCl association in polarizable water,” J. Chem. Phys. 100 , 3757–3766 (1994). 
+
+> 166
+
+F. N. Br¨ unig, J. O. Daldrop, and R. R. Netz, “Pair-Reaction Dynamics in Water: Competition of Memory, Potential Shape, and Inertial E ff ects,” J. Phys. Chem. B 126 , 10295–10304 (2022).

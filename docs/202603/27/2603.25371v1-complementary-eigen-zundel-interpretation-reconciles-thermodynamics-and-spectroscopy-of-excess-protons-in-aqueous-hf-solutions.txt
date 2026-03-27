@@ -1,0 +1,415 @@
+Title: Complementary Eigen-Zundel Interpretation Reconciles Thermodynamics and Spectroscopy of Excess Protons in Aqueous HF Solutions
+
+URL Source: https://arxiv.org/pdf/2603.25371v1
+
+Published Time: Fri, 27 Mar 2026 00:59:18 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Complementary Eigen–Zundel Interpretation Reconciles Thermodynamics and Spectroscopy of Excess Protons in Aqueous HF Solutions 
+
+Louis Lehmann, 1 Florian N. Brünig, 2 Jonathan Scherlitzki, 3 Morten Lehmann, 4 Martin Kaupp, 4 Beate Paulus, 3 and Roland R. Netz ∗1
+
+> 1
+
+Department of Physics, Freie Universität Berlin, Arnimallee 14, 14195 Berlin, Germany 
+
+> 2
+
+Department of Physics and Materials Science, University of Luxembourg, L-1511 Luxembourg City, Luxembourg 
+
+> 3
+
+Department of Physical and Theoretical Chemistry, Freie Universität Berlin, Arnimallee 22, 14195 Berlin, Germany 
+
+> 4
+
+Institute of Chemistry, Technische Universität Berlin, Straße des 17. Juni 115, 10623 Berlin, Germany 
+
+(*corresponding author: rnetz@physik.fu-berlin.de) Aqueous solutions of HF and HCl behave very differently at intermediate concentrations: HCl dissociates completely, whereas HF remains only partially dissociated and forms bifluoride (HF − 
+
+> 2
+
+). This should lead to different excess-proton spectra in HF and HCl solutions, in contrast to experimental reports. Using ab initio molecular dynamics, we show that in HF the proton is not firmly bound to F −, as suggested by textbook chem-istry, but dynamically shared with a hydrating water molecule. This is rationalized by a modified Eigen-state description which also explains the formation of HF − 
+
+> 2
+
+. The similar vibrational spectra of HF and HCl solutions are explained by a complementary Zundel picture in terms of almost identical excess proton transfer free-energy profiles for HF and HCl. These results reconcile thermodynamic and spectroscopic observations and provide a unified microscopic picture of excess protons in aqueous solution. 
+
+I. INTRODUCTION 
+
+Understanding the behavior of excess protons in aqueous solution is of fundamental importance in many areas of chem-istry and biology, such as proton-coupled electron transfer processes [1, 2], electrocatalytic reactions [3], enzymatic re-actions [4], membrane proton diffusion [5, 6], and fuel cells [7, 8]. The thermodynamic properties of an acid in aqueous solution are well described by the acid dissociation reaction HA ⇌ A− + H+ , (1) where HA is the acid molecule, A − its conjugated base and H+ is the excess proton [9]. Strong acids such as HCl (A − = Cl −, p Ka = −7.0) dissociate almost completely in wa-ter, while weak acids such as HF (A − = F−, p Ka = 3.2) only marginally [9]. Measurements of electromotive force [10, 11], conductivity [12, 13], the Hammett acidity function [14, 15], and calorimetry [16] indicate that at moderate HF concentra-tions F − is converted into bifluoride (HF − 
+
+> 2
+
+) according to HF + F− ⇋ HF − 
+
+> 2
+
+, (2) which increases the activity of H + according to Le Chatelier’s principle. It has been known for almost a century that acids with vastly different dissociation behavior exhibit similar IR spectra [17]. Solutions of HF and HCl in particular where investigated by Giguère et al. [18–20] who found no spectral evidence for HF − 
+
+> 2
+
+. Instead, they proposed that the observed spectra can be explained by a Zundel-like H 3OF configuration in which the proton is shared between water and fluoride. Previous ab-initio molecular dynamics (AIMD) simula-tions of HF solutions [21–25] found a significant population of H 3OF configurations, while no formation of HF − 
+
+> 2
+
+ions was observed at moderate concentrations, consistent with Giguère’s interpretation of experimental spectra. Simon and Klein [23] observed spontaneous HF − 
+
+> 2
+
+formation in AIMD simulations of an equimolar HF–water mixture, demonstrating that HF − 
+
+> 2
+
+formation is accessible on AIMD timescales, but not favored at moderate concentrations, in apparent contradiction with thermodynamic predictions [10, 11]. Rather than invoking HF − 
+
+> 2
+
+formation, Sillanpää et al. [22] proposed that the increasing acidity at higher concentrations can be partly attributed to enhanced fluoride stabilization arising from the increasing ionic strength of the solution. This interpretation, however, is not fully consistent with Debye–Hückel theory, which predicts that increased ionic strength stabilizes all charged species and thus lowers the activity of excess protons as well. In strong acids, excess-proton hydrates are typically in-terpreted as Zundel (H 5O+ 
+
+> 2
+
+) or Eigen (H 9O+ 
+
+> 4
+
+) cations, representing limiting cases of proton sharing between two water molecules or proton localization on a hydronium ion stabilized by three hydrogen-bonded water molecules [26–37]. Excess protons have been extensively character-ized by vibrational spectroscopy [19, 38–45]. AIMD and machine-learning molecular dynamics successfully reproduce their IR signatures in strong acids [34, 36, 46–48], where the conjugate base is often negligible or even sometimes omitted [34, 47]. AIMD studies of HF report substantially different IR broad-band signatures for H 5O+ 
+
+> 2
+
+and H 3OF [22, 24, 46]. Other studies focused on cryogenic temperatures and found pronounced spectral differences between the hydrohalic acids [24, 25, 49, 50]. Thermodynamics predicts markedly different chemical speciation in aqueous HF and HCl, whereas their experimen-tal spectra are nearly indistinguishable, which is puzzling. We analyze AIMD simulations by an extended Eigen frame-work, which yields chemical speciation consistent with thermodynamic expectations, including bifluoride formation. Spectral proton transfer signatures are best understood in a complementary Zundel picture [48], by which we explain 
+
+> arXiv:2603.25371v1 [physics.chem-ph] 26 Mar 2026
+
+2why the proton-transfer bands of HF and HCl solutions are nearly identical under ambient conditions and typical experimental concentrations (7.5 mol/kg), even though the majority of excess protons in HF are in direct contact with fluoride, while in HCl they are mainly shared between water molecules. The puzzling similarity arises because electrostatic screening renders the free-energy landscapes within the Zundel configurations H 5O+ 
+
+> 2
+
+(dominant in HCl) and H 3OF (dominant in HF) nearly indistinguishable, leading to similar proton-transfer dynamics and thereby similar IR signatures of proton transfer.   
+
+> II. RESULTS AND DISCUSSION A. Infrared Spectra and Chemical Speciation
+
+We begin our analysis by comparing the solvation structure of excess protons in 7.5 mol/kg hydrofluoric acid (HF) and hydrochloric acid (HCl) solutions at ambient conditions using AIMD simulations. Simulation snapshots are shown in Fig. 1(a), along with a zoom into the typical excess-proton hydra-tion structures, which are mainly coordinated by fluoride and water in HF solutions, and mainly by water in HCl solutions. An analysis of proton solvation beyond the Zundel–Eigen picture is shown in Fig. 1(c), which reports the probability of finding the excess proton and its conjugate base separated by the minimal number of hydrogen bonds (i.e., along the short-est hydrogen-bond path), as illustrated schematically above the panel. In HF, fluoride most frequently remains in direct contact with the excess proton (0 hydrogen bonds). Each additional hydrogen bond roughly halves this probability, and separations beyond two hydrogen bonds are rare, limiting the participation of excess protons in electrode reactions [10, 11] and conductivity [12, 13]. This is different for HCl, where excess protons are effectively repelled from chloride ions and are therefore most commonly separated by one or two hydrogen bonds. A complementary Zundel–Eigen interpretation is ap-plied to HF and HCl solutions and presented in Fig. 1(b). In the Zundel-picture the excess proton is shared between two proton acceptors, which can be either water or the conjugated base. In HF solutions, H3OF configurations dominate (63%), whereas H 5O+ 
+
+> 2
+
+accounts for only 37%. In contrast, HCl solutions are overwhelmingly characterized by H5O+ 
+
+> 2
+
+structures (95%), with H 3OCl being only marginally found (5%), as shown in Fig. 1(b). These differences reflect the distinct proton solvation preferences in weak and strong acids: fluoride participates directly in proton sharing in a substantial fraction of configurations, whereas chloride plays only a minor role in the corresponding HCl solutions. In the Eigen picture the excess proton is distributed over four proton acceptors, illustrated by a central hydronium ion (H 3O+) hydrogen-bonded to three surrounding molecules, which may be water or the conjugate base. The localization of the positive charge on the hydronium ion in Fig. 1(b) re-flects the conventional picture of a hydrogen-bond-stabilized H3O+ ion, whereas in reality these hydrogen bonds can have significant covalent character, especially in the case of fluoride. In HCl solutions, the conventional Eigen-cation H9O+ 
+
+> 4
+
+is the dominant configuration (72%), with other Eigen configurations such as H 7O3Cl (24%) and H 5O2Cl − 
+
+> 2
+
+(3%) being less likely, as shown in Fig. 1(b). In HF solutions, the excess proton is found in the Eigen cation H 9O+ 
+
+> 4
+
+only in 24% of cases. More commonly, it appears in H 7O3F structures (61%), while 14% of excess protons are coordinated by two water molecules and two fluoride ions, forming H 5O2F−
+
+> 2
+
+configurations. Further, roughly 1% of excess protons are coordinated by three fluoride ions (not shown), which leaves 8% of fluoride ions uncoordinated by excess protons. Because water is present in large excess, adding or removing water molecules from these structures does not change the underlying chemical equilibrium. H9O+ 
+
+> 4
+
+, H 7O3F and H5O2F− 
+
+> 2
+
+can therefore be interpreted as hydrates of H +, HF, and HF − 
+
+> 2
+
+, respectively. Thermodynamic analysis based on electromotive-force measurements and activity-coefficient estimates predicts H + and F − populations of 14% and 0.1% in HF solutions at 6 mol/kg [11]. Using charge and fluorine balance (see Methods), this corresponds to 14%, 72%, and 14% for H +, HF, and HF − 
+
+> 2
+
+. These values compare well with 24%, 61%, and 14% obtained here at 7.5 mol/kg. Overall the chemical speciation is consistent, especially given exper-imental uncertainties and errors from the DFT functional, basis set, and neglect of nuclear quantum effects. We present the simulated absorption coefficients ˜α(ω)
+
+of HF and HCl solutions and water in Fig. 1(d), where ˜α(ω) denotes the inverse distance over which the intensity of incident light decays to 1 /e due to absorption [52]. The extraction of ˜ α(ω) from AIMD is described in the Supple-mental Information and quantitatively tested by comparison between simulated (solid black) and experimental (dashed black) absorption coefficients of pure water [51] in Fig. 1(d). The agreement is very good, with a slight overestimation in the OH-stretch region (3000–3700 cm −1), consistent with previous results [53]. We observe that the absorption coefficients of the HF and HCl solutions are significantly different from pure water. Vibrational signatures of proton transfer are best identified in difference spectra 
+
+∆ ˜α(ω) = ˜α(ω) − X0H2O ˜αH2O(ω)
+
+X0HA 
+
+, (3) where X0HA and X0H2O are the total mole fractions of the acid and water in the solution, respectively, and ˜αH2O(ω)
+
+is the absorption coefficient of pure water. In the simulated and experimental difference spectra shown in Fig. 1(e), the transfer waiting (TW), transfer path (TP) and normal mode (NM) bands are clearly visible [48]. Here, the TW band reflects the proton-transfer reaction frequency, the TP band arises from the proton transfer, and the NM band reflects vi-brational oscillations of the proton bound to a base [48]. Due to the fundamentally different distributions of Zundel-like 30 1 2 3Number of HB between A − and H +
+
+> 025 50 75 100 Probability [%]
+
+# (c) HF HCl        
+
+> 01000 2000 3000 4000
+> ν[cm −1]012
+> ˜α [μm−1]
+> TW TP NM
+
+# (d)        
+
+> H2O Exp. HCl(7.5m) Sim. HF(7.5m) Sim. H2O Sim.
+> 01000 2000 3000 4000
+> ν[cm −1]
+> −404
+> ∆ ˜α [μm−1]
+> TW TP NM
+
+# (e) 
+
+> HCl(7.5m) Sim. HF(7.5m) Sim. HF(17.5m) Exp. HCl(15.5m) Exp. HCl(4.5m) Exp. HF(6.5m) Exp.
+
+# (a) (b) 
+
+FIG. 1. Analysis of excess-proton solvation, and IR spectra of 7.5 mol/kg HF and HCl solutions. (a) Simulation snapshots of systems containing 224 water molecules and 30 acid molecules, with HF shown on the left and HCl on the right, each including a zoomed view on representative Eigen structures. (b) Chemical structures and probability distribution of excess proton solvation configurations in the Zundel-picture and Eigen-picture for the two acid solutions. (c) Probability of finding an excess proton (H +) and its conjugate base (A −) in HF and HCl separated by a minimal number of hydrogen bonds, as indicated by the circled numbers in the sketch above the panel. (d) Simulated absorption coefficients ˜ α(ω) of pure water, and HF and HCl solutions. The experimental absorption coefficient of pure water [51] is shown for comparison. (e) Difference spectra, as defined in Eq. (3), for the simulated acid solutions compared with experimental spectra reported in the literature: HF (6.5 mol/kg) [38], HCl (4.5 m) [41], HCl (15.5 m) and HF (17.5 m) [18]. The colored frequency ranges correspond to the transfer-waiting (TW, gray), transfer-path (TP, magenta), and normal-mode (NM, cyan) regions. In the legends concentrations are given in units of molality m =mol/kg. 
+
+structures in HF and HCl solutions presented in Fig. 1(b), one expects significantly different spectra. Rather surprisingly, however, we find that the proton-transfer signatures (TW and TP) are nearly indistinguishable between the two acids, while the normal-mode region exhibits small differences. A comparison with experimental difference spectra of HF and HCl solutions, which we constructed from absorption spectra reported in the literature [18, 38, 41], shows that HF solutions display pronounced proton-transfer signatures that closely resemble those observed in HCl solutions, in agreement with our theoretical predictions. In summary, applying the Eigen picture to weak acids yields chemical speciation consistent with thermodynamic predictions, including the debated bifluoride ion. For ana-lyzing spectroscopic signatures of proton transfer, however, the Zundel picture is more appropriate. Given the significant fraction of excess protons in HF coordinated by two water molecules, one might expect similarities between the spectra of HF and HCl solutions. However, the almost indistinguish-able spectral proton-transfer signatures are puzzling given that the majority of excess protons are in direct contact with fluoride. 
+
+B. Free Energy Landscapes of Proton Transfer Reactions within H 5O+ 
+
+> 2
+
+and H 3OF 
+
+We analyze the free energy of the excess proton as a function of the coordinates R and d, shown in Fig. 2(a). Here, 
+
+R denotes the distance between the heavy atoms and the proton-transfer coordinate d is defined as the projection of the excess proton position onto the heavy-atom connecting axis (O–O, F–O, or Cl–O). As can be seen by comparison of Figs. 2(b-d) the two-dimensional free-energy surfaces of H 5O+ 
+
+> 2
+
+in HF, H 5O+
+
+> 2
+
+in HCl and H 3OF in HF are very similar, with the most 4(a) R0–d R0–d                       
+
+> O+HHHF–O+HHHF–
+> +–
+> OHHHF
+> FIG. 2. Analysis of the excess-proton free-energy landscapes in terms of the proton-transfer coordinate dand the heavy atom distance R, as schematically illustrated in (a): the coordinate dis the projection of the excess-proton position onto the heavy atoms connecting vector axis (O–O, F–O, or Cl–O) of length R. The excess proton is colored in dark turquoise and in all cases, negative dcorrespond to the proton being closer to the left heavy atom. (b–f) Two-dimensional free-energy surfaces of the excess proton for Zundel configurations: H 5O+
+> 2in HF, H 5O+
+> 2
+> in HCl, H 3OF in HF, H 3OF in dilute HF, and H 3OCl in HCl, respectively. (g) One-dimensional free-energy profiles along the proton-transfer coordinate d, for Zundel configurations in concentrated HF and HCl solutions. (h) Same as in (g), but only for H 3OF in concentrated and in dilute HF to highlight the effect of screening stabilization of the ion pair F −· · · H3O+in HF. The free-energy shift of the ion pair F −· · · H3O+
+> between the two concentrations is indicated by the horizontal line. The mechanism underlying the energetic similarity between H 5O+
+> 2and H3OF in HF is illustrated schematically by the chemical structures and surrounding ions shown in the insets of (h). To facilitate comparison with H 5O+
+> 2, the dcoordinate of H 3OF is shifted by ∆=0.04 Å in (g) and (h).
+
+notable difference being a slight shift of the excess proton towards fluoride for large heavy-atom distances in H 3OF. All three free-energy surfaces exhibit the characteristic double-well shape for large heavy-atom distances R and a single-well shape for small R, which is typical for Zundel configurations and is qualitatively consistent with previous works [22, 23, 26, 48, 54]. The striking similarity between the free-energy surfaces of H 5O+ 
+
+> 2
+
+(Figs. 2(b,c)) and H 3OF in HF (Fig. 2(d)) explains the nearly identical proton-transfer signatures observed in the IR spectra of HF and HCl solutions. In contrast, in the H3OCl configuration the proton is strongly localized towards the water molecule, as shown in Fig. 2(f), which is a consequence of the negligible proton affinity of chloride. In order to understand the underlying mechanism for the energetic similarity between H 5O+ 
+
+> 2
+
+and H3OF in HF, we additionally simulated a single HF molecule in water using AIMD and computed the free-energy surface of H 3OF at effectively infinite dilution, shown in Fig. 2(e). As can be seen by comparison of Figs. 2(d,e), the proton in H3OF in dilute HF is localized towards the fluoride ion, while in concentrated HF it is equally shared between the water molecule and the fluoride ion, with a free-energy landscape comparable to that of H 5O+ 
+
+> 2
+
+.To enable a more quantitative comparison between the different Zundel configurations, we present one-dimensional free-energy profiles along the proton-transfer reaction coordinate d, obtained by integrating the two-dimensional probability distribution over R, which we show in Figs. 2(g,h). Approximately, the reaction coordinate d describes the proton transfer reaction according to AH · · · OH 2 ⇌ A− · · · H3O+, (4) with A ∈ { H2O+, F, Cl }, where the dots indicate hydrogen bonds. The state AH · · · OH 2 (d < 0) corresponds to the pro-ton bound to A−, and A − · · · H3O+ (d > 0) is the configuration where the excess proton is localized on the water molecule. As can be seen in Fig. 2(g), the ∆ shifted one-dimensional free-energy profiles of H 5O+ 
+
+> 2
+
+in HCl (dashed red), H 5O+ 
+
+> 2
+
+in HF (solid orange) and H 3OF (solid dark green) in HF are al-most indistinguishable, with barriers around 0.7 kBT . In con-trast, the free-energy profile of H 3OCl in HCl (solid blue) is highly asymmetric, exhibiting a single well localized to-ward the water molecule, consistent with the negligible proton affinity of chloride. The free-energy profiles of H 3OF in concentrated HF (solid dark green) and in dilute HF (dashed lime green) are shown in Fig. 2(h) to highlight the effect of screening on the stabilization of the ion pair F − · · · H3O+. In dilute HF, H 3OF exhibits a single well localized toward the fluoride ion. In concentrated HF, however, the ion pair is stabilized by the surrounding ionic environment, resulting in a free-energy lowering of approximately 1 .1 kBT in comparison to the di-lute case, which is indicated by the horizontal line in Fig. 2(h). 5The free energy stabilization of two separate ions F−
+
+and H 3O+ due to an ionic environment is predicted by Debye–Hückel theory [55] to be 
+
+∆F = − e2
+
+4πε 0εκ
+
+1 + κR = −1.5 kBT, (5) in decent agreement with the observed value of −1.1 kBT for the contribution of the ionic environment to the free energy of F − · · · H3O+ in HF. Here, e is the elementary charge, ε0 is the vacuum permittivity, κ−1 = 2.4 Å is the Debye length at ionic concentration of c = 24% × 6.5 mol L −1, R = 2.4 Å is the mean distance between the hydronium and the fluoride ion (compare Figs. 2(d,e)) and ε = 78 is the dielectric constant of water [56]. Since the equilibrium in Eq. (4) remains unchanged for H 5O+ 
+
+> 2
+
+but shifts as a function of ionic strength for H 3OF, one expects a stronger concentration dependence of proton-transfer spectra in HF than in HCl, where it is minimal [48]. This partly explains the spread in experimental difference spectra of HF solutions in Fig. 1(e) and simul-taneously gives an estimate of the experimental error since we can assume that the spectra of HCl solutions should be significantly less affected by concentration changes.  
+
+> III. DISCUSSION
+
+Our analysis reconciles thermodynamic and spectroscopic properties of aqueous HF and provides a consistent pic-ture of excess proton solvation in the presence of conjugate bases with significant proton affinity, such as F −. An ex-tended Eigen framework yields chemical speciation consistent with thermodynamic predictions, including the elusive biflu-oride ion. In contrast, the vibrational response is governed by proton-transfer dynamics and is therefore best described within the Zundel picture. Despite distinct excess-proton structures found in HF and HCl, the proton-transfer bands are nearly identical. This apparent contradiction is resolved by electrostatic screening, which renders the free-energy profiles of the relevant Zundel configurations nearly indistinguishable in HF and HCl, leading to convergent proton-transfer dynam-ics and spectroscopic signatures. These free-energy profiles and spectral signatures are connected through the general-ized Langevin equation [53, 57]. Our complementary Eigen-Zundel interpretation is crucial: Eigen-like structures deter-mine equilibrium populations, while Zundel-like configura-tions encode the transition states that govern vibrational re-sponse. We expect that our findings are applicable to weak acids in general. However, we suggest that the small size of F− enables the formation of H 5O2F− 
+
+> 2
+
+, which would be ster-ically hindered for larger anions and therefore explains the anomalous thermodynamic behavior of HF compared to other weak acids.  
+
+> IV. METHODS
+
+All production simulations were performed in the NVT ensemble at 300 K using CP2K [58]. The BLYP ex-change–correlation functional [59] with D3 dispersion corrections [60] was employed. Core electrons were treated with Goedecker–Teter–Hutter (GTH) pseudopotentials [61]. DZVP-MOLOPT-SR-GTH basis sets were used for O and H, and aug-DZVP-GTH for F and Cl [62]. A plane-wave cutoff of 400 Ry was applied. The timestep was 0.5 fs, and temperature control was achieved using a CSVR thermostat [63] with a 100 fs time constant. Simulations contained 256 water molecules for pure water and 224 water molecules for the 7.5 mol/kg acid solutions, with 30 excess protons and 30 anions in the latter. The pure water system was prepared as described in Ref. [53]. Initial HCl structures were generated by classical MD using GROMACS [64]: 200 ps in the NPT ensemble at ambient pressure followed by 800 ps in the NVT ensemble at 300 K, employing the SPC/E water model [65] and Cl − and H 3O+ force-field parameters from Ref. [66]. For HF, anions were replaced and configurations rescaled according to experimental density ratios [67, 68]. The first 14 ps (HF) and 9 ps (HCl) were discarded for equilibration. The amount of Zundel- and Eigen structures are found to be in chemical equilibrium after this time. Box lengths were 19.73 Å (pure water), 20.23 Å (7.5 mol/kg HCl), and 19.63 Å (7.5 mol/kg HF). Trajectory lengths were 201 ps (water), 84 ps (HCl), and 122 ps (HF). Water and HCl trajectories were previously analyzed [48, 53] and are reused here for comparison with HF. A single HF molecule in water was simulated in a 9.855 Å cubic box containing 31 water molecules. Therefore, a stable configuration of 32 water molecules at experimental density (1.0 g/cm 3) was generated via a classical 20 ps NVT simulation as described above (but with a reduced Lennard-Jones cutoff of 4.5 nm), and then equilibrated for 10 ps with AIMD after replacing one water molecule by HF. The remaining 38 ps were used for analysis. The IR spectra where calculated from the Fourier trans-formation of the polarization autocorrelation function using Wannier center localization which is briefly described in Ref. [48] and detailed in the Supplementary Information. Since all experimental spectra [18, 38, 41] are presented in arbitrary units in the original papers, we normalize them such that the maximum of the pure water spectrum of the absorption coefficient of the respective dataset is equal to the literature value [51], to allow for a quantitative comparison. We compute the experimental difference spectra by subtract-ing the pure water spectrum from the acid solution spectra as defined in Equation (3) and normalize using the experimental density from Refs. [56, 69]. Bound protons are defined as the two protons closest to each oxygen atom in the system, the remaining protons are identified as excess protons. Zundel configurations (H 5O+ 
+
+> 2
+
+,H3OF, and H 3OCl) are identified based on the two closest heavy atoms (O, F, or Cl) to an excess proton. A similar, but slightly more complex definition of excess protons was 6used in Ref. [48], which was needed to obtain undisrupted trajectories of excess protons for the spectral analysis of the barrier-crossing dynamics. Eigen configurations are defined by a central H 3O+. The H 3O+ oxygen is taken as the oxygen atom closest to the excess proton, and the proton sharing anions are defined as the hydrogen bonded neighbors to the H3O+ oxygen. Hydrogen bonds are defined by the geometric definition of Ref. [70]. To enforce mass and charge conser-vation, each anion (F −, Cl −) is assigned to its nearest H 3O+,avoiding double counting. Consequently, H 2O molecules in the Eigen-picture (Fig. 1(b)) should be understood as generic hydrogen-bond acceptors, which are mostly water but can also be an anion bound to a different H 3O+. Counting hydrogen-bond partners of each hydronium ion yields the dif-ferent distributions: HF (H 9O+ 
+
+> 4
+
+17%, H 7O3F 44%, H 5O2F−
+
+> 2
+
+28%) and HCl (H 9O+ 
+
+> 4
+
+64%, H 7O3Cl 26%, H 5O2Cl − 
+
+> 2
+
+3%). Since Braddy et al. [11] report only the molalities of H + and F−, the molalities of HF and HF − 
+
+> 2
+
+in the experimental data are obtained from charge conservation, mH+ = mHF − 
+
+> 2
+
++ mF− ,and fluorine conservation, m0HF = mHF + mF− + 2 × mHF − 
+
+> 2
+
+,where mα denotes the molality of species α and m0HF the initial HF molality. This treatment effectively reduces the analysis to the building blocks H +, HF, F −, and HF − 
+
+> 2
+
+and does not consider H 2F− 
+
+> 3
+
+formation, which was considered in the analysis of Ref. [11]. This is consistent with our simulation analysis, where we do not investigate aggregation of different Eigen-like structures. The shortest path between the excess proton and the conjugate base is determined by the breadth-first-search algorithm, using the implementation in the Python package NetworkX [71]. 
+
+V. ACKNOWLEDGEMENTS 
+
+We acknowledge financial support from the Deutsche Forschungsgemeinschaft (DFG) within the CRC 1349. Com-putational resources were provided by the HPC systems CURTA [72], TRON, and Sheldon at Freie Universität Berlin, as well as by the North-German Supercomputing Alliance (HLRN) under project bep00068. 
+
+[1] R. E. Warburton, A. V. Soudackov, and S. Hammes-Schiffer, Theoretical Modeling of Electrochemical Proton-Coupled Elec-tron Transfer, Chemical Reviews 122 , 10599 (2022). [2] F. Baserga, P. Langner, L. Schubert, J. P. Storm, R. Schlesinger, and J. Heberle, Proton-Coupled Electron Transfer in Cy-tochrome c Oxidase: Heme a Controls the Protonation Dynam-ics of E286, ChemPhysChem 26 , e202500539 (2025). [3] X.-Y. Li, T. Wang, Y.-C. Cai, Z.-D. Meng, J.-W. Nan, J.-Y. Ye, J. Yi, D.-P. Zhan, N. Tian, Z.-Y. Zhou, and S.-G. Sun, Mech-anism of Cations Suppressing Proton Diffusion Kinetics for Electrocatalysis, Angewandte Chemie International Edition 62 ,e202218669 (2023). [4] P. E. M. Siegbahn, How Protons Move in Enzymes-The Case of Nitrogenase, The Journal of Physical Chemistry B 127 , 2156 (2023). [5] J. Heberle, J. Riesle, G. Thiedemann, D. Oesterhelt, and N. A. Dencher, Proton migration along the membrane surface and re-tarded surface to bulk transfer, Nature 370 , 379 (1994). [6] N. Agmon, H. J. Bakker, R. K. Campen, R. H. Henchman, P. Pohl, S. Roke, M. Thämer, and A. Hassanali, Protons and Hydroxide Ions in Aqueous Systems, Chemical Reviews 116 ,7642 (2016). [7] J.-H. Wee, Applications of proton exchange membrane fuel cell systems, Renewable and Sustainable Energy Reviews 11 , 1720 (2007). [8] K. Jiao, J. Xuan, Q. Du, Z. Bao, B. Xie, B. Wang, Y. Zhao, L. Fan, H. Wang, Z. Hou, S. Huo, N. P. Brandon, Y. Yin, and M. D. Guiver, Designing the next generation of proton-exchange membrane fuel cells, Nature 595 , 361 (2021). [9] P. Atkins and J. de Paula, Atkins’ Physical Chemistry (OX-FORD UNIVERSITY PRESS). [10] H. H. Broene and T. D. Vries, The Thermodynamics of Aque-ous Hydrofluoric Acid Solutions, Journal of the American Chemical Society 69 , 1644 (1947). [11] R. Braddy, P. T. McTigue, and B. Verity, Equilibria in moder-ately concentrated aqueous hydrogen fluoride solutions, Journal of Fluorine Chemistry 66 , 63 (1994). [12] C. W. Davies and L. J. Hudleston, XXXV.—Transference num-bers and ionic complexity of hydrofluoric acid solutions, Jour-nal of the Chemical Society, Transactions 125 , 260 (1924). [13] W. J. Hamer and Y.-C. Wu, The Activity Coefficients of Hy-drofluoric Acid in Water from 0 to 35 ◦C, Journal of Research of the National Bureau of Standards. Section A, Physics and Chemistry 74A , 761 (1970). [14] R. P. Bell, K. N. Bascombe, and J. C. McCoubrey, 262. Kinetics of the depolymerisation of trioxan in aqueous acids, and the acidic properties of aqueous hydrogen fluoride, Journal of the Chemical Society (Resumed) , 1286 (1956). [15] H. H. Hyman, M. Kilpatrick, and J. J. Katz, The Hammett Acid-ity Function H 0 for Hydrofluoric Acid Solutions 1, Journal of the American Chemical Society 79 , 3668 (1957). [16] L. G. Hepler, W. L. Jolly, and W. M. Latimer, The Heat and En-tropy of Ionization of Hydrofluoric Acid. The Entropy of Biflu-oride Ion, Journal of the American Chemical Society 75 , 2809 (1953). [17] E. K. Plyler and E. S. Barr, The Infrared Absorption of Acid Solutions, The Journal of Chemical Physics 2, 306 (1934). [18] P. A. Giguère and S. Turrell, H3O+ ions in aqueous acid solu-tions. The infrared spectra revisited, Canadian Journal of Chem-istry 54 , 3477 (1976). [19] P. A. Giguère, Ion pairs and the strength of hydrofluoric acid, Chemical Physics Letters 41 , 598 (1976). [20] P. A. Giguere and S. Turrell, The nature of hydrofluoric acid: A spectroscopic study of the proton-transfer complex H3O+ · · · F−, Journal of the American Chemical Society 102 ,5473 (1980). [21] K. Laasonen, Ab initio molecular dynamics study of dilute hy-drofluoric acid, Molecular Physics 88 , 135 (1996). [22] A. J. Sillanpää, C. Simon, M. L. Klein, and K. Laasonen, Struc-tural and Spectral Properties of Aqueous Hydrogen Fluoride Studied Using ab Initio Molecular Dynamics, The Journal of Physical Chemistry B 106 , 11315 (2002). [23] C. Simon and M. L. Klein, Ab Initio Molecular Dynamics Simulation of a Water–Hydrogen Fluoride Equimolar Mixture, 7
+
+ChemPhysChem 6, 148 (2005). [24] R. Iftimie, V. Thomas, S. Plessis, P. Marchand, and P. Ayotte, Spectral Signatures and Molecular Origin of Acid Dissociation Intermediates, Journal of the American Chemical Society 130 ,5901 (2008). [25] V. Thomas and R. Iftimie, Toward Understanding the Dissoci-ation of Weak Acids in Water: 1. Using IR Spectroscopy to Identify Proton-Shared Hydrogen-Bonded Ion-Pair Intermedi-ates, The Journal of Physical Chemistry B 113 , 4152 (2009). [26] D. Marx, M. E. Tuckerman, J. Hutter, and M. Parrinello, The nature of the hydrated excess proton in water, Nature 397 , 601 (1999). [27] F. Dahms, B. P. Fingerhut, E. T. J. Nibbering, E. Pines, and T. Elsaesser, Large-amplitude transfer motion of hydrated ex-cess protons mapped by ultrafast 2D IR spectroscopy, Science 
+
+357 , 491 (2017). [28] J. A. Fournier, W. B. Carpenter, N. H. C. Lewis, and A. Tok-makoff, Broadband 2D IR spectroscopy reveals dominant asymmetric H5O2+ proton hydration structures in acid solu-tions, Nature Chemistry 10 , 932 (2018). [29] A. Kundu, F. Dahms, B. P. Fingerhut, E. T. J. Nibbering, E. Pines, and T. Elsaesser, Hydrated Excess Protons in Acetoni-trile/Water Mixtures: Solvation Species and Ultrafast Proton Motions, The Journal of Physical Chemistry Letters 10 , 2287 (2019). [30] W. B. Carpenter, Q. Yu, J. H. Hack, B. Dereka, J. M. Bowman, and A. Tokmakoff, Decoding the 2D IR spectrum of the aque-ous proton with high-level VSCF/VCI calculations, The Journal of Chemical Physics 153 , 124506 (2020). [31] P. B. Calio, C. Li, and G. A. Voth, Molecular Origins of the Barriers to Proton Transport in Acidic Aqueous Solutions, The Journal of Physical Chemistry B 124 , 8868 (2020). [32] P. B. Calio, C. Li, and G. A. Voth, Resolving the Structural Debate for the Hydrated Excess Proton in Water, Journal of the American Chemical Society 143 , 18672 (2021). [33] M. Schröder, F. Gatti, D. Lauvergnat, H.-D. Meyer, and O. Ven-drell, The coupling of the hydrated proton to its first solvation shell, Nature Communications 13 , 6170 (2022). [34] A. Gomez, W. H. Thompson, and D. Laage, Neural-network-based molecular dynamics simulations reveal that proton trans-port in water is doubly gated by sequential hydrogen-bond ex-change, Nature Chemistry 16 , 1838 (2024). [35] S. Di Pino, E. D. Donkor, V. M. Sánchez, A. Rodriguez, G. Cas-sone, D. Scherlis, and A. Hassanali, ZundEig: The Structure of the Proton in Liquid Water from Unsupervised Learning, The Journal of Physical Chemistry B 127 , 9822 (2023). [36] X. Yang, Y. Wu, S. Deng, L. Liu, H. Zhao, Y. Gao, and C. Liu, Unveiling the intermediate hydrated proton in water through vi-brational analysis on the 1750 cm-1 signature, Nature Commu-nications 16 , 5764 (2025). [37] R. Ma, C. Qu, P. L. Houston, R. Conte, A. Nandi, J. M. Bowman, and Q. Yu, Revisiting the H5O2+ IR Spectrum with VSCF/VCI and the Influence of Mark Johnson’s Experiments in Advancing the Theory of Protonated Water Clusters, The Jour-nal of Physical Chemistry A 129 , 7051 (2025). [38] J. Khorami, R. Beaudoin, and H. Ménard, étude des mélanges eau–HF par spectroscopie infrarouge à transformée de Fourier, Canadian Journal of Chemistry 65 , 817 (1987). [39] J. Kim, U. W. Schmitt, J. A. Gruetzmacher, G. A. Voth, and N. E. Scherer, The vibrational spectrum of the hydrated pro-ton: Comparison of experiment, simulation, and normal mode analysis, The Journal of Chemical Physics 116 , 737 (2002). [40] L. M. Levering, M. R. Sierra-Hernández, and H. C. Allen, Ob-servation of Hydronium Ions at the Air-Aqueous Acid Inter-face: Vibrational Spectroscopic Studies of Aqueous HCl, HBr, and HI, The Journal of Physical Chemistry C 111 , 8814 (2007). [41] M. Thämer, L. De Marco, K. Ramasesha, A. Mandal, and A. Tokmakoff, Ultrafast 2D IR spectroscopy of the excess pro-ton in liquid water, Science 350 , 78 (2015). [42] W. B. Carpenter, J. A. Fournier, N. H. C. Lewis, and A. Tok-makoff, Picosecond Proton Transfer Kinetics in Water Revealed with Ultrafast IR Spectroscopy, The Journal of Physical Chem-istry B 122 , 2792 (2018). [43] H. J. Zeng and M. A. Johnson, Demystifying the Diffuse Vi-brational Spectrum of Aqueous Protons Through Cold Cluster Spectroscopy, Annual Review of Physical Chemistry 72 , 667 (2021). [44] M. Ekimova, C. Kleine, J. Ludwig, M. Ochmann, T. E. G. Agrenius, E. Kozari, D. Pines, E. Pines, N. Huse, P. Wer-net, M. Odelius, and E. T. J. Nibbering, Von lokalen kova-lenten Bindungen zu langreichweitigen elektrischen Wechsel-wirkungen der Protonenhydratation, Angewandte Chemie 134 ,e202211066 (2022). [45] M. Lounasvuori, Y. Sun, T. S. Mathis, L. Puskar, U. Schade, D.-E. Jiang, Y. Gogotsi, and T. Petit, Vibrational signature of hydrated protons confined in MXene interlayers, Nature Com-munications 14 , 1322 (2023). [46] R. Iftimie and M. E. Tuckerman, The Molecular Origin of the “Continuous” Infrared Absorption in Aqueous Solutions of Acids: A Computational Approach, Angewandte Chemie Inter-national Edition 45 , 1144 (2006). [47] R. Beckmann, F. Brieuc, C. Schran, and D. Marx, Infrared Spectra at Coupled Cluster Accuracy from Neural Network Representations, Journal of Chemical Theory and Computation 
+
+18 , 5492 (2022). [48] F. N. Brünig, M. Rammler, E. M. Adams, M. Havenith, and R. R. Netz, Spectral signatures of excess-proton waiting and transfer-path dynamics in aqueous hydrochloric acid solutions, Nature Communications 13 , 4210 (2022). [49] P. Ayotte, M. Hébert, and P. Marchand, Why is hydrofluo-ric acid a weak acid?, The Journal of Chemical Physics 123 ,184501 (2005). [50] P. Ayotte, S. Plessis, and P. Marchand, Trapping proton trans-fer intermediates in the disordered hydrogen-bonded network of cryogenic hydrofluoric acid solutions, Physical Chemistry Chemical Physics 10 , 4785 (2008). [51] G. M. Hale and M. R. Querry, Optical Constants of Water in the 200-nm to 200-μm Wavelength Region, Applied Optics 12 ,555 (1973). [52] M. Born and E. Wolf, Principles of Optics: Electromagnetic Theory of Propagation, Interference and Diffraction of Light ,7th ed. (Cambridge University Press, Cambridge, 1999). [53] F. N. Brünig, O. Geburtig, A. von Canal, J. Kappler, and R. R. Netz, Time-Dependent Friction Effects on Vibrational Infrared Frequencies and Line Shapes of Liquid Water, The Journal of Physical Chemistry B 126 , 1579 (2022). [54] D. Marx, Proton Transfer 200 Years after von Grotthuss: In-sights from Ab Initio Simulations, ChemPhysChem 7, 1848 (2006). [55] P. Debye and E. Hückel, Zur theorie der elektrolyte. I. Gefrier-punktserniedrigung und verwandte erscheinungen, Physikalis-che Zeitschrift 24 , 185 (1923). [56] W. M. Haynes, CRC Handbook of Chemistry and Physics (Tay-lor & Francis, Boca Raton, 2015). [57] H. Colinet, F. N. Brünig, and R. R. Netz, Non-Markovian Linear Vibrational Absorption Spectroscopy for Nonharmonic Bond Potentials: A Perturbative Approach, Physical Review Letters 135 , 188002 (2025). 8
+
+[58] T. D. Kühne, M. Iannuzzi, M. Del Ben, V. V. Rybkin, P. Seewald, F. Stein, T. Laino, R. Z. Khaliullin, O. Schütt, F. Schiffmann, D. Golze, J. Wilhelm, S. Chulkov, M. H. Bani-Hashemian, V. Weber, U. Borštnik, M. Taillefumier, A. S. Jakobovits, A. Lazzaro, H. Pabst, T. Müller, R. Schade, M. Guidon, S. Andermatt, N. Holmberg, G. K. Schenter, A. Hehn, A. Bussy, F. Belleflamme, G. Tabacchi, A. Glöß, M. Lass, I. Bethune, C. J. Mundy, C. Plessl, M. Watkins, J. Van-deVondele, M. Krack, and J. Hutter, CP2K: An electronic struc-ture and molecular dynamics software package - Quickstep: Ef-ficient and accurate electronic structure calculations, The Jour-nal of Chemical Physics 152 , 194103 (2020). [59] A. D. Becke, Density-functional exchange-energy approxima-tion with correct asymptotic behavior, Physical Review A 38 ,3098 (1988). [60] S. Grimme, J. Antony, S. Ehrlich, and H. Krieg, A consistent and accurate ab initio parametrization of density functional dis-persion correction (DFT-D) for the 94 elements H-Pu, The Jour-nal of Chemical Physics 132 , 154104 (2010). [61] S. Goedecker, M. Teter, and J. Hutter, Separable dual-space Gaussian pseudopotentials, Physical Review B 54 , 1703 (1996). [62] J. VandeVondele and J. Hutter, Gaussian basis sets for accurate calculations on molecular systems in gas and condensed phases, The Journal of Chemical Physics 127 , 114105 (2007). [63] G. Bussi, D. Donadio, and M. Parrinello, Canonical sampling through velocity rescaling, The Journal of Chemical Physics 
+
+126 , 014101 (2007). [64] M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, and E. Lindahl, GROMACS: High performance molecular simulations through multi-level parallelism from lap-tops to supercomputers, SoftwareX 1–2 , 19 (2015). [65] H. J. C. Berendsen, J. R. Grigera, and T. P. Straatsma, The miss-ing term in effective pair potentials, The Journal of Physical Chemistry 91 , 6269 (1987). [66] D. J. Bonthuis, S. I. Mamatkulov, and R. R. Netz, Optimization of classical nonpolarizable force fields for OH- and H3O+, The Journal of Chemical Physics 144 , 104503 (2016). [67] S. L. Clegg and A. S. Wexler, Densities and apparent molar volumes of atmospherically important electrolyte solutions. 1. The solutes H2SO4, HNO3, HCl, Na2SO4, NaNO3, NaCl, (NH4)2SO4, NH4NO3, and NH4Cl from 0 to 50 ◦C, including extrapolations to very low temperature and to the pure liquid state, and NaHSO4, NaOH, and NH3 at 25 ◦C, The Journal of Physical Chemistry. A 115 , 3393 (2011). [68] Acid & Base Normality and Molarity Calculator, https://www.sigmaaldrich.com/DE/de/support/calculators-and-apps/molarity-calculator. [69] D. Green and M. Z. Southard, Perry’s Chemical Engineers’ Handbook (McGraw-Hill Education Ltd, New York, N.Y, 2019). [70] A. Ozkanlar, T. Zhou, and A. E. Clark, Towards a unified de-scription of the hydrogen bond network of liquid water: A dy-namics based approach, The Journal of Chemical Physics 141 ,214107 (2014). [71] A. Hagberg, P. J. Swart, and D. A. Schult, Exploring Net-work Structure, Dynamics, and Function Using NetworkX ,Tech. Rep. LA-UR-08-05495; LA-UR-08-5495 (Los Alamos National Laboratory (LANL), 2008). [72] L. Bennett, B. Melchers, and B. Proppe, Curta: A General-purpose High-Performance Computer at ZEDAT, Freie Univer-sität Berlin (2020). Supplemental Information 
+
+Louis Lehmann, 1 Florian N. Brünig, 2 Jonathan Scherlitzki, 3 Morten Lehmann, 4 Martin Kaupp, 4 Beate Paulus, 3 and Roland R. Netz ∗1 
+
+> 1Department of Physics, Freie Universität Berlin, Arnimallee 14, 14195 Berlin, Germany
+> 2Department of Physics and Materials Science, University of Luxembourg, L-1511 Luxembourg City, Luxembourg
+> 3Department of Physical and Theoretical Chemistry, Freie Universität Berlin, Arnimallee 22, 14195 Berlin, Germany
+> 4Institute of Chemistry, Technische Universität Berlin, Straße des 17. Juni 115, 10623 Berlin, Germany
+> (*corresponding author: rnetz@physik.fu-berlin.de)
+> I. RELATION BETWEEN THE ABSORPTION COEFFICIENT AND THE DIELECTRIC SPECTRUM
+
+We consider the one-dimensional inhomogeneous wave equation in vacuum 
+
+ ∂ 2
+
+∂ z2 + ω2
+
+c2
+
+
+
+E(z,t) = μ0 ˙J(z,t), (S1) with a current density J(z,t) induced by a sinusoidal electric field given by E(z,t) = E(z)e−iωt + c.c.. Here c is the speed of light in vacuum, μ0 the vacuum permeability [1], c.c. is the complex conjugate and E(z) the z-dependent amplitude of the electric field. If the electric field is sufficiently weak, the current density is related to the electric field by the constitutive relation 
+
+J(z,t) = ε0 ˜σP(ω)E(z)e−iωt + c.c. , (S2) where ˜σP(ω) is a complex frequency-dependent conductivity and ε0 is the vacuum permittivity. We are associating all charges in our system to the polarization density P(z,t) which obeys ˙P(z,t) = J(z,t) . (S3) We note that, the conductivity ˜σP(ω) is the polarization conductivity and is thus different from the usual conductivity, which only accounts for transport of free charges in response to an electric field [2]. Introducing the complex dielectric function as 
+
+ω ˜ε(ω) = ω + i ˜σP(ω) , (S4) we obtain from Eqs (S2) and (S3) 
+
+J(z,t) = ˙P(z,t) = −iωε 0 (˜ε(ω) − 1) E(z)e−iωt + c.c. . (S5) With this, we eliminate the current density in Eq. (S1) and obtain the homogeneous wave equation in matter 
+
+ ∂ 2
+
+∂ z2 + ˜k(ω)2
+
+
+
+E(z,t) = 0 , (S6) where we introduced the complex wave vector ˜ k(ω) = ω
+
+> c
+
+p˜ε(ω) and used the relation c2 = 1/(ε0μ0) [1]. The solution for the electric field is given by 
+
+E(z,t) = E0e−i(ωt±˜k(ω)z) + c.c. , (S7) where the sign in the exponent determines the direction of propagation and E0 is the z-independent amplitude. The absorption coefficient ˜ α(ω) is defined as the inverse length at which the intensity of the electric field decreases by a factor 1 /e and is thus given by ˜α(ω) = 2˜ k(ω)′′ , (S8) where ˜ k(ω)′′ is the imaginary part of the complex wave vector. The factor 2 appears because the intensity is proportional to the square of the electric field. 2 
+
+> II. OBTAINING THE DIELECTRIC SPECTRUM FROM AB INITIO MOLECULAR DYNAMICS SIMULATIONS
+
+We consider an overall charge-neutral system of N atoms with charges qi, and electric dipole moments μi(t), occupying a volume V under periodic boundary conditions. The current density is given by [2] 
+
+J(t) = 1
+
+V
+
+> N
+
+# ∑
+
+> i=1
+
+(qivi(t) + ˙μi(t)) . (S9) In our case the oxygen, hydrogen, fluoride and chloride atoms carry the charges −2e, e, −e and −e, respectively. Each Wannier center has the charge −2e. Four Wannier centers are unambiguously assigned to the closest heavy atom (O,F,Cl) and zero to hydrogen in agreement with the oktet rule. Therefore, the electric dipole moment of atom i is given by 
+
+μi(t) = −2e
+
+> NWC
+> i
+
+# ∑
+
+> j=1
+
+ rWC  
+
+> i j
+
+(t) − ri(t) . (S10) Here, rWC  
+
+> i j
+
+(t) is the position of the j-th Wannier center assigned to atom i, ri(t) is the position of atom i and NWC  
+
+> i
+
+is the number of Wannier centers assigned to atom i. The distance vector rWC  
+
+> i j
+
+(t) − ri(t) is defined as the shortest vector between the Wannier center and the atom, accounting for periodic boundary conditions. We define the polarization density as 
+
+P(t) = 1
+
+V
+
+> N
+
+# ∑
+
+> i=1
+
+(qiri(t) + μi(t)) , (S11) where ri(t) denotes the position of atom i. In contrast to J(t) defined in Eq. (S9), P(t) does depend on the choice of the atomic origins, which we choose to be the nuclei positions. For consistency with the definition of the current density in Eq. (S9), the time derivative of the position must satisfy ˙ ri(t) = vi(t). Under periodic boundary conditions, this requires the use of unwrapped atomic positions, i.e., positions that are made continuous in time by adding or subtracting the box length whenever an atom crosses a periodic boundary. We pick the initial atomic position ri(0) such that all atoms are inside the simulation box at time 
+
+t = 0, but other choices are possible as long as ri(t) is continuous in time. In bulk systems, the external field in the perturbation Hamiltonian can be identified as the electric field [3, 4] and we can use the fluctuation dissipation theorem [5, 6] to relate the imaginary part of the dielectric function to the Fourier transformed trajectory of the polarization density of length τ as 
+
+ω ˜ε′′ (ω) = ω2 V
+
+2ε0kBT τ | ˜P(ω)|2 . (S12) If the system is isotropic, Eq. (S12) can be averaged over the three dimensions. Using Eq. (S3) we could also express the imaginary part of the dielectric function in terms of the current density as 
+
+ω ˜ε′′ (ω) = V
+
+2ε0kBT τ | ˜J(ω)|2 . (S13) Since the Wannier center localization procedure is numerically expensive, it is not numerically feasable to compute the atomic dipole moments at every time step. Therefore, J(t) can only be computed from a highly discretized time series of P(t), which leads to significant time discretization errors in Eq. (S13). This problem can be circumvented by using Eq. (S12) instead of Eq. (S13) to compute the imaginary part of the dielectric function, where time discretization is not an issue as long as the Nyquist–Shannon sampling criterion is fulfilled, i.e., as long as the sampling frequency exceeds twice the highest frequency present in the signal [7]. In order to compute the absorption coefficient defined in Eq. (S8) we also need the real part of the dielectric function, which is obtained by numerical Kramers-Kronig transformation as described elsewhere [4] and where we add the high-frequency contribution εVIS = 1.78 [8] to the real part of the dielectric function to account for electronic polarizability.     
+
+> [1] M. Born and E. Wolf, Principles of Optics: Electromagnetic Theory of Propagation, Interference and Diffraction of Light , 7th ed. (Cam-bridge University Press, Cambridge, 1999). [2] J. D. Jackson, Classical Electrodynamics, International Adaptation (Wiley, Hoboken, 2021). [3] H. A. Stern and S. E. Feller, Calculation of the dielectric permittivity profile for a nonuniform system: Application to a lipid bilayer simulation, The Journal of Chemical Physics 118 , 3401 (2003). [4] L. Lehmann, M. R. Becker, L. Tepper, A. P. Fellows, Á. D. Duque, M. Thämer, and R. R. Netz, Beyond the Electric Dipole Approxima-tion: Electric and Magnetic Multipole Contributions Reveal Biaxial Water Structure from SFG Spectra at the Air-Water Interface (2026), arXiv:2505.19856 [cond-mat].
+
+3
+
+[5] R. Kubo, The fluctuation-dissipation theorem, Reports on Progress in Physics 29 , 255 (1966). [6] S. Carlson, F. N. Brünig, P. Loche, D. J. Bonthuis, and R. R. Netz, Exploring the Absorption Spectrum of Simulated Water from MHz to Infrared, The Journal of Physical Chemistry A 124 , 5599 (2020). [7] C. Shannon, Communication in the Presence of Noise, Proceedings of the IRE 37 , 10 (1949). [8] W. M. Haynes, CRC Handbook of Chemistry and Physics (Taylor & Francis, Boca Raton, 2015).
