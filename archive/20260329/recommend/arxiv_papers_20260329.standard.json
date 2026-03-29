@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-29T20:26:05.493606+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.24827v1",
+      "title": "Permeation of hydrogen across graphdiyne: molecular dynamics vs. quantum simulations and role of membrane motion",
+      "abstract": "Previous research based on electronic structure calculations and molecular dynamics (MD) simulations have demonstrated that graphdiyne (GDY) is a very suitable two-dimensional membrane for the separation of small molecules in a gas mixture of different species. However, quantum effects may play a role in the dynamics of these permeation processes when light molecules are the ones involved in the crossing of the GDY subnanometric pores. In this work we report rigorous quantum-mechanical calculations together with equivalent MD simulations of the transport of H2 molecules through a static GDY membrane, as a case study for the validity of the application to these problems of classical dynamics. The force fields employed are based on an improved Lennard-Jones formulation, with parameters optimized by means of accurate ab initio calculations. It is found that, although quantum effects are still significant at the temperatures of interest (between 250 and 350 K), MD simulations are able to reasonably reproduce the dependence of the quantum permeances with the temperature. Moreover, MD permeances computed with quantum corrections through Feynman-Hibbs effective potentials provide a lower bound to quantum permeances, while the pure classical counterpart gives an upper bound, thus leading to a well delimited range of confidence of the permeation results. Furthermore, within MD simulations it is possible to incorporate the thermal motion of the GDY layer and in this situation it is observed an enhancement of the permeances with respect to the fixed membrane case, due to a significant reduction of the permeation barriers when the GDY atoms are allowed to vibrate. It seems apparent therefore, that modeling the membrane motion is crucial to provide reliable simulations of the gas transport features.",
+      "authors": [
+        "Mateo Rodríguez",
+        "José Campos-Martínez",
+        "Marta I. Hernández"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-25T21:31:39+00:00",
+      "link": "https://arxiv.org/pdf/2603.24827v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "comparison of molecular dynamics and quantum simulations",
+      "llm_evidence_cn": "分子动力学与量子模拟的比较",
+      "llm_evidence": "分子动力学与量子模拟的比较",
+      "canonical_evidence": "分子动力学与量子模拟的比较",
+      "llm_tldr_en": "Compares quantum-mechanical calculations and molecular dynamics for hydrogen permeation across membranes.",
+      "llm_tldr_cn": "对比了氢气穿过膜过程中的量子力学计算与分子动力学模拟。",
+      "llm_tldr": "对比了氢气穿过膜过程中的量子力学计算与分子动力学模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25373v1",
+      "title": "Hessian-informed machine learning interatomic potential towards bridging theory and experiments",
+      "abstract": "Local curvature of potential energy surfaces is critical for predicting certain experimental observables of molecules and materials from first principles, yet it remains far beyond reach for complex systems. In this work, we introduce a Hessian-informed Machine Learning Interatomic Potential (Hi-MLIP) that captures such curvature reliably, thereby enabling accurate analysis of associated thermodynamic and kinetic phenomena. To make Hessian supervision practically viable, we develop a highly efficient training protocol, termed Hessian INformed Training (HINT), achieving two to four orders of magnitude reduction for the requirement of expensive Hessian labels. HINT integrates critical techniques, including Hessian pre-training, configuration sampling, curriculum learning and stochastic projection Hessian loss. Enabled by HINT, Hi-MLIP significantly improves transition-state search and brings Gibbs free-energy predictions close to chemical accuracy especially in data-scarce regimes. Our framework also enables accurate treatment of strongly anharmonic hydrides, reproducing phonon renormalization and superconducting critical temperatures in close agreement with experiment while bypassing the computational bottleneck of anharmonic calculations. These results establish a practical route to enhancing curvature awareness of machine learning interatomic potentials, bridging simulation and experimental observables across a wide range of systems.",
+      "authors": [
+        "Bangchen Yin",
+        "Jian Ouyang",
+        "Zhen Fan",
+        "Kailai Lin",
+        "Hanshi Hu",
+        "Dingshun Lv",
+        "Weiluo Ren",
+        "Hai Xiao",
+        "Ji Chen",
+        "Changsu Cao"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-03-26T12:23:49+00:00",
+      "link": "https://arxiv.org/pdf/2603.25373v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning interatomic potentials for kinetic phenomena",
+      "llm_evidence_cn": "用于动力学现象的机器学习原子间势能",
+      "llm_evidence": "用于动力学现象的机器学习原子间势能",
+      "canonical_evidence": "用于动力学现象的机器学习原子间势能",
+      "llm_tldr_en": "Introduces Hi-MLIP to capture potential energy surface curvature for accurate thermodynamic and kinetic analysis.",
+      "llm_tldr_cn": "引入Hi-MLIP捕捉势能面曲率，从而实现准确的热力学和动力学分析。",
+      "llm_tldr": "引入Hi-MLIP捕捉势能面曲率，从而实现准确的热力学和动力学分析。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

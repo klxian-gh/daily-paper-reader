@@ -1,0 +1,37 @@
+{
+  "label": "2026-03-29",
+  "date": "2026-03-29",
+  "generated_at": "2026-03-29T20:26:42",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202603/29/2603.24827v1-permeation-of-hydrogen-across-graphdiyne-molecular-dynamics-vs-quantum-simulations-and-role-of-membrane-motion",
+      "section": "quick",
+      "title_en": "Permeation of hydrogen across graphdiyne: molecular dynamics vs. quantum simulations and role of membrane motion",
+      "authors": "Mateo Rodríguez, José Campos-Martínez, Marta I. Hernández",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24827v1",
+      "score": "6.0",
+      "evidence": "分子动力学与量子模拟的比较",
+      "tldr": "本研究通过量子力学计算与分子动力学（MD）模拟，探讨了氢气分子穿过石墨炔（GDY）膜的渗透过程。研究对比了量子效应在轻分子渗透中的作用，发现虽然量子效应在250-350K下显著，但MD模拟能较好反映温度依赖性。此外，研究揭示了膜的热运动对降低渗透势垒、提高渗透率的关键作用，为精确模拟气体分离提供了理论指导。",
+      "tags": "query:qmmm",
+      "abstract_en": "Previous research based on electronic structure calculations and molecular dynamics (MD) simulations have demonstrated that graphdiyne (GDY) is a very suitable two-dimensional membrane for the separation of small molecules in a gas mixture of different species. However, quantum effects may play a role in the dynamics of these permeation processes when light molecules are the ones involved in the crossing of the GDY subnanometric pores. In this work we report rigorous quantum-mechanical calculations together with equivalent MD simulations of the transport of H2 molecules through a static GDY membrane, as a case study for the validity of the application to these problems of classical dynamics. The force fields employed are based on an improved Lennard-Jones formulation, with parameters optimized by means of accurate ab initio calculations. It is found that, although quantum effects are still significant at the temperatures of interest (between 250 and 350 K), MD simulations are able to reasonably reproduce the dependence of the quantum permeances with the temperature. Moreover, MD permeances computed with quantum corrections through Feynman-Hibbs effective potentials provide a lower bound to quantum permeances, while the pure classical counterpart gives an upper bound, thus leading to a well delimited range of confidence of the permeation results. Furthermore, within MD simulations it is possible to incorporate the thermal motion of the GDY layer and in this situation it is observed an enhancement of the permeances with respect to the fixed membrane case, due to a significant reduction of the permeation barriers when the GDY atoms are allowed to vibrate. It seems apparent therefore, that modeling the membrane motion is crucial to provide reliable simulations of the gas transport features.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/29/2603.25373v1-hessian-informed-machine-learning-interatomic-potential-towards-bridging-theory-and-experiments",
+      "section": "quick",
+      "title_en": "Hessian-informed machine learning interatomic potential towards bridging theory and experiments",
+      "authors": "Bangchen Yin, Jian Ouyang, Zhen Fan, Kailai Lin, Hanshi Hu, Dingshun Lv, Weiluo Ren, Hai Xiao, Ji Chen, Changsu Cao",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25373v1",
+      "score": "6.0",
+      "evidence": "用于动力学现象的机器学习原子间势能",
+      "tldr": "本研究针对复杂系统势能面曲率计算难的问题，提出了Hessian信息感知的机器学习原子间势（Hi-MLIP）及其高效训练协议HINT。通过集成随机投影损失和课程学习等技术，HINT在减少两到四个数量级Hessian标签需求的同时，实现了对热力学和动力学现象的可靠捕捉。该方法显著提升了过渡态搜索和自由能预测的精度，并成功应用于强非谐性氢化物的超导特性模拟，为连接第一性原理理论与实验观测提供了高效实用的路径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Local curvature of potential energy surfaces is critical for predicting certain experimental observables of molecules and materials from first principles, yet it remains far beyond reach for complex systems. In this work, we introduce a Hessian-informed Machine Learning Interatomic Potential (Hi-MLIP) that captures such curvature reliably, thereby enabling accurate analysis of associated thermodynamic and kinetic phenomena. To make Hessian supervision practically viable, we develop a highly efficient training protocol, termed Hessian INformed Training (HINT), achieving two to four orders of magnitude reduction for the requirement of expensive Hessian labels. HINT integrates critical techniques, including Hessian pre-training, configuration sampling, curriculum learning and stochastic projection Hessian loss. Enabled by HINT, Hi-MLIP significantly improves transition-state search and brings Gibbs free-energy predictions close to chemical accuracy especially in data-scarce regimes. Our framework also enables accurate treatment of strongly anharmonic hydrides, reproducing phonon renormalization and superconducting critical temperatures in close agreement with experiment while bypassing the computational bottleneck of anharmonic calculations. These results establish a practical route to enhancing curvature awareness of machine learning interatomic potentials, bridging simulation and experimental observables across a wide range of systems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
