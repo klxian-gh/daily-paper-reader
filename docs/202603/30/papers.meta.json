@@ -1,0 +1,37 @@
+{
+  "label": "2026-03-30",
+  "date": "2026-03-30",
+  "generated_at": "2026-03-30T21:28:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202603/30/2603.25980v1-a-priori-sampling-of-transition-states-with-guided-diffusion",
+      "section": "deep",
+      "title_en": "A Priori Sampling of Transition States with Guided Diffusion",
+      "authors": "Hyukjun Lim, Soojung Yang, Lucas Pinède, Miguel Steiner, Yuanqi Du, Rafael Gómez-Bombarelli",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25980v1",
+      "score": "8.0",
+      "evidence": "采样过渡态以研究动力学和机理",
+      "tldr": "过渡态是决定化学反应动力学的关键，但因路径复杂且依赖启发式假设，其搜索极具挑战。本文提出 ASTRA 框架，通过在已知亚稳态配置上训练扩散模型，将过渡态搜索转化为生成模型的推理问题。ASTRA 利用引导扩散定位亚稳态间的等密度面，并结合得分对齐上升（SAA）算法与物理力，实现对一阶过渡态的精确采样。该方法无需初始路径猜测，能有效发现多种反应路径，适用于生物分子和化学反应等复杂系统。",
+      "tags": "query:qmmm",
+      "abstract_en": "Transition states, the first-order saddle points on the potential energy surfaces, govern the kinetics and mechanisms of chemical reactions and conformational changes. Locating them is challenging because transition pathways are topologically complex and can proceed via an ensemble of diverse routes. Existing methods address these challenges by introducing heuristic assumptions about the pathway or reaction coordinates, which limits their applicability when a good initial guess is unavailable or when the guess precludes alternative, potentially relevant pathways. We propose to bypass such heuristic limitations by introducing ASTRA, A Priori Sampling of TRAnsition States with Guided Diffusion, which reframes the transition state search as an inference-time scaling problem for generative models. ASTRA trains a score-based diffusion model on configurations from known metastable states. Then, ASTRA guides inference toward the isodensity surface separating the basins of metastable states via a principled composition of conditional scores. A Score-Aligned Ascent (SAA) process then approximates a reaction coordinate from the difference between conditioned scores and combines it with physical forces to drive convergence onto first-order transition states. Validated on benchmarks from 2D potentials to biomolecular conformational changes and chemical reaction, ASTRA locates transition states with high precision and discovers multiple reaction pathways, enabling mechanistic studies of complex molecular systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.26411v1-coupling-quantum-mechanical-modeling-and-molecular-dynamics-on-heterogeneous-supercomputers-for-studying-distal-mutation-effects-on-drug-binding-in-hiv-1",
+      "section": "deep",
+      "title_en": "Coupling Quantum Mechanical Modeling and Molecular Dynamics on Heterogeneous Supercomputers for Studying Distal Mutation Effects on Drug Binding in HIV-1",
+      "authors": "William Dawson, Louis Beal, Marco Zaccaria, Luigi Genovese",
+      "date": "2026-03-27",
+      "pdf": "https://arxiv.org/pdf/2603.26411v1",
+      "score": "8.0",
+      "evidence": "结合分子动力学与高通量量子力学分析的耦合模拟工作流",
+      "tldr": "本研究针对HIV-1蛋白酶中远端突变影响药物结合的难题，提出了一种结合长时程分子动力学（MD）与高通量量子力学（QM）分析的耦合模拟工作流。该工作流利用GPU加速MD生成构象系综，并在异构超级计算机上并行执行线性缩放密度泛函理论（DFT）计算。通过分析多突变变体对达芦那韦的耐药性，揭示了电子结构特征在远端突变效应中的关键作用，为设计抗耐药性抑制剂提供了可扩展的计算策略。",
+      "tags": "query:qmmm",
+      "abstract_en": "Predicting how protein mutations affect drug binding remains a major challenge, particularly when the mutations are distal from the binding site. In this study, we introduce a coupled simulation workflow that combines long-time-scale molecular dynamics (MD) with high-throughput quantum mechanical (QM) analysis to reveal the electronic structure signatures of mutation induced drug resistance in the HIV-1 protease. Our workflow leverages GPU-accelerated MD to generate conformational ensembles, and performs in-operando linear-scaling density functional theory (DFT) calculations on selected frames parallelized on a coupled partition of CPU nodes. This design enables efficient, massively parallel quantum analysis of protein-ligand complexes at atomic resolution. Using this approach, we investigate resistance to the antiviral Darunavir in a multi-mutant HIV-1 protease variant. By mapping the network of electronic interactions across the binding interface, our results highlight the critical role of conformational sampling and quantum insight in understanding distal mutation effects, and demonstrate a scalable computational strategy for studying complex biophysical mechanisms of drug resistance. We argue that such kind of analysis may pave the way for designing inhibitors that maintain binding stability against systemic, mutation-induced destabilization.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,634 @@
+Title: A Priori Sampling of Transition States with Guided Diffusion
+
+URL Source: https://arxiv.org/pdf/2603.25980v1
+
+Published Time: Mon, 30 Mar 2026 00:26:25 GMT
+
+Number of Pages: 47
+
+Markdown Content:
+# A Priori Sampling of Transition States with Guided Diffusion 
+
+# Hyukjun Lim 1†, Soojung Yang 2* †, Lucas Pinède 3†, Miguel Steiner 4,Yuanqi Du 5, Rafael Gómez-Bombarelli 4* 
+
+> 1
+
+Department of Materials Science and Engineering, Seoul National University, 1 Gwanak-ro, Gwanak-gu, Seoul, 08826, Republic of Korea. 
+
+> 2
+
+Computational and Systems Biology, MIT, 77 Massachusetts Avenue, Cambridge, 02139, Massachusetts, USA. 
+
+> 3
+
+Chimie ParisTech, PSL University, 11 rue Pierre et Marie Curie, Paris, 75005, France. 
+
+> 4
+
+Department of Materials Science and Engineering, MIT, 77 Massachusetts Avenue, Cambridge, 02139, Massachusetts, USA. 
+
+> 5
+
+Department of Computer Science, Cornell University, 127 Hoy Road, Ithaca, 14850, NY, USA. *Corresponding author(s). E-mail(s): soojungy@mit.edu; rafagb@mit.edu; Contributing authors: hyukjunlim@snu.ac.kr; lucas.pinede@etu.chimieparistech.psl.eu; steinmig@mit.edu; yd392@cornell.edu; 
+
+> †
+
+These authors contributed equally to this work. 
+
+Abstract 
+
+Transition states, the first-order saddle points on the potential energy surfaces, govern the kinetics and mechanisms of chemical reactions and conformational changes. Locating them is challenging because transition pathways are topologically complex and can proceed via an ensemble of diverse routes. Existing methods address these challenges by introducing heuristic assumptions about the pathway or reaction coordinates, which limits their applicability when a good initial guess is unavailable or when the guess precludes alternative, potentially relevant pathways. We propose to bypass such heuristic limitations by introducing ASTRA, A Priori Sampling of TRA nsition States with Guided Diffusion, which reframes the transition state search as an inference-time scaling problem for generative models. ASTRA trains a score-based diffusion model on configura-tions from known metastable states. Then, ASTRA guides inference toward the isodensity surface separating the basins of metastable states via a principled composition of conditional scores. A Score-Aligned Ascent (SAA) process then approximates a reaction coordinate from the differ-ence between conditioned scores and combines it with physical forces to drive convergence onto first-order transition states. Validated on benchmarks from 2D potentials to biomolecular confor-mational changes and chemical reaction, ASTRA locates transition states with high precision and discovers multiple reaction pathways, enabling mechanistic studies of complex molecular systems. 
+
+Keywords: Transition State Search, Score-Based Diffusion Models, Guided Diffusion, Computational Chemistry 
+
+1
+
+> arXiv:2603.25980v1 [physics.chem-ph] 26 Mar 2026
+
+# 1 Introduction 
+
+Understanding the dynamics of molecular systems, from chemical reactions to protein folding, requires characterizing their transition states (TSs) [1, 2]. Defined as first-order saddle points on the poten-tial energy surface (PES), TSs represent the highest energy configurations along a minimum energy path and act as kinetic bottlenecks that determine reaction rates and mechanisms. Despite their central importance, locating TSs remains notoriously difficult: they are too short-lived for atomistic experimental characterization, and too rarely visited for unbiased molecular dynamics simulation [3]. Various enhanced sampling techniques have therefore been developed to circumvent these timescale limitations [4–7], but their efficacy relies on defining collective variables (CVs) that accurately describe the relevant slow degrees of freedom . Identifying appropriate CVs is challenging when the transi-tion mechanism is unknown; requiring iterative refinement from an initial guess that can become computationally expensive. Time-independent TS optimization (TSO) methods offer an alternative by finding individual TS structures and describing a series of transformations within the framework of TS theory [1, 2], though their focus on individual structures initially limited their application to systems with limited con-formational flexibility. Over the past decade, these methods have been increasingly automated and scaled up to model complex reaction networks across diverse chemical systems [8–13]. However, TSO methods remain computationally intensive, and require chemically informed initial guesses that are difficult to generalize across chemical systems [14]. The reliance of both enhanced sampling MD and TSO methods on heuristics makes the TS search tedious and difficult to scale to complex systems. In recent years, data-driven strategies have aimed to accelerate MD and TSO approaches by learn-ing CVs automatically [15–22], but the transferability of learned manifolds remains limited for systems outside the training distribution – a limitation shared across data-driven approaches. A prominent example is the committor function — the probability of reaching the product state before the reactant from a given configuration — which can be learned from transition path data via maximum-likelihood methods [23–25], or from equilibrium and short-trajectory MD data via variational [26, 27] and self-consistency formulations [28–30]. In either case, success requires either sufficient transition path data or substantial computational investment in iterative sampling [31–34] and active learning [35, 36], and the need for iterative enhanced sampling to cover the transition region persists regardless. Generative ML models offer another alternative: conditional models sample TSs given the reactant and product states [37–40], while unconditional models target the equilibrium distribution [41–44] and require post-hoc identification of TSs. Both remain limited by their training data distribution. Recent works have partially addressed this by using geometric optimization and energy evaluations during training to find transition paths and extract TSs without a pre-curated TS dataset [45, 46] or by lever-aging MD-derived metrics [47] and the Onsager–Machlup functional with a force field approximated from a generative model trained on equilibrium distribution to find transition paths [48]. Neverthe-less, these approaches still rely on either accurately learning the PES near the TS or constructing mappings to pre-computed TS distributions [48, 49], limiting their utility to underexplored systems. To go beyond sampling the learned distribution, inference-time control in diffusion models offers a promising avenue for steering generative processes toward desired regions of chemical and conforma-tional space. Steering the sampling of generative models based on objectives, constraints, or rewards has been an active area of research, spanning earlier approaches such as classifier-free guidance [50] to reward-titled, annealed, and equal-density distribution sampling [51–53]. However, steered sampling outside the training PES distribution have not been extensively explored. Recent attempts to inte-grate enhanced sampling with generative models remained limited by poor transferability to unseen systems or reliance on predefined CVs [54]. Given that diffusion models can learn to sample diverse states and that atomistic simulations provide ground truth energetics, combining them offer a natural framework for TS ensemble generation with low data requirements. We introduce ASTRA ( A Priori Sampling of TRA nsition States with Guided Diffusion), a system-independent workflow to locate and optimize transition states of arbitrary molecular systems without iterative enhanced sampling, heuristics, or TS training data (see Figure 1). Our approach combines recent advances in generative ML with principles from computational chemistry. The central idea is that a useful TS ensemble guess can be inferred from the learned probability distributions of the sur-rounding metastable states. ASTRA therefore employs a conditionally trained score-based diffusion model [50, 55] that learns the data manifold of reactant and product basins from short MD trajecto-ries. At inference, the reverse diffusion process is guided to sample configurations on the isodensity surface where the probability of belonging to either state is equal, via a principled composition of 2conditional scores [52] – which we term Score-Based Interpolation (SBI) . These samples are then refined by force-based updates on the PES, ascending along the reaction coordinate and descending along orthogonal directions, leveraging our second key insight that the reaction coordinate can be effectively approximated from the conditional diffusion scores. This process, which we call Score-Aligned Ascent (SAA) , alleviates the need for the diffusion model to learn the PES perfectly. Crucially, ASTRA operates entirely a priori , requiring only samples from the reactant and product states with no knowledge of the transition region, yielding high-quality TS guesses ideally suited for rapid convergence with single-ended optimization methods. ASTRA is thus uniquely positioned to replace conventional double-ended TS guess methods in standard hierarchical search protocols [56–59], providing a universal and a priori approach to saddle point location. Our contributions are threefold: (1) We propose a workflow for direct TS sampling that leverages guided diffusion, eliminating the need for path-finding algorithms or prior TS data. (2) We introduce the combination of Score-Based Interpolation and Score-Aligned Ascent as a principled mechanism for guiding a diffusion process to sample first-order saddle points. (3) We show that ASTRA successfully identifies known transition states and competing pathways in systems ranging from two-dimensional potentials to high-dimensional chemical systems. 
+
+Fig. 1 : Overview of ASTRA . The method consists of three stages: (1) training a conditional gener-ative model, (2) sampling from an isodensity surface, and (3) inference-time guidance that combines a reaction coordinate approximated from score differences of the two conditional models θA, θ B
+
+(R = SAθ − SBθ ) with physical forces to rapidly sample transition states defined as first-order saddle points. 
+
+# 2 Results 
+
+To assess the performance of the ASTRA algorithm rigorously, we established a unified evaluation framework consistent across all test systems. This is designed to probe the quality of the TS ensembles generated by our method. For each system, a score-based diffusion model is first trained on configura-tions, from known metastable states, obtained from short MD trajectories. The ASTRA algorithm is then employed to generate a candidate TS ensemble. Detailed experimental parameters are provided in Appendix C, and the results of all ablation studies are presented in Appendix H.1. For the 2D analytical potential energy surfaces, the ASTRA-generated samples are directly com-pared to the known transition states using the L2 distance metric. In the higher-dimensional chemical systems, we quantify the quality of the samples with committor values. The committor function q(x)
+
+defines the probability that a trajectory initiated from a given state x will reach the designated prod-uct state before returning to the reactant state. By definition, the true TS ensemble corresponds to the q(x) = 0 .5 isosurface. We compute this metric using a pretrained ML committor model or MD-based evaluations when a force field is available (i.e. for all-atoms systems). In the latter case, we approximate committor values by initiating multiple replicas of Langevin dynamics simulations from each structure with random initial velocities sampled from the Maxwell–Boltzmann distribution. 3Additionally, for chemical systems with a force field available, we assess the quality of the TS guesses provided by the different approaches with the convergence of the Dimer algorithm, a single-ended TS optimization method. This setup mirrors standard practice for obtaining an optimized saddle point structure, where double-ended methods, such as Nudged Elastic Band (NEB), typically provide a robust initial guess for the convergence of a subsequent single-ended TS optimization method. In that context, we evaluate ASTRA specifically as a TS guess generation method. 
+
+# 2.1 Analytical Potentials   
+
+> (a) Double well potential. (b) Müller-Brown potential. (c) Double path potential.
+
+Fig. 2 : Our method discovers transition state regions with high precision. It finds a transition state for the (a) double well potential, and multiple transition states for the (b) Müller-Brown potential and (c) double path potential. On a one-dimensional double well potential, we first demonstrate the fundamental capability of our method to sample TSs over a simple energy barrier. The model is trained on data from two distinct energy wells, designated as State A and State B. As illustrated in Figure 2a, our algorithm identifies the TS by generating samples densely clustered at the peak of the potential barrier separating the two minima. To further assess our method’s performance, we employ the Müller-Brown potential [60], which is a common two-dimensional benchmark for evaluating TS search algorithms. Its energy surface features three local minima connected by two first-order saddle points, offering a controlled environ-ment to assess a method’s ability to identify non-linear pathways and distinct saddle points. For our analysis, we assigned the two lowest-energy minima as the initial and final states (State A and State B in Figure 2b). The ASTRA algorithm successfully locates configurations clustering around both accessible transition states connecting A and B. Ablation studies shown in Figure H6 indicate that this ability to discover multiple, topologically distinct saddle points is primarily driven by the Score-Aligned Ascent (SAA) component of our method. A critical test for advanced sampling methods is the ability to identify multiple, topologically distinct pathways for a given transition. We evaluate this specific capability on a two-dimensional potential engineered to include two competing reaction channels connecting the same reactant and product states. As shown in Figure 2c, the ASTRA algorithm successfully populates selectively both TS regions corresponding to the two competing pathways. This simultaneous discovery of distinct reac-tion channels, achieved without any explicit path-based guidance, demonstrates a key advantage of our method. Whereas traditional algorithms are designed to converge to a single pathway, our approach can explore the entire TS manifold, thereby providing mechanistic insights into complex energy land-scapes that can be easily overlooked with conventional techniques without extensive sampling, and avoids being trapped in local maxima that are irrelevant for the studied chemical process. 
+
+# 2.2 Conformational Isomerization in Common Protein Model Systems 
+
+Having demonstrated proficiency on low-dimensional analytical potentials, we tested our algorithm’s performance on molecular systems. The conformational dynamics of alanine dipeptide, a 22-atom molecular system, provide a widely adopted model and benchmark for studying conformational ensem-bles of biomolecules. The dynamics are conventionally analyzed through a Ramachandran plot, defined 4(a) Alanine dipeptide. (b) Chignolin. 
+
+Fig. 3 : Application of our method to chemical systems. (a) For the alanine dipeptide, the generated samples (circles) localize the transition region between two states. (b) For chignolin, the free energy landscape is projected onto the two slowest time-independent components learned from a converged simulation [3]. The background densities in both plots correspond to the training data distribution where distinct colors indicate the defined State A and State B. The color scale for the alanine dipeptide plot represents the MD-based committor value while the scale for chignolin indicates the machine-learned committor value [36]. by the dihedral angles ϕ and ψ. We focus on the isomerization between the two most populated con-formational states, the C5 and C7ax conformations, which represent distinct local minima separated by free energy barriers [61]. We highlight the absence of model knowledge in the transition region in Figure 3a a), showing the distribution of the ASTRA-generated structures overlaid on the distribution of the training set. We observe that they are localized precisely within three narrow regions of the Ramachandran plot, which correspond to the known transition states for the C5-C7ax interconversion. This is validated by committor analysis, where short Langevin Dynamics simulations initiated from these configurations yield a distribution of committor values sharply peaked at 0.5 (Figure 4) for all transition states. This highlights the key ability of ASTRA to identify distinct and structurally diverse pathways for a transition in a chemical system, without any input or prior knowledge of the mechanisms at play. Additionally, we assess the quality of our samples with a single-ended TS optimization procedure, which typically requires a high-quality initial guess, geometrically close to the saddle point. The objective is to evaluate how similar the ASTRA-generated samples are to the reference structures obtained by an optimization method. Specifically, we report the convergence rate, the root mean square deviation (RMSD) of atomic positions, and the energy differences between the initial and optimized structures. As illustrated in Figure 4, and in greater detail in Table H2 and Table H3, we find that our method is able to provide a majority of samples that converge to a saddle point within a few optimization steps. Additionally, final optimized structures remain close to the original ASTRA samples, as evidenced by the low RMSD values and small changes in energy barriers. The validity of the transition state guesses generated by ASTRA is further confirmed by comparing them to structures obtained by NEB, a reference method for finding minimum energy paths. We show in Figure 4 that the configurations optimized by NEB are almost indistinguishable from the ones generated by our algorithm. Additional details and metrics are provided in Table H4. We also refer to Appendix G for complete analysis and details of the method and the key components of its success in this system. We extend our analysis to chignolin, a 10-residue fast-folding protein with multiple competing folding pathways, and transition timescales spanning microseconds. For this task, we initialized our score-based diffusion model from the publicly available checkpoint of Ref. 62, which was pretrained on coarse grained chignolin trajectories. We then fine-tuned the model using our training protocol to enable Classifier-Free Guidance on the MD trajectory dataset by D. E. Shaw Research [3]. To prevent direct supervision on the transition region during fine-tuning, all frames corresponding to the 5Fig. 4 : Detailed performance of ASTRA on alanine dipeptide. a) The ASTRA samples covering all three TSs are compared to the Nudged Elastic Band reference method. One ASTRA sample is selected randomly for each TS for readability. The background shows the training data distribution and col-ors represent the two defined states for the classifier free guidance training. The three-dimensional structures are overlayed for each identified TS. b) shows the distribution of committor value for the stable ASTRA samples peaked around 0.5. c-e) characterize how close ASTRA samples are from their Dimer-optimized counterpart. c) shows the distribution of number of iterations necessary to converge Dimer from the stable ASTRA samples. d) displays the Root Mean Square Deviation (RMSD) of ASTRA samples after Dimer optimization compared to before, while e) shows that difference in terms of the energy of the structures. We indicate the number of stable ASTRA samples, compared to the total number of structures drawn from our algorithm for that analysis, alongside the Dimer conver-gence rate from ASTRA stable samples. Stable ASTRA samples correspond to structures sampled by ASTRA for which running 2ps MD from is stable. transition region were removed from the fine-tuning set. This region was identified using a pre-trained, machine learning-based committor model [36], where frames with ML committor values q in the range of 0.0001 ≤ q ≤ 0.9999 were excluded. The resulting configurations generated by our method were then projected onto a two-dimensional space defined by time-lagged independent component analysis (TICA) for visualization [63, 64]. The generated configurations are concentrated along the q ≈ 0.5
+
+isosurface, providing strong quantitative evidence that our method concentrates probability mass on the TS ensemble (Figures 3b and H12). Furthermore, these samples are not concentrated on one spot but are spread across the TICA space within the transition region. Structural analysis reveals that the generated samples can be classified into the two known competing folding pathways for chignolin, commonly referred to as TS down and TS up (Figure 5). This confirms our method’s ability to accurately describe transition state diversity in folding mechanisms. 
+
+# 2.3 Chemical Reaction 
+
+Beyond conformational sampling of biomolecules, TS are of major importance in the study of chemical reaction mechanisms. However, learning high energy structures governed by covalent bond formation and cleavage without prior data of such structures has been a major challenge. We test our algorithm on a first-generation donor-acceptor Stenhouse adduct, which has already been studied in the context of learning collective variables [36]. The molecule consists of 42 atoms. It transitions from a linear, conjugated (open) state to a cyclic (closed) state through a multi-step reaction pathway that includes 
+
+Z-E isomerization, conformational rotation, and a thermally driven 4 π-electrocyclization [65]. We focus on the TS sampling of the 4 π-electrocyclization that involves a concerted formation of two and breaking of one covalent bond in two distinct regions of the molecule, demonstrating if our algorithm can learn to interpolate the reactant and product state for multiple bonds at once. Analogous to alanine dipeptide, we constructed a training dataset by sampling configurations from the metastable transient isomer and stable enol closed isomer with conventional MD simulations. Both simulations were not transitory and we further ensured that our dataset excludes any state close the 6(a) ASTRA-generated samples. (b) References. 
+
+Fig. 5: Visualization of chignolin transition state mechanisms. Representative structures from ASTRA-sampled TS down and TS up (left ) ensembles are overlaid with transparent tubes on the refer-ence conformations from Ref. 36 ( right ). The structural agreement validates our method’s ability to resolve distinct folding pathways. transition region with a pre-trained ML committor model [36] that predicted all values to be either below 0.0001 or above 0.9999. 
+
+Fig. 6 : Lewis structure representation of the chemical reaction and three dimensional reactant struc-ture with the two coordinates highlighted that span the plot. The two chosen degrees of freedom separate the reactant and product state well, but were only used for visualization and not included in any part of our algorithm. The MD simulation data points are plotted as densities. The structures generated by the ASTRA algorithm and the structures optimized with the Dimer algorithm and con-verged to a true transition state are shown as differently shaped points that are colored based on the committor value predicted by the pretrained model. The ASTRA algorithm at inference then consistently generated structures within the TS region, which are shown in Figure 6, indicated by committor values predicted by the pretrained ML model different from 0 or 1. However, the ML committor values do not peak at 0.5 for both the structures generated by ASTRA or structures optimized with the Dimer algorithm that are confirmed to be TS structures with a single imaginary normal mode. A possible reason is that the ML committor model 7was not trained on optimized TS structures, but on frames of MD simulations. Hence, we do not rely on the committor values in this analysis when comparing converged TS structures obtained with different methods and instead focus our analysis on the coverage of the various possible TS conformers and compare this coverage to other single- and double-ended TS search algorithms. Various TS conformers are possible for this reaction due to i) the different out-of-plane positions of the geminal methyl groups as shown in a previous study [36], ii) the dihedral angle of the 6-membered ring with the formed 5-membered ring, and iii) the orientation of the ethyl groups of the amine group. Generating various TS structures from baseline workflows and ASTRA, reveals a clear clustering of data points on the two-dimensional subspace, which is depicted in Figure D3. The different clusters reveal a large structural diversity of potential TS conformers that is successfully covered by the ASTRA samples and required a multi-level workflow of conformer generation and TS guess generation with existing approaches. 
+
+# 3 Discussion 
+
+In this work, we introduce ASTRA, a workflow that reconceptualizes TS sampling as an inference-time guidance task of generative models by leveraging a pretrained score-based model conditioned on known metastable states and physical forces. Our method composes learned distributions with Score-Based Interpolation (SBI) to target directly the dividing surface of equal density, while the Score-Aligned Ascent (SAA) mechanism steers the sampling process towards transition states. This approach successfully locates the TS ensemble regions with high precision and discovers competing reaction pathways in chemical systems, as demonstrated on alanine dipeptide, chignolin, and an electrocyclical reaction, without any prior knowledge of the underlying transition mechanisms. The a priori sampling of transition states is primarily enabled by the synergetic use of SBI and SAA. The implicit probabilistic definition of the transition state region by SBI provides a clear advantage over classical interpolation methods, such as linear or geodesic interpolation, that require carefully selected starting structures to ensure diversity. Yet, in the alanine dipeptide benchmark only a guidance scale of 1.0 with Isodensity Interpolation enables the sampling of all three transition states, because a larger guidance scale tends to collapse the samples in high-density modes. Enhancing the diversity of samples on the PES during SBI could further improve the robustness, particularly in systems exhibiting complex, multi-pathway reaction dynamics. To guarantee convergence, traditional minimum energy path algorithms such as the NEB require both a good initial mechanistic path and high-quality structures. For example, NEB fails to converge a linearly interpolated path between the two states. In contrast, SAA leverages the difference of scores, emulating a reaction coordinate that connects the two basins at a low latent level. As such, the optimization is less bound by the physicality of the guess structures as we map them back to the data manifold with subsequent denoising. This robustness enables SAA to converge the two main TS in the alanine dipeptide system, even when initialized from a linear interpolation in Cartesian space. We refer to Appendix G for an extended analysis and key methodological details of the method. While ASTRA is not yet able to substitute all existing TS exploration workflows with a drop-in replacement, we show that (i) diffusion models can infer reliable TS structures from adjacent states and (ii) our inference-time guidance with SBI and SAA enables massive shortcuts in the generation of out-of-distribution samples. The concurrent work by Tang et al. [66] learns the committor function of a given system by launching simulations from structures generated with a diffusion model that was also trained only on metastable states at first. They do not modify the reverse-diffusion process and hence require a computationally intensive iterative approach to converge on a reliable model of the committor function. In contrast, ASTRA acts as a “single-shot” generator. While it remains to be seen if one-shot generation can fully replace iterative enhanced sampling in large biological systems, it is straightforward to integrate our ASTRA approach into existing iterative approaches as a powerful ini-tialization strategy. This could potentially eliminate the reliance on heuristic collective variables and reduce the number of iterations needed to uncover complex reaction mechanisms. Contrary, in the application of ASTRA as a TS guess generation model in time-independent TS optimization tasks, our generative workflow is computationally more expensive than existing traditional computational chemistry workflows because of the system-focused training data generation and training overhead. However, existing methods can often become trapped in single pathways due to heuristic initialization strategies without massive scale-up and automation of the TS search, while ASTRA enables direct 8broad and diverse TS guess generation free from heuristic assumptions. This diversity is key in confor-mational flexible systems, where ASTRA’s computational overhead could be offset by the increased sampling efficiency at inference. A key advantage of our approach is its compatibility with increasingly powerful pretrained genera-tive models for molecular conformational sampling. For instance, models such as BioEmu [41] generate protein ensembles consistent with the Boltzmann distribution and are therefore biased toward low-energy states, with potentially limited accuracy near transition regions. When combined with our inference-time, force-guided scaling strategy, however, such models can still serve as strong priors. Starting from these pretrained priors rather than from scratch further improves the data efficiency of the search. Future work will extend ASTRA toward a general-purpose inference-time guidance framework for rare event discovery across diverse chemical systems. Although this study employs classical force fields and semi-empirical quantum chemistry methods, the framework easily generalizes to employing higher-fidelity force predictions such as machine learning interatomic potentials (MLIPs). Beyond transition state discovery based on saddle point definitions, ASTRA can be adapted to explore rare event regions more broadly, for example through uncertainty-aware guidance [22, 67] that targets configurations with high predictive uncertainty under the generative model or MLIPs. Such a strategy can be used for autonomous data acquisition and self-refinement steps in the active learning framework to improve the models. More broadly, the principle of SBI and SAA in generative modeling may extend beyond chemistry and offer a foundation for rare-event discovery in complex dynamical systems. 
+
+# 4 Methods 
+
+# 4.1 Score-Based Interpolation of Diffusion Models for Initial Guess 
+
+Our objective is to infer the TS, given short MD data of each metastable state. In particular, our aim was to sample the TS from a generative model that learned only the respective distribution of each metastable state, without any knowledge of the TS region and without further training on TS structures. We model the metastable distributions with a single system-specific diffusion model. In particular, following the denoising score matching framework [55], we formulate a mapping between the target data distribution p0(x0) and a simple Gaussian prior pT (xT ) ∼ N (0 , I), through a Stochastic Differential equation: 
+
+dx = f (x, t )dt + g(t)dw, (1) where dw is a Wiener process, f (x, t ) is the drift coefficient, and g(t) is the diffusion coefficient. The reverse process can be written 
+
+dx = [ f (x, τ ) − g(τ )2∇x log pτ (x)] dτ + g(τ )d ¯w, (2) where ¯w is a reverse Wiener process, and the reverse time τ ∈ [T, 0] [55]. The model learns sθ (x, t ) ≈∇xlog pτ (x) so that by initializing the reverse SDE with noise xτ ∼ N (0 , I ) and solving it numerically, we can sample from the data distribution after training. The training is generally self-supervised and requires only nuclear positions. However, we require the diffusion model to additionally be conditioned on each metastable state to sample from the transition region between each state. Hence, we annotate each data point with its metastable state class c and train a denoising score matching model with Classifier-Free Guidance (CFG) [50]. The labeling is trivial as the training data is generated from two separate molecular dynamics simulations for systems without any pre-existing trajectory data. The scores are then parametrized by the CFG-based score sc 
+
+> θ
+
+(x, t ) ≈ ∇ log pt(x|c), given by the extrapolation 
+
+sc 
+
+> θ
+
+(x, t ) = sθ (x, t, ∅) + γ(sθ(x, t, c ) − sθ (x, t, ∅)) , (3) where c is the condition, replaced by a null token ∅ for the unconditional score, and γ is the hyperpa-rameter of the guidance scale that controls the conditioning strength. We trained the diffusion models with the Denoising Diffusion Probabilistic Models[68] (DDPM) framework. Recent methods have proposed various approaches to steer the diffusion sampling process at infer-ence time[69, 70]. We are particularly interested in sampling an intermediate region between two metastable states while producing structures lying on the data manifold. The Superposition of Diffu-sion models [52] (SuperDiff) proposed a principled way to sample the surface of equal density under 9two conditional models denoted A and B, where the equal density surface is sampled by following the reverse SDE while respecting 
+
+d log pAt (x) = d log pBt (x). (4) Our key intuition is that the TS region overlaps with this equal density region of two conditional generative models trained on the respective metastable states MD sampling. We formulate this infer-ence steering following the SuperDiff AND operator. The reverse diffusion process is biased to follow along the target equal probability surface by interpolating between the two conditional scores 
+
+sSBI (x, t ) = sBθ (x, t ) + κ(sAθ (x, t ) − sBθ (x, t )) , (5) where the interpolation weight κ controls the contribution of each state’s score. To obtain the κ that follows the path dictated by equation 4, the change of probability densities can be estimated with an Itô density estimator. One can then obtain the value of κ at each time step by solving a simple system of linear equations. We refer to the original SuperDiff paper for details on the derivation and implementation [52]. We get our initial guesses following the reverse diffusion process of equation 2 with the interpolated score of equation 5. We evaluate this method against Score Averaging (SA) that provides a simpler baseline that directly averages the two conditional scores, which corresponds to setting κ = 0 .5 [71]. 
+
+# 4.2 Score-Aligned Ascent for Saddle Point Search 
+
+TSs are first-order saddle points on a multi-dimensional PES. Locating a TS corresponds to an optimization problem, where the energy needs to be maximized along the given transformation, often referred to as the reaction coordinate r, and minimized in all orthogonal directions. This is achieved by decomposing the negative gradient of the energy with respect to all nuclear coordinates −∇ U (x) into components parallel and perpendicular to the reaction coordinate. The parallel component is inverted to create an ascent force that pushes the system energetically upward along r, while preserving the original components that minimize the energy in all orthogonal directions. This operation yields the ideal ascent force 
+
+F = −∇ U (x) + 2( ∇U (x) · r)r/∥r∥22. (6) The key challenge of this method lies in the definition of r. For example, existing approaches such as the Dimer algorithm [72–76], find local approximations to r by locating the direction of least curvature with gradient calculations of two close-lying configurations on the PES. We detail existing methods reproducing this kind of dynamics in section 4.4.1 that serve as baselines for our approach. We propose to leverage the ability of diffusion models to emulate these dynamics with the Score-Aligned Ascent (SAA). In practice, towards the end of the reverse diffusion process steered with SBI, we pause the denoising and optimize with SAA. We find that, at this low noise level, an approximate reaction coordinate rSAA can be dynamically formulated at each step by taking the difference of the scores conditioned on each state A and B
+
+rSAA = sBθ (x, t ) − sAθ (x, t ). (7) This vector points from one metastable state to the other (see Appendix E) and provides an efficient ascent direction. Then, by calculating the physical force −∇ U (x) that produced the training data, one computes the SAA force 
+
+FSAA = −∇ U (x) + 2( ∇U (x) · rSAA )rSAA /∥rSAA ∥22. (8) There are two main objectives when performing the SAA dynamics at a low latent level. First, because of its sensitivity to small topological changes, the force field must be evaluated on clean structures, i.e. configurations on the data manifold. Therefore, we estimate the denoised data point 
+
+ˆxt for a configuration xt from the posterior mean ˆxt ≡ Ep(x0|xt)[x0] with 
+
+ˆxt = 1
+
+√¯αt
+
+ xt − √1 − ¯αtϵθ(xt, t ) , (9) where we follow the standard DDPM notations and write ˆxt to emphasize the dependency of that estimate on time. However, this estimate deteriorates rapidly as the diffusion timestep increases, 10 particularly for molecular systems. We address this limitation by performing SAA at a low noise level. Moreover, the score difference used as an approximation for the ascent direction is computed at the selected latent level. Therefore, there is a discrepancy between rSAA (xt) and the forces −∇ U (ˆ xt), as these two directions are not computed at the same latent level. To effectively minimize the impact of this structural mismatch in equation 8, we chose a lower noise level for SAA dynamics. A second, equally important reason for pausing the denoising and not operating SAA directly on the data manifold is central to the success of the method. The ascent direction derived from equation 7 can lead to non-physical structures, because the score difference provides no guarantee of movement along the true physical structure manifold. Nonetheless, this direction offers an efficient and meaningful pathway to connect two states, which can subsequently be projected back onto the manifold by denoising to τ = 0 . By performing the dynamics at an intermediate latent level, we can correct such non-physical structures after SAA optimization by completing the denoising reverse process. 
+
+# 4.3 ASTRA 
+
+Summarizing the workflow, we first solve the reverse-time SDE with interpolated score up to a chosen fixed timestep close to the SDE endpoint to ensure both reliable force and score calculations. We then pause the reverse SDE process, and optimize with ˆFSAA = −∇ U (x) + 2( ∇U (x) · rSAA )rSAA /∥rSAA ∥22
+
+to steer the configuration towards a TS. We then resume the reverse SDE sampling, which transfers the sample onto the data manifold and corrects non-physical configurations stemming from the non-physical ascent direction. We refer to Algorithm 1 for the complete details of the method and its key hyperparameters. 
+
+# 4.4 Evaluation and baselines 
+
+Except for coarse-grained chignolin, all baseline and benchmark methods were evaluated with the same classical force field or electronic structure method that was used to generate the dataset and to perform SAA. A common force field reference ensures that the transition states and other reference structures targeted by each algorithm are consistent with the underlying PES, so that observed differences reflect methodological performance rather than differences between potentials. In that regard, we emphasize that the notion of ’true’ TS is relative to the given force field used. 
+
+4.4.1 Transition state characterization 
+
+Our primary metric for assessing the quality of the sampled TS configurations is the evaluation of the committor value q(x). It corresponds to the probability that a trajectory starting from a given structure x will reach one metastable state before reaching another metastable state. Thus, a TS is characterized by q(x) = 0 .5 as a simulation launched from a TS has the same probability of ending in either state. This definition requires us to define the outlines of the metastable states. We define the outlines within a dimensionality-reduced space, based on the observed MD distributions in the training sets that sampled these basins. Then, after sampling 100 structures with our method, we run a 2 ps long MD simulation and filter out all the configurations leading to instability that are labeled as non-physical. From the validated TS structures we then run multiple replicas of a Langevin Dynamics trajectory with velocities initialized randomly from the Maxwell–Boltzmann distribution. The committor value is calculated by counting the number of simulations that reached metastable state A before reaching state B and dividing it by the number of total simulations. To further assess the quality of our TS samples, we demonstrate that established reference TS optimization methods converge rapidly when initialized from these samples. Such methods typically require accurate initial guesses to ensure convergence. Therefore, we carried out short single-ended TS optimizations implemented in SCINE ReaDuct [77, 78]. We report (i) the convergence rate, (ii) the average number of steps required for convergence, (iii) the average energy difference between the ASTRA samples and the final converged structures, and (iv) the average root mean square deviation (RMSD) of nuclear positions between the two. Our TS optimization method of choice in this work is the dimer method [72], a Hessian-free, minimum-mode-following technique that requires only energy gradients and can be initialized from a single configuration. The method represents the search direction using a “dimer” (two nearby images separated by a small displacement) and iterates cycles of (i) dimer rotation to identify the lowest-curvature (minimum) mode based solely on forces, and (ii) configuration translation (climbing) along 11 this mode while simultaneously relaxing all orthogonal degrees of freedom. Iterations continue until the curvature is minimal and the gradient converges to zero. This approach is particularly well suited to large systems where explicit Hessians are impractical, and several improvements, such as shrinking/optimization-based variants, L-BFGS acceleration, and reduced gradient-evaluation sched-ules, have been proposed to enhance convergence and robustness [73–76]. In our implementation, we initialize the dimer direction from a Hessian calculation rather than from a random guess, as supported by SCINE ReaDuct [78]. 
+
+4.4.2 TS sampling baselines 
+
+We benchmarked the quality of our TS guesses against traditional approaches. As a primary baseline, we employed the NEB[79, 80] method, a standard approach for locating transition states and minimum energy paths (MEPs) between known reactant and product states. NEB represents the pathway as a chain of discrete images connected by virtual springs. The springs prevent all images from converging to one of the two minima while the energy of all images is minimized. This “nudging” drives the images towards the MEP, enabling accurate saddle point localization without explicit knowledge of the reaction coordinate. NEB has become widely applied in computational chemistry and materials science for exploring energy barriers and reaction mechanisms. 
+
+Acknowledgements. H.L. acknowledges the Korea Institute for Advancement of Technology (KIAT). This paper was supported by a KIAT grant funded by the Korea Government (Ministry of Education)(P0025681-G02P22450002201-10054408, Semiconductor-Specialized University). M.S. gratefully acknowledges the Mobility fellowship P500PN_225736 from the Swiss National Science Foundation. Y.D. acknowledges the support from Cornell University. The authors acknowledge MIT SuperCloud and Lincoln Laboratory Supercomputing Center for providing (HPC, database, consultation) resources that have contributed to the research results reported within this paper. 
+
+# Appendix A Related Works 
+
+# A.1 Machine Learning for Transition State Search 
+
+Numerous machine learning approaches have been developed to study rare events and in particular transition search. Early works leveraged a dataset of accumulated transition states to train generative models [37] with diffusion models [38, 39] and flow matching [40]. However, to alleviate the require-ment of creating a transition state dataset, later work aimed to leverage geometric optimization and energy evaluations during training to find transition paths and extract transition states from it [45, 46]. Ref. [47] also leveraged the metric induced by local molecular dynamics simulation to learn a gener-alized flow matching model, while Ref. [48] relied on the learned force field from pre-trained diffusion models with the Onsager–Machlup functional to approximate the transition path. Additionally, a large body of literature tackled the committor function estimation problem and esti-mate reaction rates directly. When transition path data are available, maximum-likelihood methods are straightforward to learn the committor function [23–25]. Ref. [26, 27] directly solved the varia-tional formulation of the Kolmogorov backward equation (KBE) with equilibrium data. Ref. [35, 36] proposed active approaches to use the current estimate of committor function to improve sampling of transition state regions when solving the KBE equation. Ref. [28–30] instead considered the Feynman— Kac formulation of the KBE and used self-consistency objectives to match the committor values across the domain and their expected values after time evolution. 
+
+# A.2 Inference-time Control for Diffusion Models 
+
+Diffusion models excel at generating high-quality data, spanning images, texts to molecular structures. Beyond sampling from the learned distribution, they can be guided to generate from modified target distributions that encode design objectives, constraints, or rewards. The early and well-known exam-ples are classifier guidance and classifier-free guidance to sample from conditional distributions [50]. Later on, inference-time control has been extended to compositional, reward-tilted, annealed, equal density distributions and more [51–53]. One popular branch of methods develop upon the heuristics and approximate guidance [81]. Another branch of methods study exact guidance where expensive Monte Carlo (MC) estimations are required [82]. Recently, sequential Monte Carlo methods have become relevant to reweight on path space to reduce the variance of inference-time control [53, 83, 84]. 12 Appendix B Background 
+
+# B.1 Score-Based Diffusion Models 
+
+Given a forward process that transforms a data distribution p0(x0) over a continuous time variable 
+
+t ∈ [0 , T ] into a known prior distribution pT (xT ), typically the standard Normal distribution N (0 , I ),a diffusion model sθ(x, t ) can be trained such that a reverse process transforms samples from the prior distribution to the data distribution [85]. The model can learn the added noise in each time step t [68] or the gradient of the log-probability of the data distribution ∇x log pt(x), the so-called score function [86]. Both training strategies can be related as discretizing the same continuous reverse process described by the stochastic differential equation (SDE) 
+
+dx = [ f (x, τ ) − g(τ )2∇x log pτ (x)] dτ + g(τ )d ¯w, (B1) where f (x, t ) is the drift coefficient, g(t) is the diffusion coefficient, ¯w is a reverse Wiener process, and the reverse time τ ∈ [T, 0] [55]. Once the model sθ(x, t ) is trained, it can be applied as a generative model by initializing the reverse SDE with noise xτ ∼ N (0 , I ) and solving it numerically. 
+
+# B.2 Classifier-Free Guidance 
+
+Classifier-Free Guidance (CFG) [50] is a technique for conditional generation that trains a single diffusion model to handle both conditional and unconditional generation scenarios. The model is trained to predict the score of the data distribution, conditioned on the label c ∈ { C1, C 2, ..., ∅} .During training, the conditioning information is randomly dropped with a given probability pdrop .This technique enables the single model to learn both the conditional score functions, ∇ log pt(x|c),for each label, and the unconditional score function, ∇ log pt(x), over the entire data manifold. During inference, the CFG-based score sc
+
+> θ
+
+(x, t ) is given by interpolation 
+
+sc 
+
+> θ
+
+(x, t ) = sθ(x, t, ∅) + γ(sθ (x, t, c ) − sθ (x, t, ∅)) , (B2) where sθ(x, t, c ) is the conditional score, sθ (x, t, ∅) is the unconditional score, where the condition c
+
+is replaced by a null token ∅, and γ is the guidance scale that controls the strength of conditioning. This approach provides fine-grained control over conditioning strength without requiring separately trained conditional models. 
+
+# B.3 Superposition of Diffusion Models 
+
+The Superposition of Diffusion Models (SuperDiff) [52] provides a principled way to combine the score functions from multiple models, each trained on a different data distribution. Given two score models, sA and sB , trained on distributions pA and pB respectively, a composite score function can be constructed by a weighted average: 
+
+sSBI (x, t ) = sB 
+
+> θ
+
+(x, t ) + κ(sA 
+
+> θ
+
+(x, t ) − sB 
+
+> θ
+
+(x, t )) . (B3) The interpolation factor κ(t) determines the nature of the composition, enabling the generation of samples from distributions that represent logical combinations of the base distributions. For example, setting κ(t) based on the relative likelihoods of a sample under each model can produce samples from the union (OR) of the distributions, while setting κ based on equal likelihoods can produce samples from the intersection (AND). In the context of transition state sampling, we are interested in the latter and a κ(t) that satisfies the equal density: 
+
+d log pA 
+
+> t
+
+(x) = d log pB 
+
+> t
+
+(x) (B4) can be found by solving a set of three linear equations [52]. As a comparison, we also include in our ablations Simple Averaging of the scores to interpolate and steer the diffusion process [71]. 
+
+# B.4 Local mode maximization 
+
+Transition states are first-order saddle points on a multi-dimensional potential energy surface (PES). Localizing a transition state corresponds to an optimization problem, where the energy needs to be 13 maximized along the given transformation and minimized in all orthogonal directions. If the mode of transformation r, commonly referred to as reaction coordinate, is known, a gradient-based optimiza-tion to the transition state can be achieved with a sufficiently close start condition. The optimization is driven by the step ∆x i that is determined by the gradient of the potential energy with respect to nuclear coordinates g(x)
+
+∆x i = −g(x) + 2  g(x)T r r. (B5) However, the definition of r is non-trivial for a given chemical system. Existing approaches, such as the Dimer algorithm [72–76], find local approximations to r by locating the direction of least curvature with gradient calculations for multiple close-lying configurations on the PES. 
+
+# Appendix C Additional Details on Experiments 
+
+# C.1 Double Well Potential 
+
+The double well potential is a simple potential with two distinct states. The analytical formula for this potential energy surface is given by: 
+
+V (x) = 0 .1x4 − x2 + 0 .1x + 1 .0 (C6) 
+
+# C.2 Müller-Brown Potential 
+
+For the Müller-Brown potential, our methodology adheres to the training procedure detailed in Ref. 48. A score-based diffusion model was trained on the ‘tiny’ subset of the provided dataset, which consists of 4,000 samples. The two metastable states, A and B, are defined by the coordinate criteria y < 20 and y > 20, respectively. The analytical surface of this system is defined as: 
+
+V (x, y ) = 
+
+> 4
+
+X
+
+> i=1
+
+Ai exp αi(x − ai)2 + βi(x − ai)( y − bi) + γi(y − bi)2 (C7) with the parameters taken directly from the simulation code: 
+
+A = 10 × barrier × [−1.73 , −0.87 , −1.47 , 0.13] 
+
+α = 10 −2 × [−0.39 , −0.39 , −2.54 , 0.273] 
+
+a = [48 , 32 , 24 , 16] 
+
+β = 10 −2 × [0 , 0, 4.30 , 0.23] 
+
+b = [8 , 16 , 32 , 24] 
+
+γ = 10 −2 × [−3.91 , −3.91 , −2.54 , 0.273] 
+
+where ‘barrier‘ is a scaling factor for the height of the potential barrier, for which we used 1.0. 
+
+# C.3 Double Path Potential 
+
+For the double path potential, the dataset was generated with Langevin Dynamics simulations, fol-lowing the procedure outlined in Ref. 48. A score-based diffusion model was subsequently trained on a curated subset of these simulation data, with 4,000 samples. State A and B are defined by the regions 
+
+x < 0 and x > 0, respectively. 14 The analytical formula for the potential energy surface is given by: 
+
+V (x, y ) = 10 
+
+
+
+2 + 43 x4 − 2y2 + y4 + 10 3 x2(y2 − 1) 
+
+
+
++ 7 exp 
+
+
+
+− (x + 0 .7) 2 + ( y − 0.8) 2
+
+0.42
+
+
+
++ exp 
+
+
+
+− (x − 1.0) 2 + ( y + 0 .3) 2
+
+0.42
+
+
+
+− 6 exp 
+
+
+
+− (x + 1 .0) 2 + ( y + 0 .6) 2
+
+0.42
+
+
+
+(C8)  
+
+> (a) Alanine dipeptide. (b) Chignolin.
+
+Fig. C1 : Potential Energy Surface (PES) of alanine dipeptide and chignolin. 
+
+# C.4 Alanine Dipeptide   
+
+> (a) Conditioned on C5. (b) Conditioned on C7ax. (c) Unconditional.
+
+Fig. C2 : Potential Energy Surface (PES) of alanine dipeptide sample from the trained diffusion model. We generated the dataset by running Langevin Dynamics from each state (C5 and C7ax) for 500 ps with a 1 fs time step saving every 10 steps and a temperature of 300 K. We then sliced parts of the trajectory that covers the widest region in Ramachandran space (ϕ, ψ ) and subsample randomly 15 2,500 configurations for each of the two states. In Figure C1a, we show the PES of alanine dipeptide. We propagated the dynamics with a custom force field taken from Ref. 48. We then trained a diffusion model based on the EquiformerV2 architecture [87] with up to L = 2 representations, four attention heads and 64 channels. The radius graph is computed with rcutof f = 5 .0 Å. We use the AdamW optimizer with a constant learning rate 6.10 −4, 0.001 weight decay. We use an 0.999 Exponential Moving Average (EMA) decay with an effective batch size of 128 , and train for 500 epochs. For diffusion, we leverage the Denoising Diffusion Probabilistic Model framework (DDPM) with 1000 time steps and a cosine schedule [68]. For SAA, we use 1000 optimization steps by Adam optimizer with a learning rate of 0.01, β1 = 0 .0, and β2 = 0 .999 .The committor probabilities are computed from 100 configurations sampled from the method. We first run a 2 ps long simulation and filter out all the configurations leading to instability that are labelled as non physical. For all reported results, more than 98% of samples were kept and used for the committor calculations. We compute the committor probabilities by running 100 replicas stochastic Langevin Dynamics with randomly initialized velocities using the same force field that generated the dataset to stay consistent with the PES distribution. The simulations are run for 1 ps with 1 fs steps at T=300 K. We define each state limits and record the region first reach for each replica to compute the probability of reaching one state or the other. 
+
+# C.5 Chignolin 
+
+For our analysis of Chignolin, which is a small fast-folding protein, we employed the D. E. Shaw Research coarse-grained (CG) dataset [3]. In Figure C1b, we show the PES of the chignolin training dataset. We removed all the conformations with a ML committor value between 0.0001 and 0.9999 in the training dataset. Our conditional diffusion model is an adaptation of the pre-trained architecture from Ref. 62. We finetuned this base model to enable conditional generation by incorporating a group embedding that specifies the state, i.e., folded or unfolded, at the beginning of the forward process. Sampling was then performed using SAA hyperparameters with 100 optimization steps, a learning rate of 0.0005, and a pause ratio of 0.05. Finally, the generated configurations were validated by computing their committor probabilities with the machine-learned committor predictor model from Ref. 36. 
+
+# C.6 Electrocyclical reaction 
+
+We generated the dataset by running Langevin Dynamics from the reactant and product structure each for 500 ps with a 0.5 fs time step saving every 10 steps and a temperature of 300 K. We propagated the dynamics with the semi-empirical PM6 method [88] calculated with Scine Sparrow [89, 90]. We then trained a diffusion model with the exact same procedure as before with alanine dipeptide. 16 Appendix D Conformational diversity of the transition state ensemble for the electrocyclical reaction 
+
+To validate the structural diversity of ASTRA-generated samples for the DASA system (Figure D3), we generated a large set of reference structures using multiple transition-state optimization meth-ods with varying initializations. By comparing the ASTRA samples directly against these resulting reference clusters, we characterize the coverage and validity of our generative approach. Notably, the only cluster missed by ASTRA is 2). It contains structures that continue a structural trend of an increasing dihedral angle and hence structural distortion going from the top right to the bottom left of cluster 1), hence, cluster 2) is an extreme version of cluster 1). The lack of cluster 2) structures indicates that the distorted structure is disfavored in the diffusion process. Due to this distortion, the chemical relevance of this cluster might be low as all structures in this cluster are higher in energy than the ASTRA generated structures in cluster 1). Beyond the coverage of each cluster, ASTRA can also capture a finer grained diversity within a certain cluster. Cluster 5) mixes different methyl group orientations, with the right side of the cluster including structures with downward methyl orientation, while the left side of the cluster includes upward orientations. We observe that ASTRA successfully captures this internal diversity of structures. Similarly, cluster 3) has a large extent of possible carbon-carbon distances while preserving the other structural features, which is covered by ASTRA samples. This demonstrates that our algorithm can recover physically valid variability of transitory configurations without prior knowledge or sampling of such ensembles due to our SBI and SAA sampling process. Our ASTRA algorithm produced an additional structure outside of cluster 3) that exhibits similar structural features, but includes an asymmetrical position of the transferred proton. This is missed by the other methods, but it also includes a strong distortion of the 6-membered ring and is high in energy. The ASTRA algorithm also produced three out of four structures in cluster 4). The structures of this cluster show an upward tilted left oxygen atom while the right 6-membered ring stays flat. Structures within all clusters generally show different amine ethyl group orientations that aim at reducing steric hindrance. Based on these findings, we are confident that the structural diversity of ASTRA samples observed in the smaller test systems before also extends to more complex chemical reactions. For examples, the structures in cluster 1) exhibit a small dihedral angle of the transferred proton and the 6-membered ring and the geminal methyl groups are positioned downward. In comparison, cluster 5), the largest set of points, shows a strong tilt of the oxygen atoms transferring the proton with the left one tilted upwards and the right one downwards. Sampling with ASTRA encompasses this diversity of structural features typically encountered in traditional approaches with a diverse initialization. 17 Fig. D3 : Two dimensional representation of the reactive potential energy surface (PES) spanned by two important internuclear distances. The MD simulation data points are plotted as densities. The various points represent structures optimized with the Dimer algorithm where the initial structure was generated with different TS guess structure generation algorithms. The various baseline methods are detailed in section G.2.2. The zoomed-in version of the PES features representative structures for each cluster of points that are numbered from 1 to 5. 
+
+# Appendix E Validation of Score Difference Approximation to Reaction Coordinate 
+
+To validate the claim that the score difference approximates the reaction coordinate, i.e., sA(x, t ) −
+
+sB(x, t ) ≈ r, we compare the two vectors in Figure E4. The visualization shows strong alignment between our approximation (blue arrows) and the true reaction coordinate (red arrows). This is quantified by the high average cosine similarity: 0.9275 on the Müller-Brown potential and 0.9584 on the double path potential. 18 (a) Müller-Brown potential. (b) Double path potential. 
+
+Fig. E4 : Validation of Score Difference Approximation. The score difference vector (red) closely aligns with the true reaction coordinate (blue) on the (a) Müller-Brown potential and (b) double path potential. 
+
+# Appendix F ASTRA Sampling Algorithm 
+
+19 Algorithm 1 Sampling with Score-Based Interpolation and Score-Aligned Ascent 
+
+Require: Denoising model ϵθ (xt, t, c ) with classifier-free guidance; Energy-based force field F(x);Total number of time steps T ; Guidance pause time step Tpause ; Number of optimization steps 
+
+Nopt ; Optimizer hyperparameters Θopt .
+
+Output: Sampled molecular conformation x0. 
+
+> 1:
+
+function SBI_Combine (xt, t ) 
+
+> 2:
+
+Compute conditional noise estimates: ϵAt ← ϵθ (xt, t, A ), ϵBt ← ϵθ (xt, t, B ). 
+
+> 3:
+
+Compute the interpolation factor: κt ← SBI (ϵAt , ϵBt , xt, t ). 
+
+> 4:
+
+Combine noise estimates: ϵcomb ← ϵBt + κt(ϵAt − ϵBt ). 
+
+> 5:
+
+return ϵcomb , ϵAt , ϵBt 
+
+> 6:
+
+end function  
+
+> 7:
+
+Initialize positions xT ∼ N (0 , I).
+
+// Phase 1: Denoising with Score-Based Interpolation  
+
+> 8:
+
+for t ← T, T pause + 1 do  
+
+> 9:
+
+ϵcomb , _, _ ← SBI_Combine (xt, t ) 
+
+> 10:
+
+Perform one reverse diffusion step to obtain xt−1 from xt and ϵcomb . 
+
+> 11:
+
+end for 
+
+// Phase 2: Score-Aligned Ascent Optimization at latent time Tpause  
+
+> 12:
+
+Let z ← xTpause . Initialize an optimizer O with Θopt . 
+
+> 13:
+
+for k ← 1, N opt do  
+
+> 14:
+
+ϵcomb , ϵATpause , ϵBTpause ← SBI_Combine (xTpause , T pause ) 
+
+> 15:
+
+Approximate the reaction coordinate: τ ← ϵBTpause − ϵATpause . 
+
+> 16:
+
+Predict the clean sample: ˆx0 ← predict_x 0(z, T pause , ϵcomb ). 
+
+> 17:
+
+Evaluate the force from the external field: f ← F(ˆ x0). 
+
+> 18:
+
+Compute the Score-Aligned Ascent force: fSAA ← f − 2 f ·τ 
+
+> ∥τ∥22
+
+τ . 
+
+> 19:
+
+Update positions with gradient descent: z ← O (z, ∇zL), where ∇zL = −fSAA . 
+
+> 20:
+
+end for  
+
+> 21:
+
+xTpause ← z.
+
+// Phase 3: Resumed Denoising  
+
+> 22:
+
+for t ← Tpause , 1 do  
+
+> 23:
+
+ϵcomb , _, _ ← SBI_Combine (xt, t ) 
+
+> 24:
+
+Perform one reverse diffusion step to obtain xt−1 from xt and ϵcomb . 
+
+> 25:
+
+end for return x0.
+
+# Appendix G Extended analysis of ASTRA dynamics and robustness 
+
+# G.1 Modules characterization 
+
+In this section we attempt to characterize and interpret the behavior of ASTRA. We base our discus-sions on the alanine dipeptide systems as its multiple and geometrically diverse transition pathways provide a challenging task. All ablation studies results can be found in Section H. The ASTRA frame-work is composed of two fundamental modules, Score-Based Interpolation (SBI) for generating an initial guess of the transition ensemble and Score-Aligned Ascent (SAA) for its subsequent refinement. Therefore, we evaluate the efficacy and contribution of each individual components through ablation studies that are discussed using the committor and Transition State optimization metrics. 
+
+G.1.1 Score-Based Interpolation 
+
+We examine the effectiveness of the SBI module as an initialization strategy for SAA by replacing it with established transition state (TS) guess methods, and by comparing two distinct SBI-based approaches. Specifically, we benchmark our primary method—Isodensity Interpolation (II)—against 20 alternative initialization techniques including Simple Averaging (SA), geodesic interpolation [91], and linear interpolation in Cartesian space. From SBI-based approaches, ASTRA successfully recovers at least two out three TSs as shown in Figure H8. These results are in agreement with prior results obtained using our force field [48]. While SAA shines in its convergence capabilities, SBI - as an informed initialization prior to SAA optimization - is the main feature allowing a priori sampling of a diverse TS ensemble. In particular, by sampling across a broad region of the (approximate) iso-probability surface connecting the two metastable states—under their respective conditional generative models, II provides a diverse set of initial guesses that helps avoid premature convergence to a single dominant pathway. This allows to sample all three transition states. Interestingly, this comprehensive sampling of the TS is only observed when employing a guidance scale of 1.0. This phenomenon is illustrated in Figure H19 and Fig. H20, where increasing the guidance scale from 1.0 to 3.0 progressively concentrates the TS guesses into the direct region separating the high-probability metastable states. This behavior is consistent with a stronger guidance driving the sampling toward more localized, higher-density regions: a reduction in directional diversity constrains the sampling trajectories to fewer dominant modes. Notably, SA fails to generate initial guesses that converge to all three TSs under SAA, whereas II succeeds, albeit with the third TS (bottom-right region of the Ramachandran plot) being sampled less frequently, as shown in Figure H19. While the difference in sampling density for this third TS is substantial, it highlights the potential of II to recover underrepresented transition modes. Looking ahead, further improving the diversity and breadth of PES coverage during initialization could enhance the robustness of the overall method, particularly in systems exhibiting complex, multi-pathway reaction dynamics. To evaluate the advantage of SBI over traditional TS guess methods for initializing SAA, we com-pare it against linear interpolation and geodesic interpolation. In both cases, we construct a path of 25 intermediate structures and extract the five central images, which are then perturbed with latent noise at a PR = 0.05 level before being used as inputs to SAA (see Figure H18. To ensure fair compar-ison and assess the ability of each method to converge toward distinct TSs, we avoid random starting configurations and instead ensure that the interpolated paths pass sufficiently close to the true TS region. This allows us to sample all TSs. Results presented in Table H4 demonstrate that SAA initial-ized with both linear and geodesic interpolation can yield reasonable TS candidates, as supported by committor values and dimer convergence metrics. However, SBI consistently produces slightly more accurate TS guesses, as measured by lower RMSD and energy difference to the reference TS. We high-light a key limitation of classical interpolation-based methods: they require prior structural knowledge of the TS region or the mechanism, to construct meaningful and diverse paths. In contrast, SBI oper-ates without any such prior, generating diverse and physically plausible TS guesses directly from the conditional generative model. The broad coverage of the intermediate region between the two basins, facilitates the discovery of multiple valid transition states without prior access to the PES. 
+
+G.1.2 Score-Aligned Ascent 
+
+We proceed to analyzing the behavior of SAA by sweeping the hyperparameter space. The results are reported Table H2 and H3. We start with the Pause Ratio (PR) that defines at which step is the reverse diffusion process halted to perform SAA before resuming the last few denoising steps. The PR is critical for the overall performance of the method. We define PR as Pause time step Total number of time steps . The PR intrinsically manages the quality of the force field prediction, and the level of discrepancy between the SAA ascent direction and the structure it is optimized on, in terms of noise level. In fact, the force field should be evaluated on a clean structure and therefore we should use the posterior expectation as input. However the score difference defining the ascent direction should be evaluated at the latent level. Consequently, whether the optimization is carried out in latent space or on the denoised structure introduces an inherent trade-off: in either case, a discrepancy arises between the domain where the ascent direction or the forces are computed and where they are applied. In fact, we observe in Figure H16 nearly identical performances whether optimization is performed directly in latent space or on the denoised structure. In our implementation, we choose to perform the optimization on the denoised structure and subsequently project it back to the latent space corresponding to the PR level, using the same predicted score used to compute the posterior expectation. Then, the next score evaluation can be computed, and so on. 21 In addition, we find that pausing the reverse diffusion at a nonzero latent noise level plays a critical role in correcting for the partially non-physical nature of the ascent direction in SAA, which can otherwise drive samples away from the true data manifold. This is a key feature of the method. Specifically, the difference between conditional scores yields a highly informative ascent direction, but one that is more reliable in latent space - consistent with prior observations that denoising score matching models tend to struggle at very low noise levels [92]. The strength of the method is that the outcome of this latent ascent can be effectively mapped back to the data manifold by simply resuming the reverse SDE from the pause time step to completion. In fact, we observe in Table F2 that computing SAA at τ = 0 is not numerically stable. Increasing the pausing ratio generally increases the number of samples that have physical structures. However, when pausing too far from the SDE endpoint, the distribution of committer values spreads out of the TS region range. We attribute this degradation partially to the aforementioned discrepancy between the structure on which the forces are computed, and the structure on which the ascent direction is computed. We also hypothesize that the II scores may actually drive the samples out of the narrow TS region Therefore, we find that there exists an optimal pause ratio around 0.05 that achieves the best balance between these constraints. When increasing the Optimization Step (OS), we observe a clear convergence, across all metrics, demonstrating the stability and reliability of SAA. We note that the trends of both the committor analysis, and dimer optimization are consistent with one another. Our optimization algorithm reaches a plateau around 750 OS achieving about a 85% convergence rate, 20 steps needed for convergence and guess TS structures as close as a 0.01Å and a -0.5kcal.mol −1 energy difference away from the optimized ground truth TS. Changing the number of optimization steps, we also identify a characteristic of SAA. In fact, we observe that SAA can drive samples out of the data manifold. As OS increases, the number of stable samples decreases before reaching a plateau of about 75% of physical structures. As non-physical structures can be easily filtered out by running a short MD simulation from them, we report the % of Committor value between 0.4 and 0.6, with respect to the number of stable (filtered) structures. We may in part interpret harsher SAA conditions as a filter here. As the distribution narrows around the TS regions, non promising TS guesses from SBI are driven too far away from the manifold for them to be corrected by the subsequent denoising. They can then be easily filtered out, achieving in the end an excellent quality of the TS guesses, of almost all structures. The Step Size (SS) presents an optimum value of around 0.01 Å corresponding to a standard tradeoff between a slow convergence, and an overshooting leading to non-physical structures. We emphasize that the filtered ASTRA samples still remain close to the true TS in harsh SS conditions, although there are logically very few of them. 
+
+# G.2 Baselines 
+
+G.2.1 Alanine dipeptide 
+
+Our main baseline for alanine dipeptide is NEB, a well established method to optimize a MEP and find the saddle point. We provide in Table H4 a comparison of SAA against NEB to optimize an initial guess structure (in the case of SAA) and path (in the case of NEB) to the true TS. To draw a fair comparison, we use identical initialization algorithms (linear and geodesic interpolation) as input to SAA and NEB. For NEB, we take the whole paths obtained from energy minimized structures (central to obtaining the TS as the highest energy point). For SAA, we retain the middle points as inputs. The initial structure from which the paths are interpolated are the same as in section G.1.2 and the results for the optimized paths are shown Figure H17. The principal observation is that, when a structure from NEB can be converged by dimer, it is extremely close to the true TS structure both in terms of position RMSD and energy difference. We highlight the closeness of SAA generated samples in terms of RMSD when initialized from geodesic interpolation. This is the most relevant case as we are able to recover the two main TS in contrast to linear interpolation where the upper path cannot be converged by NEB. This is actually one of the main advantage of using SAA here. NEB is not able to recover two TS from the linear interpolated paths. This is probably due to non-physical structures that the reference method struggles to handle (see Figure H14). In contrast, SAA noises the structure back to the latent space and has the ability to correct unphysical structures back to the manifold. Our method is then able to sample the two main TSs from the linear interpolated paths. Therefore, SAA is more robust compared to NEB with respect to lesser quality interpolation method. This emphasizes once against the strength of such an approach. Where no knowledge of the PES is 22 needed and where the overall obtaining of the TS is straightforward, with little user input needed to obtain a good TS guess. Finally, our method does not need minimized structures which allows a broader coverage of tran-sition states samples with conventional interpolation technics as illustrated Figure H18. Indeed, we are not constrained to initiate paths between the main minimum energy structures. This broad cover-age of the TS ensemble is less straightforward for NEB depending on the system and its PES which significantly hinders systematic approach to Transition state search. In contrast, ASTRA allows a generalized exploration without system-specific considerations. 
+
+G.2.2 Electrocyclic reaction 
+
+We took multiple established TS generation methods as baselines for the DASA system to ensure that ASTRA covers all relevant transition states. We ran a CREST simulation [93, 94] with the default settings for both the reactant and product. This resulted in 20 reactant and 162 product conformers. We then carried out a Newton Trajectory 2 scan [10] for each reactant and product conformer with the associations and dissociations defined by the two oxygen-hydrogen bonds and the carbon-carbon bond within the formed 5-membered ring. Additionally, we carried out double-ended searches. We ran one double-ended search per conformer, where we selected the conformer of the other side to be the one with the lowest RMSD. The double-ended search was then carried out with both the Direct Max Flux (DMF) method [95] and with a B-Spline-based optimization [96]. The initial trajectory was determined by geodesic interpolation [91] for DMF and with linear interpolation in Cartesian space for the B-Spline-based optimization. All generated guess structures were subjected to the identical Dimer optimization algorithm with a maximum of 300 optimization steps. 
+
+# Appendix H Ablation Studies 
+
+# H.1 Effect of Score-Based Interpolation and Score-Aligned Ascent 
+
+We investigate the effects of two interpolation methods, Isodensity Interpolation (II) and Simple Averaging (SA) , both with and without the application of Score-Aligned Ascent (SAA) , on the double well potential, as shown in Figure H5. When used alone, SA fails to capture the true transition state, instead generating samples scattered between the two basins. In contrast, II produces samples closer to the true transition state. The subsequent application of SAA further refines these outcomes. For both interpolation methods, SAA guides the diffusion process toward the transition state (TS) region, correcting deviations and ensuring the final configurations closely align with the true TS. Notably, the combination of II and SAA yields the most accurate and physically meaningful transition path. 23 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H5 : Impact of Score-Based Interpolation and Score-Aligned Ascent on double well potential. We extended this ablation study to the two-dimensional potential energy surfaces of the Müller-Brown and double path potential. On both systems, as shown in Figures H6 and H7, II draws a dividing line between the two states, while SA is less effective, producing a scattered distribution of samples, several of which are located in non-physical high-energy regions. Neither interpolation method alone is sufficient for precise TS localization. The application of SAA proves crucial, refining the samples by collapsing the broad distributions onto the precise locations of the low- and high-energy transition states. As quantified by the L2 distance statistics in Table H1, both interpolation methods alone yield substantial errors, whereas subsequently applying SAA dramatically reduces the distance to the nearest transition state, confirming its critical role. 24 (a) II. (b) SA. 
+
+(c) II + SAA. (d) SA + SAA. 
+
+Fig. H6 : Impact of Score-Based Interpolation and Score-Aligned Ascent on Müller-Brown potential. 
+
+Table H1 : L2 Distance statistics for analytical potentials from the closer transition state. The best results are bolded , and the second-best results are underlined .                                        
+
+> Potential II II+SAA SA SA+SAA Double Well 0.1174 ±0.0101 0.0002 ±0.0000 0.5870 ±0.5000 0.0002 ±0.0000 Müller-Brown 7.3632 ±1.0707 0.0376 ±0.0044 6.8723 ±3.1354 0.0449 ±0.0107
+> Double Path 0.6810 ±0.1008 0.0511 ±0.0377 0.6998 ±0.1511 0.0384 ±0.0358
+
+25 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H7 : Impact of Score-Based Interpolation and Score-Aligned Ascent on double path potential. We further extend our ablation study to alanine dipeptide to assess the method’s performance in a high-dimensional system. The results, presented in Figure H8, highlight the critical role of SAA. When used alone, both II and SA incorrectly identify the transition state region by generating samples located between the two basins. Upon introducing SAA, the performance of both methods improves notably. SAA successfully guides the generated samples to probable TS regions, causing them to converge precisely onto the known, physically meaningful transition states on the potential energy surface. 26 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H8 : Impact of Score-Based Interpolation and Score-Aligned Ascent on alanine dipeptide. A similar trend is observed for the folding of chignolin, depicted in Figure H9. While both inter-polation methods can generate a coarse path between the folded and unfolded states, the resulting samples are diffuse and fail to define the transition pathway clearly. The addition of SAA is essential for refining this pathway, guiding the scattered points toward the transition state region. This result demonstrates that the combination of II and SAA is a robust and effective method for identifying transition states in complex biomolecular systems. 27 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H9 : Impact of Score-Based Interpolation and Score-Aligned Ascent on Chignolin. For the electrocyclical reaction, as illustrated in Figure H10, both II and SA fail to precisely locate the TS of the reaction. Instead, the resulting samples are broadly distributed in the region between the two energy minima corresponding to the open (colored) and closed (colorless) isomers. The application of SAA is critical, as it refines this scattered distribution, driving the system to the more probable TS structures. This result underscores the method’s ability to navigate the complex PES of a chemical reaction. 28 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H10 : Impact of Score-Based Interpolation and Score-Aligned Ascent on DASA reaction. 
+
+# H.2 Committor Analysis of Chemical Systems 
+
+In Figure H11, we report histograms of the distributions of committor values calculated based on the samples in Figure H8. We observe that given the partial coverage of the metastable states by our MD simulations at 300 K, simply using Score-Based Interpolation allows sampling an intermediate region but not the TSs themselves. The SAA algorithm successfully directs the samples towards the true TSs as demonstrated by a peaked distribution of the committor values around 0.5. SuperDiff AND surpasses SA in our experiments. 29 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H11 : Histogram of calculated committors on alanine dipeptide. We also report ML committor values computed with the trained models from [36] to compare the effects of SBI and SAA algorithm. We observe that SAA consistently increases the number of samples close to the q = 0 .5 region. We note that the ML committor model draws much sharper isocommittor surfaces compared to our MD evaluation for alanine dipeptide. 30 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H12 : Histogram of ML predicted committors on Chignolin. 31 (a) II. (b) SA.  
+
+> (c) II + SAA. (d) SA + SAA.
+
+Fig. H13 : Histogram of ML predicted committors on DASA reaction. 32 H.3 Sensitivity to Hyperparameters 
+
+We present a detailed hyperparameter sweep for ASTRA, and a comparison of SAA against NEB. These results are the basis for the discussion in Sections G.1 and G.2. 
+
+Table H2 : Hyperparameter Ablation Study evaluated by running the Dimer method on ASTRA generated samples. The main result configuration is shown first. Each subsequent row ablates a single hyperparameter, with the modified value in bold . No value means that the SAA was unstable and the force field eventually returns NaN. We report median values for all metrics. 
+
+Method GS PR OS SS Conv. Rate ↑ Conv. Step ↓ Pos. RMSD ↓ Energy Diff. ↓
+
+(Å) (kcal ·mol −1)Main 1.0 0.05 1000 0.0100 0.84 14 0.010 -0.50 
+
+Ablation on the Guidance Scale (GS) 
+
+GS = 2.0 2.0 0.05 1000 0.0100 0.86 34 0.011 -0.51 GS = 3.0 3.0 0.05 1000 0.0100 0.87 11 0.011 -0.46 
+
+Ablation on the Pause Ratio (PR) 
+
+PR = 0.00 1.0 0.00 1000 0.0100 – – – –PR = 0.25 1.0 0.25 1000 0.0100 0.78 70 0.05 -0.12 PR = 0.75 1.0 0.75 1000 0.0100 0.41 129 0.018 -1.1 PR = 0.10 1.0 0.10 1000 0.0100 0.13 294 0.06 -1.2 
+
+Ablation on the Optimization Steps (OS) 
+
+Steps = 100 1.0 0.05 100 0.0100 0.27 193 0.38 -1.8 Steps = 250 1.0 0.05 250 0.0100 0.55 161 0.17 -0.83 Steps = 500 1.0 0.05 500 0.0100 0.79 84 0.03 -0.53 Steps = 750 1.0 0.05 750 0.0100 0.84 17 0.01 -0.50 Steps = 1250 1.0 0.05 1250 0.0100 0.84 20 0.01 -0.49 Steps = 1500 1.0 0.05 1500 0.0100 0.88 14 0.01 -0.48 
+
+Ablation on the Step Size (SS) 
+
+SS = 0.0005 1.0 0.05 1000 0.0005 0.25 209 0.47 -2.8 SS = 0.001 1.0 0.05 1000 0.0010 0.31 – 0.36 -1.6 SS = 0.005 1.0 0.05 1000 0.005 0.80 18 0.018 -0.51 SS = 0.02 1.0 0.05 1000 0.02 0.81 76 0.018 -0.49 SS = 0.05 1.0 0.05 1000 0.05 0.50 108 0.07 -0.54 
+
+33 Table H3 : Hyperparameter Ablation Study evaluated by computing the MD committor. The main result configuration is shown first. Each subsequent row ablates a single hyperparameter, with the modified value in bold . No value means that the SAA was unstable and the force field eventually returns NaN. The number of stable samples corresponds to the number of structure for which running MD for 2 ps starting, from these configurations, is stable. The metrics were evaluated by sampling 100 configurations from ASTRA. 
+
+Method GS PR OS SS % of Comm. ↑ Num. stable samples 
+
+in [0.4,0.6] (out of 100) Main 1.0 0.05 1000 0.0100 85 76 
+
+Ablation on the Guidance Scale (GS) 
+
+GS = 2.0 2.0 0.05 1000 0.0100 81 88 GS = 3.0 3.0 0.05 1000 0.0100 80 78 
+
+Ablation on the Pause Ratio (PR) 
+
+PR = 0.00 1.0 0.00 1000 0.0100 – –PR = 0.25 1.0 0.25 1000 0.0100 42 44 PR = 0.75 1.0 0.75 1000 0.0100 61 79 PR = 0.10 1.0 0.10 1000 0.0100 21 98 
+
+Ablation on the Optimization Steps (OS) 
+
+Steps = 100 1.0 0.05 100 0.0100 19 96 Steps = 250 1.0 0.05 250 0.0100 40 82 Steps = 500 1.0 0.05 500 0.0100 75 76 Steps = 750 1.0 0.05 750 0.0100 88 75 Steps = 1250 1.0 0.05 1250 0.0100 86 76 Steps = 1500 1.0 0.05 1500 0.0100 84 74 
+
+Ablation on the Step Size (SS) 
+
+SS = 0.0005 1.0 0.05 1000 0.0005 12 100 SS = 0.001 1.0 0.05 1000 0.0010 15 100 SS = 0.005 1.0 0.05 1000 0.005 80 78 SS = 0.02 1.0 0.05 1000 0.02 68 77 SS = 0.05 1.0 0.05 1000 0.05 11 14 
+
+34 H.3.1 Quality of samples from classic interpolation approaches 
+
+We evaluate two baseline methods for generating conformational pathways: linear interpolation, per-formed after applying the Kabsch algorithm [97], and a geodesic interpolation approach based on internal coordinates, as proposed by Ref. 91, in Figure H14 and H15 Specifically for the alanine dipep-tide, both methods fail to produce physically realistic pathways, as they traverse significant energy barriers on the PES. Linear interpolation, in particular, is prone to generating intermediate confor-mations with severe steric clashes, leading to geometrically invalid structures. While the geodesic method avoids such direct structural inconsistencies, the pathway it defines remains energetically pro-hibitive and is, therefore, an unviable representation of the transition. Therefore, further optimization is needed, using NEB for example. For such flexible systems with structurally very different pathways, these classical interpolation methods might struggle to provide a broad and valid set of initial guesses for optimization algorithms.   
+
+> (a) Linear interpolation. (b) Geodesic interpolation.
+> (c) Structure of linear interpolation. (d) Structure of geodesic interpolation.
+
+Fig. H14 : Comparison of linear and geodesic interpolation for alanine dipeptide. The top row visu-alizes the interpolated pathways on the potential energy surface (PES), while the bottom row shows representative intermediate structures. 35 (a) Linear interpolation. (b) Geodesic interpolation.  
+
+> (c) Structure of linear interpolation. (d) Structure of geodesic interpolation.
+
+Fig. H15 : Comparison of linear and geodesic interpolation for the folding of chignolin. The top row displays the pathways on the PES, and the bottom row shows intermediate molecular structures. 36 H.4 Noise level for SAA optimization  
+
+> (a) Latent-level optimization. (b) Clean structure-level optimization.
+
+Fig. H16 : Committor histograms comparison of a latent-level optimization and a clean structure-level optimization. This is for PR=0.05. In Figure H16, we provide the comparison between optimizing at the latent level or at the clean structure level. The results show that the performance is almost identical. This stems from the fact that the force predictions are computed at the clean structure level while the SAA direction is computed at the latent level inducing a discrepancy in both cases. 37 H.5 SAA and NEB from standard interpolation methods 
+
+Figure H18 shows the optimized minimum energy paths obtained by running NEB starting from linear and geodesic-interpolated paths. The paths are made of 25 intermediate images. We clearly observe that NEB fails to converge the second TS from the linearly-interpolated path. This probably stems from the poor quality of these samples as highlighted in Section H.3.1. We also provide in Figure H18 the details of the linear and geodesic interpolations. We show the different interpolated paths and the 5 selected middle frames that are used to initialize SAA for the results in Table H4. Additionally, we highlight that when energy minimization is not necessary (as is the case for ASTRA, unlike NEB), we can sample a broader ensemble of guesses, allowing for better coverage of the TSE. 
+
+(a) Linear Interpolation. (b) Geodesic Interpolation. 
+
+Fig. H17 : NEB transition state guesses and minimum energy paths computed from linear and geodesic interpolation guess paths. The yellow empty circles correspond to the initial guesses computed by interpolating between the start (red) and end (blue) configurations using the given interpolation technique. The optimized paths are colored with the viridis color scheme. 
+
+Table H4 : Evaluation of TS samples generated by running SAA or NEB after initializing guess structures from classical interpolation algorithms (linear and geodesic interpolation). We report metrics associated with running the Dimer method from these structures. The "minimized" or "non-minimized" initialization corresponds to minimizing the energy of the structure before interpolating the initial guess path.                                         
+
+> Method % of Comm. ↑Num. stable samples Conv. Rate ↑Conv. Step ↑Pos. RMSD ↓Energy Diff. ↓
+> [0.4,0.6] (out of 56) (Å) (kcal ·mol −1)
+> Geodesic Interpolation (minimized)
+> SAA 0.83 54 0.93 20 0.013 -0.82 NEB (baseline) 56 0.98 0.07 -0.009
+> Geodesic Interpolation (non-minimized)
+> SAA 0.9 40 0.85 23 0.012 -0.69 NEB (baseline) 50.0 –––
+> Linear Interpolation (minimized)
+> SAA 0.3 53 0.52 137 0.17 -1.01 NEB (baseline) 50 0.98 0.008 -0.025
+
+38 (a) Minimized. (b) Non-minimized. 
+
+Fig. H18 : Interpolation paths using geodesic interpolation with the start and end structures used to evaluate SAA performance and the NEB baseline. We highlight in orange the 5 middle points for each path that were taken as input for SAA. The two graphs (a) and (b) correspond to whether the initial configurations are optimized with energy minimization before computing the interpolated path. As required by NEB, the minimized configuration (b) where used for NEB calculations. 39 H.6 Score-Based Interpolation TS region covering 
+
+Figure H19 shows the distribution of samples obtained from Isodensity Interpolation when varying the guidance scale. Figure H20 shows this same distribution when using Simple Averaging of scores instead of II.  
+
+> (a) Guidance 1.0. (b) Guidance 2.0.
+> (c) Guidance 3.0.
+
+Fig. H19 : Effect of the guidance scale when sampling 100 structures using Isodensity Interpolation to guide the reverse diffusion process. 40 (a) Guidance 1.0. (b) Guidance 2.0. 
+
+> (c) Guidance 3.0.
+
+Fig. H20 : Effect of the guidance scale when sampling 100 structures using Simple Averaging to guide the reverse diffusion process. 41 References 
+
+[1] Eyring, H.: The activated complex in chemical reactions. The Journal of chemical physics 3(2), 107–115 (1935) [2] Wigner, E.: The transition state method. Transactions of the Faraday Society 34 , 29–41 (1938) [3] Lindorff-Larsen, K., Piana, S., Dror, R.O., Shaw, D.E.: How fast-folding proteins fold. Science 
+
+334 (6055), 517–520 (2011) [4] Tiwary, P., Walle, A.: A review of enhanced sampling approaches for accelerated molecular dynamics. Multiscale materials modeling for nanomechanics, 195–221 (2016) [5] Yang, Y.I., Shao, Q., Zhang, J., Yang, L., Gao, Y.Q.: Enhanced sampling in molecular dynamics. J. Chem. Phys. 151 (7) (2019) [6] Hénin, J., Lelièvre, T., Shirts, M.R., Valsson, O., Delemotte, L.: Enhanced sampling methods for molecular dynamics simulations. arXiv preprint arXiv:2202.04164 (2022) [7] Shen, W., Zhou, T., Shi, X.: Enhanced sampling in molecular dynamics simulations and their latest applications – A review. Nano Research 16 (12), 13474–13497 (2023) [8] Dewyer, A.L., Zimmerman, P.M.: Finding Reaction Mechanisms, Intuitive or Otherwise. Org. Biomol. Chem. 15 (3), 501–504 (2017) [9] Simm, G.N., Vaucher, A.C., Reiher, M.: Exploration of Reaction Pathways and Chemical Transformation Networks. J. Phys. Chem. A (2018) [10] Unsleber, J.P., Reiher, M.: The Exploration of Chemical Reaction Networks. Annu. Rev. Phys. Chem. 71 (1), 121–142 (2020) [11] Baiardi, A., Grimmel, S.A., Steiner, M., Türtscher, P.L., Unsleber, J.P., Weymuth, T., Reiher, M.: Expansive Quantum Mechanical Exploration of Chemical Reaction Paths. Acc. Chem. Res. 
+
+55 (1), 35–43 (2022) [12] Ismail, I., Majerus, R.C., Habershon, S.: Graph-Driven Reaction Discovery: Progress, Challenges, and Future Opportunities. J. Phys. Chem. A 126 (40), 7051–7069 (2022) [13] Steiner, M., Reiher, M.: Autonomous reaction network exploration in homogeneous and hetero-geneous catalysis. Top. Catal. 65 (1), 6–39 (2022) [14] Steiner, M., Reiher, M.: A human-machine interface for automatic exploration of chemical reaction networks. Nat. Commun. 15 (1), 3680 (2024) [15] Mehdi, S., Smith, Z., Herron, L., Zou, Z., Tiwary, P.: Enhanced sampling with machine learning. Annu. Rev. Phys. Chem. 75 (2024), 347–370 (2024) [16] Mendels, D., Piccini, G., Parrinello, M.: Collective variables from local fluctuations. J. Chem. Phys. Lett. 9(11), 2776–2781 (2018) [17] Wang, Y., Ribeiro, J.M.L., Tiwary, P.: Past–future information bottleneck for sampling molecular reaction coordinate simultaneously with thermodynamics and kinetics. Nat. Commun. 10 (1), 3573 (2019) [18] Kang, P., Zhang, J., Trizio, E., Hou, T., Parrinello, M.: Committors without descriptors. arXiv preprint arXiv:2510.18018 (2025) [19] Trizio, E., Kang, P., Parrinello, M.: Everything everywhere all at once: a probability-based enhanced sampling approach to rare events. Nat. Comput. Sci., 1–10 (2025) [20] Das, S., Raucci, U., Trizio, E., Kang, P., Neves, R.P., Ramos, M.J., Parrinello, M.: A machine 42 learning-driven, probability-based approach to enzyme catalysis. ACS Catal. 15 , 9785–9792 (2025) [21] Zhang, J., Bonati, L., Trizio, E., Zhang, O., Kang, Y., Hou, T., Parrinello, M.: Descriptor-free collective variables from geometric graph neural networks. J. Chem. Theory Comput. 20 (24), 10787–10797 (2024) [22] Tan, A.R., Dietschreit, J.C., Gómez-Bombarelli, R.: Enhanced sampling of robust molecular datasets with uncertainty-based collective variables. J. Chem. Phys. 162 (3) (2025) [23] Jung, H., Covino, R., Hummer, G.: Artificial intelligence assists discovery of reaction coordinates and mechanisms from molecular dynamics simulations. arXiv preprint arXiv:1901.04595 (2019) [24] Sun, L., Vandermause, J., Batzner, S., Xie, Y., Clark, D., Chen, W., Kozinsky, B.: Multitask machine learning of collective variables for enhanced sampling of rare events. J. Chem. Theory Comput. 18 (4), 2341–2353 (2022) [25] Jung, H., Covino, R., Arjun, A., Leitold, C., Dellago, C., Bolhuis, P.G., Hummer, G.: Machine-guided path sampling to discover mechanisms of molecular self-organization. Nature Computational Science 3(4), 334–345 (2023) [26] Khoo, Y., Lu, J., Ying, L.: Solving for high-dimensional committor functions using artificial neural networks. Research in the Mathematical Sciences 6, 1–13 (2019) [27] Li, Q., Lin, B., Ren, W.: Computing committor functions for the study of rare events using deep learning. The Journal of Chemical Physics 151 (5) (2019) [28] Li, H., Khoo, Y., Ren, Y., Ying, L.: A semigroup method for high dimensional committor func-tions based on neural network. In: Mathematical and Scientific Machine Learning, pp. 598–618 (2022). PMLR [29] Strahan, J., Finkel, J., Dinner, A.R., Weare, J.: Predicting rare events using neural networks and short-trajectory data. Journal of computational physics 488 , 112152 (2023) [30] Mitchell, A.R., Rotskoff, G.M.: Committor guided estimates of molecular transition rates. Journal of Chemical Theory and Computation 20 (21), 9378–9393 (2024) [31] Megías, A., Contreras Arredondo, S., Chen, C.G., Tang, C., Roux, B., Chipot, C.: Iterative variational learning of committor-consistent transition pathways using artificial neural networks. Nat. Comput. Sci., 1–11 (2025) [32] Arredondo, S.C., Tang, C., Talmazan, R.A., Megías, A., Chen, C.G., Chipot, C.: From atoms to dynamics: Learning the committor without collective variables. arXiv preprint arXiv:2507.17700 (2025) [33] Talmazan, R.A., Chipot, C.: From static pathways to dynamic mechanisms: A committor-based data-driven approach to chemical reactions. J. Chem. Inf. Model. (2025) [34] Giuseppe Chen, C., Tang, C., Megías, A., Talmazan, R.A., Contreras Arredondo, S., Roux, B., Chipot, C.: Following the committor flow: A data-driven discovery of transition pathways. J. Chem. Theory Comput. (2026) [35] Rotskoff, G.M., Mitchell, A.R., Vanden-Eijnden, E.: Active importance sampling for variational objectives dominated by rare events: Consequences for optimization and generalization. In: Mathematical and Scientific Machine Learning, pp. 757–780 (2022). PMLR [36] Kang, P., Trizio, E., Parrinello, M.: Computing the committor with the committor to study the transition state ensemble. Nat. Comput. Sci. 4(6), 451–460 (2024) [37] Pattanaik, L., Ingraham, J.B., Grambow, C.A., Green, W.H.: Generating transition states of 43 isomerization reactions with deep learning. Physical Chemistry Chemical Physics 22 (41), 23618– 23626 (2020) [38] Duan, C., Du, Y., Jia, H., Kulik, H.J.: Accurate transition state generation with an object-aware equivariant elementary reaction diffusion model. Nature computational science 3(12), 1045–1055 (2023) [39] Kim, S., Woo, J., Kim, W.Y.: Diffusion-based generative ai for exploring transition states from 2d molecular graphs. Nature Communications 15 (1), 341 (2024) [40] Duan, C., Liu, G.-H., Du, Y., Chen, T., Zhao, Q., Jia, H., Gomes, C.P., Theodorou, E.A., Kulik, H.J.: Optimal transport for generating transition states in chemical reactions. Nature Machine Intelligence 7(4), 615–626 (2025) [41] Lewis, S., Hempel, T., Jiménez-Luna, J., Gastegger, M., Xie, Y., Foong, A.Y.K., Satorras, V.G., Abdin, O., Veeling, B.S., Zaporozhets, I., Chen, Y., Yang, S., Foster, A.E., Schneuing, A., Nigam, J., Barbero, F., Stimper, V., Campbell, A., Yim, J., Lienen, M., Shi, Y., Zheng, S., Schulz, H., Munir, U., Sordillo, R., Tomioka, R., Clementi, C., Noé, F.: Scalable emulation of protein equilibrium ensembles with generative deep learning. Science 389 (6761), 9817 (2025) [42] Jing, B., Stärk, H., Jaakkola, T., Berger, B.: Generative modeling of molecular dynamics trajectories. Adv. Neural. Inf. Process. Syst. 37 , 40534–40564 (2024) [43] Costa, A.d.S., Ponnapati, M., Rubin, D., Smidt, T., Jacobson, J.: Accelerating Protein Molecular Dynamics Simulation with DeepJump. arXiv preprint arXiv:2509.13294 (2025) [44] Thiemann, F.L., Reschützegger, T., Esposito, M., Taddese, T., Olarte-Plata, J.D., Martelli, F.: Force-free molecular dynamics through autoregressive equivariant networks. arXiv preprint arXiv:2503.23794 (2025) [45] Nam, J., Steiner, M., Misterka, M., Yang, S., Singhal, A., Gómez-Bombarelli, R.: Transferable learning of reaction pathways from geometric priors. J. Phys. Chem. Lett. 16 (45), 11690–11699 (2025) [46] Hait, D., Estrada Pabon, J.D., Stohr, M., Martínez, T.J.: Locating ab initio transition states via geodesic construction on machine-learned potential energy surfaces. Journal of Chemical Theory and Computation 21 (22), 11632–11644 (2025) [47] Wang, H., Qiu, Y., Wang, Y., Brekelmans, R., Du, Y.: Generalized flow matching for transition dynamics modeling. arXiv preprint arXiv:2410.15128 (2024) [48] Raja, S., Šípka, M., Psenka, M., Kreiman, T., Pavelka, M., Krishnapriyan, A.S.: Action-minimization meets generative modeling: Efficient transition path sampling with the onsager-machlup functional. arXiv preprint arXiv:2504.18506 (2025) [49] Tuo, P., Chen, J., Li, J.: Flow matching for reaction pathway generation. arXiv preprint arXiv:2507.10530 (2025) [50] Ho, J., Salimans, T.: Classifier-free diffusion guidance. arXiv preprint arXiv:2207.12598 (2022) [51] Du, Y., Durkan, C., Strudel, R., Tenenbaum, J.B., Dieleman, S., Fergus, R., Sohl-Dickstein, J., Doucet, A., Grathwohl, W.S.: Reduce, reuse, recycle: Compositional generation with energy-based diffusion models and mcmc. In: International Conference on Machine Learning, pp. 8489– 8510 (2023). PMLR [52] Skreta, M., Atanackovic, L., Bose, J., Tong, A., Neklyudov, K.: The superposition of diffusion models using the itô density estimator. In: The Thirteenth International Conference on Learning Representations (2024) [53] Skreta, M., Akhound-Sadegh, T., Ohanesian, V., Bondesan, R., Aspuru-Guzik, A., Doucet, A., 44 Brekelmans, R., Tong, A., Neklyudov, K.: Feynman-kac correctors in diffusion: Annealing, guid-ance, and product of experts. In: Forty-second International Conference on Machine Learning (2025) [54] Nam, J., Máté, B., Toshev, A.P., Kaniselvan, M., Gómez-Bombarelli, R., Chen, R.T., Wood, B., Liu, G.-H., Miller, B.K.: Enhancing diffusion-based sampling with molecular collective variables. arXiv preprint arXiv:2510.11923 (2025) [55] Song, Y., Sohl-Dickstein, J., Kingma, D.P., Kumar, A., Ermon, S., Poole, B.: Score-based generative modeling through stochastic differential equations. arXiv preprint arXiv:2011.13456 (2020) [56] Del Campo, J.M., Köster, A.M.: A hierarchical transition state search algorithm. The Journal of chemical physics 129 (2) (2008) [57] Peters, B., Heyden, A., Bell, A.T., Chakraborty, A.: A growing string method for determining transition states: Comparison to the nudged elastic band and string methods. The Journal of chemical physics 120 (17), 7877–7886 (2004) [58] Zimmerman, P.: Reliable transition state searches integrated with the growing string method. Journal of chemical theory and computation 9(7), 3043–3050 (2013) [59] Maiti, S.R., Buttar, D., Duarte, F.: Benchmark of double-ended transition state search methods for metal-catalysed reactions (2025) [60] Müller, K., Brown, L.D.: Location of saddle points and minimum energy paths by a constrained simplex optimization procedure. Theor. Chim. Acta 53 (1), 75–93 (1979) [61] Chekmarev, D.S., Ishida, T., Levy, R.M.: Long-time conformational transitions of alanine dipep-tide in aqueous solution: Continuous and discrete-state kinetic models. The Journal of Physical Chemistry B 108 (50), 19487–19495 (2004) [62] Arts, M., Garcia Satorras, V., Huang, C.-W., Zugner, D., Federici, M., Clementi, C., Noé, F., Pinsler, R., Berg, R.: Two for one: Diffusion models and force fields for coarse-grained molecular dynamics. Journal of Chemical Theory and Computation 19 (18), 6151–6159 (2023) [63] Molgedey, L., Schuster, H.G.: Separation of a mixture of independent signals using time delayed correlations. Physical review letters 72 (23), 3634 (1994) [64] Pérez-Hernández, G., Paul, F., Giorgino, T., De Fabritiis, G., Noé, F.: Identification of slow molecular order parameters for markov model construction. J. Chem. Phys. 139 (1) (2013) [65] Reyes, C.A., Karr, A., Ramsperger, C.A., K, A.T.G., Lee, H.J., Picazo, E.: Compartmentalizing donor–acceptor stenhouse adducts for structure–property relationship analysis. J. Am. Chem. Soc. 147 (1), 10–26 (2024) [66] Tang, C., Pandey, M.P., Chen, C.G., Megías, A., Dehez, F., Chipot, C.: Breaking the timescale barrier: Generative discovery of conformational free-energy landscapes and transition pathways. arXiv preprint arXiv:2510.24979 (2025) [67] Koulischer, F., Handke, F., Deleu, J., Demeester, T., Ambrogioni, L.: Feedback guidance of diffusion models. arXiv preprint arXiv:2506.06085 (2025) [68] Ho, J., Jain, A., Abbeel, P.: Denoising diffusion probabilistic models. Advances in neural information processing systems 33 , 6840–6851 (2020) [69] Skreta, M., Akhound-Sadegh, T., Ohanesian, V., Bondesan, R., Aspuru-Guzik, A., Doucet, A., Brekelmans, R., Tong, A., Neklyudov, K.: Feynman-kac correctors in diffusion: Annealing, guidance, and product of experts. arXiv preprint arXiv:2503.02819 (2025) 45 [70] Singhal, R., Horvitz, Z., Teehan, R., Ren, M., Yu, Z., McKeown, K., Ranganath, R.: A gen-eral framework for inference-time scaling and steering of diffusion models. arXiv preprint arXiv:2501.06848 (2025) [71] Liu, N., Li, S., Du, Y., Torralba, A., Tenenbaum, J.B.: Compositional visual generation with composable diffusion models. In: European Conference on Computer Vision, pp. 423–439 (2022). Springer [72] Henkelman, G., Jónsson, H.: A dimer method for finding saddle points on high dimensional potential surfaces using only first derivatives. J. Chem. Phys. 111 (15), 7010–7022 (1999) [73] Olsen, R., Kroes, G., Henkelman, G., Arnaldsson, A., Jónsson, H.: Comparison of methods for finding saddle points without knowledge of the final states. J. Chem. Phys. 121 (20), 9776–9792 (2004) [74] Heyden, A., Bell, A.T., Keil, F.J.: Efficient methods for finding transition states in chemical reactions: Comparison of improved dimer method and partitioned rational function optimization method. The Journal of chemical physics 123 (22) (2005) [75] Kästner, J., Sherwood, P.: Superlinearly converging dimer method for transition state search. The Journal of chemical physics 128 (1) (2008) [76] Shang, C., Liu, Z.-P.: Constrained broyden minimization combined with the dimer method for locating transition state of complex reactions. Journal of Chemical Theory and Computation 
+
+6(4), 1136–1144 (2010) [77] Weymuth, T., Unsleber, J.P., Türtscher, P.L., Steiner, M., Sobez, J.-G., Müller, C.H., Mörchen, M., Klasovita, V., Grimmel, S.A., Eckhoff, M., Csizi, K.-S., Bosia, F., Bensberg, M., Reiher, M.: 
+
+SCINE – Software for chemical interaction networks. J. Chem. Phys. 160 (22) (2024) [78] Bensberg, M., Brunken, C., Csizi, K.-S., Grimmel, S.A., Gugler, S., Sobez, J.-G., Steiner, M., Türtscher, P.L., Unsleber, J.P., Vaucher, A., Weymuth, T., Reiher, M.: qcscine/readuct: Release 6.0.0. Zenodo (2024). https://doi.org/10.5281/zenodo.13372944 . https://doi.org/10. 5281/zenodo.13372944 [79] Henkelman, G., Uberuaga, B.P., Jónsson, H.: A Climbing Image Nudged Elastic Band Method for Finding Saddle Points and Minimum Energy Paths. J. Chem. Phys. 113 (22), 9901–9904 (2000) [80] Henkelman, G., Jónsson, H.: Improved tangent estimate in the nudged elastic band method for finding minimum energy paths and saddle points. J. Chem. Phys. 113 (22), 9978–9985 (2000) [81] Chung, H., Kim, J., Mccann, M.T., Klasky, M.L., Ye, J.C.: Diffusion posterior sampling for general noisy inverse problems. arXiv preprint arXiv:2209.14687 (2022) [82] Lu, C., Chen, H., Chen, J., Su, H., Li, C., Zhu, J.: Contrastive energy prediction for exact energy-guided diffusion sampling in offline reinforcement learning. In: International Conference on Machine Learning, pp. 22825–22855 (2023). PMLR [83] Wu, L., Trippe, B., Naesseth, C., Blei, D., Cunningham, J.P.: Practical and asymptotically exact conditional sampling in diffusion models. Advances in Neural Information Processing Systems 
+
+36 , 31372–31403 (2023) [84] He, J., Hernández-Lobato, J.M., Du, Y., Vargas, F.: Rne: a plug-and-play framework for diffusion density estimation and inference-time control. arXiv preprint arXiv:2506.05668 (2025) [85] Sohl-Dickstein, J., Weiss, E., Maheswaranathan, N., Ganguli, S.: Deep unsupervised learning using nonequilibrium thermodynamics. In: International Conference on Machine Learning, pp. 2256–2265 (2015). pmlr [86] Song, Y., Ermon, S.: Generative modeling by estimating gradients of the data distribution. 46 Advances in neural information processing systems 32 (2019) [87] Liao, Y.-L., Wood, B., Das, A., Smidt, T.: Equiformerv2: Improved equivariant transformer for scaling to higher-degree representations. arXiv preprint arXiv:2306.12059 (2023) [88] Stewart, J.J.: Optimization of parameters for semiempirical methods V: Modification of NDDO approximations and application to 70 elements. J. Mol. Mod. 13 (12), 1173–1213 (2007) [89] Bosia, F., Husch, T., Müller, C., Polonius, S., Sobez, J.-G., Steiner, M., Unsleber, J.P., Alain, V., Weymuth, T., Reiher, M.: qcscine/sparrow: Release 5.1.0. Zenodo (2024). https://doi.org/10. 5281/zenodo.13372942 [90] Bosia, F., Zheng, P., Vaucher, A., Weymuth, T., Dral, P.O., Reiher, M.: Ultra-fast semi-empirical quantum chemistry for high-throughput computational campaigns with Sparrow. J. Chem. Phys. 
+
+158 (5), 054118 (2023) [91] Zhu, X., Thompson, K.C., Martínez, T.J.: Geodesic interpolation for reaction pathways. The Journal of Chemical Physics 150 (16) (2019) [92] De Bortoli, V., Hutchinson, M., Wirnsberger, P., Doucet, A.: Target score matching. arXiv preprint arXiv:2402.08667 (2024) [93] Pracht, P., Bohle, F., Grimme, S.: Automated exploration of the low-energy chemical space with fast quantum chemical methods. Phys. Chem. Chem. Phys. 22 , 7169–7192 (2020) [94] Pracht, P., Grimme, S., Bannwarth, C., Bohle, F., Ehlert, S., Feldmann, G., Gorges, J., Müller, M., Neudecker, T., Plett, C., Spicher, S., Steinbach, P., Wesołowski, P.A., Zeller, F.: CREST—A program for the exploration of low-energy molecular chemical space. J. Chem. Phys. 160 (11), 114110 (2024) [95] Koda, S.-i., Saito, S.: Locating Transition States by Variational Reaction Path Optimization with an Energy-Derivative-Free Objective Function. J. Chem. Theory Comput. 20 (7), 2798–2811 (2024). PMID: 38513192 [96] Vaucher, A.C., Reiher, M.: Minimum Energy Paths and Transition States by Curve Optimization. J. Chem. Theory Comput. 14 (6), 3091–3099 (2018). PMID: 29648812 [97] Lawrence, J., Bernal, J., Witzgall, C.: A purely algebraic justification of the kabsch-umeyama algorithm. Journal of research of the National Institute of Standards and Technology 124 , 1 (2019) 47
