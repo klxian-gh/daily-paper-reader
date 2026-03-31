@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-31 <!--dpr-date:20260331-->
+    * 精读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/31/2603.28343v1-towards-analyzing-formic-acid-using-classical-and-quantum-methods" data-sidebar-item="{&quot;title&quot;: &quot;Towards Analyzing Formic Acid Using Classical and Quantum Methods&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.28343v1-towards-analyzing-formic-acid-using-classical-and-quantum-methods&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;融合量子与经典工具进行催化模拟&quot;}">Towards Analyzing Formic Acid Using Classical and Quantum Methods</a>
   * 2026-03-30 <!--dpr-date:20260330-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/30/2603.25980v1-a-priori-sampling-of-transition-states-with-guided-diffusion" data-sidebar-item="{&quot;title&quot;: &quot;A Priori Sampling of Transition States with Guided Diffusion&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.25980v1-a-priori-sampling-of-transition-states-with-guided-diffusion&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;采样过渡态以研究动力学和机理&quot;}">A Priori Sampling of Transition States with Guided Diffusion</a>

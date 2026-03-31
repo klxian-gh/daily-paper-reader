@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-31T21:16:26.598539+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 0,
+    "quick_skim_target": 11,
+    "quick_selected": 0
+  },
+  "deep_dive": [
+    {
+      "id": "2603.28343v1",
+      "title": "Towards Analyzing Formic Acid Using Classical and Quantum Methods",
+      "abstract": "Catalytic carbon fixation to formic acid is important for studying the reduction of carbon footprint and the emergence of life. Can discrete quantum exhaustive search merged with other methods help reduce the carbon footprint? We suggest merging quantum, quantum inspired, and classical tools for a better simulation of various relevant processes. Quantum tools are often used for analyzing the electronic structure of molecules, sometimes because this problem is not scalable (in the number of orbitals) on classical computers while it is potentially approximately scalable on (future) quantum computers. It is potentially even solvable in the near future using variational quantum eigensolvers (VQE) yet a major obstacle to such analysis is the appearance of barren plateaus in the Hilbert space describing the problem.   Here we make use of the basic (standard) tools while also including a novel one -- the discrete quantum exhaustive search, which relies on mutually unbiased bases, for analyzing the simplest non-catalytic process involving carbon dioxide, hydrogen and formic acid.",
+      "authors": [
+        "Omer Gurevich",
+        "Tal Mor",
+        "Ido Ram"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cs.CE"
+      ],
+      "published": "2026-03-30T12:13:12+00:00",
+      "link": "https://arxiv.org/pdf/2603.28343v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "merging quantum and classical tools for catalytic simulation",
+      "llm_evidence_cn": "融合量子与经典工具进行催化模拟",
+      "llm_evidence": "融合量子与经典工具进行催化模拟",
+      "canonical_evidence": "融合量子与经典工具进行催化模拟",
+      "llm_tldr_en": "Discusses merging quantum and classical methods for simulating catalytic carbon fixation.",
+      "llm_tldr_cn": "讨论了融合量子与经典方法来模拟催化固碳过程。",
+      "llm_tldr": "讨论了融合量子与经典方法来模拟催化固碳过程。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": []
+}

@@ -1,0 +1,23 @@
+{
+  "label": "2026-03-31",
+  "date": "2026-03-31",
+  "generated_at": "2026-03-31T21:17:10",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202603/31/2603.28343v1-towards-analyzing-formic-acid-using-classical-and-quantum-methods",
+      "section": "deep",
+      "title_en": "Towards Analyzing Formic Acid Using Classical and Quantum Methods",
+      "authors": "Omer Gurevich, Tal Mor, Ido Ram",
+      "date": "2026-03-30",
+      "pdf": "https://arxiv.org/pdf/2603.28343v1",
+      "score": "8.0",
+      "evidence": "融合量子与经典工具进行催化模拟",
+      "tldr": "本研究旨在通过模拟二氧化碳固定为甲酸的过程来降低碳足迹。研究提出了一种结合经典、量子及量子启发式工具的新方法，特别是引入了基于互补无偏基的离散量子穷举搜索。该方法旨在解决经典计算在分子轨道扩展性上的局限，并试图克服变分量子本征求解器（VQE）中的贫瘠高原问题，为分析甲酸相关化学过程提供了新视角。",
+      "tags": "query:qmmm",
+      "abstract_en": "Catalytic carbon fixation to formic acid is important for studying the reduction of carbon footprint and the emergence of life. Can discrete quantum exhaustive search merged with other methods help reduce the carbon footprint? We suggest merging quantum, quantum inspired, and classical tools for a better simulation of various relevant processes. Quantum tools are often used for analyzing the electronic structure of molecules, sometimes because this problem is not scalable (in the number of orbitals) on classical computers while it is potentially approximately scalable on (future) quantum computers. It is potentially even solvable in the near future using variational quantum eigensolvers (VQE) yet a major obstacle to such analysis is the appearance of barren plateaus in the Hilbert space describing the problem.   Here we make use of the basic (standard) tools while also including a novel one -- the discrete quantum exhaustive search, which relies on mutually unbiased bases, for analyzing the simplest non-catalytic process involving carbon dioxide, hydrogen and formic acid.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

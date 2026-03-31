@@ -1,0 +1,955 @@
+Title: Towards Analyzing Formic Acid Using Classical and Quantum Methods
+
+URL Source: https://arxiv.org/pdf/2603.28343v1
+
+Published Time: Tue, 31 Mar 2026 02:01:23 GMT
+
+Number of Pages: 33
+
+Markdown Content:
+# Towards Analyzing Formic Acid Using Classical and Quantum Methods 
+
+Omer Gurevich 1, Tal Mor 1,2 , and Ido Ram 11Computer Science Department, Technion, Haifa, Israel ∗
+
+2The Helen Diller Quantum Center, Technion, Haifa, Israel March 23, 2026 
+
+Abstract 
+
+Catalytic carbon fixation to formic acid is important for studying the reduction of carbon footprint and the emergence of life. Can discrete quantum exhaustive search merged with other methods help reduce the carbon footprint? We suggest merging quantum, quantum inspired, and classical tools for a better simulation of various relevant processes. Quantum tools are often used for analyzing the elec-tronic structure of molecules, sometimes because this problem is not scalable (in the number of orbitals) on classical computers while it is potentially approximately scalable on (future) quantum computers. It is potentially even solvable in the near future using variational quantum eigensolvers (VQE) yet a major obstacle to such analysis is the appearance of barren plateaus in the Hilbert space describing the problem. Here we make use of the basic (standard) tools while also including a novel one — the discrete quantum exhaustive search, which relies on mutually unbiased bases, for analyzing the simplest non-catalytic process involving carbon dioxide, hydrogen and formic acid. 
+
+# 1 Introduction 
+
+Quantum computers are expected to revolutionize fields like quantum chemistry by efficiently simulating many-body wavefunctions, potentially accelerating global decar-bonization through the discovery of superior catalysts [1]. In this work, we focus on Formic Acid, its implications on climate change, carbon fixation, and its connection to the origin of life. In what follows, we provide motivation for the significance of this in-teraction from both climatic and biological perspectives, and then describe the tools we used for studying it—tools from the worlds of both classical and quantum algorithms. 
+
+> ∗
+
+Email: omergu@campus.technion.ac.il 
+
+1
+
+> arXiv:2603.28343v1 [quant-ph] 30 Mar 2026
+
+1.1 Carbon fixation and climate change 
+
+Anthropogenic carbon dioxide emissions are a major driver of global climate change [2, 3], and the development of sustainable technologies to capture and convert CO 2 into value-added products is a critical social and scientific challenge. One of the simplest and most studied reactions in this context is the hydrogenation of CO 2 to formic acid (HCOOH) [4]: CO 2 + H 2 → HCOOH This reaction is deeply related to carbon fixation as it allows us to artificially transform inorganic CO 2 into organic and harmless formic acid. Formic acid is already a valuable commodity chemical with a global production of about 800,000 tons annually, primarily used in textiles, cleaning, and preservation [4]. Its high volumetric hydrogen density (53 g/L of H 2), low toxicity, and liquid state under ambient conditions make it an attractive hydrogen storage medium [5]. While hydrogen release from formic acid is well established, mainly using noble-metal catalysts, devel-oping efficient base-free catalysts for the reverse reaction—hydrogenating CO 2 to formic acid—could significantly enhance its role in a future hydrogen economy [4] and establish it as a promising hydrogen carrier for energy storage and transport [5]. Efficiently model-ing this process at the atomic level is important not only for fundamental understanding but also for guiding the rational design of catalysts that enable CO 2 utilization at scale. 
+
+Impact on humanity The uncatalysed CO 2 + H 2 → HCOOH reaction is slow and unfavorable when it is attempted in standard conditions. For this reason, the uncatal-ysed version is not considered useful for carbon fixation. However, a promising modern approach is to find catalysts which make the reaction more favorable by lowering its activation energy. If humanity were to discover increasingly better catalysts, it could potentially increase the feasibility of reducing carbon emission by turning it to formic acid, and maybe even reverse some of the damage already caused to the Earth’s climate and atmosphere. 
+
+1.2 Formic acid and Origin of Life 
+
+While the role of formic acid in the origin of life is still not fully understood, it is often considered a possible precursor in prebiotic chemistry [6]. Demassa et al.[6] further sug-gest, that there may have been an abundance of formic acid in the early Earth atmosphere. The exact effect of formic acid on abiogenesis is debated. In addition, they argue that formic acid could inhibit amino acid synthesis, while Mohammadi et al.[7] suggest that it could contribute indirectly by promoting the formation of formamide (HCONH 2)[7]. Formamide is widely regarded as a versatile prebiotic building block, capable of giving rise to amino acids, nucleobases, and sugars under appropriate conditions. As can be seen in Fig. 1 (taken from Wikipedia and based on [8] and [9]), there are several prebi-otic building blocks that can be synthesized from formamide under plausible prebiotic conditions, including amino acids. 2Figure 1: Main prebiotic building blocks that can be synthesized from formamide under plausible prebiotic conditions [8], [9]. Thus, formic acid may have acted either as a direct precursor or as a feedstock for other intermediates like formamide, which in turn drive Miller–Urey type chemistry. More generally, it might be that the process CO 2 + H 2 → HCOOH has established an equilibrium between CO 2, H 2, and formic acid under early Earth conditions, thereby seeding more complex prebiotic chemistry. 
+
+1.3 Review of the Algorithms Used 
+
+In our study, we apply a combination of classical and quantum computational methods to analyze this reaction. For the quantum simulations, we investigate the Variational Quantum Eigensolver (VQE). Further details on VQE are provided in Sec. 4.1, where the whole hybrid scheme for molecular structure problems is detailed in Sec. 5. Although VQE is a leading approach for molecular ground-state estimation, it often encounters the Barren Plateau (BP) problem [10]. The BP problem occurs when cost-function gradients vanish exponentially with system size, rendering standard optimization ineffective [10, 11]. To mitigate this, we follow a recent scheme proposed by Alfassi et al. (2024) called Discrete Quantum Exhaustive Search (DQES) [12]. DQES relies on initializing the optimization from states that evenly spread across the Hilbert space, specifically utilizing states from Mutually Unbiased Bases (MUBs)[13] to avoid flat landscapes and local minima. Our results show that, potentially, DQES-based VQE is more precise than random initialization on average, indicating that barren plateaus and local minima may be successfully avoided in problem instances where standard VQE fails to converge. For the construction of potential energy surfaces (PES), we utilize quantum-inspired methods based on matrix diagonalization of qubit Hamiltonians [14]. To characterize the full reaction coordinate and locate transition states, we employ classical optimization algorithms such as Nudged Elastic Band (NEB) [15] and Intrinsic Reaction Coordinate (IRC) [16]. 32 Background 
+
+In this section, we review the foundational concepts required to study chemical re-actions through both classical and quantum lenses. Then we review the Barren Plateau problem in variational quantum algorithms. While we hope these quantum algorithms will be able to solve chemistry problems larger than those solvable classically, the exis-tence of Barren Plateaus is currently viewed as a major obstacle in their scalability. 
+
+2.1 Electronic Structure Problem 
+
+One of the most basic tasks in computational chemistry is to determine the ground-state energy of a molecule or a system of several molecules. This is known as the electronic structure problem . The input is the spatial coordinates of the atoms involved, sometimes along with other properties such as total charge and spin of the system. It is also possible to find excited energy levels of the system of interest. In an isolated atom, electrons occupy atomic orbitals (AOs)—continuous spatial func-tions describing the probability distribution of the electron’s position. Each spatial AO corresponds to two spin-orbitals. While an atom theoretically possesses an infinite number of energy levels and corresponding AOs, thermodynamic considerations at finite tempera-tures dictate that only the lowest energy states are meaningfully occupied. Consequently, the physical system is well-approximated by considering only a finite number of AOs, typ-ically not much more than half the number of electrons. When atoms interact to form a molecule, their individual AOs overlap to create chemical bonds. The electrons in the resulting molecular system are then described by molecular orbitals (MOs), which are mathematically constructed as linear combinations of the constituent atomic orbitals (LCAO). The multi-particle fermionic states, which must satisfy antisymmetry, are math-ematically represented by Slater determinants within the Fock space. In Appendix B we provide a more formal background on these topics. Full Configuration Interaction (FCI) represents the gold standard for solving the elec-tronic Schr¨ odinger equation exactly within a given finite space. However, the dimension of the Fock space d scales combinatorially as  2NNe
+
+ for Ne electrons in N molecular or-bitals, i.e 2 N spin-orbitals. Such exponential scaling imposes hard limits on classical exact diagonalization, rendering it intractable beyond approximately Ne = 16 electrons in 2 N = 32 spin-orbitals [17, 18]. Despite this exponential growth, it is possible to simulate intermediate-size molecules by restricting the calculation to a limited subset of critically important MOs (e.g., those directly involved in bond breaking and formation) and electrons while freezing the rest. This is referred to as choosing an Active Space (AS) . More details on how FCI is commonly used are explained in Sec. 3.1. To avoid the exponential cost of FCI, classical quantum chemistry relies on various ad-ditional approximation methods. Among them, it relies on mean-field and density-based approximations. Hartree–Fock (HF) theory approximates ground-state energies via aver-aged electron-electron potentials, while Density Functional Theory (DFT) approximates electron correlation via exchange–correlation functionals. In the general worst-case sce-nario, solving the HF and DFT problems is still highly complex; as discussed later in Sec. 5.3.2, the HF problem is NP-complete, and the DFT problem is QMA-complete [19]. 42.2 Potential Energy Surface 
+
+When studying dynamics and reactions, scientists are interested in knowing the energy of the system at many points, that is, solving the electronic structure problem for many spatial configurations of the atoms. The plot of the energy as a function of the coordinates is called Potential Energy Surface (PES). The construction of the PES lies at the core of modeling chemical reactions. The PES can give for example insights about stable and non-stable regions of spatial configurations, as well as the likely reaction trajectory at any given point. We present two examples at Sec. 6.1 on collinear systems - one of three hydrogen atoms, and the second of CO 2. These are simple examples that pave the way in studying our CO 2 + H 2 → HCOOH reaction of interest. 
+
+2.3 Reaction Coordinate 
+
+The chemical reaction process starts with reactants and ends with products. The abstract set of coordinates along the reaction path is called the reaction coordinate. Mathematically, the reaction coordinate is a path of points that have minimum energy in all directions perpendicular to the path connecting the reactants and the products. In simple systems with only one or two degrees of freedom, plotting the PES can be the first step for finding the Reaction Coordinate, whereas for reactions with more complex geometries, other methods should be considered. We discuss optimization techniques that are used in such cases in Sec. 3.4. 
+
+2.4 Transition States 
+
+Once the reaction coordinate is known, there is a specific point of interest along this path called Transition State. Out of all the points on the reaction coordinate, it is defined as the point of maximal energy - the ’bottleneck’ of the reaction. On the PES, it is a saddle point: It has maximal energy along the reaction coordinate, and minimal energy perpendicular to it. Discovery of transition states of reactions is very useful as it teaches us the activation energy required for the reaction to happen, and guides us in the search for better catalysts. 
+
+# 3 Classical Methods 
+
+3.1 Single-Point Energy Calculation 
+
+All the computational methods mentioned in Sec. 2.1 rely on representing AOs by us-ing a finite basis set of functions. Hence, the N MOs are essentially a linear combination of these N basis functions rather than of exact AOs. Typically, N scales linearly with the number of electrons Ne [20]. Because modeling exact AOs requires deep chemical and physical considerations, it is standard practice to rely on predefined basis sets developed by domain experts. Two well-known basis sets are STO-3G and 6-31G. In the STO-3G basis set, a basis function is assigned to every AO up to the highest energy level occupied by the electrons [20]. Each basis function is built from 3 Gaussian functions called primitives (where more generally 5basis sets STO-nG use n Gaussians per basis function) , resulting in an approximation for the AO which is computationally efficient to integrate. More expressive basis sets assign multiple functions per AO to increase accuracy. For example, the 6-31G basis set uses two basis functions for each valence orbital, correspondingly increasing N and the overall computational complexity, where the basis functions are also approximated by a combination of Gaussian functions. Consider for example the atoms relevant for carbon fixation: In STO-3G (6-31), each hydrogen contributes 1 (2), and each carbon/oxygen contributes 5 (9) basis functions. Throughout this work, we exclusively utilize the STO-3G. By limiting the problem to a small number of basis functions N (which scales linearly in the input size), standard implementations of HF and DFT can utilize iterative proce-dures that exhibit favorable polynomial scaling per iteration (e.g., O(N 3)– O(N 7) [20]). Note that exact methods such as FCI are only exact within a given basis set, and if the active space is full, meaning it includes all N molecular orbitals. Restricting the active space—typically by freezing lower-energy core electrons, as mentioned in Sec. 2.1—further reduces the accuracy of the calculation. Although this polynomial efficiency per iteration is nice, it is insufficient in the pres-ence of strong electronic correlation—such as near avoided crossings, conical intersections, or in catalytic complexes involving transition metals or charge transfer states. In these hard cases, the underlying exponential worst-case complexity of HF and DFT manifests directly: the number of iterations can grow exponentially in N , or convergence may not be reached at all [21–23]. For catalytic CO 2 fixation, the complexity arises not merely from system size but from the need to capture subtle multireference character, electron delocalization, and dynamically evolving correlations during bond formation and breaking. Such effects challenge single-reference methods and preclude classical black-box modeling of reaction pathways involving heterogeneous catalysts. In this work, we use HF as an initial approximation. From this reference state, con-structing and subsequently solving the second-quantized Hamiltonian constitutes what is called the post-Hartree–Fock (post-HF) process. Finding its eigenvalue is done ei-ther quantumly (Sec. 6.2) or in a quantum-inspired manner (Sec. 6.1); both equivalent to solving FCI. We elaborate on the process starting from a classical approximation to quantumly finding the exact eigenvalue in Sec. 5. 
+
+3.2 Potential Energy Surface Calculation 
+
+By using the above-mentioned methods for solving the electronic structure problem, a PES can be obtained simply by finding the energy for points on a multidimensional grid representing the coordinates of the atom. For systems with more than 2 degrees of freedom, a visual representation becomes challenging, but it is still possible to study the PES. For the uncatalyzed CO 2 + H 2 → HCOOH reaction, the PES is relatively simple. Classical methods can locate the transition state and compute the activation barrier and reaction pathway with reasonable accuracy. However, when a catalyst is introduced, the complexity of the system increases dramatically: the number of atoms grows, the electronic structure becomes more strongly correlated, and the PES develops a rugged, high-dimensional landscape with many local minima and competing pathways. Capturing the role of the catalyst — and the transition states and intermediates it enables — often requires going beyond mean-field approximations to include dynamic correlation and 6multireference character, which is where classical methods struggle. For this work, we do not introduce a catalyst. Still, we consider alternatives to cal-culating the entire PES. We discuss these alternative ways to study reaction coordinates and transition states in the upcoming sections 3.3 and 3.4. 
+
+3.3 Transition State Calculation - NEB Method 
+
+Due to the importance of finding a valid transition state, there are many algorithms with varying advantages and disadvantages for finding the transition states of various reactions. In this paper we used the Nudged Elastic Band (NEB) method [15]. The method approximates the reaction coordinate by assigning N points on the PES that connect between the reactants and the products. Then, it iteratively optimizes each point according to the PES (that is, to minimize its energy) but also accounts for ’elastic forces’ between consecutive points which ensures the path taken won’t collapse to a trivial point. This way, the NEB algorithm finds a path that is minimal in all axes (except tangentially to the path) and connects between the reactants and products. The highest-energy point on this path is thus an approximation of the transition state, which can be taken as-is or further optimized by iterative optimization methods that rely on good guesses of the transition state. 
+
+3.4 Intrinsic Reaction Coordinate 
+
+To calculate the reaction coordinate more precisely, we use the IRC method [16, 24]. The algorithm begins from the transition state, nudges it in the direction downstream in the energy (this is done by considering the lowest frequency eigenvector of the hessian, known as the ”transition vector”, at the transition state), and then iteratively optimizes the geometry until it reaches the minimum, which should be the reactants or the products. Then it re-optimizes in the opposite direction to the ’transition vector’ until it reaches the reactants or the products. Finally, stitching the obtained backward and forward paths together yields the full reaction coordinate of the reaction. In cases where there are intermediate products, or multiple local transition states, one needs to run the method multiple times from each local transition state and stitch the full path together. 
+
+# 4 Quantum Methods 
+
+4.1 Variational Quantum Eigensolver (VQE) 
+
+The Variational Quantum Eigensolver (VQE) [25, 26] is a prominent example of the broader class of Variational Quantum Algorithms (VQAs). VQAs are iterative hybrid algorithms where a classical optimizer trains a Parametrized Quantum Circuit (PQC), denoted as U (θ), with θ representing a vector of tunable parameters. In VQE specifi-cally, the ansatz U (θ) prepares a trial quantum state |Ψ( θ)⟩ in the Hilbert space of n
+
+qubits, with the objective of approximating the ground state energy of a physical sys-tem’s Hamiltonian ˆH. For the sake of concreteness, Appendix A provides the explicit Hamiltonians describing some of the molecules and chemical reactions simulated in our experiments. The cost function is defined as the expectation value of this Hamiltonian: 
+
+C(θ) = ⟨Ψ( θ)| ˆH|Ψ( θ)⟩, (1) 7where |Ψ( θ)⟩ := U (θ) |Ψ0⟩. Often, the initial state is set to the computational basis state |Ψ0⟩ = |0⟩⊗n. However, this is not always the case; for example, in problems from quantum chemistry, the process frequently starts from a physically inferred state, such as the Hartree-Fock (HF) state (see Sec. 5.1). To calculate the cost, ˆH is decomposed into a linear combination of Pauli strings, ˆH = P 
+
+> P
+
+cP P , where cP are real coefficients and P ∈ { I, X, Y, Z }⊗n1. For quantum chemistry Hamiltonians of N molecular orbitals, the number of Pauli strings is O(N 4)[26]. By linearity: 
+
+C(θ) = X
+
+> P
+
+cP ⟨Ψ( θ)|P |Ψ( θ)⟩ (2) Since measurement is performed in the computational basis, measuring X or Y operators on a given qubit requires applying basis rotation gates to map their eigenstates to the computational basis. For a Pauli-X operator, a Hadamard gate H is applied. For a Pauli-Y operator, a phase gate S† followed by H is applied. These measurements are repeated to obtain statistically reliable estimates, which are summed to compute C(θ). A classical optimizer then determines the parameter update for the next iteration. As you can see, at each iteration, every Pauli term has to be measured repeatedly enough times to get a reasonable approximation of its expectation value. As was mentioned in the Introduction (Sec. 1.3), our full quantum method is to apply DQES-based VQE, in which the optimization starts from different MUB states. When performing DQES-based VQE, all the measurements have to be repeated for each of the initial MUB states. The definition in Eq. (1) can be extended to mixed states by defining C(θ) =Tr 
+
+
+
+ρ(θ) ˆH
+
+
+
+, though we restrict our discussion here to pure states. Finally, as noted in the Introduction, the optimization of these landscapes is non-trivial; VQAs frequently suffer from Barren Plateaus (BPs), where gradients vanish exponentially with the system size, hindering convergence. We now turn to discuss these BPs in more detail. 
+
+4.2 Barren Plateaus 
+
+For the optimization using VQEs, Barren plateaus (BPs) usually constitute a major obstacle. More specifically, an ansatz is considered suitable for optimization when its cost-function gradient decreases at most polynomially with system size or circuit depth; conversely, when the gradient decays exponentially, the algorithm is said to suffer from a barren plateau [11, 26]. From a statistical viewpoint, this phenomenon emerges be-cause the expectation value of gradients necessary for the iterations for the optimization problem concentrates exponentially around zero [10], and as the number of qubits grows, the variance also vanishes. In other words, the probability of selecting a random state far from a region of gradient zero decreases severely with the size of the system. In this sense, even highly expressive ans¨ atze which explore the Hilbert space almost uniformly are extremely unlikely to sample parameters with non-negligible gradients. This effect is not limited to gradient-based methods: it has been shown to also hinder gradient-free optimizers such as COBYLA, Powell, and Nelder-Mead [26]. Several mitigation strategies have been proposed to address BPs. Techniques that reduce ansatz expressibility such as adaptive ans¨ atze help avoid exponentially vanishing                                
+
+> 1For reference, the standard Pauli matrices are defined as: I= ( 1 0 0 1 ), X= ( 0 1 1 0 ), Y= 0−ii0
+> ,
+> Z= 100−1
+> .The Hadamard gate and phase gate that we mention below are H=1√2
+>  111−1
+> and
+> S= ( 1 0 0i), respectively.
+
+8gradients [26]. In this direction, initializing parameters in regions of high gradient– analogous to positioning near “steeper gravitational wells”–could improve optimization by avoiding flat regions. However, as noted in Ref. [10], due to measure concentration, such favorable regions occupy exponentially small volumes of the parameter space and are difficult to detect. Another leading strategy was proposed by Grant et al. [27]. This strategy is more similar to ours as both strategies deal with alternative initialization. Grant et al. suggest to choose initial parameters such that the circuit approximates the identity operation or a block-identity structure, preventing the gradients from vanishing when training starts. However, problem may still remain; the parameters may be initialized near local traps (despite having large gradients) or within a classically simulable subspace [28]. 
+
+# 5 Hybrid Quantum-Classical Computational Pipeline in VQE 
+
+5.1 From Geometry to Qubits: The Workflow 
+
+Our research utilizes a hybrid quantum-classical workflow mediated by Qiskit Na-ture [29] and the classical chemistry driver PySCF [30]. The transformation from a physical molecule to a qubit Hamiltonian involves four computational stages: 1. System Definition: The input is defined by atomic coordinates, total charge, and spin multiplicity. We assume the standard Born-Oppenheimer approximation (see Eq. 10 in Appendix B), treating nuclei as fixed point charges. 2. Basis Set & Mean-Field Calculation: We select a Basis Set (e.g., STO-3G or 6-31G) to represent the Atomic Orbitals (AOs), denoted as {χμ}. Let N be the number of spatial basis functions. 
+
+• Integral Generation: First, the classical driver computes the one-body and two-body integrals in the AO basis {χμ}. There are O(N 4) such integrals, representing all possible Coulombic interactions between the basis functions. The form of these integrals is given in Eqs. 21, 22 in Appendix B. 
+
+• Hartree-Fock (HF) Optimization: We perform a Self-Consistent Field (SCF) calculation [31] to find the Molecular Orbitals (MOs), denoted as {ψp}. The MOs are linear combinations of AOs: 
+
+ψp =
+
+> N
+
+X
+
+> μ=1
+
+Cμp χμ, (3) where {xμ} are the basis functions chosen to represent the AOs. The SCF algorithm iteratively optimizes the coefficient matrix C by solving the Hartree-Fock equations . This requires constructing the Hartree-Fock potential [31] at each iteration (at a cost of O(N 4)) to match the updated value of C, until convergence. Full mathematical details of the HF equations and potential are provided in Appendix B.4. Formally, this heuristic procedure attempts to solve the Hartree-Fock problem [19]; we discuss the formal definition and complexity of this problem immediately below. 9• Output of step 2: Once the optimized coefficient matrix C is found, the orig-inal AO integrals are transformed (rotated) into the MO basis via a tensor contraction ( C is the basis transformation matrix from AOs to MOs). This transformation is given by: 
+
+hpqrs = X
+
+> μνλσ
+
+C∗
+
+> μp
+
+C∗
+
+> νq
+
+Cλr Cσs ⟨μν |λσ ⟩AO , (4) with 
+
+⟨μν |λσ ⟩AO =
+
+Z
+
+dx1dx2 χ∗
+
+> μ
+
+(x1)χ∗ 
+
+> ν
+
+(x2) 1
+
+|r1 − r2|χλ(x1)χσ(x2) (5) The resulting tensor hpqrs contains not only the Coulomb and Exchange terms used in HF but also the general off-diagonal terms required to describe electron corre-lation (excitations) in the VQE Hamiltonian which is obtained in the next step. Although diagonalizing the Hamiltonian takes exponential time, its construction is polynomial: A naive evaluation of all 4-index integrals (Eq. 4) scales as O(N 8). Standard implementations perform this as a sequential tensor contraction (trans-forming one index at a time), reducing the cost to O(N 5). 3. Active Space Transformation: To make the problem tractable on near-term quantum hardware, we truncate the orbitals to an Active Space (AS), effectively freezing core electrons and ignoring high-energy virtual orbitals. 
+
+• Output of Step 3: This step produces a reduced set of integrals ( hAS pq , h AS pqrs )corresponding only to the active orbitals. These reduced integrals constitute the coefficients of the final Second Quantized Hamiltonian (Eq. 20 in Ap-pendix B). 4. Qubit Mapping: The fermionic Hamiltonian obtained at the previous step, is projected onto the qubit space using transformations such as Jordan-Wigner [32] or Parity [33, 34]. This produces a qubit operator Hq = P 
+
+> i
+
+ciPi, composed of Pauli strings Pi, which serves as the input for the VQE algorithm. For example, see Hamiltonians (7) and (8) in Appendix A. 
+
+5.2 Benchmarking with Classical Solvers 
+
+To validate the accuracy of our VQE result, we compare our results against the Full Configuration Interaction (FCI) energy [35]. In our workflow, this benchmark is computed using Qiskit Nature’s exact eigensolver, which performs matrix diagonalization of the Second Quantized Hamiltonian (defined in Eq. 20 in Appendix B) within the chosen active space. This result is exact within the chosen basis set and within the choice of the active space. However, the calculation scales exponentially with system size, creating a strict computational bottleneck. 
+
+Note on computational cost: While Qiskit Nature’s default solver relies on full diag-onalization (scaling as O(D3) where D is the full Hilbert space dimension), specialized chemistry drivers like PySCF offer iterative subspace methods such as the Davidson [36] or Lanczos [37] algorithms. These methods reduce the cost to roughly O(kD 2) (where k
+
+is the number of desired eigenvalues), allowing for slightly larger systems, though they remain exponentially costly in the number of qubits. 10 5.3 Remarks on Invariance and Complexity 
+
+5.3.1 Independence of FCI from Mean-Field Method: 
+
+PySCF offers various mean-field approximations, including Restricted HF, Unre-stricted HF, and Density Functional Theory (DFT) [38]. While the details on each of these specific method is beyond our scope, a common point of confusion is whether the final FCI result depends on this initial choice. The FCI wavefunction |ΨF CI ⟩ is defined as the linear combination of the reference state |Φ0⟩ obtained from the chosen approximation method (e.g, the HF state obtained from the SCF procedure), and all possible excitations: 
+
+|ΨF CI ⟩ = c0|Φ0⟩ + X
+
+> ia
+
+cai |Φai ⟩ + X
+
+> ijab
+
+cab ij |Φab ij ⟩ + . . . (6) The term |Φai ⟩ represents a singly excited determinant formed by exciting an electron from the occupied orbial i to an unoccupied orbital a, |Φab ij ⟩ represents a doubly excited determinant formed by exciting two electrons from occupied orbitals i, j to unoccupied orbitals a, b , and so on... The orbitals mentioned are MOs. The set of all such determinants forms a complete basis for the N -electron Hilbert space defined by the atomic basis set which we started with. Changing the initial method (e.g., from HF to DFT) essentially rotates the orbital basis; while the individual coef-ficients c change to accommodate the new basis, the total vector space spanned by the determinants remains identical. Note that |Φ0⟩ itself, and its excitations depend on the choice of approximation. But this is merely a change of basis. Thus, the exact diagonal-ization yields a unique ground state energy, independent of the initial orbitals. 2
+
+5.3.2 Feynman’s Intuition and Beyond 
+
+Before connecting computational complexity to specific computational chemistry prob-lems, we briefly clarify the relevant complexity classes. The class NP encompasses prob-lems that a classical computer can solve in polynomial time, provided a correct and relevant hint is supplied by an external source. Analogously, the QMA (Quantum Mer-lin Arthur) complexity class contains problems that a quantum computer can solve in polynomial time once an appropriate hint is given from an outside source. While the HF algorithm seeks to find the optimal Slater determinant for minimizing the energy, a formulation of the promise (decision) HF problem for a system with N spatial orbitals is as follows: given two constants b > a with a gap b − a > 1poly( N ) , does the optimal Slater determinant have an energy lower than a or larger than b? This problem turns out to be NP-complete. Similarly, a decision problem for the DFT method is known to be QMA-complete. For both results, see [19]. We now give the intuition for why the HF problem is NP-complete. The proof from [19] is based on the fact that the promise problem of whether an Ising spin glass Hamiltonian 
+
+HISING on an L×L×2 lattice has ground state energy eg < a or eg > b is NP-complete [39]. It is possible to map any instance ( HISING , a, b ) to an instance ( HHF , a ′, b ′) in polynomial time such that: 
+
+> 2Strictly speaking, this invariance holds only if the calculation is performed on the full basis set. If an Active Space is used, the results will agree only if the selected active orbitals span the exact same subspace.
+
+11 • If eg < a , then min Φ⟨Φ|HHF |Φ⟩ < a ′, where the minimization is over all Slater determinants Φ. 
+
+• If eg > b , then min Φ⟨Φ|HHF |Φ⟩ > b ′.Since the mapping can be done in polynomial time, the Hartree-Fock problem is NP-hard. Additionally, the constructed HHF is in second-quantized form (with only bi-quadratic terms; see Eq. 20 for an example of such Hamiltonian), which makes the evaluation for the energy of a witness state Φ efficient. Therefore, we conclude that the Hartree-Fock problem is NP-complete. Since the HF problem is NP-C, here is why we expect a quantum advantage. Most problems in the class NP-C are not hard on average, but in the worst cases. This leaves a lot of room of easy cases, but not only. It also leaves a lot of room for cases that are potentially easy for a quantum computer while they are still hard for classical ones. Intuitively, the quantum advantage relevant for those cases could result from expanding the search space far beyond the computation basis. Even for just a single qubit, the two values accessible classically are generalized into a whole sphere. So one may assume that some BP and local minima could potentially be bypassed by alowing the huge space that expands beyond just the computation basis. On small-size problems MUBs could provide non-conventional hints to where such bypasses could be enabled. A similar intuition is not only about easy cases but also about easy approximations. More about this, here below. When going beyond HF, this enlarged space is actually what is also accessible to Na-ture itself. In quantum terminology, instead of an Ising model, the correct and relevant model is the Heisenberg model. For context, finding the ground state of an Ising model is NP-complete [39], as reviewed by Lucas [40], who formulated numerous classical com-binatorial problems as the minimization of Ising Hamiltonian energies. The Heisenberg model, however, connects directly to the quantum Local Hamiltonian problem (where molecular Hamiltonians sit), which Kitaev established as being QMA-complete [41]. As a result, there is an even better intuition as to why quantum computers may be superior to classical ones: algorithms like VQE are motivated precisely by this fact, as they are designed to variationally prepare and explore these highly correlated states directly on quantum hardware, bypassing the classical memory bottlenecks that make such QMA-hard spaces intractable. Feynman suggested the notion of quantum computers exactly for that reason: Since Nature solves the problem of directing a molecule into its ground state, and since Nature is quantum, maybe a quantum computer can solve this problem exponentially faster than classical ones? However, today we know that the best estimate for solving the ground state problem is using DFT instead of HF. But we also know that DFT is even a harder problem than HF, and it is harder than being NP-C. It is QMA-C. So why can we expect Nature to solve QMA-C problems? Our intuition in this case is less about finding easy cases that are easy for a quantum computer but hard for a classical ones. Our intuition—going beyond Feynman’s—says that Nature, for the hard cases, finds great approximations instead of the optimal solution. So we are assuming there are approximations to certain levels that are easy for a quantum computer but are still hard for classical computers. This, in our eyes, is the improved variant for what Feynman predicted. 12 6 Results 
+
+6.1 Quantum Inspired Analysis 
+
+In Sec. 2.2 we reviewed the motivation for calculating the PES for reactions or molecules. We also discussed the complexity of doing so for large systems, namely large in the number of active orbitals. At this stage, we present calculations for smaller systems: The first is for the dynamics of 3 hydrogen atoms, which is a simple case study which demonstrates expected phenomena, which we discuss shortly. Two more systems are the CO 2 and H 2O molecules, both related to HCOOH. Carbon-dioxide (CO 2), is a relevant starting point towards our ultimate goal of studying PES related to carbon fixation, as it is involved in the process we study. We further investigate the dynamics of this process in following sections. Water is also relevant, as it is one of the reactants in another process where formic acid is formed (see Sec. 7). The calculation is quantum inspired. We used the PySCF software that generates a fermionic Hamiltonian of the reaction, based on (restricted) Hartree-Fock approximation with the basis set STO-3G. Then, we used the parity mapping, to obtain a corresponding qubit Hamiltonian (e.g Eqs. (7) and (8)), which is done by Qiskit-Nature (PySCF is also called from Qiskit-Nature). The energies calculated are the minimal eigenvalues of these Hamiltonians, calculated by matrix diagonalization, possible only for small number of qubits n, as the matrix size is exponential in n.In the dynamical simulation of the three-hydrogen system, we assumed the three atoms are colinear and defined R1[˚ A] and R2[˚ A] to be the distances between the atom in the center, to the left atom and to the right atom, respectively. For a 20 × 20 grid of evenly spread points R1, R 2 ∈ [0 .8, 1.2], we calculated the energy of the system. We chose an Active Space (AS) of three electrons and three spatial orbitals (six spin orbitals), which is the default in PySCF. The active space refers to a reduced subset of electrons and molecular orbitals selected for explicit treatment in qluantum chemical calculations, allowing accurate simulations at a fraction of the full Hilbert space size. All calculations were performed in the zero-temperature limit ( T = 0 K), where thermal excitations are neglected and the system is characterized by its ground state. Accordingly, we compute the full spectrum of the qubit Hamiltonian and report the lowest eigenvalue as the ground state energy. The results for the potential energy surface (PES) of the system are shown in Figure 2. 13 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 
+
+> R1 [Å]
+> 0.80
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> 1.15
+> 1.20
+> R2 [Å]
+> 1.5775
+> 1.5730
+> 1.5685
+> 1.5640
+> 1.5595
+> 1.5550
+> 1.5505
+> 1.5460
+> 1.5415
+> 1.5370
+> Energy [Hartree]
+
+Figure 2: 2d PES of co-linear dynamics of three hydrogen atoms. Our results exhibit the known behavior: Formation of H 2 molecule, in which two of the atoms are very close, and the third is not bound to them, is the most preferable state. Indeed, we see two global minima of the energy in the upper left and bottom right regions of the figure. The formation of H 3 molecule as seen, is less preferable, though it appears as a saddle point in the PES. This is accepted, since while not stable, this molecule acts as a transition state [42]. The second PES we plotted is for the dynamics of one carbon atom and two oxygen atoms. We assumed co-linearity for this system as well, with R1[˚ A] and R2[˚ A] the dis-tances between the carbon, to the left and to the right oxygen, respectively. We took 
+
+R1, R 2 ∈ [0 .96 , 2.36] which was chosen to capture the interesting regions. We chose AS of 6 electrons and 6 spatial orbitals (12 spin orbitals), which yields a 10-qubit Hamiltonian, whereas the default in PySCF is 22 electrons and 15 spatial orbitals (30 spin orbitals). This means that the lowest-energy 16 electrons are assumed to simply occupy the eight lowest energy orbitals (16 lowest energy spin-orbitals). The results are shown in Fig. 3 14 1.0 1.2 1.4 1.6 1.8 2.0 2.2 
+
+> R1 [Å]
+> 1.0
+> 1.2
+> 1.4
+> 1.6
+> 1.8
+> 2.0
+> 2.2
+> R2 [Å]
+> 185.168
+> 185.096
+> 185.024
+> 184.952
+> 184.880
+> 184.808
+> 184.736
+> 184.664
+> 184.592
+> 184.520
+> Energy [Hartree]
+
+Figure 3: 2d PES of co-linear dynamics of two oxygens around a carbon atom. The PES presented in Fig. 3 shows that having all the atoms close to each other, is the most preferable state. This result is consistent with the chemical stability of carbon-dioxide under ambient conditions. Other local minima appear when a CO molecule is formed and the other oxygen is far apart, corresponding to the formation of the less (but still) stable molecule of CO. We see that states in which both distances R1, R 2 are too large, are less preferable than the formation of molecules in this co-linear settings, as expected. Finally, we plotted the PES for water, with respect to two parameters: the distance 
+
+R[˚ A], between each of the hydrogen atoms and the oxygen atom, and the angle ⃗ θ[◦]between the two oxygen-hydrogen bonds. The known parameters at equilibrium are known to be Req = 0 .9582˚ A,⃗ θ eq = 104 .5◦. We used a grid of 11 × 11 points evenly spread (around the equilibrium) in the region [0 .6Req , 1.4Req ] × [0 .6⃗θeq , 1.4⃗θeq ]. As expected, we observed minimal energy at the middle point. A minimal active space of 2 electrons and 2 spatial orbitals (4 spin orbitals) was sufficient to demonstrate this behavior. The PES result is shown in Fig. 4. 15 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 
+
+> R [Angstrom]
+> 70
+> 80
+> 90
+> 100
+> 110
+> 120
+> 130
+> 140
+> Theta [degrees]
+> Known min at (R,Theta)=(0.9584,104.5)
+> Simulated min at (R,Theta)=(0.9584,104.50). E=-74.9644
+> 74.90
+> 74.75
+> 74.60
+> 74.45
+> 74.30
+> 74.15
+> 74.00
+> 73.85
+> 73.70
+> Energy [Hartree]
+
+Figure 4: 2d PES of water molecule. 
+
+6.2 Ground State Energy Simulation of Formic Acid with DQES 
+
+Simulation Details We ran numerous ground-state energy simulations of Formic Acid. We compared the solutions obtained by both standard VQE methods and partial-DQES (see Sec. 1.3) on two qubits. Unless mentioned otherwise, all of the simulations are of Formic Acid (HCOOH) in its lowest energy geometry at absolute zero temperature (see Appendix C). We computed the ground state energy for various levels of approximation, corresponding to different choices of AS. All the Hamiltonians were obtained using PySCF and Qiskit-Nature in the manner discussed in the previous section. Our different choices of active space were: Two electrons and two spatial orbitals (2 qubits), four electrons and four spatial orbitals (6 qubits) and six electrons and six spatial orbitals (10 qubits). The tests were run in parallel on 20 recycled computers for several weeks. 
+
+Comparison of Quantum Eigenvalue Algorithms For our comparison between VQE and DQES, we measured how the choice of ansatz circuit affects both algorithms. Most work on VQE is done with some choice of an ansatz and an optimizer, while the initial state is simply |000 . . . 00 ⟩ for all qubits. Of course there are a few exceptions (e.g. a piece of work named subset-VQE, and various additional works); we intend to deal with those in the future, and compare our method to the main ones. We have seen that the use of MUBs could be extremely important and even crucial: E.g., in the case of a singlet and a degenerate triplet, one could accidentally use an ansatz that will solely be restricted to the huge barren plateau. MUB initialization prevents that. 16 Let us now decide how to compare to the above case in which the initial state is always |000 . . . 00 ⟩. In all such papers, the flexibility is with choosing a vector ⃗ θ of all angles in the ansatz, commonly a random choice. If the optimizer does not lead to a convergence, another attempt or a few attempts are then done. Commonly there is no deep understanding of how many attempts should be applied, so we can for example compare to just five attempts (see below). However, the intuition of spanning the entire quantum space is what causes us (and of course [12]) to use MUBs. So the full DQES, for small problems, used 2 n × (2 n + 1) states. It makes sense to compare to an identical number of random attempts, if the ansatz is expressive (can reach any point in the quantum space). Commonly the ansatz is not expressive unless in papers dealing with very few (e.g., 2-3) qubits. So then, some measure of “nicely spread” states can maybe be defined. E.g., the Haar measure is sometimes used, but commonly only for the full quantum space. We are aware of very few papers that try many random initial states, e.g [43] and [44]. In the future we intend to check how many such random states, so we can try to use an identical number and compare. We also plan to compare the performance of our method with other clever randomization techniques, for example, see [27] , in which only a subset of the parameters is randomly initialized. Given the above information, one fair way of comparing is to check paper by paper and use a small number of random choices as done there and compare to our attempt with larger number of initial states, that commonly depends on some deterministic yet arbi-trary choice of partial efficient DQES ([12]) or the full DQES if the system is sufficiently small. Alternatively, we can adjust the number of random vectors ⃗ θ, to be exactly identical to the number of our initial states that uses full or partial DQES. Theoretically, For a fully expressive ansatz and full DQES we do not know yet what will be better, to use all 2 n × (2 n + 1) states or to use 2 n × (2 n + 1) random ⃗ θ vectors. We believe that both methods will be great in different ways, for analyzing BPs. However, this theoretical comparison is far beyond the scope of our program here. It could take years or decades till such a theoretical comparison will be performed. Here, for non-expressive ansatz, versus some deterministic yet arbitrary partial DQES, we can only compare heuristics. This is done here, see below. We plan to also compare, for very small cases, full DQES with fully expressive ansatz, and with the same number of attempts. Here, we tested two ansatze: UCCSD [45] and EfficientSU2 [46]. Their circuit repre-sentation is given in Appendix D. When using partial-DQES, we optimize once over all MUB states on two qubits with the other qubits fixed to |0⟩. We chose the initial param-eters of the ansatz all to zero ( ⃗ θ0 =⃗ 0). Hence, this algorithm is completely deterministic yet arbitrary. In contrast, VQE is initialized with random initial parameters for each trial. We measured the effect of a constant number of VQE trials (5 trials as a baseline) and an adaptive number of VQE trials, which is set to be the same number of trials as the amount of MUB states for DQES, denoted by N . Specifically, for 2 qubits N = 19, for 6 qubits N = 286 and for 10 qubits N = 856 3. We classically found the ground-state energy 
+
+E0 and evaluated the ground-state energy error of each trial, defined as ∆ E = E − E0
+
+where E is the optimized energy from each trial. The results are summarized in Table 1. For μ = 1 .4 × 10 −3 [Hartree] known as chemical accuracy we also checked if the results   
+
+> 3After removing redundant |0⟩states
+
+17 are precise, namely if ∆ E < μ . This is a well-known standard of precision in chemistry [14]. Test Method ∆E [Hartree] ↓ min [∆ E] [Hartree] ↓
+
+2 qubits - UCCSD 
+
+VQE - 20 trials 8.5 × 10 −15 < 10 −16 
+
+VQE - 5 trials 1.1 × 10 −14 2.7 × 10 −15 
+
+DQES (ours) 6.4 × 10 −2 4.4 × 10 −16 
+
+6 qubits - UCCSD 
+
+VQE - 286 trials 1.4 × 10 0 1.3 × 10 0
+
+VQE - 5 trials 1.4 × 10 0 1.4 × 10 0
+
+DQES (ours) 1.7 × 10 0 3.9 × 10 −5
+
+10 qubits - UCCSD 
+
+VQE - 856 trials 4.3 × 10 0 4.2 × 10 0
+
+VQE - 5 trials 4.3 × 10 0 4.2 × 10 0
+
+DQES (ours) 2.2 × 10 0 6.4 × 10 −3
+
+2 qubits - EfficientSU2 
+
+VQE - 19 trials 1.1 × 10 −14 < 10 −16 
+
+VQE - 5 trials 8.9 × 10 −15 3.3 × 10 −15 
+
+DQES (ours) 3.9 × 10 −9 1.3 × 10 −15 
+
+6 qubits - EfficientSU2 
+
+VQE - 286 trials 3.3 × 10 −2 1.62 × 10 −3
+
+VQE - 5 trials 2.6 × 10 −2 2.32 × 10 −2
+
+DQES (ours) 5.1 × 10 −2 1.58 × 10 −3
+
+10 qubits - EfficientSU2 
+
+VQE - 856 trials 2.7 × 10 −1 3.0 × 10 −2
+
+VQE - 5 trials 2.0 × 10 −1 7.6 × 10 −2
+
+DQES (ours) 4.4 × 10 −1 1.8 × 10 −2
+
+Table 1: Comparison of DQES and VQE optimization results on the qubit Hamiltonian of Formic Acid. As seen in Table 1, when the number of qubits and the depth of the ansatz increase, the minimum energy gap for VQE becomes significant ( ∼ 1 [Hartree] and higher). In contrast, DQES manages to achieve results within chemical accuracy. Note that the average Energy Error in VQE is usually lower than in DQES. We collected the final energy results from all trials of both algorithms. The results are summarized in Fig. 5 for the 6-qubit test on both ansatze, and in Fig. 6 on the 10-qubit test. 0 50 100 150 200 250            
+
+> Index
+> 10 2
+> 10 1
+> 10 0
+> Energy [Hartree]
+> VQE Energies
+> MUB Energies
+> Chemical Accuracy 050 100 150 200 250
+> Index
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Energy [Hartree]
+> VQE Energies
+> MUB Energies
+> Chemical Accuracy
+
+Figure 5: The Energy Error spread in 6 qubits EfficientSU2 (left; in log-scale) and 
+
+UCCSD (right) in VQE trials (Blue) and MUB trials (Red). 18 0 200 400 600 800       
+
+> Index
+> 10 2
+> 10 1
+> 10 0
+> Energy [Hartree]
+> VQE Energies
+> MUB Energies
+> Chemical Accuracy 0200 400 600 800
+> Index
+> 0
+> 1
+> 2
+> 3
+> 4
+> Energy [Hartree]
+> VQE Energies
+> MUB Energies
+> Chemical Accuracy
+
+Figure 6: Energy Error spread in 10 qubits EfficientSU2 (left) and UCCSD in log (right) in VQE trials (Blue) and MUB trials (Red). According to Fig. 5, in both ansatze the minimum of DQES trials is well below the minimum of VQE trials. When using the EfficientSU2 ansatz, two MUB trials reached chemical accuracy, while all VQE trials did not. When using UCCSD ansatz, six MUB trials reached chemical accuracy. According to Fig. 6, for both ansatze, all VQE trials got stuck in a significant energy gap, while DQES trials were scattered in several re-gions. In the UCCSD case, some of the DQES trials even reached low energy gap (yet not in chemical accuracy range, see Fig. 14 in Appendix E). From these two figures, we find that EfficientSU2 tends to yield a high variance in optimized energy, while UCCSD yields either significantly high energy gaps or extremely low energy gaps. Next, for each method, we present the best and worst convergence performances. Results for the 6-qubit case and the 10-qubit case (both with the UCCSD ansatz) are presented in Fig. 7 and Fig. 8, respectively. 0 100 200 300 400            
+
+> Iteration
+> 0.80
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> 1.15
+> 1.20
+> Energy Error [Hartree]
+> 1e 13 + 4.404712978671683 [Hartree]
+> Lowest Energy
+> Highest Energy 0200 400 600 800 1000
+> Iteration
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Energy Error [Hartree]
+> Lowest Energy
+> Highest Energy
+
+Figure 7: Optimization plots of the 6 qubit UCCSD task with the lowest and highest energy trials out of all the VQE attempts (left) and MUB attempts (right). 19 0 200 400 600 800 1000        
+
+> Iteration
+> 4.2
+> 4.4
+> 4.6
+> 4.8
+> 5.0
+> 5.2
+> 5.4
+> 5.6
+> Energy Error [Hartree]
+> Lowest Energy
+> Highest Energy 0200 400 600 800 1000
+> Iteration
+> 10 2
+> 10 1
+> 10 0
+> Energy Error [Hartree]
+> Lowest Energy
+> Highest Energy
+
+Figure 8: Optimization plots of the 10 qubit UCCSD task with the lowest and highest energy trials out of all the VQE attempts (left) and MUB attempts (right). In the 6 qubit test, summarized in Fig. 7, in the VQE case both the best and the worst trials are similar and zigzag around a constant and significant energy gap ( ∼ 4 Hartree), showing that this optimization in this landscape is ineffective. In contrast, DQES in the best case optimizes normally and even achieves convergence at the 400th iteration. It is interesting to note that in the worst case it appears to get stuck on a high energy gap, similar to VQE. In the 10 qubit test, as seen in Fig. 8, VQE still appears to get stuck on different but significant energy gaps ( ∼ 4 Hartree). In DQES, the worst case does seem to get stuck on a high energy gap like before. While the best case optimizes normally, it doesn’t reach absolute convergence in 1000 iterations, though it outperforms the best VQE trial. 
+
+Further variations As a final comparison, we test the effect of the initial state of the ansatz circuit to the optimization landscape. For each VQE trial, we randomize the initial state |ψ0⟩ to be a random state in the computational basis. For each DQES trial, we first select the qubit pair to have the MUB state, and then the rest of the qubits are randomly sampled to be a state in the computational basis. The results for these tests are in Table 2. Test Method ∆E [Hartree] ↓ min [∆ E] [Hartree] ↓
+
+6 qubits - UCCSD VQE + random |ψ0⟩ - 286 trials 5.6 × 10 −1 2.0 × 10 −2
+
+DQES + random |ψ0⟩ 6.1 × 10 −1 3.9 × 10 −5
+
+6 qubits - SU2 VQE + random |ψ0⟩ - 286 trials 3.7 × 10 −2 2.0 × 10 −3
+
+DQES + random |ψ0⟩ 7.2 × 10 −2 1.8 × 10 −3
+
+Table 2: Summary of results of the random initialization state on the 6 qubit problems. According to Table 2, we observe an improvement in the minimum energy gap for both algorithms compared to the results seen in Table 1. Even then, the energy gap in the UCCSD test is significantly higher in VQE than in DQES, while in EfficientSU2 it is less significant. 20 6.3 Transition state optimization 
+
+Throughout the following experiments we used the computational chemistry library ORCA [47] which has both NEB and IRC algorithms implemented. As mentioned in Sec. 3.4 we first want to find the transition state and then utilize it to find the full reaction coordinate. 1.5 1.0 0.5 0.0 0.5 1.0 
+
+> X [Å]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Y [Å]
+> O
+> O
+> C
+> H
+> H
+> Reaction Coordinate 51/71
+
+Figure 9: The Transition State as calculated by the NEB-TS optimization method. According to Fig. 9, the transition state happens when all the atoms H-O-C-H have electrons connecting them, yielding a highly-unstable and high-energy configuration. We expect the states before it to have the H 2 molecule further away and the states after it to have the H-H bond broken, with each hydrogen going to the oxygen or to the carbon atoms. The energy of this configuration is −189 .629, [Hartree] while the energy of the reactants (H 2+CO 2) is −189 .738 [Hartree] and that of the product (HCOOH) is −189 .735 [Hartree]. These values tell us that the reaction has activation energy ∆ Ea = 0 .109 [Hartree], and that it is endothermic with an energy difference of 0 .003 [Hartree]. 
+
+6.4 IRC calculation 
+
+We wish to find the full reaction coordinate of the reaction. The results of the IRC method on the previously obtained transition state is given in Fig. 10. 21 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Normalized Reaction Coordinate
+> 0.00
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.10
+> Relative Energy (Hartree)
+> E = 0.003
+> Ea= 0.109
+> TS
+
+Figure 10: Intrinsic Reaction Coordinate Plot of the formic acid reaction obtained by the IRC method on the transition state from Fig. 9 According to Fig. 10, the entire reaction has one transition state, flowing from the reactants to the product, with no other intermediates states. The left side of the graph requires many iterations since it includes the path the hydrogen takes to come close to the carbon dioxide. To further inspect the reaction, we inspect a few selected snapshots of the reaction throughout the optimized reaction coordinate, summarized in Fig. 11. 1.5 1.0 0.5 0.0 0.5 1.0 
+
+> X [Å]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Y [Å]
+> O
+> O
+> C
+> H
+> H
+
+(a) 1.5 1.0 0.5 0.0 0.5 1.0  
+
+> X [Å]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Y [Å]
+> O
+> O
+> C
+> H
+> H
+
+(b) 1.5 1.0 0.5 0.0 0.5 1.0  
+
+> X [Å]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Y [Å]
+> O
+> O
+> C
+> H
+> H
+
+(c) 1.5 1.0 0.5 0.0 0.5 1.0  
+
+> X [Å]
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> Y [Å]
+> O
+> O
+> C
+> H
+> H
+
+(d) 
+
+Figure 11: Four different snapshots of the molecule configurations on the reaction coor-dinate. Snapshot (a) is the initial configuration, where H 2 is separated from CO 2. It is slightly tilted to break symmetry. Snapshot (b) is the transition state as was found in Sec. 6.3. Snapshot (c) shows the state where the H-H bond has broken and head hydrogen forms its own bond with oxygen & carbon. Finally, (d) shows the product, formic acid, which is reached after the hydrogen atoms move apart due to steric repulsion. 
+
+# 7 Discussion and Future Research 
+
+In this work, we studied formic acid from a hybrid quantum-classical point of view. The reaction we studied has connection to carbon fixation and origin of life as was dis-cussed in Sec. 1. Our analysis is an initial step in a research about these connections. 22 Applying the tools we used in this work such DQES with VQE, PES calculation, as well as NEB and IRC algorithms, on more complex set-ups that involve catalysts, may shed more light on the significance of the process, and hopefully lead to interesting applications. Our PES calculations for the two co-linear cases demonstrate known phenomena using a quantum-inspired tool and represent an important step before moving on to the more complicated optimization process of finding the reaction coordinate. We consider this a method for future work that can be run on both classical and quantum computers, with improved running time due to symmetries that can be exploited in the qubit formulation. Exploring systems with more degrees of freedom remains a challenge we wish to address in the future by using coarse-graining methods and a clever choice of coordinates to ignore due to symmetries. We suggest also studying the following alternative reaction resulting in formic acid CO + H 2O → HCOOH ,
+
+with the same methods applied in this work. As a first step, we already presented the PES of water, by using our quantum-inspired analysis (Sec. 6.1). Our results for VQE with Mutually Unbiased Bases provide evidence for the success of DQES as a discrete search that avoids barren plateaus and local minima where regular VQE fails. The results, sum-marized in Table 1, show that in small problems (in this case, AS of two electrons and two spatial orbitals), both VQE and DQES perform well, with minimal error. However, as the active space expands to 4 electrons, 4 spatial orbitals and 6 electrons, 6 spatial orbitals, standard VQE fails to converge reliably, likely due to barren plateaus [10]. DQES, in con-trast, finds at least one solution within chemical accuracy, supporting the hypothesis that structured ansatze avoid flat landscapes[48]. This is consistent with recent Hessian-based analysis showing improved trainability in low-curvature regions [49]. We note that on average , DQES performs worse than VQE, which aligns with intu-itions of a wide search in various regions both good and bad. This lets the minimum energy gap in DQES be significantly lower than in VQE, which implies random VQE ini-tializations are not a successful search strategy. This is further illustrated in Fig. 5 and Fig. 6 which show that most of the trials in both DQES and VQE ’get stuck’ on higher-energy barren plateaus or local minima, while only a select few MUB states manage to slip by and find the global minimum, up to chemical accuracy. Another behavior that we found is that it is harder to optimize with UCCSD compared to EfficientSU2 , while the closest results to the global minimum are when optimizing 
+
+UCCSD . We believe this is because of the large depth of the UCCSD ansatz that makes it more likely to exhibit barren plateaus. This is illustrated best in Fig. 7 and Fig. 8 where it is clear that VQE struggles to optimize due to barren plateaus or local minima, while DQES manages to find the initial states to avoid them. The results of the modified algorithms in Table 2 show improvement in the results for both algorithms, indicating that the decision of |ψ0⟩ = |0⟩ is arbitrary. Even in these variations, DQES still outperforms VQE in the best case, which means it is a better exhaustive search than simply selecting a random computational basis state as the initial state. These results provide intuition to expect that full-MUB DQES will provide even better results. Future directions include exploring quantum subspace techniques like CSVQE [50], which have been shown to extract better energy estimates from mid-circuit states, even when optimization converges to local minima. Additionally, landscape diagnostics using Hessian eigenvalue spectra [48] or Fisher information may be applied to characterize trainability zones in high-dimensional ansatze. As was suggested in Sec. 6.2, a comparison 23 with the alternative initialization technique of Grant et al. [27], and an informed choice for ideal number of random runs (according to [43, 44]), are valuable directions to us. We plan to extend our approach to larger, more complex catalytic models, including metal-organic frameworks and heterogeneous catalytic systems, validating our method-ology on available quantum hardware platforms. 
+
+# Acknowledgments 
+
+We would like to clarify that a portion of this work, specifically the implementation of the DQES method, was conducted as part of the initial phase of the XPRIZE Quantum Applications competition, utilizing the framework described in Ref. [12]. This specific contribution was performed without financial support. We thank Michael Iv, Linoy Nagar Shaul, Thales Silva and Uri Peskin for fruitful discussions. T.M and O.G thank the Quantum Computing Consortium of Israel Innovation Authority for financial support. This research project was partially supported by the Helen Diller Quantum Center at the Technion. 24 A Hamiltonians from VQE and PES experiments 
+
+Throughout this work, we ran VQE simulations and Quantum inspired algorithm for PES analysis for many Hamiltonians. The number of Pauli coefficients these Hamiltonians have grows with the number of qubits number of qubits in their encoding. As concrete examples, we give the two smallest Hamiltonians we obtained in our experiments, at specific geometries: 
+
+• H2O defined over two qubits, at equilibrium geometry (see Sec. 6.1): ˆHH2O = 0 .297406 I ⊗ Z − 0.297406 Z ⊗ I − 0.074868 Z ⊗ Z + 0 .038562 X ⊗ X (7) 
+
+• Formic Acid (see Sec. 6.2 with minimal active space tested (of two qubits as well), with the geometry provided at Appendix C: ˆHHCOOH = 0 .147402 I ⊗ Z − 0.147402 Z ⊗ I − 0.050507 Z ⊗ Z + 0 .015736 X ⊗ X (8) Larger Hamiltonians contain from dozens to hundreds of Pauli terms, and can be given upon request. 
+
+# B Electronic Structure Problem Preliminaries 
+
+B.1 The Electronic Hamiltonian 
+
+To solve the electronic structure problem for Nn nuclei with positions R1, . . . , RNn
+
+and Ne electrons with positions r1, . . . , rNe , we start with the full Hamiltonian: 
+
+Htot = −
+
+> Ne
+
+X
+
+> i=1
+
+∇2
+
+> i
+
+2 −
+
+> Nn
+
+X
+
+> I=1
+
+∇2
+
+> I
+
+2MI
+
+−
+
+> Ne
+
+X
+
+> i=1
+> Nn
+
+X
+
+> I=1
+
+ZI
+
+|ri − RI | +
+
+> Ne
+
+X
+
+> i<j
+
+1
+
+|ri − rj | +
+
+> Nn
+
+X
+
+> I<J
+
+ZI ZJ
+
+|RI − RJ |, (9) where the terms represent electron kinetic energy, nucleus kinetic energy, electron-nucleus attraction, electron-electron repulsion, and nucleus-nucleus repulsion, respectively. 
+
+Note on Units: Atomic units are used throughout, meaning me = e = ℏ = 4 πϵ 0 = 1, where me is the mass of the electron, e is its charge, ℏ is the reduced Planck constant and 4 πϵ 0 is the reciprocal of the Coulomb constant. Under the Born-Oppenheimer approximation, the nuclei are treated as fixed point charges ( MI → ∞ ). The electronic Hamiltonian reduces to: 
+
+Helec = −
+
+> Ne
+
+X
+
+> i=1
+
+∇2
+
+> i
+
+2 −
+
+> Ne
+
+X
+
+> i=1
+> Nn
+
+X
+
+> I=1
+
+ZI
+
+|ri − RI | +
+
+> Ne
+
+X
+
+> i<j
+
+1
+
+|ri − rj | (10) 
+
+B.2 Orbitals and Fock Space 
+
+To construct the many-body states for the Ne electrons, we define a single-particle basis consisting of N orthonormal spatial molecular orbitals. Associating each spatial orbital with either an up ( ↑) or down ( ↓) spin eigenfunction yields a set of exactly 2 N
+
+orthonormal spin-orbitals {χp(x)}2Np=1 . Here, the composite coordinate x = ( r, s ) denotes both the spatial position ri ∈ R3 and the spin coordinate s ∈ {↑ , ↓} .25 According to the Pauli Exclusion Principle, electrons are fermions, meaning each spin-orbital can be occupied by at most one electron. In this formalism, the multi-particle states live in what is known as the Fock space . The dimension d of this subspace scales exponentially with system size and is given by  2NNe
+
+; the number of possible configurations of Ne electrons occupying 2 N spin orbitals. For instance, in the case where ne = N/ 2, we have d = O(22N 
+
+> √N
+
+). As a concrete numerical example, for 6 electrons in 5 spatial orbitals there are 10 spin orbitals, resulting in d =  10 6
+
+ = 210. This corresponds to the number of what is called Fock states or Slater determinants, which we define in the following section. We remark that the restriction to a finite number of spatial orbitals is justified by ther-modynamic considerations. The occupation probability of electronic states is governed by the Fermi-Dirac distribution [51]. In the ground state limit ( T → 0), this distribu-tion approaches a step function, where states below the chemical potential are occupied and states above it are empty. Even at finite temperatures, the probability of occupying high-energy states decays exponentially. This allows us to neglect the infinite spectrum of high-energy orbitals and treat the system using a set of Ne/2 spatial orbitals 4.This finite discretization allows for a direct connection to quantum information. For ex-ample, a single electron confined to one spatial orbital can be treated as a theoretical realization of a qubit, where the logical states correspond to the electron’s spin orienta-tions ( |↑⟩ , |↓⟩ ). 
+
+B.3 Antisymmetry and Slater Determinants 
+
+Because electrons are indistinguishable fermions, the total Ne-electron wavefunction Ψ( x1, . . . , xNe ) must be fundamentally antisymmetric with respect to the exchange of any two particles: Ψ( . . . , xi, . . . , xj , . . . ) = −Ψ( . . . , xj , . . . , xi, . . . ) (11) A specific electronic configuration where Ne electrons occupy a selected subset of the available spin-orbitals, and that explicitly satisfies the antisymmetry condition in Eq. 11, is described by a Slater Determinant Φ: Φ( x1, . . . , xNe ) = 1
+
+√Ne!
+
+χ1(x1) χ2(x1) · · · χNe (x1)
+
+χ1(x2) χ2(x2) · · · χNe (x2)... ... . . . ...
+
+χ1(xNe ) χ2(xNe ) · · · χNe (xNe ).
+
+(12) In the formalism of second quantization, such a determinant corresponds to a unique 
+
+Fock state (or occupation number vector). Crucially, the set of all  2NNe
+
+ possible Slater Determinants formed from these 2 N
+
+spin-orbitals constitutes a complete orthonormal basis for the Ne-electron Hilbert space. Therefore, the exact many-body wavefunction |Ψ⟩ can be expressed as a linear superpo-sition: 
+
+|Ψ⟩ = X
+
+> k
+
+Ck|Φk⟩, (13)     
+
+> 4That being said, basis sets often include N > N e/2 spatial orbitals. The reason is that the Fermi-Dirac distribution is strictly valid only for non-interacting fermions; in reality, electron-electron repulsion (correlation) causes electrons to partially occupy higher-energy orbitals even at T→0.
+
+26 where |Φk⟩ represents the k-th Slater determinant and the coefficients satisfy P |Ck|2 = 1. The Hartree-Fock method (discussed next) approximates this sum by finding the single 
+
+best determinant. 
+
+B.4 The Hartree-Fock Method 
+
+The Hartree-Fock (HF) theory is a method of approximation that assumes the ground state wavefunction can be described by a single Slater determinant [20, 31] 5. It is im-portant to emphasize that restricting the solution to a single determinant is a mean-field approximation ; it assumes each electron moves in the average static field of all others, thereby neglecting the instantaneous electron-electron correlation. Consequently, the HF energy is necessarily higher than the exact ground state energy. Despite this limitation, the optimized HF determinant serves as the critical reference state for high-accuracy “Post-Hartree-Fock” methods (such as Configuration Interaction or Coupled Cluster), which aim to recover the missing correlation energy [31, 52]. Mathematically, we seek the Slater determinant Φ HF that minimizes: 
+
+EHF = min  
+
+> Φ
+
+⟨Φ|Helec |Φ⟩ (14) subject to the orthonormality constraints of the spin-orbitals. This variational minimiza-tion yields the Hartree-Fock equations :
+
+f (x)ψi(x) = ϵiψi(x) (15) where ϵi are the orbital energies and f (x) is the Fock operator . This operator describes the effective Hamiltonian felt by a single electron: 
+
+f (xi) = −∇2
+
+> i
+
+2 − X
+
+> I
+
+ZI
+
+|ri − RI |
+
+| {z }
+
+> hcore,i
+
++vHF (xi) (16) Here, hcore represents the kinetic energy and nuclear attraction, while vHF is the effective mean-field potential. The HF potential is defined as the sum of the Coulomb ( J) and Exchange ( K) operators acting over all occupied orbitals 6:
+
+vHF (x) = 
+
+> occ
+
+X
+
+> j
+
+(Jj (x) − Kj (x)) (17) These operators are defined by their action on an arbitrary orbital ϕ(x): 
+
+• Coulomb Operator ( Jj ): Represents the classical electrostatic repulsion felt by an electron at position x due to the electron density in the occupied orbital ψj .
+
+Jj (x1)ϕ(x1) = 
+
+Z 
+
+dx2|ψj (x2)|2 1
+
+|r1 − r2|
+
+
+
+ϕ(x1) (18)          
+
+> 5Terminology varies in the literature. For instance Ref. [31] uses “Hartree-Fock Approximation” , while Ref. [20] refers to it as “Hartree-Fock Theory”. We use “Hartree-Fock Method ” in this context.
+> 6Calculating the potential vHF scales as O(N4) in a single iteration due to the contraction of O(N4)two-electron integrals. This is consistent with the polynomial runtime (per iteration) discussed in Sec. 5.3, distinct from the NP-complete worst-case complexity of the global optimization.
+
+27 • Exchange Operator ( Kj ): Represents the non-classical exchange effect arising from antisymmetry. 
+
+Kj (x1)ϕ(x1) = 
+
+Z 
+
+dx2ψ∗ 
+
+> j
+
+(x2) 1
+
+|r1 − r2|ϕ(x2)
+
+
+
+ψj (x1) (19) 
+
+B.5 Second Quantization and Integral Definitions 
+
+For quantum algorithms, we project the electronic Hamiltonian (Eq. 10) onto the basis of molecular orbitals generated by the HF procedure. This yields the Second Quantized Hamiltonian :
+
+H = X
+
+> p,q
+
+hpq a†
+
+> p
+
+aq + 12
+
+X
+
+> p,q,r,s
+
+hpqrs a†
+
+> p
+
+a†
+
+> q
+
+aras (20) where a†
+
+> p
+
+, a q are fermionic creation and annihilation operators. The coefficients are the pre-computed integrals in the molecular orbital basis: 
+
+• One-Electron Integrals ( hpq ): Corresponds to the core Hamiltonian matrix ele-ments. 
+
+hpq =
+
+Z
+
+dx ψ∗ 
+
+> p
+
+(x) −∇2
+
+2 − X
+
+> I
+
+ZI
+
+|r − RI |
+
+!
+
+ψq(x) (21) 
+
+• Two-Electron Integrals ( hpqrs ): Represents the electron-electron repulsion be-tween electrons in MOs p, q, r, s . In physics notation, these are defined as: 
+
+hpqrs = ⟨pq |rs ⟩ =
+
+Z
+
+dx1dx2
+
+ψ∗ 
+
+> p
+
+(x1)ψ∗ 
+
+> q
+
+(x2)ψr(x1)ψs(x2)
+
+|r1 − r2| (22) Note that the Coulomb ( J) and Exchange ( K) terms discussed in the Hartree-Fock section correspond to the specific integrals hpqpq and hpqqp respectively. The VQE Hamiltonian, however, requires the full set of general hpqrs integrals to describe electron correlation effects (excitations) beyond the mean-field approximation. 
+
+# C Geometry of Formic Acid at T = 0[ K]
+
+The spatial coordinates of all atoms in formic acid HCOOH in absolute zero 7, in ˚ A, are: 1. C - (0.0, 0.4421, 0.0) 2. O - (-1.0461, -0.4667, 0.0) 3. O - (1.1708, 0.1201, 0.0) 4. H - (-0.3887, 1.4750, 0.0) 5. H - (-0.6086, -1.3552, 0.0) In the future, we hope to obtain improved results for these values: First, by plotting a PES using diagonalization (as discussed in Sec. 6.1), and later by applying the newly developed DQES method. 
+
+> 7https://cccbdb.nist.gov/geom2x.asp
+
+28 D Circuit Representation of UCCSD and EfficientSU2 
+
+# ansatze 
+
+For the sake of comparison, we plot the EfficientSU2 and UCCSD circuits for 2 qubits. 
+
+q0 :exp(-it IY) (t[0]) 
+
+0
+
+exp(-it YI) (t[1]) 
+
+0
+
+exp(-it (XY + YX)) (t[2]) 
+
+0
+
+q1 : 1 1 1
+
+Figure 12: UCCSD ansatz circuit for 2 qubits 
+
+q0 : RY (˜θ[0]) RZ (˜θ[2]) • RY (˜θ[4]) RZ (˜θ[6]) • RY (˜θ[8]) RZ (˜θ[10]) • RY (˜θ[12]) RZ (˜θ[14]) 
+
+q1 : RY (˜θ[1]) RZ (˜θ[3]) RY (˜θ[5]) RZ (˜θ[7]) RY (˜θ[9]) RZ (˜θ[11]) RY (˜θ[13]) RZ (˜θ[15]) Figure 13: EfficientSU2 ansatz circuit for 2 qubits 
+
+# E Log-plot for Fig. 6 ( UCCSD )
+
+We add the Log-plot the UCCSD subplot of Fig. 6. This is presented in Fig. 14. 0 200 400 600 800        
+
+> Index
+> 10 14
+> 10 12
+> 10 10
+> 10 8
+> 10 6
+> 10 4
+> 10 2
+> 10 0
+> Energy [Hartree]
+> VQE Energies
+> MUB Energies
+> Chemical Accuracy
+
+Figure 14: Log-Plot of the Energy Error spread in 10 qubits UCCSD in VQE trials (Blue) and MUB trials (Red). The log scale in Fig. 14 shows that the spread of energy gaps is large in DQES states, yet none of them reach chemical accuracy. 
+
+# References 
+
+[1] V. von Burg, G. H. Low, T. H¨ aner, D. S. Steiger, M. Reiher, M. Roetteler, and M. Troyer, “Quantum computing enhanced computational catalysis,” Physical Re-view Research , vol. 3, no. 3, p. 033055, 2021. [2] IPCC, “Climate change 2021: The physical science basis,” Cambridge University Press , 2021. 29 [3] N. A. of Sciences and R. Society, “Climate change: Evidence and causes,” tech. rep., 2014. [4] S. Moret, P. J. Dyson, and G. Laurenczy, “Direct synthesis of formic acid from carbon dioxide by hydrogenation in acidic media,” Nature Communications , vol. 5, p. 4017, 2014. [5] A. K. Singh, S. Singh, and A. Kumar, “Hydrogen energy future with formic acid: a renewable chemical hydrogen storage system,” Catalysis Science & Technology ,vol. 6, no. 1, pp. 12–40, 2016. [6] J. M. DeMassa, “Formic acid: a possible precursor in prebiotic chemistry,” Origins of Life and Evolution of Biospheres , vol. 43, pp. 133–149, 2013. [7] M. Mohammadi et al. , “Formic acid and the formation of formamide,” Prebiotic Chemistry and Chemical Evolution , 2020. [8] R. Saladino et al. , “From communism to genetics: Formamide chemistry and the origin of life,” Chemical Society Reviews , vol. 41, pp. 5526–5565, 2012. [9] R. Saladino, E. Carota, G. Botta, M. Kapralov, G. N. Timoshenko, A. Y. Rozanov, E. Krasavin, and E. Di Mauro, “Meteorite-catalyzed syntheses of nucleosides and of other prebiotic compounds from formamide under proton irradiation,” Proceedings of the National Academy of Sciences , vol. 112, no. 21, pp. E2746–E2755, 2015. [10] J. R. McClean et al. , “Barren plateaus in quantum neural network training land-scapes,” Nature Communications , vol. 9, p. 4812, 2018. [11] M. Larocca et al. , “Barren plateaus in variational quantum computing,” Nature Reviews Physics , vol. 7, pp. 174–189, 2025. [12] I. Alfassi, D. Meirom, and T. Mor, “Discretized quantum exhaustive search for variational quantum algorithms,” arXiv preprint arXiv:2407.17659 , 2024. [13] T. Durt, B.-G. Englert, I. Bengtsson, and K. ˙Zyczkowski, “Mutually unbiased bases,” 
+
+International journal of quantum information , vol. 8, no. 04, pp. 535–640, 2010. Comprehensive review covering applications and open problems. [14] J. A. Pople, “Nobel lecture: Quantum chemical models,” Reviews of Modern Physics ,vol. 71, no. 5, p. 1267, 1999. [15] H. Jonsson et al. , “A nudged elastic band method for finding settled points and minimum energy paths,” Classical and Quantum Dynamics in Condensed Phase Simulations , 1998. [16] K. Fukui, “The intrinsic reaction coordinate,” Accounts of Chemical Research ,vol. 14, pp. 363–368, 1981. [17] J. Tennyson, “Perspective: Quantum chemistry on quantum computers,” Physical Review A , vol. 105, p. 030101, 2022. [18] D. S. Levine et al. , “CASSCF with extremely large active spaces using the adap-tive sampling configuration interaction method,” Journal of Chemical Theory and Computation , vol. 16, 2020. 30 [19] N. Schuch and F. Verstraete, “Computational complexity of interacting electrons and fundamental limitations of density functional theory,” Nature Physics , vol. 5, pp. 732–735, 2009. [20] F. Jensen, Introduction to computational chemistry . John wiley & sons, 2017. [21] D. I. Lyakh, M. Musia l, V. F. Lotrich, and R. J. Bartlett, “Multireference nature of chemistry: the coupled-cluster view,” Chemical reviews , vol. 112, no. 1, pp. 182–243, 2012. [22] H. P. L¨ uthi, J. H. Ammeter, J. Alml¨ of, and K. Faegri Jr, “How well does the hartree– fock model predict equilibrium geometries of transition metal complexes? large-scale lcao–scf studies on ferrocene and decamethylferrocene,” The Journal of Chemical Physics , vol. 77, no. 4, pp. 2002–2009, 1982. [23] Z.-L. Cai, K. Sendt, and J. R. Reimers, “Failure of density-functional theory and time-dependent density-functional theory for large extended π systems,” The Journal of chemical physics , vol. 117, no. 12, pp. 5543–5549, 2002. [24] H. Hratchian, H. Schlegel, C. Dykstra, G. Frenking, K. Kim, and G. Scuseria, “The-ory and applications of computational chemistry: the first 40 years,” Dykstra, CE ,vol. 195, 2005. [25] A. Peruzzo et al. , “A variational eigenvalue solver on a photonic quantum processor,” 
+
+Nature Communications , vol. 5, p. 4213, 2014. [26] J. Tilly et al. , “The variational quantum eigensolver: a review of methods and best practices,” Physics Reports , vol. 986, pp. 1–128, 2022. [27] E. Grant et al. , “An initialization strategy for addressing barren plateaus in parametrized quantum circuits,” Quantum , vol. 3, p. 214, 2019. [28] M. Cerezo et al. , “Challenges and opportunities in quantum machine learning,” 
+
+Nature Reviews Physics , vol. 4, pp. 12–23, 2022. [29] Q. contributors, “Qiskit nature: An open-source quantum computing software de-velopment framework for natural science,” 2023. [30] Q. Sun et al. , “Pyscf: the python-based simulations of chemistry framework,” The Journal of Chemical Physics , vol. 148, no. 10, p. 104117, 2018. [31] A. Szabo and N. S. Ostlund, Modern quantum chemistry: introduction to advanced electronic structure theory . Courier Corporation, 2012. [32] P. Jordan and E. Wigner, “ ¨Uber das paulische ¨ aquivalenzverbot,” Zeitschrift f¨ ur Physik , vol. 47, no. 9, pp. 631–651, 1928. [33] S. B. Bravyi and A. Y. Kitaev, “Fermionic quantum computation,” Annals of Physics , vol. 298, no. 1, pp. 210–226, 2002. [34] J. T. Seeley, M. J. Richard, and P. J. Love, “The bravyi-kitaev transformation for quantum computation of electronic structure,” The Journal of Chemical Physics ,vol. 137, no. 22, 2012. 31 [35] C. D. Sherrill and H. F. Schaefer III, “The configuration interaction method: Ad-vances in highly correlated approaches,” Advances in quantum chemistry , vol. 34, pp. 143–269, 1999. [36] E. R. Davidson, “The iterative calculation of a few of the lowest eigenvalues and cor-responding eigenvectors of large real-symmetric matrices,” Journal of Computational Physics , vol. 17, no. 1, pp. 87–94, 1975. [37] C. Lanczos, “An iteration method for the solution of the eigenvalue problem of linear differential and integral operators,” Journal of Research of the National Bureau of Standards , vol. 45, no. 4, pp. 255–282, 1950. [38] R. G. Parr and W. Yang, Density-functional theory of atoms and molecules . Oxford university press, 1989. [39] F. Barahona, “On the computational complexity of Ising spin glass models,” Journal of Physics A: Mathematical and General , no. 10, pp. 3241–3253, 1982. [40] A. Lucas, “Ising formulations of many np problems,” Frontiers in Physics , vol. 2, 2014. [41] A. Y. Kitaev, A. H. Shen, and M. N. Vyalyi, Classical and Quantum Computation ,vol. 47 of Graduate Studies in Mathematics . American Mathematical Society, 2002. [42] X. Feng et al. , “Formation of H +3 from ethane dication induced by electron impact,” 
+
+Communications Chemistry , vol. 3, p. 162, 2020. [43] H. Miyahara and V. Roychowdhury, “Ansatz-independent variational quantum clas-sifiers and the price of Ansatz,” Scientific Reports , vol. 12, no. 1, p. 19520, 2022. [44] J. Kim and Y. Oz, “Quantum energy landscape and circuit optimization,” Physical Review A , vol. 106, no. 5, p. 052424, 2022. [45] “QISKIT documentation webpage for UCCSD.” https://qiskit-community. github.io/qiskit-nature/_modules/qiskit_nature/second_q/circuit/ library/ansatze/uccsd.html# . Qiskit Nature Library. [46] “QISKIT documentation webpage for EfficientSU2.” https://quantum.cloud.ibm. com/docs/en/api/qiskit/qiskit.circuit.library.EfficientSU2 . Accessed via IBM Quantum. [47] F. Neese, “The orca program system,” Wiley Interdiscip. Rev. Comput. Mol. Sci. ,vol. 2, no. 1, pp. 73–78, 2012. [48] Y. A. Oz and A. Hanany, “Emergent statistical structure in the optimization land-scape of variational quantum algorithms,” Journal of Statistical Mechanics: Theory and Experiment , vol. 2022, p. 083101, 2022. [49] A. Dauphin and P. Huembeli, “Characterizing the loss landscape of variational quan-tum circuits,” Quantum Science and Technology , vol. 6, no. 2, p. 025006, 2021. [50] R. Van Beeumen et al. , “Diagnosing local minima and accelerating convergence of variational quantum eigensolvers with quantum subspace techniques,” arXiv preprint arXiv:2402.10332 , 2024. 32 [51] R. K. Pathria and P. D. Beale, Statistical Mechanics . Elsevier, 3rd ed., 2011. [52] T. Helgaker, P. Jorgensen, and J. Olsen, Molecular electronic-structure theory . John Wiley & Sons, 2000. 33
