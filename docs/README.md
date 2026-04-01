@@ -6,26 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-31
-- 运行时间：2026-03-31 21:17:03 UTC
+- 最新运行日期：2026-04-01
+- 运行时间：2026-04-01 22:03:38 UTC
 - 运行状态：成功
-- 本次总论文数：1
-- 精读区：1
-- 速读区：0
+- 本次总论文数：3
+- 精读区：0
+- 速读区：3
 
 ### 今日简报（AI）
-聚焦甲酸分析前沿，深度探索经典与量子计算方法的跨界融合。
-论文对比了两种计算路径在分子特性研究中的表现，为复杂化学体系的精准模拟提供了新视角。
-建议关注量子计算在绿色能源分子分析中的应用潜力，了解未来化学研究的算力转型。
-- 详情：[/202603/31/README](/202603/31/README)
+今日聚焦电子结构理论前沿，深入探讨了化学反应描述符、近简并态计算及界面极化机制。
+重点推荐 TD$\Delta$SCF 方法对复杂电子态的优化处理，以及电子集体变量在揭示油水界面电荷不对称性中的关键作用。
+建议关注计算化学如何通过精细化电子模型，提升对动态反应过程和微观界面特性的预测精度。
+- 详情：[/202604/01/README](/202604/01/README)
 
 ### 精读区论文标签
-1. [Towards Analyzing Formic Acid Using Classical and Quantum Methods](/202603/31/2603.28343v1-towards-analyzing-formic-acid-using-classical-and-quantum-methods)  
-   标签：评分：8.0/10、query:qmmm
-   evidence：融合量子与经典工具进行催化模拟
+- 本次无精读推荐。
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Electronic Collective Variables for Chemical Reactions](/202604/01/2603.29143v1-electronic-collective-variables-for-chemical-reactions)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：用于化学反应采样的电子集合变量
+2. [TD$Δ$SCF: Time-Dependent Density Functional Theory with a Non-Aufbau Reference for near-degenerate states](/202604/01/2603.29948v1-tdscf-time-dependent-density-functional-theory-with-a-non-aufbau-reference-for-near-degenerate-states)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：用于电子结构的非Aufbau参考TD-DFT方法
+3. [Collective Electronic Polarization Drives Charge Asymmetry at Oil-Water Interfaces](/202604/01/2603.24142v1-collective-electronic-polarization-drives-charge-asymmetry-at-oil-water-interfaces)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：基于神经网络的深度势能分子动力学研究电子密度
 
 
 <div class="dpr-home-promo-card">

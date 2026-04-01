@@ -1,0 +1,847 @@
+Title: TD$\Delta$SCF: Time-Dependent Density Functional Theory with a Non-Aufbau Reference for near-degenerate states
+
+URL Source: https://arxiv.org/pdf/2603.29948v1
+
+Published Time: Wed, 01 Apr 2026 01:25:36 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+## TD ∆SCF: Time-Dependent Density Functional Theory with a Non-Aufbau Reference for near-degenerate states 
+
+Shuto Shibasaki ∗ and Fumiya Mohri ∗† 
+
+Department of Applied Chemistry, Shibaura Institute of Technology, 3-7-5 Toyosu, Koto-ku, Tokyo 135-8548 Japan 
+
+Takashi Tsuchimochi ‡
+
+College of Engineering, Shibaura Institute of Technology, 3-7-5 Toyosu, Koto-ku, Tokyo 135-8548 Japan and Institute for Molecular Science, 38 Nishigonaka, Myodaiji, Okazaki 444-8585 Japan 
+
+Near-degenerate electronic structures remain a major challenge for conventional single-reference density functional theory (DFT). To address this problem, we propose time-dependent ∆SCF (TD ∆SCF), a novel linear-response scheme in which a non-Aufbau ∆SCF determinant serves as the reference for a subsequent TDDFT calculation. In contrast to collinear spin-flip (SF)-TDDFT, this formulation preserves the usual Coulomb and exchange-correlation response contributions while describing the target states from an electronically excited reference. We examine the performance of TD ∆SCF for several prototypical problems involving near-degeneracy, including the torsional potential of ethylene, singlet–triplet gaps of representative diradicals, geometry optimizations of benzyne isomers, and bond-dissociation curves of hydrogen fluoride and F 2. Across these tests, TD ∆SCF shows markedly weaker functional dependence than SF-TDDFT and often yields a more balanced description of challenging singlet states. In particular, it provides smooth torsional poten-tials, improved singlet–triplet gaps, a consistent monocyclic structure for singlet m-benzyne, and a more satisfactory description of bond dissociation without the spurious low-lying states found in SF-TDDFT. At the same time, the method exhibits a systematic tendency to overestimate singlet energies and can lose accuracy when the underlying ∆SCF reference is not well suited to the final state. We also identify a numerical instability that can arise in non-Aufbau calculations and trace its origin to the exchange-correlation potential near uncompensated nodal regions. These results highlight both the promise and the practical limitations of TD ∆SCF as a low-cost method for singlet states with near-degenerate electronic structures. 
+
+I. INTRODUCTION 
+
+Density functional theory (DFT) and its time-dependent extension (TDDFT) are among the most widely used electronic-structure methods because they offer a favorable balance between computational cost and accuracy. [1–3] For many closed-shell molecules near their equilibrium geometries, conventional Kohn–Sham DFT and linear-response TDDFT provide practical de-scriptions of ground- and excited-state properties. How-ever, these single-reference frameworks often become un-reliable in the presence of orbital degeneracy or near-degeneracy, such as along bond-dissociation coordinates, near twisted geometries, and in diradical or polyradical systems. In such situations, the exact wave function ac-quires substantial multiconfigurational character, and a single-determinant reference is no longer qualitatively ad-equate. [4, 5] A widely used low-cost strategy for treating such elec-tronically degenerate cases is spin-flip time-dependent density functional theory (SF-TDDFT). In SF-TDDFT, low-spin target states are described as spin-flipping ex-   
+
+> ∗These authors contributed equally.
+> †Present address: Graduate School of Science, Institute of Science Tokyo, 2-12-1 Ookayama, Meguro-ku, Tokyo 152-8551, Japan
+> ‡To whom correspondence should be addressed.
+
+citations from a high-spin reference determinant, allow-ing a formally single-reference response treatment to re-cover key features of near-degenerate electronic structure. This approach has been successfully applied to a broad range of chemical problems, including diradicals,[4] con-ical intersections,[6] and photochemical dynamics.[7, 8] Despite these successes, collinear SF-TDDFT has a well-known formal limitation. Within the spin-flip mani-fold, the coupling is governed primarily by Hartree–Fock exchange, while the usual DFT exchange-correlation ker-nel does not contribute in the same way as in ordinary same-spin linear-response TDDFT. As a result, the ac-curacy of SF-TDDFT often shows pronounced functional dependence. [9, 10] Although noncollinear SF-TDDFT restores the missing exchange-correlation coupling, its practical use is often hindered by numerical instability associated with the underlying kernel. [9–11] A different route to electronically excited states is pro-vided by ∆SCF approaches, in which the target excited configuration is treated through a constrained variational optimization of a non-Aufbau determinant, thereby in-corporating state-specific orbital relaxation from the outset. Since the introduction of practical excited-state SCF procedures such as the maximum overlap method (MOM),[12] such state-specific approaches have attracted renewed interest as computationally efficient orbital-optimized descriptions of excited states. In par-allel with related developments such as restricted open-
+
+> arXiv:2603.29948v1 [physics.chem-ph] 31 Mar 2026
+
+2shell Kohn–Sham (ROKS) theory,[13, 14] ∆SCF-based methods have been applied successfully to a wide range of excited states, and benchmark studies have shown that non-Aufbau state-specific descriptions can achieve accu-racy comparable to, and in some cases better than, that of TDDFT.[15–18] Their main limitation, however, is the difficulty of converging the desired excited-state solution reliably, because excited states often correspond to sad-dle points rather than minima on the orbital optimiza-tion landscape. To address this issue, several more robust optimization strategies have recently been developed, in-cluding the level-shift-based state-targeted energy projec-tion (STEP) method,[19] square gradient minimization (SGM),[20] and direct optimization approaches based on quasi-Newton or saddle-point-search algorithms.[21, 22] Together, these developments have substantially broad-ened the practical applicability of state-specific excited-state electronic structure methods. From this perspective, a natural yet still largely unex-plored next step is to formulate linear-response theory on top of a ∆SCF excited-state reference, which we refer to as “TD ∆SCF.” This idea is closely related to the physi-cal picture underlying transient absorption spectroscopy (TAS), in which a system prepared by a pump pulse is interrogated by a subsequent probe pulse,[23] and it has very recently been exploited in simulating excited-state absorption relevant to TAS.[24] Related concepts have also appeared in core-level spectroscopy, most notably in linear-response formalisms built on optimized hole references, such as electron-affinity TDDFT for X-ray absorption.[25] In the present work, however, our focus is different. Rather than targeting excited-state absorp-tion itself, we focus on the de-excitation channels rele-vant to stimulated emission ,[23] and on the ground-state-related information that can be extracted from them within such a TD ∆SCF framework. This perspective parallels a wave function-based approach recently devel-oped by one of us within the configuration-interaction-singles (CIS) framework, which showed encouraging per-formance for electronically degenerate systems.[26–28] On this basis, we formulate TD ∆SCF as a linear-response extension of ∆SCF and assess its potential as a practical method for electronically challenging systems. In partic-ular, TD ∆SCF may offer an advantage over collinear SF-TDDFT because it naturally includes contributions from the exchange-correlation potential and Coulomb interac-tion that are absent from the collinear SF-TDDFT kernel and may become important for the property of interest. We also identify a previously unrecognized numerical in-stability that can arise in non-Aufbau calculations and elucidate its origin through an analysis of the associated exchange-correlation potential. Together, these results establish the formal and practical features of TD ∆SCF while also providing new insight into the numerical be-havior of ∆SCF-based excited-state descriptions. This paper is organized as follows. In Section II, we re-view the basic formulations of conventional TDDFT and SF-TDDFT and then introduce the theoretical frame-work of TD ∆SCF, emphasizing its formal relation to and distinction from SF-TDDFT. Section III summarizes the computational details employed in the present study. In Section IV, we assess the performance of TD ∆SCF through several representative applications, including the torsional potential of ethylene, singlet–triplet gaps of pro-totypical diradicals, geometry optimizations of the ben-zyne isomers, and bond-dissociation curves of hydrogen fluoride and F 2. We also examine a numerical instability that can arise in non-Aufbau calculations by analyzing the σg → σu excitation of H 2. Finally, Section V con-cludes the paper with a summary of the main findings and perspectives for future work.   
+
+> II. THEORY A. TDDFT
+
+In the density-matrix representation, the electron den-sity ρ(x) is written as 
+
+ρ(x) = ∑
+
+> pq
+
+Ppq ϕ∗
+
+> p
+
+(x)ϕq (x), (1) where x = ( r, σ ) denotes the spatial and spin coordi-nates, and {ϕp} is a set of orthonormal spin-orbitals. For a single-determinantal N -electron reference, the one-particle density matrix P satisfies the idempotency con-dition 
+
+P2 = P, (2) and its trace gives the total number of electrons.[29, 30] The time evolution of the Kohn–Sham density matrix in the presence of a weak external perturbation is gov-erned by 
+
+[F + λV(t), P] = i ∂P
+
+∂t , (3) where V(t) denotes an infinitesimal time-dependent field and F is the Kohn–Sham Fock matrix.[2, 30] In a spin-orbital basis, F is given by 
+
+Fpq =
+
+∫
+
+ϕ∗
+
+> p
+
+(x)
+
+[
+
+− 12 ∇2 − ∑
+
+> A
+
+ZA
+
+|r − RA|
+
++
+
+∫ ρ(x′)
+
+|r − r′| dx′ + vxc (x)
+
+]
+
+ϕq (x) dx.
+
+(4) For weak perturbations, Eq. (3) may be linearized about the ground-state Kohn–Sham solution. Within the adiabatic approximation, the exchange-correlation potential at time t depends only on the instanta-neous density, so that the corresponding response ker-nel becomes frequency independent.[2, 3] In this linear-response regime, excitation energies appear as poles of the density-response function. When expressed in the 3basis of occupied–virtual orbital transitions, the result-ing equations take the familiar Casida form,[2, 31, 32] 
+
+( A BB∗ A∗
+
+) ( XI
+
+YI
+
+)
+
+= ωI
+
+(1 00 −1
+
+) ( XI
+
+YI
+
+)
+
+, (5) where ωI is the excitation energy of state I, and XI and 
+
+YI are the forward and backward transition amplitudes, respectively. The matrix elements of A and B are given by 
+
+Aai,bj = ( εa − εi)δab δij + ∂F ai 
+
+∂P bj 
+
+, (6) 
+
+Bai,bj = ∂F ai 
+
+∂P jb 
+
+, (7) where indices i, j, . . . and a, b, . . . denote occupied and virtual orbitals, respectively. Within the Tamm–Dancoff approximation (TDA), the coupling to the backward amplitudes is neglected,[33] and Eq. (5) reduces to 
+
+AX I = ωI XI . (8) Thus, TDDFT/TDA may be viewed as a CIS-like eigen-value problem in which the bare Kohn–Sham orbital-energy differences are supplemented by Coulomb and exchange-correlation response contributions.[3, 33] The limitations of conventional TDDFT for near-degenerate systems can be understood directly from Eq. (8). The response space is constructed from spin-conserving one-electron excitations based on a single ground-state Kohn–Sham determinant. When the phys-ically relevant low-energy states require more than one dominant configuration, as in bond breaking or dirad-icals, the reference determinant itself becomes qualita-tively unbalanced. In such cases, the difficulty origi-nates from the choice of reference state and the associ-ated response manifold.[3, 5] This observation motivates alternative response formalisms in which low-spin target states are accessed from a more balanced high-spin ref-erence through spin-flip excitations.[4, 5]  
+
+> B. SF-TDDFT
+
+As illustrated in Fig. 1(a), SF-TDDFT replaces the or-dinary low-spin reference with a high-spin determinant, typically an MS = 1 triplet reference, and solves Eq. (8) in the spin-flip excitation space. The corresponding ex-citation operator is 
+
+ˆEaβ 
+
+> iα
+
+= a† 
+
+> aβ
+
+aiα , (9) which promotes an electron from an occupied α orbital to a virtual β orbital while simultaneously flipping its spin. The matrix elements in the spin-flip block are given by 
+
+ASF    
+
+> aβiα,b βjα
+
+= ( εaβ − εiα )δij δab + KSF    
+
+> aβiα,b βjα
+
+. (10) ΔSCF state 
+
+> MOM,
+> STEP
+
+Triplet state   
+
+> Spin -flip
+> TDDFT
+> ±
+> TDDFT (b)
+> (a)
+> ±
+> FIG. 1. Illustration of SF-TDDFT and TD ∆SCF. The two methods employ different reference states. (a) SF-TDDFT uses a high-spin configuration and accesses low-spin states via spin-flip excitations. (b) In TD ∆SCF, the reference is an excited-state configuration and the target states are described by subsequent linear-response excitations.
+
+In the collinear formulation, however, this coupling term is qualitatively different from that in ordinary TDDFT. In particular, the Coulomb term does not couple spin-flip excitations, 
+
+∂J aβ iα
+
+∂P bβ jα
+
+= 0 , (11) and the semilocal exchange-correlation kernel does not provide the usual off-diagonal coupling in this block. As a result, the dominant nontrivial contribution is given by the Hartree–Fock exchange part, so that Eq. (10) is effectively reduced to 
+
+ASF    
+
+> aβiα,b βjα
+
+= ( εaβ − εiα )δij δab − cHF (aβ bβ |iαjα), (12) where cHF is the fraction of Hartree–Fock exchange. Equation (12) shows that, within collinear SF-TDDFT, the coupling between spin-flip configurations is governed primarily by the Hartree–Fock exchange term. This is the origin of the pronounced functional depen-dence of collinear SF-TDDFT and motivates the search for an alternative formulation that retains the exchange-correlation response more completely. To address this deficiency, Wang and Ziegler introduced noncollinear SF-TDDFT, in which the exchange-correlation response is formulated for noncollinear spin densities and can there-fore include the transverse spin contributions missing in the collinear treatment.[34] This noncollinear formula-tion can substantially reduce the strong functional de-pendence of collinear SF-TDDFT.[10, 35] In practice, however, noncollinear kernels beyond the local-density approximation are more difficult to construct and may 4suffer from numerical instabilities, particularly for gener-alized gradient approximation (GGA) functionals.[9, 10] For this reason, adiabatic local-density-type kernels are often employed in practical calculations.[9]  
+
+> C. TD ∆SCF
+
+Another, less explored route for treating near-degenerate electronic structures within a single-determinant framework is to use a non-Aufbau excited-state determinant, as in ∆SCF, as the ref-erence for a subsequent linear-response treatment. As illustrated in Fig. 1(b), we introduce TD ∆SCF as a new linear-response framework in which a non-Aufbau 
+
+∆SCF determinant serves as the reference state for a subsequent TDDFT/TDA calculation. The key idea is to retain the standard linear-response structure of TDDFT while replacing the ground-state Kohn–Sham reference by an electronically promoted self-consistent determinant. The TDA equation retains the same algebraic form as Eq. (8), 
+
+A∆SCF X∆SCF  
+
+> I
+
+= ω∆SCF  
+
+> I
+
+X∆SCF  
+
+> I
+
+, (13) but the matrix is now defined with respect to the ∆SCF reference determinant |Φ∆SCF ⟩:
+
+A∆SCF  
+
+> ai,bj
+
+= ( ε∆SCF  
+
+> a
+
+− ε∆SCF  
+
+> i
+
+)δij δab + K∆SCF  
+
+> ai,bj
+
+. (14) The corresponding states are expressed as 
+
+|Ψ∆SCF  
+
+> I
+
+⟩ ∼ ∑
+
+> ai
+
+XI, ∆SCF  
+
+> ai
+
+ˆEai |Φ∆SCF ⟩, (15) which may be viewed as response states built on the promoted reference and, in favorable cases, can de-scribe states with de-excitation-like character relative to 
+
+|Φ∆SCF ⟩.The essential difference from SF-TDDFT is that TD ∆SCF changes the reference determinant itself while retaining a spin-conserving response manifold. As a re-sult, the usual Coulomb and exchange-correlation re-sponse terms are retained in the kernel K(∆ SCF ) 
+
+> ai,bj
+
+of Eq. (14), unlike in the collinear spin-flip block, where the coupling is effectively dominated by the Hartree– Fock exchange contribution. In this way, TD ∆SCF is in-tended to provide a reference better suited to a promoted electronic configuration without sacrificing the standard exchange-correlation response structure of conventional TDDFT. TD ∆SCF may therefore offer a promising route to a more accurate and less functional-sensitive descrip-tion of near-degenerate electronic structures, although this expectation must ultimately be assessed numeri-cally. In particular, because the response problem re-mains spin-conserving, its functional dependence may be closer to that of ordinary TDDFT than to that of collinear SF-TDDFT. A further practical advantage of TD ∆SCF is its simplicity of implementation. Once a suitable ∆SCF reference has been obtained, the sub-sequent calculation formally reduces to an ordinary spin-conserving TDDFT/TDA step. Thus, in exist-ing electronic-structure codes that already support both 
+
+∆SCF and TDDFT, TD ∆SCF can in principle be real-ized with only minimal additional implementation, mak-ing it straightforward to test in practice. As in SF-TDDFT, however, the choice of reference determinant is critical: the non-Aufbau reference must be constructed so that, after linear response, it prop-erly represents the near-degeneracy of the system under study. In practice, this requires a determinant built from the appropriate open-shell orbitals; otherwise, the result-ing response states may be physically meaningless. An-other practical challenge is that ∆SCF calculations are often difficult to converge, because the SCF optimiza-tion is prone to variational collapse back to the ground-state determinant. Nevertheless, a number of algorithms have been developed to stabilize convergence to the de-sired ∆SCF solution, including MOM,[12] STEP,[19] and SGM.[20] We should also note that TD ∆SCF shares the same spin-contamination issue as SF-TDDFT. Because the singly excited non-Aufbau ∆SCF state typically used in TD ∆SCF is a mixture of singlet and triplet configura-tions, the resulting TDA solutions are often spin contam-inated. In practice, however, as will be demonstrated, the lowest states exhibit only very small spin contami-nation, similar to what is observed in SF-TDDFT. An-other important difference between TD ∆SCF and SF-TDDFT is that the former cannot, in principle, describe triplet states within the same response space, whereas the latter includes them naturally among its solutions. Consequently, triplet states must be treated in separate calculations within the TD ∆SCF framework.  
+
+> III. COMPUTATIONAL DETAILS
+
+For TD ∆SCF calculations, we first optimized the ground-state Kohn–Sham determinant. Starting from the resulting Kohn–Sham orbitals, we then constructed the desired ∆SCF reference state by promoting an α elec-tron from an occupied orbital to a virtual orbital so as to generate the appropriate open-shell electronic config-uration. In many cases, this corresponds to a bonding-to-antibonding excitation. To stabilize convergence of the ∆SCF procedure, we employed the maximum-overlap method (MOM). For comparison, we also carried out collinear SF-TDDFT calculations using the same open-shell configuration as the reference. Noncollinear SF-TDDFT was not considered in the present study; a more comprehensive assessment of that approach is left for fu-ture work. For benchmarking, we primarily employed the BLYP, B3LYP, and BHHLYP functionals[36] to assess the effect of the Hartree–Fock exchange fraction, with 5
+
+cHF = 0 , 0.2, and 0.5, respectively. All calculations were performed with Q-Chem,[37] except for the grid analysis in Section IV E, which was performed using PySCF.[38] For the singlet–triplet gap calculations discussed in Section IV B, the triplet states in DFT and TD ∆SCF were obtained from separate unrestricted KS calcula-tions, whereas in SF-TDDFT they were taken as low-spin triplet solutions of the TDA equation.   
+
+> IV. RESULTS A. Ethylene torsion
+
+The torsional potential energy curve of ethylene has been widely used as a benchmark for discussing multicon-figurational character. [4, 9, 39] In the planar geometry, ethylene forms a π bond; however, as the torsion angle increases, the π bond progressively breaks, and a proper description requires a superposition of two configurations corresponding to the π and π∗ orbitals. Consequently, single-reference methods such as conventional DFT and Hartree–Fock become inadequate and often lead to a non-physical cusp in the potential energy curve. The ethylene geometry used in the calculations was taken from [40], with structural parameters fixed at 
+
+rCC = 1 .330 Å , rCH = 1 .076 Å, and dHCH = 116 ◦.We have employed the DZP basis set. Taking the singlet energy at the planar structure (0 ◦ torsion) as the refer-ence, we evaluated the torsion-induced energy differences and plotted the resulting curves in Figure 2. The cor-responding singlet energies and spin expectation values, 
+
+⟨S2⟩, are summarized in Table I. All TD ∆SCF methods tested, i.e., TD ∆BLYP, 0 30 60 90 120 150 180      
+
+> Torsion Angle ( )
+> 0.00
+> 0.04
+> 0.08
+> 0.12
+> 0.16
+> Relative energy (Hartree)
+> MRCISD
+> SF-BLYP
+> SF-B3LYP
+> SF-BHHLYP
+> TD BLYP
+> TD B3LYP
+> TD BHHLYP
+> FIG. 2. Torsional potential energy curves of ethylene com-puted with TD ∆SCF (solid line), SF-TDDFT (dashed line) and MRCISD using the DZP basis set. A cusp is clearly ob-served near the barrier region for the pure functional (BLYP). Energies are referenced to the planar (0 ◦) geometry.
+
+TD ∆B3LYP, and TD ∆BHHLYP, produced smooth po-tential energy curves in the barrier region around 90 ◦. In contrast, the SF-BLYP curve exhibits a cusp, which can be attributed to the absence of coupling between distinct spin-flip excitations in pure exchange–correlation func-tionals. The computed torsional barriers were 3.10 and 3.53 eV obtained with TD ∆BHHLYP and SF-BHHLYP, respectively, both in good agreement with the high-level multireference value of 3.27eV obtained by MRCISD [41]. Thus, the near-degenerate region around 90 ◦ is described reasonably well by TD ∆SCF regardless of the functional. However, TD ∆SCF tends to underestimate the barrier height when BLYP and B3LYP are used. TD ∆BLYP and TD ∆B3LYP yield barrier heights of 2.43 and 2.71 eV, corresponding to errors of −0.84 and −0.56 eV rel-ative to the MRCISD value, respectively. By contrast, SF-TDDFT overestimates the barriers, giving 3.98 and 3.79 eV with BLYP and B3LYP, respectively, corre-sponding to errors of +0 .71 and +0 .52 eV. This un-derestimation in TD ∆SCF originates from the deterio-rated description at 0◦. Since the 0◦ structure is not degenerate, it can be described accurately by a stan-dard ground-state DFT calculation. Table II summa-rizes the energies at 0 ◦ computed with standard ground-state DFT EKS −DFT (0 ◦) for each functional. We find that, as the HF exchange fraction decreases, both the TD ∆SCF and SF-TDDFT energies deviate further from 
+
+EKS −DFT (0 ◦). We also report in Table II the barrier heights evaluated using the KS-DFT reference energy, 
+
+∆ETD ∆SCF = ETD ∆SCF (90 ◦)−EKS −DFT (0 ◦). When this energy difference is used, reasonable agreement not only with MRCISD but also among different functionals is ob-tained: the resulting barriers are 3.37, 3.30, and 3.15 eV for BLYP, B3LYP, and BHHLYP, respectively. This analysis suggests that, in TD ∆SCF, the near-degenerate region around 90 ◦ is described reasonably well regardless of the functional, whereas near 0 ◦, the ac-curacy deteriorates as the fraction of Hartree–Fock ex-change decreases. In SF-TDDFT, by contrast, the de-scription deteriorates at both 0 ◦ and 90 ◦. This is re-flected in the corresponding barrier heights evaluated with the same KS-DFT reference, which are 5.15, 4.62, and 3.71 eV for BLYP, B3LYP, and BHHLYP, respec-tively. Of course, SF-BLYP does not give a correct pic-ture at 90 ◦, so the apparently reasonable barrier height in the original definition is due to fortuitous error can-cellation arising from overestimation at both 0 ◦ and 90 ◦.Finally, the spin expectation values ⟨S2⟩ indicate that TD ∆SCF, similar to SF-TDDFT, exhibits sufficiently small spin contamination (less than 0.1 ) and yields phys-ically reasonable results.  
+
+> B. Singlet-triplet energy gaps
+
+To further quantitatively assess the performance of TD ∆SCF, we next evaluate the singlet–triplet energy gaps ∆EST of representative diradicals and compare 6
+
+TABLE I. Torsion-angle-dependent singlet energies E and spin expectation values ⟨S2⟩ of ethylene computed with TD ∆SCF and SF-TDDFT using the BLYP, B3LYP, and BHHLYP functionals. The unrelaxed torsional barrier height ∆E = E(90 ◦) − E(0 ◦)
+
+(eV) is also reported. TD ∆SCF SF-TDDFT Angle BLYP B3LYP BHHLYP BLYP B3LYP BHHLYP 
+
+E ⟨S2⟩ E ⟨S2⟩ E ⟨S2⟩ E ⟨S2⟩ E ⟨S2⟩ E ⟨S2⟩
+
+0◦ -78.50429 0.0123 -78.56900 0.0122 -78.53267 0.0128 -78.49553 0.0085 -78.56037 0.0099 -78.52842 0.0140 
+
+15 ◦ -78.50421 0.0138 -78.56736 0.0135 -78.52876 0.0145 -78.49239 0.0085 -78.55649 0.0100 -78.52369 0.0142 
+
+30 ◦ -78.49794 0.0148 -78.55864 0.0147 -78.51645 0.0166 -78.48150 0.0084 -78.54424 0.0101 -78.50975 0.0147 
+
+45 ◦ -78.48220 0.0149 -78.54079 0.0153 -78.49556 0.0183 -78.46143 0.0085 -78.52293 0.0104 -78.48703 0.0155 
+
+60 ◦ -78.45836 0.0144 -78.51514 0.0157 -78.46742 0.0200 -78.43226 0.0090 -78.49275 0.0111 -78.45647 0.0163 
+
+75 ◦ -78.43079 0.0126 -78.48608 0.0153 -78.43635 0.0220 -78.39459 0.0101 -78.45474 0.0118 -78.42117 0.0159 
+
+80 ◦ -78.42282 0.0114 -78.47774 0.0149 -78.42750 0.0227 -78.38028 0.0106 -78.44098 0.0117 -78.41025 0.0147 
+
+85 ◦ -78.41709 0.0102 -78.47172 0.0144 -78.42119 0.0231 -78.36516 0.0112 -78.42795 0.0107 -78.40188 0.0131 
+
+90 ◦ -78.41495 0.0097 -78.46948 0.0142 -78.41884 0.0233 -78.34924 0.0551 -78.42092 0.0089 -78.39857 0.0122 
+
+∆E [eV] 2.43 2.71 3.10 3.98 3.79 3.53 TABLE II. Ground-state reference energies at 0◦ (Hartree), deviations of TD ∆SCF and SF-TDDFT from standard KS-DFT at 
+
+0◦ (mHartree), and torsional barrier heights of ethylene defined as ∆EX = EX (90 ◦) − EKS −DFT (0 ◦) (eV), where X = TD ∆SCF or SF-TDDFT. Functional EKS −DFT (0 ◦) TD ∆SCF (mH) SF-TDDFT (mH) ∆ETD ∆SCF (eV) ∆ESF −TDDFT (eV) BLYP -78.53863 34.3 43.1 3.37 5.15 B3LYP -78.59057 21.6 30.2 3.30 4.62 BHHLYP -78.53476 2.1 6.3 3.15 3.71 
+
+them with those obtained by standard KS-DFT and SF-TDDFT. To this end, we consider the following sys-tems: (1) the C, O, and Si atoms; (2) the diatomic molecules NH, OH +, O 2, and NF; (3) the carbene deriva-tives CH 2, NH +2 , SiH 2, and PH +2 ; and (4) the o-, m-, and 
+
+p-benzyne isomers. For CH 2, the geometry optimized at the FCI/TZ2P level was used, whereas those for the car-bene derivatives were taken from CISD/TZ2P(f,d) op-timizations. For the benzyne systems, the geometries optimized at the SF-TDDFT/50-50(50% Hartree–Fock + 8% Slater + 42% Becke for exchange and 19% VWN + 81% LYP for correlation) /6-311G* level were used. The geometries of the carbene and benzyne systems were the same as those used in Ref.[10]. In addition, the ge-ometries of the diatomic molecules were optimized at the MP2/TZ2P level. These systems provide a stringent test because conventional DFT describes only a single deter-minantal state and is therefore often inadequate for near-degenerate electronic structures. The overall trends are illustrated in Fig. 3, where the calculated ∆EST are plotted against the experimental values, taken from Ref.[10, 42, 43]. Conventional DFT shows substantial deviations from experiment, and these deviations increase as the Hartree–Fock exchange frac-tion increases. This trend is quantified in Table III, which summarizes the signed errors relative to experiment. The MAEs of conventional DFT are 7.28, 10.18, and 15.18 kcal/mol for BLYP, B3LYP, and BHHLYP, respectively. SF-TDDFT performs especially poorly with BLYP, for which the results deviate catastrophically from the ex-perimental values, giving an MAE of 209.14 kcal/mol. For this reason, the SF-BLYP results are omitted from Fig. 3. Although the results improve substantially when Hartree–Fock exchange is introduced, the scatter re-mains large even with B3LYP and BHHLYP, particularly for atoms, diatomic molecules, and carbenes with pro-nounced one-center diradical character. In addition, SF-TDDFT systematically underestimates the gaps. More-over, relative to conventional DFT, SF-TDDFT with B3LYP is actually less accurate overall, and even with BHHLYP the improvement is only marginal. These re-sults clearly demonstrate that SF-TDDFT exhibits a much stronger functional dependence than conventional DFT. In contrast, TD ∆SCF can incorporate exchange– correlation effects that are not properly captured by SF-TDDFT. As a result, it avoids the severe errors observed for SF-BLYP and is generally much less sensitive to the choice of functional, as is evident from Fig. 3. It also yields better accuracy than SF-TDDFT for molecules dominated by essentially one-center diradical character (Table III). At the BHHLYP level, for example, the MAE is 4.69 kcal/mol for TD ∆SCF, compared with 11.89 kcal/mol for SF-TDDFT. Remarkably, quite simi-lar MAEs are obtained with BLYP (4.60 kcal/mol) and B3LYP (4.27 kcal/mol), indicating that the overall per-750 25 0 25 50 75                  
+
+> Experimental EST (kcal/mol)
+> 60
+> 40
+> 20
+> 0
+> 20
+> 40
+> 60
+> 80
+> Computed  EST  (kcal/mol)
+> (a) DFT
+> BLYP
+> B3LYP
+> BHHLYP
+> 50 25 025 50 75
+> Experimental EST (kcal/mol)
+> (b) SF-TDDFT
+> 50 25 025 50 75
+> Experimental EST (kcal/mol)
+> (c) TD-SCF
+
+FIG. 3. Comparison of computed and experimental ∆EST values (kcal/mol) obtained with different methods. For SF-TDDFT, the BLYP results are omitted; see the main text for details. TABLE III. Errors in the calculated ∆EST values relative to experiment (kcal/mol) for each method and functional. System DFT SF-TDDFT TD ∆SCF Reference BLYP B3LYP BHHLYP BLYP B3LYP BHHLYP BLYP B3LYP BHHLYP C 11.30 12.46 14.50 -191.31 -22.38 -12.62 3.77 2.75 1.84 29.15 O 16.74 18.17 20.79 -202.38 -35.60 -20.63 2.68 1.52 1.13 45.36 Si 7.31 8.02 9.23 -152.82 -13.30 -6.38 0.62 0.30 0.03 18.01 NH 10.50 11.84 14.14 -176.29 -31.04 -18.52 0.43 -0.60 -1.25 39.00 OH + 17.54 18.96 21.74 -305.89 -39.91 -23.47 2.79 1.30 0.69 50.55 O2 13.85 15.97 19.99 -317.83 -15.26 -4.16 4.31 6.92 12.65 22.64 NF 9.26 11.63 15.83 -272.75 -27.49 -15.58 0.12 0.62 2.43 34.32 CH 2 2.43 3.77 5.44 -224.83 -28.26 -14.31 6.18 5.48 4.40 8.99 NH +2 1.56 3.19 5.78 -349.85 -42.98 -23.82 4.18 3.51 3.40 30.12 SiH 2 0.24 0.98 1.98 -194.21 -20.46 -9.07 4.51 4.04 3.40 -20.98 PH +2 1.11 1.94 3.39 -254.34 -26.71 -12.70 4.62 4.28 4.47 -17.30 
+
+o-benzyne 3.14 7.23 15.59 -98.11 -17.85 -4.28 14.30 11.93 10.04 -37.5 
+
+m-benzyne 1.46 9.08 22.56 -98.33 -15.11 -0.84 13.34 12.17 12.13 -21.0 
+
+p-benzyne 5.57 19.31 41.51 -89.05 -7.69 -0.08 2.50 4.43 7.84 -3.8 ME 7.28 10.18 15.18 -209.14 -24.57 -11.89 4.60 4.19 4.51 MAE 7.28 10.18 15.18 209.14 24.57 11.89 4.60 4.27 4.69 
+
+formance of TD ∆SCF is only weakly dependent on the functional. These results indicate that TD ∆SCF is more reliable than SF-TDDFT for the present set of singlet– triplet gaps. At the same time, however, TD ∆SCF shows a clear systematic tendency to overestimate ∆EST relative to experiment for all systems and functionals examined, in contrast to SF-TDDFT. This implies that TD ∆SCF systematically overestimates the singlet energy. This is likely because the lowest singlet state obtained by TD ∆SCF depends strongly on the orbitals of the under-lying ∆SCF reference and is therefore not variationally optimized to the lowest-energy singlet solution, whereas the triplet state is fully optimized by a conventional open-shell SCF procedure. This systematic bias becomes par-ticularly visible for p-benzyne, for which TD ∆SCF pre-dicts the wrong sign of ∆EST with B3LYP and BHHLYP. Although the functional dependence of TD ∆SCF is weak in terms of the overall MAE, several notable ex-ceptions are found at the level of individual systems, namely O 2, o-benzyne, and p-benzyne. For these sys-tems, the variation among the three functionals is sub-stantially larger than in the rest of the data set, where the discrepancy between functionals is less than ∼2 kcal/mol in most cases. At present, the origin of this behavior is not entirely clear. One possible explanation is that the underlying ∆SCF reference states are not fully consistent across the different functionals, so that the subsequent TD ∆SCF calculations are effectively based on slightly different electronic references. A more detailed analy-8H
+
+# H
+
+# H
+
+# H 126.32 
+
+> 126.07
+> 125.85
+> 126.42
+> 126.21
+> 126.02
+> 111.34
+> 111.66
+> 111.97
+> 1.2505
+> 1.2632
+> 1.2742
+> 1.3778
+> 1.3857
+> 1.3952
+> 1.3934
+> 1.4061
+> 1.4181
+> 1.3999
+> 1.4050
+> 1.4120
+> 118.92
+> 118.77
+> 118.68
+> 1.0779
+> 1.0864
+> 1.0936
+> 1.0748
+> 1.0839
+> 1.0916
+
+# H
+
+# H
+
+# H
+
+# H 126.68 
+
+> 127.41
+> 127.66
+> 126.78
+> 127.30
+> 127.32
+> 110.95
+> 110.33
+> 110.38
+> 1.2412
+> 1.2448
+> 1.2543
+> 1.3740
+> 1.3795
+> 1.3860
+> 1.3947
+> 1.4120
+> 1.4262
+> 1.3976
+> 1.4043
+> 1.4105
+> 118.88
+> 118.55
+> 118.34
+> 1.0788
+> 1.0866
+> 1.0940
+> 1.0751
+> 1.0845
+> 1.0927
+> Enucl=185.9817
+> 187.3517
+> 188.7388
+> Enucl=186.5122
+> 187.8184
+> 189.1021
+
+# H
+
+# H
+
+# H
+
+> 1.0713
+> 1.0816
+> 1.0899
+> 100.35
+> 103.17
+> 105.24
+> 117.24
+> 117.38
+> 117.50
+> 1.3632
+> 1.3742
+> 1.3851
+> 1.3647
+> 1.3717
+> 1.3798
+> 1.3901
+> 1.4017
+> 1.4131
+> 1.0882
+> 1.0960
+> 120.76
+> 121.16
+> 121.45
+> 1.0769
+> 1.0854
+> 1.0926
+> Enucl=185.0677
+> 186.4963
+> 188.0011
+
+# H
+
+> 135.10
+> 133.72
+> 131.59
+
+# H
+
+# H
+
+# H
+
+> 1.0721
+> 1.0846
+> 1.0959
+> 96.32
+> 71.83
+> 89.70
+> 116.36
+> 108.47
+> 114.46
+> 1.3534
+> 1.3497
+> 1.3603
+> 1.3620
+> 1.3783
+> 1.3730
+> 1.3891
+> 1.4104
+> 1.4167
+> 1.0798
+> 1.0877
+> 1.0982
+> 121.08
+> 125.99
+> 123.03
+> 1.0762
+> 1.0820
+> 1.0927
+> Enucl=187.2331
+> 190.7308
+> 188.8105
+
+# H
+
+> 138.46
+> 159.84
+> 144.35
+> 1.0792
+> 2.0938
+> 2.1535
+> 2.2014
+> 2.0167
+> 1.5835
+> 1.9187
+
+# H H
+
+# H
+
+> 124.73
+> 125.16
+> 125.40
+> 117.64
+> 117.42
+> 117.30
+> 1.3603
+> 1.3672
+> 1.3749
+> 1.4126
+> 1.4258
+> 1.4393
+> 1.0751
+> 1.0845
+> 1.0922
+> 119.38
+> 119.16
+> 118.92
+
+# H H
+
+# H
+
+> 124.93
+> 125.72
+> 126.13
+> 117.54
+> 117.14
+> 116.93
+> 1.3549
+> 1.3448
+> 1.3476
+> 1.4186
+> 1.4723
+> 1.5017
+> 1.0762
+> 1.0838
+> 1.0907
+> 118.65
+> 115.55
+> 114.42
+> Enucl=184.4860
+> 185.7660
+> 187.0266
+> Enucl=184.4020
+> 185.8368
+> 187.2138
+
+# H
+
+# H
+
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+
+# SF-TDDFT 
+
+# TD ∆SCF 
+
+FIG. 4. Optimized singlet-state geometrical parameters of the benzyne systems obtained by SF-TDDFT and TD-∆SCF, together with the nuclear repulsion energies (bond lengths in Å, bond angles in degrees, and energies in hartree). BLYP is indicated in normal type, B3LYP in italics, and BHHLYP and 50-50 by underlining. 
+
+sis of the corresponding ∆SCF states would be needed to clarify this point, but we leave such an analysis for future work. Finally, the spin expectation values ⟨S2⟩ of the singlet states obtained by TD ∆SCF are all below 0.1, indicat-ing that spin contamination is negligible (see Supporting Information). 
+
+C. Geometry optimization of Benzyne systems 
+
+Because TD ∆SCF is formulated within the standard TDDFT/TDA framework, its analytical nuclear gradi-ents are readily available.[44] We therefore carried out geometry optimizations of the singlet states of the ben-zyne systems using TD ∆SCF and SF-TDDFT. The 6-311G* basis set was used for both methods. In TD ∆SCF, BLYP, B3LYP, and BHHLYP were employed as in the preceding sections, whereas in SF-TDDFT, the 50-50 functional was adopted instead of BHHLYP, as in Ref. [10]. The optimized bond lengths and bond angles are shown in Fig. 4, and the corresponding MAEs relative to the SF-CCSD reference are summarized in Table IV. The SF-CCSD reference values were taken from Ref. [10]. For o-benzyne and p-benzyne, there is no substan-tial difference between the geometries obtained with TD ∆SCF and SF-TDDFT, regardless of the functional employed. Consistent with this observation, comparison with the SF-CCSD reference shows that the bond lengths are in good overall agreement for both systems, although some differences remain in the bond angles of o-benzyne. The MAEs relative to SF-CCSD are less than 0.04 Å 9                                        
+
+> TABLE IV. Mean absolute errors in bond lengths (Å) and bond angles (deg) relative to the SF-CCSD reference. SF-TDDFT TD ∆SCF System Metric BLYP B3LYP 5050 BLYP B3LYP BHHLYP
+> o-benzyne Distance 0.0330 0.0346 0.0390 0.0295 0.0316 0.0375 Angle 6.06 5.95 5.41 4.80 4.96 5.12
+> m-benzyne Distance 0.0317 0.0763 0.0104 0.0337 0.0192 0.0072 Angle 5.25 15.83 1.16 3.41 2.42 1.07
+> p-benzyne Distance 0.0371 0.0259 0.0070 0.0119 0.0032 0.0076 Angle 2.26 1.68 0.25 0.39 0.35 0.20
+
+and approximately 6 ◦ for all methods as summarized in Table IV. In contrast, Fig. 4 and Table IV show that SF-B3LYP gives a markedly different geometry for m-benzyne, most notably by significantly underestimating the C1–C2–C3 angle relative to the other results. Specifically, this angle is 98.28 ◦ at the SF-CCSD level, whereas SF-B3LYP gives 71.83 ◦. In addition, the C1–C3 bond length is 2.0608 Å at the SF-CCSD level but 1.5835 Å for SF-B3LYP, in-dicating that SF-B3LYP yields a structure in which C1 and C3 are much closer to each other. This qualitative difference is also reflected in the overall deviations from SF-CCSD: for m-benzyne, SF-B3LYP gives substantially larger MAEs in both bond lengths and bond angles than the TD ∆SCF geometries and SF-5050. The full set of optimized geometrical parameters is provided in the Sup-porting Information. In m-benzyne, such a shortening of the C1–C3 dis-tance is known to be a geometrical feature of a bicyclic structure in which a bond is formed between C1 and C3. Indeed, Kraka and co-workers reported that, de-pending on the theoretical method, a bicyclic structure can be stabilized for m-benzyne.[45] In contrast, Win-kler and Sander reexamined the potential energy surface of m-benzyne and concluded that the minimum struc-ture corresponds to a monocyclic geometry in which the C1–C3 distance remains around 2.05 ± 0.05 Å.[46] Furthermore, Al-Saidi and Umrigar showed by diffusion Monte Carlo calculations that the monocyclic structure is lower in energy than the bicyclic one.[47] Taken to-gether, these results indicate that the C1–C3-contracted structure obtained by SF-B3LYP can be interpreted as a bicyclic structure and further suggest that SF-B3LYP fails to reproduce the monocyclic structure regarded as intrinsically stable for singlet m-benzyne, instead pos-sibly over-stabilizing the bicyclic form. By contrast, TD ∆SCF yields a monocyclic structure with a C1–C3 distance maintained around 2.09 –2.20 Å for all function-als examined. These results indicate that TD ∆SCF pro-vides a more consistent monocyclic structural description for singlet m-benzyne than SF-TDDFT.  
+
+> D. Potential energy curves
+
+Single-bond dissociation provides a stringent test for any method intended to describe near-degenerate elec-tronic structures. In the stretched-bond region, the exact wave function acquires strong static-correlation charac-ter, and a balanced description of the bonding and an-tibonding configurations becomes essential. We there-fore examine the bond-dissociation curves of hydrogen fluoride and F 2 using DFT, SF-TDDFT, and TD ∆SCF. This comparison is also of independent interest because, to the best of our knowledge, the performance of SF-TDDFT for such bond-dissociation curves has not been systematically analyzed. All calculations were carried out with the 6-31++G** basis set using BLYP, B3LYP, BHHLYP, and HF as the underlying functionals. The resulting curves are shown in Figs. 5 and 6. In both cases, the energies are plotted relative to the dis-sociation limit obtained from unrestricted Kohn–Sham calculations, indicated by the gray dashed line. For both molecules, DFT gives a reasonable description near the equilibrium geometry. As the bond is stretched, how-ever, the DFT curves do not approach this limit. This failure reflects the essentially single-determinantal nature of DFT: although the neutral singlet should become de-generate with the triplet reference in the proper dissocia-tion limit, the underlying restricted description does not recover this degeneracy. A major complication in SF-TDDFT is that, in the stretched-bond region, the target neutral bond-breaking singlet is often not the lowest spin-flip root. In Figs. 5 and 6, we therefore plot the singlet state associated with 
+
+σ-bond breaking; the other low-lying SF-TDDFT states are omitted from the figures and summarized instead in the Supporting Information. For hydrogen fluoride, SF-TDDFT improves the asymptotic behavior relative to DFT only in limited cases. At the HF level, the dissociation curve approaches the unrestricted dissoci-ation limit reasonably well. By contrast, with BLYP and B3LYP, severe self-interaction errors (SIEs) stabi-lize an unphysical ionic state, H + · · · F−, below the neu-tral bond-breaking state. As a result, the physically rel-evant neutral dissociation state H • · · · F• lies at higher energy, remains strongly spin contaminated ( ⟨ ˆS2⟩ ≈ 1), 10 1 2 3 4 5         
+
+> R (Å)
+> 0.3
+> 0.2
+> 0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> Relative Energy (Hartree)
+> DFT
+> BLYP
+> B3LYP
+> BHHLYP
+> HF
+> 12345
+> R (Å)
+> SF-TDDFT
+> 12345
+> R (Å)
+> TD SCF
+
+FIG. 5. Bond dissociation curves of hydrogen fluoride calculated with each method. Energies are plotted relative to the gray dashed line, which denotes the unrestricted dissociation limit. 1 2 3 4 5             
+
+> R (Å)
+> 0.10
+> 0.05
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> Relative Energy (Hartree)
+> DFT
+> BLYP
+> B3LYP
+> BHHLYP
+> HF
+> 12345
+> R (Å)
+> SF-TDDFT
+> 12345
+> R (Å)
+> TD SCF
+> 345
+> 0.020
+> 0.025
+> 345
+> 0.000
+> 0.005
+
+FIG. 6. Bond dissociation curves of F 2 calculated with each method. Energies are plotted relative to the gray dashed line, which represents the dissociation limit obtained from unrestricted calculations. Insets show enlarged views of the long-bond region. 
+
+and does not cross the ionic branch (see Supporting In-formation). With BHHLYP, the SIE-driven ionic solu-tion present with BLYP and B3LYP disappears, and the asymptotic region is instead governed by a neutral bond-breaking state. This state, however, still remains signifi-cantly spin contaminated and lies above the lowest roots, which correspond to π → σ∗ excitations rather than to the target singlet. For the symmetric F 2 molecule, no analogous SIE-driven ionic solution is present, but the stretched-bond region still contains many low-lying spu-rious states. Overall, the SF-TDDFT dissociation curves exhibit strong functional dependence. This pronounced functional dependence can be under-stood from the structure of the SF-TDDFT energy ex-pression. The singlet energy is written as 
+
+ESF S = ET + X†ASF X, (16) where ET is the triplet reference energy and the second term is the spin-flip excitation energy. In the proper dissociation limit for these molecules, the triplet state becomes degenerate with the target singlet ground state, so the second term should approach zero. In collinear SF-TDDFT, however, this excitation energy generally re-mains finite and strongly functional dependent, because the spin-flip kernel lacks part of the usual Coulomb and exchange-correlation response. As a result, the required cancellation is incomplete, and static correlation is not recovered in a balanced manner, except in favorable cases such as SF-HF. This interpretation is also consistent with the ethylene torsion results discussed in Sec. IV A, where the description of the electronically degenerate 90 ◦ ge-ometry varied significantly among functionals and rea-sonable barrier heights were obtained only through error cancellation between different geometries. TD ∆SCF exhibits qualitatively different behavior from SF-TDDFT. First, the dissociation curves obtained with different density functionals are much more similar to one another, indicating markedly weaker functional dependence. More importantly, in the stretched-bond region, the TD ∆SCF curves remain much closer to the unrestricted dissociation limit for both hydrogen fluoride and F 2, irrespective of the underlying functional, and 11                                       
+
+> TABLE V. Bond dissociation energies (kcal/mol) of hydrogen fluoride and F 2calculated with each method and functional. Method Hydrogen fluoride F2
+> BLYP B3LYP BHHLYP HF BLYP B3LYP BHHLYP HF DFT 168.60 194.07 228.42 272.92 92.32 119.66 158.90 212.35 SF-TDDFT 127.16 164.79 170.12 80.49 95.46 73.91 46.01 8.53 TD ∆SCF 155.93 142.77 120.24 87.32 1.43 7.57 16.67 24.77 Experiment 141.13 a38.30 b
+> a
+> Ref. 48.
+> b
+> Estimated from the reported value of D0in Ref. 49.
+
+no analogous spurious lower-lying states are observed. Thus, although TD ∆SCF is not exact, it provides a sub-stantially more balanced description of static correlation along bond dissociation. This behavior can be understood from the correspond-ing energy expression, 
+
+E∆SCF S = E∆SCF + X†A∆SCF X. (17) The second term represents the response correction built on the broken-symmetry ∆SCF reference and, within the adiabatic approximation, retains the usual exchange-correlation response contribution. In the dissociation limit, the ∆SCF determinant may be regarded approxi-mately as an equal mixture of the triplet state and the excited open-shell singlet, whose energies differ by about 
+
+2Kσσ ∗ . Therefore, one may write 
+
+E∆SCF ≈ ET + Kσσ ∗ , (18) suggesting that the response term compensates for this excess and drives the final TD ∆SCF energy toward the neutral dissociation limit. In this sense, the de-excitation response in TD ∆SCF plays a role analogous to an effec-tive −Kσσ ∗ correction. Another important distinction from SF-TDDFT is that TD ∆SCF does not produce the spurious ionic H+ · · · F− state as a competing low-lying root. This can also be understood from the structure of the TD ∆SCF response space. In the dissociation limit, the bonding and antibonding orbitals may be expressed as 
+
+|σ⟩ = c|H1s⟩ + √1 − c2 |F2pz ⟩, (19) 
+
+|σ∗⟩ = √1 − c2 |H1s⟩ − c|F2pz ⟩, (20) so that 
+
+|F2pz ⟩ = √1 − c2 |σ⟩ − c|σ∗⟩. (21) The ionic state can then be expanded as 
+
+|H+ · · · F−⟩ = |Fα 
+
+> 2pz
+
+Fβ 
+
+> 2pz
+
+⟩ (22) 
+
+= (1 − c2)|σασβ ⟩ + c2|σ∗ασ∗β ⟩− c√1 − c2 (|σ∗ασβ ⟩ + |σασ∗β ⟩) . (23) Since the reference ∆SCF determinant is |σ∗ασβ ⟩,the closed-shell determinants |σασβ ⟩ and |σ∗ασ∗β ⟩ are reached by a single de-excitation and a single excitation, respectively, and can therefore appear within the linear-response space. By contrast, the determinant |σασ∗β ⟩
+
+differs from the reference by two spin-orbitals and thus lies outside the singles response manifold. Consequently, a pure ionic state cannot be represented exactly within TD ∆SCF built on |σ∗ασβ ⟩. This limitation is, in prac-tice, beneficial because it prevents the spurious H + · · · F−
+
+solution from emerging as a low-lying state. At the same time, however, TD ∆SCF is not uniformly better over the entire potential energy curve. Near the equilibrium geometry, its performance depends more no-ticeably on the quality of the underlying ∆SCF reference. With BHHLYP, the TD ∆SCF curves remain reasonably close to the DFT curves in the bonding region. With BLYP and B3LYP, however, clear deviations emerge: for hydrogen fluoride the energy rises too steeply upon bond stretching, whereas for F 2 the minimum itself is placed too high. This behavior is naturally interpreted as an orbital bias inherited from the non-Aufbau reference de-terminant. Because the underlying orbitals are optimized for an excited-state determinant rather than for the final ground-state singlet, they are not guaranteed to provide a balanced description in the near-equilibrium region. These trends are also reflected in the dissociation en-ergies, De, summarized in Table V. We estimate De as the energy difference between the equilibrium geometry and the structure at R = 5 Å. The experimental values are 141.13 kcal/mol for hydrogen fluoride [48] and ap-proximately 38.30 kcal/mol for F 2, the latter estimated from the reported D0 value of 37.00 kcal/mol.[49] For hydrogen fluoride, TD ∆SCF reproduces the dissociation energy at least qualitatively for all functionals, and with B3LYP the agreement is even quantitatively reasonable. Although some functional dependence remains, it is much weaker than in SF-TDDFT. For F 2, in contrast, SF-TDDFT strongly overestimates De except with BHH-LYP, with errors of roughly 57 and 36 kcal/mol for BLYP and B3LYP, respectively. This directly reflects its failure to describe the dissociation limit properly. TD ∆SCF, on the other hand, underestimates De by about 22–37 kcal/mol. Importantly, this error does not mainly origi-nate from the asymptotic region, which is described much 12 better than in SF-TDDFT, but rather from the poorer description near the minimum, where the orbital bias of the ∆SCF reference raises the energy. Thus, TD ∆SCF is not uniformly accurate along the entire potential energy curve, but it captures the physically essential dissociation behavior more satisfactorily than SF-TDDFT and does so with substantially weaker functional dependence. A final feature worth noting is that the TD ∆SCF curves obtained with BLYP, B3LYP, and BHHLYP ex-hibit weak oscillations and, in some cases, small disconti-nuities in the stretched-bond region, as illustrated most clearly for F 2 in Fig. 6. By contrast, the corresponding HF-based curve remains smooth. This contrast strongly suggests that the anomaly originates from the exchange-correlation potential vxc , rather than from the Hartree– Fock exchange contribution. We analyze the origin of this behavior in the next section.      
+
+> E. Numerical Instability in Non-Aufbau Excitation: The Case of σg→σuTransition in H 2
+
+In the course of our investigation of the potential en-ergy curves in the previous section, we found that calcu-lations of non-Aufbau electronic states with the ∆SCF method can, under certain conditions, exhibit numerical instabilities that in turn lead to discontinuous behav-ior in TD ∆SCF. To illustrate this in the simplest possi-ble setting, we consider the potential energy curves of H2 in the STO-3G basis, which contains only the σg
+
+and σu orbitals. We impose a non-Aufbau occupation in which the α electron occupies σu and the β elec-tron occupies σg . This minimal model removes com-plications arising from orbital relaxation and from dis-continuities associated with changes in the SCF solu-tion itself, thereby allowing us to isolate the behavior of the exchange-correlation potential vxc . Calculations were carried out with BLYP and PBE using three nu-merical integration grids, (50, 302), (70, 590), and (90, 974). Figure 7 shows the orbital energies of σg and σu for both spins as functions of bond length. Strikingly, the 
+
+α-spin σg orbital energy exhibits sharp peaks. No compa-rable discontinuities appear in the other orbital energies, which behave smoothly as expected. We also find that both the positions and the magnitudes of these peaks depend on the numerical integration grid, whereas the peak positions are nearly identical for BLYP and PBE. Moreover, this pathological behavior is absent at the HF level (not shown). Taken together, these observations strongly suggest that the instability originates from the numerical evaluation of the exchange correlation poten-tial vxc (r) in ∆SCF. Because the KS orbital energies en-ter directly into the diagonal part of the TDDFT re-sponse matrix, such discontinuities immediately contam-inate the TDDFT excitation energies. In addition, the TDDFT kernel itself is constructed from derivatives of the exchange-correlation potential and is therefore ex-pected to inherit the same numerical pathology. The dis-continuous behavior observed in the TD ∆SCF energies is thus naturally understood as a consequence of insta-bilities in both the orbital-energy contribution and the exchange-correlation kernel. To examine the origin of this behavior more closely, Figure 8(a) plots vα
+
+> xc
+
+(r) against the α-spin density ρα(r)
+
+at R = 1 .003 Å using the (50, 302) grid for BLYP. A pronounced divergence in vα 
+
+> xc
+
+appears at a particular grid point r∗ where the density is extremely small, ρα(r∗) ≈
+
+10 −10 . To identify the origin of this divergence more clearly, Figure 8(b) shows vα 
+
+> xc
+
+as a function of the reduced gradient 
+
+s(r) = |∇ ρ(r)|
+
+ρ4/3 (r) (24) The divergence in vα 
+
+> xc
+
+is clearly correlated with an ex-tremely large value of s(r∗), exceeding 10 6. This indicates that |∇ ρ(r∗)| remains finite even though ρ(r∗) becomes vanishingly small, as can occur near a nodal surface. This interpretation is confirmed by the three-dimensional analysis of s in Figure 9, which shows that the singularity is localized on the nodal plane ( z = 0 ) of the antibonding orbital. Ordinarily, when the electron density ρ approaches zero at a point, its gradient |∇ ρ| is also expected to vanish. Here, however, the node arises from occupation of a single antibonding orbital, so ρ goes to zero while |∇ ρ| remains finite. This mismatch causes the reduced gradient s to diverge locally, introducing a numerically singular contribution to the energy and po-tential that standard quadrature schemes cannot handle robustly. Indeed, the singular point r∗ is found on the nodal plane. By contrast, the β-spin exchange-correlation potential remains well behaved, as shown in Figures 8(c) and (d), and Figure 9(b). This is because the β electron occupies the bonding σg orbital, which has no node. For ordinary ground-state densities, this type of insta-bility is usually absent or negligibly small. In such cases, the nodal structure of an antibonding orbital is compen-sated by density contributions from other occupied or-bitals, especially bonding orbitals, so that the total spin density remains finite even near the node. As a result, the reduced gradient s(r) does not diverge in the bond-ing region. The situation is qualitatively different near an uncompensated “bare” node, where no such compensat-ing density is present. In that case, serious numerical and even physical breakdowns can arise because the density vanishes while its gradient remains finite. This problem becomes much more severe in dissociation limits or in localized electronic states, where the lack of compensa-tion is most pronounced. In this sense, H 2 in the present setup should be regarded as a rather special, near-worst-case example, in which the instability is exposed in an especially clear and severe form. In the hydrogen fluoride and F 2 cases discussed in the previous section, by con-trast, the same instability has only a minor effect on the overall shape of the potential energy curves. More gener-13 -0.3750         
+
+> -0.3500
+> -0.3250
+> -0.3000
+> BLYP
+> Energy (Hartree)
+> 0.1680
+> 0.1695
+> 0.1710
+> 0.1725
+> Energy (Hartree)
+> -0.2920
+> -0.2914
+> -0.2908
+> -0.2902
+> -0.2896
+> Energy (Hartree)
+> 0.2205
+> 0.2220
+> 0.2235
+> 0.2250
+> Energy (Hartree)
+> Grid level
+> (50, 302)
+> (70, 590)
+> (90, 974)
+> 1.000 1.005 1.010
+> R (Å)
+> -0.2850
+> -0.2800
+> -0.2750
+> -0.2700
+> -0.2650
+> PBE
+> Energy (Hartree)
+> 1.000 1.005 1.010
+> R (Å)
+> 0.1755
+> 0.1770
+> 0.1785
+> 0.1800
+> Energy (Hartree)
+> 1.000 1.005 1.010
+> R (Å)
+> -0.2950
+> -0.2944
+> -0.2938
+> -0.2932
+> -0.2926
+> Energy (Hartree)
+> 1.000 1.005 1.010
+> R (Å)
+> 0.2190
+> 0.2205
+> 0.2220
+> 0.2235
+> Energy (Hartree)
+
+FIG. 7. ∆SCF orbital energies ϵ∆SCF of H 2 using BLYP (Top) and PBE (Bottom). σαu and σβg are occupied, whereas σαg and 
+
+σβu are unoccupied. 
+
+FIG. 8. Scatter plots of the exchange–correlation potential 
+
+Vxc (r) against the electron density ρ(r) and the reduced gra-dient s(r), evaluated at all numerical grid points r for the 
+
+∆SCF state of H 2 (see the main text). Panels (a) and (b) show the α-spin components, whereas panels (c) and (d) show the β-spin components. 
+
+ally, this issue is not expected to be problematic in many practical situations, including the ethylene torsion and singlet–triplet gaps discussed in Sections IV A and IV B, because the antibonding density remains embedded in density contributions from other occupied orbitals, as in ordinary ground-state calculations. This interpretation is also consistent with the hydrogen fluoride and F 2 po-tential energy curves, in which the discontinuity appears only in the dissociative region and has a negligible effect on the overall curve shape. From this perspective, TD ∆SCF may also be numer-ically more stable than noncollinear SF-TDDFT, whose kernel contains terms involving division by the spin-density difference ρα(r)−ρβ (r). Because regions in which the spin density becomes very small or vanishes are ubiq-uitous in molecular systems, such terms may represent an additional source of numerical instability. 
+
+V. CONCLUDING REMARKS 
+
+In this work, we have introduced TD ∆SCF, a linear-response formalism in which a non-Aufbau ∆SCF de-terminant is used as the reference for a subsequent TDDFT/TDA calculation. In contrast to collinear SF-TDDFT, TD ∆SCF retains the usual Coulomb and exchange-correlation response terms by employing a spin-conserving response manifold on top of an electronically promoted reference. The present results demonstrate that this alternative formulation provides a useful low-cost route for describing near-degenerate electronic struc-tures. For the ethylene torsion problem, TD ∆SCF yields smooth potential-energy curves in the strongly near-degenerate region around the 90 ◦ twisted geometry for all functionals examined, whereas SF-BLYP exhibits an unphysical cusp. In the singlet–triplet gap benchmark, TD ∆SCF is much less sensitive to the functional than collinear SF-TDDFT and gives consistently smaller over-all errors, with MAEs of about 4.3–4.7 kcal/mol across BLYP, B3LYP, and BHHLYP. In addition, for the ben-zyne systems, TD ∆SCF provides geometries that are generally comparable to those of SF-TDDFT for o- and 
+
+p-benzyne and, importantly, yields a more consistent 14        
+
+> FIG. 9. Three-dimensional distribution of the reduced density gradient s(r)at all numerical grid points for the ∆SCF state of H2. Panels (a) and (b) correspond to the α- and β-spin components, respectively. The H–H bond is oriented along the zaxis, while the translucent blue slice marks the nodal plane of the antibonding orbital.
+
+monocyclic description of singlet m-benzyne, whereas SF-B3LYP spuriously favors a bicyclic structure. For bond dissociation, TD ∆SCF captures the dissociation behavior more satisfactorily than SF-TDDFT and shows substantially weaker functional dependence, although its accuracy near the equilibrium geometry is not uniformly improved. At the same time, the present study also reveals sev-eral limitations of TD ∆SCF. Although its overall func-tional dependence is weak, TD ∆SCF shows a systematic tendency to overestimate singlet–triplet gaps, suggesting that the singlet states obtained from the response cal-culation are not fully optimized relative to the triplet states. Moreover, in bond dissociation, the method can lose accuracy near the equilibrium region when the un-derlying ∆SCF reference is not appropriate, reflecting an orbital bias inherited from the non-Aufbau reference de-terminant. We also identify, for the first time to the best of our knowledge, a numerical instability that can arise in non-Aufbau DFT calculations and trace its origin to the exchange-correlation potential in the vicinity of un-compensated nodal regions. Overall, TD ∆SCF emerges as a promising single-determinant framework for singlet states with near-degenerate electronic structures, particularly in situ-ations where the ground-state reference of ordinary TDDFT becomes qualitatively inadequate because of static correlation and collinear SF-TDDFT suffers from strong functional dependence. Further developments aimed at improving the construction and stability of the 
+
+∆SCF reference, together with a deeper understanding of the numerical instabilities identified here, should broaden the applicability and reliability of this approach. 
+
+> ASSOCIATED CONTENT Supporting information
+
+Tables of the calculated ∆EST values for each method and functional; ⟨ ˆS2⟩ values for the TD-∆SCF singlet states; bond-length and bond-angle deviations from SF-CCSD for o-, m-, and p-benzyne; TD-∆SCF dissociation curves of F 2 near the equilibrium bond distance and in the 2.5–5.0 Å range; SF-TDDFT dissociation curves for the three lowest-energy states of hydrogen fluoride and the ten lowest-energy states of F 2; and tables of total energies and ⟨ ˆS2⟩ values for hydrogen fluoride and F 2.
+
+> ACKNOWLEDGMENTS
+
+This work was supported by JSPS KAKENHI, Grant Nos. 25K01733 and 25K22247. 
+
+> NOTES
+
+The authors declare no competing financial interest.   
+
+> [1] W. Kohn and L. J. Sham, Physical Review 140 , A1133 (1965). [2] E. Runge and E. K. U. Gross, Phys. Rev. Lett. 52 , 997 (1984).
+
+15 
+
+[3] M. Casida and M. Huix-Rotllant, Annual Review of Physical Chemistry 63 , 287 (2012). [4] Y. Shao, M. Head-Gordon, and A. I. Krylov, The Journal of Chemical Physics 118 , 4807 (2003). [5] A. I. Krylov, Accounts of Chemical Research 39 , 83 (2006). [6] N. Minezawa and M. S. Gordon, The Journal of Phys-ical Chemistry A 113 , 12749 (2009), pMID: 19905013, https://doi.org/10.1021/jp908032x. [7] Y. Harabuchi, K. Keipert, F. Zahariev, T. Taket-sugu, and M. S. Gordon, The Journal of Physi-cal Chemistry A 118 , 11987 (2014), pMID: 25181251, https://doi.org/10.1021/jp5072428. [8] L. Yue, Y. Liu, and C. Zhu, Phys. Chem. Chem. Phys. 
+
+20 , 24123 (2018). [9] Z. Li and W. Liu, The Journal of Chemical Physics 136 ,024107 (2012). [10] Y. A. Bernard, Y. Shao, and A. I. Krylov, The Journal of Chemical Physics 136 , 204103 (2012). [11] M. Huix-Rotllant, B. Natarajan, A. Ipatov, C. Muhavini Wawire, T. Deutsch, and M. E. Casida, Phys. Chem. Chem. Phys. 12 , 12811 (2010). [12] A. T. Gilbert, N. A. Besley, and P. M. Gill, J. Phys. Chem. A 112 , 13164 (2008). [13] M. Filatov and S. Shaik, The Journal of Chemical Physics 
+
+110 , 116 (1999). [14] T. Kowalczyk, T. Tsuchimochi, P.-T. Chen, L. Top, and T. Van Voorhis, J. Chem. Phys. 138 , 164101 (2013). [15] D. Hait and M. Head-Gordon, The Journal of Physi-cal Chemistry Letters 11 , 775 (2020), pMID: 31917579, https://doi.org/10.1021/acs.jpclett.9b03661. [16] D. Hait and M. Head-Gordon, J. Phys. Chem. Lett. 12 ,4517 (2021). [17] E. Selenius, A. E. Sigurdarson, Y. L. A. Schmerwitz, and G. Levi, 20 , 3809 (2024). [18] L. Paetow and J. Neugebauer, Phys. Chem. Chem. Phys. 
+
+27 , 16354 (2025). [19] K. Carter-Fenk and J. M. Herbert, Journal of Chemi-cal Theory and Computation 16 , 5067 (2020), pMID: 32644792, https://doi.org/10.1021/acs.jctc.0c00502. [20] D. Hait and M. Head-Gordon, Journal of Chemical The-ory and Computation 16 , 1699 (2020), pMID: 32017554, https://doi.org/10.1021/acs.jctc.9b01127. [21] G. Levi, A. V. Ivanov, and H. Jónsson, Faraday Discuss. 
+
+224 , 448 (2020). [22] G. Levi, A. V. Ivanov, and H. Jnsson, J. Chem. Theory Comput. 16 , 6968 (2020). [23] R. Berera, R. van Grondelle, and J. T. M. Kennis, Pho-tosynthesis Research 101 , 105 (2009). [24] Z. J. Knepp, D. R. Fertal, G. B. Masso, R. C. Hamburger, C. A. Guzman, E. R. Young, and L. A. Fredin, Journal of Chemical Theory and Computation 21 , 9736 (2025), pMID: 41031514, https://doi.org/10.1021/acs.jctc.5c00591. [25] K. Carter-Fenk, L. A. Cunha, J. E. Arias-Martinez, and M. Head-Gordon, The Journal of Physical Chem-istry Letters 13 , 9664 (2022), pMID: 36215404, https://doi.org/10.1021/acs.jpclett.2c02564. [26] T. Tsuchimochi, The Journal of Chemical Physics 161 ,241102 (2024). [27] T. Tsuchimochi and B. Mokhtar, Journal of Chemical Theory and Computation 0, null (0), https://doi.org/10.1021/acs.jctc.6c00182. [28] T. Tsuchimochi, “Analytical nuclear gradients for state-averaged configuration interaction singles vari-ants: Application to conical intersections,” (2026), arXiv:2602.15700 [physics.chem-ph]. [29] R. G. Parr and Y. Weitao, Density-Functional Theory of Atoms and Molecules (Oxford University Press, 1995). [30] C. A. Ullrich, Time-Dependent Density-Functional Theory: Concepts (Oxford University Press, 2011). [31] M. Petersilka, U. J. Gossmann, and E. K. U. Gross, Phys. Rev. Lett. 76 , 1212 (1996). [32] R. Bauernschmitt and R. Ahlrichs, Chemical Physics Let-ters 256 , 454 (1996). [33] S. Hirata and M. Head-Gordon, Chemical Physics Letters 
+
+314 , 291 (1999). [34] F. Wang and T. Ziegler, The Journal of Chemical Physics 
+
+121 , 12191 (2004). [35] F. Wang and T. Ziegler, The Journal of Chemical Physics 
+
+122 , 074109 (2005). [36] A. D. Becke, The Journal of Chemical Physics 98 , 5648 (1993). [37] E. Epifanovsky, A. T. B. Gilbert, X. Feng, J. Lee, Y. Mao, N. Mardirossian, P. Pokhilko, A. F. White, M. P. Coons, A. L. Dempwolff, Z. Gan, D. Hait, P. R. Horn, L. D. Jacobson, I. Kaliman, J. Kussmann, A. W. Lange, K. U. Lao, D. S. Levine, J. Liu, S. C. McKen-zie, A. F. Morrison, K. D. Nanda, F. Plasser, D. R. Rehn, M. L. Vidal, Z.-Q. You, Y. Zhu, B. Alam, B. J. Albrecht, A. Aldossary, E. Alguire, J. H. Andersen, V. Athavale, D. Barton, K. Begam, A. Behn, N. Bel-lonzi, Y. A. Bernard, E. J. Berquist, H. G. A. Bur-ton, A. Carreras, K. Carter-Fenk, R. Chakraborty, A. D. Chien, K. D. Closser, V. Cofer-Shabica, S. Dasgupta, M. de Wergifosse, J. Deng, M. Diedenhofen, H. Do, S. Ehlert, P.-T. Fang, S. Fatehi, Q. Feng, T. Friedhoff, J. Gayvert, Q. Ge, G. Gidofalvi, M. Goldey, J. Gomes, C. E. GonzÃ¡lez-Espinoza, S. Gulania, A. O. Gunina, M. W. D. Hanson-Heine, P. H. P. Harbach, A. Hauser, M. F. Herbst, M. HernÃ¡ndez Vera, M. Hodecker, Z. C. Holden, S. Houck, X. Huang, K. Hui, B. C. Huynh, M. Ivanov, Ádám Jász, H. Ji, H. Jiang, B. Kaduk, S. Kähler, K. Khistyaev, J. Kim, G. Kis, P. Klun-zinger, Z. Koczor-Benda, J. H. Koh, D. Kosenkov, L. Koulias, T. Kowalczyk, C. M. Krauter, K. Kue, A. Kunitsa, T. Kus, I. Ladjánszki, A. Landau, K. V. Lawler, D. Lefrancois, S. Lehtola, R. R. Li, Y.-P. Li, J. Liang, M. Liebenthal, H.-H. Lin, Y.-S. Lin, F. Liu, K.-Y. Liu, M. Loipersberger, A. Luenser, A. Manjanath, P. Manohar, E. Mansoor, S. F. Manzer, S.-P. Mao, A. V. Marenich, T. Markovich, S. Mason, S. A. Maurer, P. F. McLaughlin, M. F. S. J. Menger, J.-M. Mewes, S. A. Mewes, P. Morgante, J. W. Mullinax, K. J. Oosterbaan, G. Paran, A. C. Paul, S. K. Paul, P. Fabijan, Z. Pei, S. Prager, E. I. Proynov, A. Rák, E. Ramos-Cordoba, B. Rana, A. E. Rask, A. Rettig, R. M. Richard, F. Rob, E. Rossomme, T. Scheele, M. Scheurer, M. Schneider, N. Sergueev, S. M. Sharada, W. Skomorowski, D. W. Small, C. J. Stein, Y.-C. Su, E. J. Sundstrom, Z. Tao, J. Thirman, G. J. Tornai, T. Tsuchimochi, N. M. Tub-man, S. P. Veccham, O. Vydrov, J. Wenzel, J. Witte, A. Yamada, K. Yao, S. Yeganeh, S. R. Yost, A. Zech, I. Y. Zhang, X. Zhang, Y. Zhang, D. Zuev, A. Aspuru-Guzik, A. T. Bell, N. A. Besley, K. B. Bravaya, B. R. Brooks, D. Casanova, J.-D. Chai, S. Coriani, C. J. 16 
+
+Cramer, G. Cserey, I. DePrince, A. Eugene, J. DiSta-sio, Robert A., A. Dreuw, B. D. Dunietz, T. R. Furlani, I. Goddard, William A., S. Hammes-Schiffer, T. Head-Gordon, W. J. Hehre, C.-P. Hsu, T.-C. Jagau, Y. Jung, A. Klamt, J. Kong, D. S. Lambrecht, W. Liang, N. J. Mayhall, C. W. McCurdy, J. B. Neaton, C. Ochsenfeld, J. A. Parkhill, R. Peverati, V. A. Rassolov, Y. Shao, L. V. Slipchenko, T. Stauch, R. P. Steele, J. E. Sub-otnik, A. J. W. Thom, A. Tkatchenko, D. G. Truh-lar, T. Van Voorhis, T. A. Wesolowski, K. B. Wha-ley, I. Woodcock, H. Lee, P. M. Zimmerman, S. Faraji, P. M. W. Gill, M. Head-Gordon, J. M. Herbert, and A. I. Krylov, The Journal of Chemical Physics 155 , 084801 (2021). [38] Q. Sun, X. Zhang, S. Banerjee, P. Bao, M. Barbry, N. S. Blunt, N. A. Bogdanov, G. H. Booth, J. Chen, Z.-H. Cui, J. J. Eriksen, Y. Gao, S. Guo, J. Hermann, M. R. Hermes, K. Koh, P. Koval, S. Lehtola, Z. Li, J. Liu, N. Mardirossian, J. D. McClain, M. Motta, B. Mus-sard, H. Q. Pham, A. Pulkin, W. Purwanto, P. J. Robin-son, E. Ronca, E. R. Sayfutyarova, M. Scheurer, H. F. Schurkus, J. E. T. Smith, C. Sun, S.-N. Sun, S. Upad-hyay, L. K. Wagner, X. Wang, A. White, J. D. Whitfield, M. J. Williamson, S. Wouters, J. Yang, J. M. Yu, T. Zhu, T. C. Berkelbach, S. Sharma, A. Y. Sokolov, and G. K.-L. Chan, The Journal of Chemical Physics 153 , 024109 (2020). [39] S. Saade and H. G. A. Burton, Journal of Chemical The-ory and Computation 20 , 5105 (2024), pMID: 38847452. [40] A. I. Krylov, Chemical Physics Letters 338 , 375 (2001). [41] A. Nikiforov, J. A. Gamez, W. Thiel, M. Huix-Rotllant, and M. Filatov, The Journal of Chemical Physics 141 ,124122 (2014). [42] K. P. Huber and G. Herzberg, Constants of Diatomic Molecules (Van Nostrand Rein-hold, New York, 1979). [43] P. G. Wenthold, R. R. Squires, and W. C. Lineberger, Journal of the American Chemical Society 120 , 5279 (1998). [44] F. Furche and R. Ahlrichs, The Journal of Chemical Physics 117 , 7433 (2002). [45] E. Kraka, J. Anglada, A. Hjerpe, M. Filatov, and D. Cre-mer, Chemical Physics Letters 348 , 115 (2001). [46] M. Winkler and W. Sander, The Journal of Physical Chemistry A 105 , 10422 (2001). [47] W. A. Al-Saidi and C. J. Umrigar, The Journal of Chem-ical Physics 128 , 154324 (2008). [48] W. T. Zemke, W. C. Stwalley, J. A. Coxon, and P. G. Hajigeorgiou, Chemical Physics Letters 177 , 412 (1991). [49] P. Wang, S. Gong, and Y. Mo, The Journal of Physical Chemistry Letters 15 , 12594 (2024).

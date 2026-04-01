@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-01",
+  "date": "2026-04-01",
+  "generated_at": "2026-04-01T22:03:50",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/01/2603.29143v1-electronic-collective-variables-for-chemical-reactions",
+      "section": "quick",
+      "title_en": "Electronic Collective Variables for Chemical Reactions",
+      "authors": "YaoKun Lei, Yi Isaac Yang",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29143v1",
+      "score": "7.0",
+      "evidence": "用于化学反应采样的电子集合变量",
+      "tldr": "本研究针对化学反应采样中传统几何集体变量（CV）通用性不足的问题，提出了一种基于电荷空间的电子集体变量。该方法通过描述反应过程中的电子重分布，利用在QM/MM数据上训练的神经网络模型实时提供原子电荷及其梯度。在水溶液和酶环境下的多种反应模拟中，该电子CV展现了极高的通用性与物理可解释性，成功捕捉了电子与构象的耦合特征，为研究复杂化学反应提供了一个减少对手工几何描述符依赖的新型物理框架。",
+      "tags": "query:qmmm",
+      "abstract_en": "Chemical reaction sampling critically depends on collective variables (CVs) that capture the slow degrees of freedom governing reactive transformations. However, existing reaction CVs are often defined in geometric space or learned in a system-specific manner, which limits their transferability and leaves open the more fundamental question of how reaction progress should be represented. From a physical perspective, chemical reactions are defined by electron redistribution. Here, we introduce a charge-space electronic collective variable that describes the electronic component of reaction progress in a common linear form based on atomic charges. To enable its use in enhanced sampling, atomic charges and the corresponding CV gradients are provided by a neural-network model trained on QM/MM data within an iterative sampling-training workflow. Across multiple reactions in aqueous and enzymatic environments, we show that this electronic CV can be constructed in a common charge-space form, with the corresponding coefficients assigned in a simple manner from charge differences between relevant states. Our simulations further show that reaction progress generally involves coupled electronic and conformational components, and that the same framework can also be extended to restrain side reactions. These findings support charge-based electronic CVs as a physically motivated framework for describing the electronic component of chemical reaction progress with reduced reliance on handcrafted geometric descriptors.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.29948v1-tdscf-time-dependent-density-functional-theory-with-a-non-aufbau-reference-for-near-degenerate-states",
+      "section": "quick",
+      "title_en": "TD$Δ$SCF: Time-Dependent Density Functional Theory with a Non-Aufbau Reference for near-degenerate states",
+      "authors": "Shuto Shibasaki, Fumiya Mohri, Takashi Tsuchimochi",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29948v1",
+      "score": "7.0",
+      "evidence": "用于电子结构的非Aufbau参考TD-DFT方法",
+      "tldr": "针对传统密度泛函理论（DFT）难以处理近简并电子结构的问题，本文提出了一种名为TD$Δ$SCF的新型线性响应方案。该方法利用非Aufbau $Δ$SCF行列式作为TDDFT计算的参考态，旨在克服自旋翻转（SF）-TDDFT的局限性。通过对乙烯扭转势能、双自由基能隙及化学键断裂等典型问题的测试，证明了该方法在描述挑战性单重态方面具有更弱的泛函依赖性和更好的平衡性，为低成本处理近简并体系提供了新思路。",
+      "tags": "query:qmmm",
+      "abstract_en": "Near-degenerate electronic structures remain a major challenge for conventional single-reference density functional theory (DFT). To address this problem, we propose time-dependent $Δ$SCF (TD$Δ$SCF), a novel linear-response scheme in which a non-Aufbau $Δ$SCF determinant serves as the reference for a subsequent TDDFT calculation. In contrast to collinear spin-flip (SF)-TDDFT, this formulation preserves the usual Coulomb and exchange-correlation response contributions while describing the target states from an electronically excited reference. We examine the performance of TD$Δ$SCF for several prototypical problems involving near-degeneracy, including the torsional potential of ethylene, singlet--triplet gaps of representative diradicals, geometry optimizations of benzyne isomers, and bond-dissociation curves of hydrogen fluoride and F$_2$. Across these tests, TD$Δ$SCF shows markedly weaker functional dependence than SF-TDDFT and often yields a more balanced description of challenging singlet states. In particular, it provides smooth torsional potentials, improved singlet--triplet gaps, a consistent monocyclic structure for singlet $m$-benzyne, and a more satisfactory description of bond dissociation without the spurious low-lying states found in SF-TDDFT. At the same time, the method exhibits a systematic tendency to overestimate singlet energies and can lose accuracy when the underlying $Δ$SCF reference is not well suited to the final state. We also identify a numerical instability that can arise in non-Aufbau calculations and trace its origin to the exchange-correlation potential near uncompensated nodal regions. These results highlight both the promise and the practical limitations of TD$Δ$SCF as a low-cost method for singlet states with near-degenerate electronic structures.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.24142v1-collective-electronic-polarization-drives-charge-asymmetry-at-oil-water-interfaces",
+      "section": "quick",
+      "title_en": "Collective Electronic Polarization Drives Charge Asymmetry at Oil-Water Interfaces",
+      "authors": "Gabriele Amante, Klaudia Mrazikova, Gabriele Centi, Sylvie Roke, Ali Hassanali, Giuseppe Cassone",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24142v1",
+      "score": "6.0",
+      "evidence": "基于神经网络的深度势能分子动力学研究电子密度",
+      "tldr": "本研究旨在揭示水中油滴自发带负电的微观机制。通过结合神经网络深度势能分子动力学与数据驱动的信息论方法，研究者分析了癸烷-水界面的电子密度分布。研究发现，与小簇模型不同，扩展界面表现出明显的电荷转移不对称性，导致电子从水相流向油相。这种现象由集体多体极化主导，并与界面处C-H...O和O-H...C结构的微观不对称性密切相关，为理解界面电荷起源提供了新视角。",
+      "tags": "query:qmmm",
+      "abstract_en": "Why kinetically stable oil droplets in water spontaneously acquire a negative charge remains one of the most vigorously debated questions in interfacial science. Here, we combine neural-network based deep potential molecular dynamics with a data-driven and information theory approach to probe the real-space electron density at an extended decane-water interface. While decane-water clusters show nearly symmetric forward and backward charge transfer (CT) and thus negligible net CT, the extended interface displays a systematic electronic asymmetry, yielding a net CT from water to the hydrocarbon phase producing an average surface charge density of $\\sim0.006~e^{-}\\,\\mathrm{nm}^{-2}$ on the oil phase. This imbalance is accompanied by much larger intra-phase self-polarization, particularly within the hydrocarbon phase, demonstrating that collective many-body polarization dominates the interfacial electronic response. Structural analysis reveals an asymmetry between forward C--H$\\cdots$O and backward O--H$\\cdots$C motifs, providing a microscopic origin for a net CT from one phase to the other. Curiously, both the water O--H and decane C--H covalent bonds incur subtle contractions which originate from a response to the charge-separation layers at the interface. These features are fully consistent with the weak improper hydrogen-bonds forming at the oil-water interface that results in blue-shifts of the C-H modes.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
