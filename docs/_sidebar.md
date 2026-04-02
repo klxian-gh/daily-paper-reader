@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-02 <!--dpr-date:20260402-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/02/2604.00405v1-reliable-and-efficient-automated-transition-state-searches-with-machine-learned-interatomic-potentials" data-sidebar-item="{&quot;title&quot;: &quot;Reliable and Efficient Automated Transition-State Searches with Machine-Learned Interatomic Potentials&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.00405v1-reliable-and-efficient-automated-transition-state-searches-with-machine-learned-interatomic-potentials&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;反应机理的过渡态搜索&quot;}">Reliable and Efficient Automated Transition-State Searches with Machine-Learned Interatomic Potentials</a>
   * 2026-04-01 <!--dpr-date:20260401-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/01/2603.29143v1-electronic-collective-variables-for-chemical-reactions" data-sidebar-item="{&quot;title&quot;: &quot;Electronic Collective Variables for Chemical Reactions&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.29143v1-electronic-collective-variables-for-chemical-reactions&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;用于化学反应采样的电子集合变量&quot;}">Electronic Collective Variables for Chemical Reactions</a>

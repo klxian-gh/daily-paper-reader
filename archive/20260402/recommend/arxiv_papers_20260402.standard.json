@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-02T21:04:23.960735+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.00405v1",
+      "title": "Reliable and Efficient Automated Transition-State Searches with Machine-Learned Interatomic Potentials",
+      "abstract": "Transition-state searches are central to understanding reaction mechanisms, but the high computational cost of density-functional theory (DFT) limits their application in high-throughput catalyst and materials discovery. Machine-learned interatomic potentials (MLIPs) offer near-DFT accuracy at orders-of-magnitude lower cost, yet their reliability for transition-state searches remains underexplored. Here, we systematically benchmark hybrid transition-state-search workflows combining six freely available potentials (MACE-OMol25, UMA-Small, UMA-Medium, eSEN-S, AIMNet2, and GFN2-xTB) with two reaction-path-finding algorithms (the freezing-string method and climbing-image nudged elastic band) across 58 diverse reactions spanning small organics, polymerization chemistry, and transition-metal catalysis. We find that models trained on the Open Molecules 2025 dataset exhibit markedly superior performance, with MACE-OMol25 achieving a 96.6% success rate while requiring fewer than four DFT-gradient evaluations per reaction on organic systems - a 94-96% reduction compared to conventional DFT-based searches. Low-level refinement on the MLIP surface before high-level DFT optimization reduces computational cost three-fold with minimal loss in reliability. For transition-metal systems, UMA-Medium demonstrates promising transferability to in-distribution transition metal complex reactions and out-of-distribution organometallic C-H activation. These results establish MLIP-accelerated workflows as practical tools for automated reaction discovery, enabling near-DFT accuracy at a fraction of traditional expense.",
+      "authors": [
+        "Jonah Marks",
+        "Jonathon Vandezande",
+        "Joseph Gomes"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-01T02:42:43+00:00",
+      "link": "https://arxiv.org/pdf/2604.00405v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "transition-state searches for reaction mechanisms",
+      "llm_evidence_cn": "反应机理的过渡态搜索",
+      "llm_evidence": "反应机理的过渡态搜索",
+      "canonical_evidence": "反应机理的过渡态搜索",
+      "llm_tldr_en": "Benchmarks machine-learned potentials for efficient transition-state searches in reaction mechanisms.",
+      "llm_tldr_cn": "评估机器学习势能在反应机理过渡态搜索中的效率与可靠性。",
+      "llm_tldr": "评估机器学习势能在反应机理过渡态搜索中的效率与可靠性。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
