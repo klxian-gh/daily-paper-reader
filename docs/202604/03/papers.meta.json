@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-03",
+  "date": "2026-04-03",
+  "generated_at": "2026-04-03T20:07:52",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/03/2604.01360v1-a-new-paradigm-for-computational-chemistry",
+      "section": "deep",
+      "title_en": "A New Paradigm for Computational Chemistry",
+      "authors": "Raphael T. Husistein, Markus Reiher",
+      "date": "2026-04-01",
+      "pdf": "https://arxiv.org/pdf/2604.01360v1",
+      "score": "8.0",
+      "evidence": "量子精度与力场速度结合用于反应机理",
+      "tldr": "本文探讨了计算化学从密度泛函理论（DFT）向基础机器学习原子间势能（MLIPs）转型的范式变革。DFT虽是目前主流但计算成本高，而新兴的基础MLIPs克服了以往需大规模特定数据训练的缺陷，实现了量子级精度与极快计算速度的结合，预示着计算化学研究模式的重大转变。",
+      "tags": "query:qmmm",
+      "abstract_en": "Computational chemistry has become an indispensable tool for generating data and insights, pervading all branches of experimental chemistry. Its most central concept is the potential energy hypersurface, key to all chemistry and materials science, as it assigns an energy to a molecular structure, the necessary ingredient for reaction mechanism elucidation and reaction rate calculation. Density functional theory (DFT) has been the most important method in practice for obtaining such energies, which is mirrored in the use of high-performance computing hardware. In the last two decades, a new class of surrogate potential energy functions has been evolving with remarkable properties: quantum accuracy combined with force-field speed. Until very recently, their application was hampered by the fact that they needed to be trained on truly large system-specific data sets, generated before a computational chemistry study could be started (in sharp contrast to DFT, which, as a first-principles method, works out of the box, but at a far higher price of computational cost). Very recently, this roadblock has been overcome by so-called foundation machine learning interatomic potentials, which are poised to completely change the way we do computational chemistry, likely prompting us to abandon DFT as the prime method of choice for this purpose in less than a decade.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

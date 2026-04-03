@@ -6,26 +6,25 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-02
-- 运行时间：2026-04-02 21:04:41 UTC
+- 最新运行日期：2026-04-03
+- 运行时间：2026-04-03 20:07:42 UTC
 - 运行状态：成功
 - 本次总论文数：1
-- 精读区：0
-- 速读区：1
+- 精读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日聚焦利用机器学习势函数实现高效、可靠的过渡态自动化搜索。
-该研究证明了机器学习势能面能显著加速复杂化学反应路径的定位，并兼顾了搜索的成功率与计算效率。
-建议关注 AI 如何通过替代高成本量子化学计算，为大规模化学反应机理探索提供新工具。
-- 详情：[/202604/02/README](/202604/02/README)
+今日聚焦计算化学领域的范式革新，深度解读 8.0 分重磅前沿论文。
+该研究提出了一种全新的计算框架，预示着化学模拟将进入高效精准的新阶段。
+- 详情：[/202604/03/README](/202604/03/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [A New Paradigm for Computational Chemistry](/202604/03/2604.01360v1-a-new-paradigm-for-computational-chemistry)  
+   标签：评分：8.0/10、query:qmmm
+   evidence：量子精度与力场速度结合用于反应机理
 
 ### 速读区论文标签
-1. [Reliable and Efficient Automated Transition-State Searches with Machine-Learned Interatomic Potentials](/202604/02/2604.00405v1-reliable-and-efficient-automated-transition-state-searches-with-machine-learned-interatomic-potentials)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：反应机理的过渡态搜索
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
