@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-04 <!--dpr-date:20260404-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/04/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules" data-sidebar-item="{&quot;title&quot;: &quot;GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;针对高达3000个原子的大型有机系统的GPU加速TDDFT计算&quot;}">GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules</a>
   * 2026-04-03 <!--dpr-date:20260403-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/03/2604.01360v1-a-new-paradigm-for-computational-chemistry" data-sidebar-item="{&quot;title&quot;: &quot;A New Paradigm for Computational Chemistry&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.01360v1-a-new-paradigm-for-computational-chemistry&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;量子精度与力场速度结合用于反应机理&quot;}">A New Paradigm for Computational Chemistry</a>

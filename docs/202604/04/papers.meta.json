@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-04",
+  "date": "2026-04-04",
+  "generated_at": "2026-04-04T20:34:50",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/04/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules",
+      "section": "quick",
+      "title_en": "GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules",
+      "authors": "Zehao Zhou, Xiaojie Wu, Yanheng Li, Xinran Wei, Cheng Fan, Fusong Ju, Qiming Sun, Yi Qin Gao",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29257v1",
+      "score": "6.0",
+      "evidence": "针对高达3000个原子的大型有机系统的GPU加速TDDFT计算",
+      "tldr": "本研究在GPU4PySCF框架下实现了GPU加速的最小辅助基TDDFT方法（TDDFT-risp）。通过结合三中心积分评估、张量收缩优化、交换空间截断及辅助基简化等技术，显著提升了计算效率。在保持高精度的前提下，该方法能够在单块A100 GPU上完成包含数千个原子的有机分子激发态计算，为大规模生物分子系统的研究提供了实用工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "We introduce a GPU-accelerated implementation of time-dependent density functional theory with the minimal auxiliary basis approach (TDDFT-risp) in GPU4PySCF, together with large system demonstrations carried out using the Tamm--Dancoff approximation (TDA-risp). The method combines GPU-accelerated three-center integral evaluation, tensor contractions, exchange-space truncation, omission of hydrogen atoms from the auxiliary basis, and a host memory assisted Davidson solver. On the EXTEST42 benchmark set, a conservative 40 eV exchange cutoff yields excitation-energy errors relative to standard TDA of about 0.03--0.05 eV for low-lying states. For systems of 300 to 3000 atoms, we demonstrate that TDA-risp calculations of 15 low-lying excited states with $ω$B97XD/def2-SVP complete on a single A100 GPU with wall times ranging from minutes to hours. These results position GPU-TDDFT-risp as a practical route toward excited-state calculations for large organic and biomolecular systems with thousands of atoms.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
