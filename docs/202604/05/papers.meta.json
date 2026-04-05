@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-05",
+  "date": "2026-04-05",
+  "generated_at": "2026-04-05T20:07:31",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/05/2603.28659v1-phenol-release-from-pnipam-hydrogels-scaling-molecular-dynamics-simulations-with-dynamical-density-functional-theory",
+      "section": "quick",
+      "title_en": "Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory",
+      "authors": "H. A. Pérez-Ramírez, A. Moncho-Jordá, G. Odriozola",
+      "date": "2026-03-30",
+      "pdf": "https://arxiv.org/pdf/2603.28659v1",
+      "score": "6.0",
+      "evidence": "分子动力学模拟与自由能计算",
+      "tldr": "本研究结合分子动力学（MD）模拟和动态密度泛函理论（DDFT），探究了苯酚、甲烷和5-氟尿嘧啶在pNIPAM水凝胶中的转移自由能和扩散行为。研究发现转移自由能随聚合物浓度线性变化，并成功预测了微凝胶中药物释放的半衰期，其结果与实验数据高度吻合，为理解和预测水凝胶药物释放动力学提供了跨尺度模拟的新方法。",
+      "tags": "query:qmmm",
+      "abstract_en": "We employed molecular dynamics simulations (MD) and Bennett's acceptance ratio method to compute the free energy of transfer (Delta G_trans) of phenol, methane, and 5-fluorouracil (5-FU) between bulk water and water-pNIPAM mixtures with different polymer volume fractions (phi_p). To this end, we first calculate the solvation free energies in both media to obtain Delta G_trans. Phenol and 5-FU (a drug used in cancer treatment) adsorb onto the pNIPAM surface and exhibit negative values of Delta G_trans irrespective of temperature, both above and below the lower critical solution temperature (T_c) of pNIPAM. In contrast, methane changes the sign of Delta G_trans, being positive below and negative above T_c. In all cases, and in contrast with some theoretical predictions, Delta G_trans shows a linear dependence on pNIPAM concentration up to high polymer densities. We also compute the diffusion coefficient (D) of phenol in water-pNIPAM mixtures as a function of phi_p in the dilute limit. Both Delta G_trans and D as functions of phi_p are key inputs to estimate the release halftime of hollow pNIPAM microgels using dynamic density functional theory (DDFT). Our scaling approach reproduces the experimental value of 2200 s for microgels of 50 micrometer radius without a cavity, at phi_p approximately 0.83 and 315 K.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

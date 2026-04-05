@@ -1,0 +1,530 @@
+Title: Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory
+
+URL Source: https://arxiv.org/pdf/2603.28659v1
+
+Published Time: Tue, 31 Mar 2026 02:24:27 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# Phenol release from pNIPAM hydrogels: Scaling Molec-ular Dynamics simulations with Dynamical Density Functional Theory †
+
+H. A., Pérez-Ramírez, ∗a A. Moncho-Jordá, b, G. Odriozola, a∗
+
+We employed Molecular Dynamic simulations (MD) and Bennett’s acceptance ratio method to com-pute the free energy of transfer, ∆Gtrans , of phenol, methane, and 5-Fluorouracil (5-FU), between bulk water and water-pNIPAM mixtures of different polymer volume fractions, φp. For this pur-pose, we first calculate the solvation free energies in both media to obtain ∆Gtrans . Phenol and 5-FU (a medication used to treat cancer) attach to the pNIPAM surface so that they show negative values of ∆Gtrans irrespective of temperature (above or below the lower critical solution temperature of pNIPAM, Tc). Conversely, methane switches the ∆Gtrans sign when considering temperatures below (positive) and above (negative) Tc. In all cases, and contrasting with some theoretical predictions, 
+
+∆Gtrans maintains a linear behavior with the pNIPAM concentration up to large polymer densities. We have also employed MD to compute the diffusion coefficient, D, of phenol in water-pNIPAM mixtures as a function of φp in the diluted limit. Both ∆Gtrans and D as a function of φp are needed inputs to obtain the release halftime of hollow pNIPAM microgels through Dynamic Density Func-tional Theory (DDFT). Our scaling strategy captures the experimental value of 2200 s for 50 μmradius microgels with no cavity, for φp ≃ 0.83 at 315 K. 
+
+# 1 Introduction 
+
+Hydrogel particles in their different morphologies (such as core-shell and hollow) have a wide variety of uses, e. g. drugs car-rying and delivery 1–6 , filters 7–9 , wastewater cleaning 10 , cell cul-ture 11,12 , wound healing 13,14 , etc. 15,16 . Depending on its pur-pose, the hydrogel is designed to load, release, or trap large cargo molecules. Drug delivery processes are key to achieving the de-sired therapeutic effect. Pharmacokinetics and target specificity can be controlled through the employment of drug carriers, such as liposomes, micelles, microspheres, and microgels. On the other hand, cargo uptake may occur directly from bulk towards hydro-gel particles, or one can design gel membrane reactors able to concentrate the desired molecule to purify water. In particular, hydrogel particles made of Poly N-Isopropylacrylamide (pNIPAM) crosslinked polymer chains constitute a model thermoresponsive nanosystem. Indeed, pNIPAM is a type of temperature-sensitive polymer having a lower critical solution temperature in water, 
+
+Tc, around 305 K 17–19 . Below it, the polymer swells while hy-drating and forming a translucent and homogeneous solution. Conversely, temperatures above Tc make the pNIPAM-water mix-tures phase separate, producing pNIPAM aggregates that disperse light and turn the previously translucent solution into a white milky dispersion 17,20 . When pNIPAM is synthesized employing crosslinkers, it is possible to form core-shell and (following a somewhat more complicated procedure) hollow hydrogel parti-cles that share the same swelling ability 5,21–23 . The pNIPAM ma-   
+
+> † Accepted for publication in Soft Matter . This is a preprint of an article published in
+> Soft Matter . DOI: 10.1039/D2SM01083F.
+> aÁrea de Física de Procesos Irreversibles, División de Ciencias Básicas e Ingeniería, Universidad Autónoma Metropolitana-Azcapotzalco, Avenida San Pablo 180, 02200 Ciudad de México, Mexico.
+> bDepartamento de Física Aplicada, Universidad de Granada, Campus Fuentenueva S/N, 18071 Granada, Spain.
+> ∗email: godriozo@azc.uam.mx
+
+trix of the hydrogel structure includes covalent bonds so that it remains well-defined even after following several reversible heat-ing and cooling cycles around Tc 20,24 .In many of the applications mentioned above, controlling the kinetics of cargo load and release is essential to optimize the ef-ficiency of these nanoparticles. This type of process may have characteristic times that range from the order of seconds or min-utes while being controlled by diffusion and molecular interac-tions. Hence, it comes as no surprise that predicting the release kinetics of a given cargo molecule from its microparticle capsule is a complex task. In fact, the design of efficient nanocarriers usually entails extensive experimental work mostly based on trial and error 25 . To help the development of rational designing of these nanosystems, we need reliable theoretical models able to predict the load/release kinetics as a function of the observable parameters. There are two descriptors used in physical sciences and mate-rial engineering that determine the kinetics of cargo molecules through complex media, such as a polymer network of a hydro-gel nanoparticle. The first one is the reversible work required to transfer a given molecule (cargo) from one bulk to another at constant temperature and pressure, known as the free energy of transfer, ∆Gtrans . For an infinitely dilute cargo system, this free energy equals the effective interaction difference between the two bulks and the molecule, ueff , and dictates the partition coefficient (the concentration ratio between two bulks at thermo-dynamic equilibrium), a central quantity to design capsules and membranes with different materials and purposes 26–34 . However, 
+
+∆Gtrans is a thermodynamic property and does not provide infor-mation about how long it takes to load or release the cargo from a given capsule or the mass flux across a membrane. Consequently, we also need a transport property, the diffusion coefficient, D, to access the load (or release) kinetics 35–39 .Therefore, a complete theory aimed to describe the JournalName ,[year],[vol.],
+
+> 1–13 | 1
+> arXiv:2603.28659v1 [cond-mat.soft] 30 Mar 2026
+
+load/release process requires a proper estimation of ∆Gtrans and 
+
+D and then being able to consider these two parameters in the governing kinetic equations. These two properties strongly de-pend on the volume fraction occupied for the polymer chains, φp.As already mentioned, φp is a function of temperature 40 due to the deswelling of the polymer network above Tc. However, for a fixed temperature, φp also changes when moving from the denser interval region of the hydrogel particle to its more diluted exter-nal shell, in which φp gradually tends to zero. In addition, φp can also be controlled by the number of crosslinkers used in the parti-cle synthesis: a higher crosslinker concentration leads to hydrogel particles with a smaller swelling ratio and larger φp 41,42 .In this work, we investigate these two properties and explore the load/release kinetics for cargo molecules diffusing across a pNIPAM (Poly N-Isopropylacrylamide) hydrogel particle. For this purpose, we use a combination of atomistic Molecular Dynam-ics simulations (MD) and Dynamical Density Functional Theory (DDFT). MD simulations allow us to determine directly ∆Gtrans 
+
+and D. DDFT is a theory able to predict the time evolution of the non-equilibrium density profiles of the cargo concentra-tion 43 , which has been applied successfully to similar prob-lems 32,33,44,45 . We use the values of ∆Gtrans and D obtained from MD simulations as input parameters to obtain the time evolution of the cargo concentration. In particular, we calculate ∆Gtrans for several representative small cargo molecules, namely methane, phenol, and 5-fluorouracil (5-FU). On the one hand, methane is a small non-polar molecule, which changes its ∆Gtrans (φp) sign when considering temperatures above and below Tc. On the other hand, phenol and 5-FU are ring polar molecules able to form hy-drogen bonds with pNIPAM and water. Phenol is a water pollu-tant 46–48 , and microgels could assist water treatment processes. 5-FU is a drug commonly used to treat some kinds of cancer 49–52 .We fix two temperatures below and above Tc, given by 295 K and 
+
+315 K, and explore the dependence of the transfer free energy with φp. We also calculate D(φp) for the particular case of phenol to directly compare the outcomes for a transport process obtained from simulations and DDFT. Finally, once DDFT is validated, it is used to make general predictions for the upload and release ki-netics for hollow hydrogel nanoparticles. 
+
+# 2 Simulations 
+
+As mentioned, the transfer free energy and diffusion coefficient of a cargo molecule are key parameters that control the kinetics of non-equilibrium diffusive uptake/release processes. In partic-ular, both quantities are required as inputs for the DDFT method to yield release times. In addition, since we assume a continu-ous pNIPAM density profile for DDFT calculations, we need both quantities as a function of polymer density. For this purpose, we follow the simulation procedure proposed by Kanduˇ c et al. 31,39 ,by which two equilibrated simulation boxes are built, one filled with pure water and the other with the target polymer density. These boxes are used as initial conditions for the calculations of 
+
+∆Gtrans and D.Simulations are based on an atomistic model, where the OPLS-AA force field is used for the polymer, and water is given by the SPCE model. This force field and its versions are frequently em-ployed for pNIPAM systems 53–64 and provide the best results for capturing the coil-to-globule transition when employed with the TIP4P/ice water model 64 . A particular version of the OPLS-AA 65 
+
+with the TIP4P/ice can capture the pNIPAM in water behavior at different temperatures and pressures 63 . However, the OPLS-AA combination with SPCE water is also common 27,39,54,59 . We em-ployed the GROMACS 2020 package for all simulations 66 . We set a timestep of 1 fs and use the velocity rescale algorithm as a ther-mostat, with coupling time τt = 0.1 ps at two temperatures, 295 Kand 315 K. The Berendsen barostat is set with a reference pres-sure of 1 bar and coupling constant τp = 1.0 ps. Lennard-Jones and the real-space electrostatic interactions are truncated with a cutoff of 1.2 nm while using long-range corrections to energy and pressure. We set the particle mesh Ewald technique to deal with electrostatic interactions by considering a grid Fourier spacing of 
+
+0.12 nm in all directions. Periodic boundary conditions are also applied in all directions to mimic a bulk system. Below 305 K, the system is expected to form a homogeneous mixture, while it should aggregate displaying inhomogeneities above it. Nonethe-less, all boxes have a well-defined overall polymer density. To build the initial cells, we establish an empty cubic simulation box of 6 nm per side, where we insert the necessary polymer atac-tic chains to approximately reach the target volume fraction. Each chain contains 20 monomers. Note that chains are not crosslinked as implemented by Tavagnacco et al. 67 , which is a much more proper description of a microgel network. Crosslinks affect chain diffusivity by restricting reptation. In turn, cargo molecules at-tached to chains may increase their diffusion due to this fact. Sim-ulation boxes are then filled with water and thermalized for 10 ns in an NPT ensemble at 295 K. At the end of this short thermaliza-tion, we check the polymer volume fraction and, if necessary, add more water or polymer. Then, each box is simulated for 100 ns in an NPT ensemble to guarantee proper thermalization. Table 1 summarizes the final amounts of oligomers and water molecules in each box. Fig. 1 shows a series of snapshots of every simulation box once thermalized at 295 K (top) and 315 K (bottom). Note that oligomers disperse at 295 K (below Tc) and aggregate at 315 K (above Tc). These cells serve as starting points for the following simulations.                       
+
+> Polymer chains Water molecules φp
+> 07000 0.00 46550 0.07 86037 0.17 11 5560 0.19 15 5225 0.23 17 4600 0.29 20 3865 0.36 23 3156 0.44 27 2313 0.48
+> Table 1 Polymer and water content in each box. The final and corre-sponding snapshots are depicted in Fig. 1.
+
+2.1 Transfer free energy 
+
+The solvation free energy is computed for different cargo molecules using Bennett’s Acceptance Ratio method (BAR) 68 . We    
+
+> 2 | 1–13 JournalName ,[year],[vol.],Fig. 1Snapshots corresponding to the cells taken as the starting points for transfer free energy and diffusion coefficient calculations. The polymer density increases from left to right, as labeled. Temperature is 295 K for the top row and 315 K for the one at the bottom.
+
+calculate the solvation free energy of cargo molecules for each polymer concentration, ∆Gsol (φp). First, the simulation systems are prepared by randomly inserting cargo molecules in the previ-ously built hydrogel boxes. For the smaller cargo molecules, we insert up to 15 molecules to improve the sampling while maxi-mizing their distances to mimic an infinite dilution. Due to this reason, we only insert 5 to 8 molecules for the largest cargo molecules. Secondly, we define the initial state (A) as the one containing the cargo molecules and the final one as that without them (B). These two systems contain the same polymer volume fraction, φp.The system change can be seen as a transformation in the total Hamiltonian, which switches off the cargo interaction with the other components (polymer and water molecules). In addition, we define a series of intermediate Hamiltonians, H(λ ), associated to a coupling parameter, λ . The idea is to simulate several systems with different λ values, which are then employed to estimate the free energy differences among them through 
+
+∆Gλi = Gλi+1 − Gλi = ln QNPT λi
+
+QNPT λi+1
+
+, (1) where QNPT λi and QNPT λi+1 are the isothermal-isobaric partition functions corresponding to the Hamiltonians defined for λi and 
+
+λi+1, respectively. The BAR method estimates QNPT λi /QNPT λi+1
+
+as a ratio of weighted averages of the exp [−β (H(λ ) + PV )] fac-tors 68 , where β is the reciprocal temperature, P is the pressure, and V is the system volume. Note that the original method is deduced for the canonical ensemble instead of the isothermal-isobaric one 68 . The sampling for these averages is carried out ev-ery 100 steps. λ increases homogeneously in intervals of 0.0208 from 0 (A state) to 1 (B state), therefore we perform 48 sim-ulations. We employ the gmx bar tool of Gromacs to yield 
+
+GB − GA = ∑i ∆Gλi . In our case, the solvation free energy is given by ∆Gsolv (φp) = −(GB − GA), given our selection of the initial and final states (we are passing the cargo molecules from bulk to vac-uum), which coincides with the reversible work to move a cargo molecule from vacuum to bulk. The coupling parameter λ controls the Coulombic and Lennard-Jones interactions between the cargo molecule and the reference system. Coulombic and Lennard-Jones interactions are decoupled separately through 48 simulations, 24 each, first Coulomb and then Lennard-Jones. Thus, the last simulation for Coulomb is the first for Lennad-Jones decoupling. The non-bonded interactions are smoothly decoupled, as λ goes from 0
+
+to 1. When the cargo molecules nearly disappear, soft-core in-teractions are included to avoid numerical instabilities 69 . The alpha parameter of the soft-core interactions, sc-alpha , is set to 0.5 with a power sc-power = 1 and a soft-core diameter of 
+
+sc-sigma=0.3 . This problem does not appear with Coulomb interactions given that Lennard-Jones are still turned on. The production simulations are 3 ns long. Before that, we thermalize the system containing the inserted cargo molecules along 1000 ps in the NPT ensemble at the desired temperatures ( 295 K or 315 K). Note that for φp = 0, ∆Gsolv turns into the solvation free energy of cargo molecules in bulk water. The transfer free energy from a bulk of water towards another of polymer in water, at a certain φp,is given by ∆Gtrans = ∆Gsolv (φp) − ∆Gsolv (0). This quantity is the reversible work needed to move a given cargo molecule from wa-ter to the polymer-water mixture, and it is the parameter we need to feed the DDFT algorithm. It is worth mentioning that ∆Gsolv (0)
+
+must be precisely determined to achieve a low ∆Gtrans error. Thus, we repeat 15 times the computation of ∆Gsolv (0) for each cargo and at least 5 times for the other cases. From these repetitions (which go from the step of inserting the cargo molecules), we report the average and estimate the errors. 
+
+2.2 Diffusion coefficient 
+
+Aside from the effective interaction between polymer and cargo particles, we need to determine the diffusion coefficient of these molecules inside the hydrogel matrix. For this purpose, we cal-culate the mean squared displacement (MSD) of phenol in the hydrogel for different polymer volume fractions. As for free energy calculations, we use the prebuilt hydrogel boxes and randomly insert eight phenol molecules in each one. Systems are thermalized during 20 ns in the NPT ensembles, at 
+
+295 K or 315 K, depending on the target temperature. Berend-sen barostat and velocity rescale thermostat are set with coupling times of 0.1 and 1 ps, respectively. The production molecular dy-namic simulation is performed along 800 ns with a timestep of 
+
+1 fs, on the NPT ensemble. To save disk space, only the coordi-nates of phenol are written every nanosecond during the simu-lation. The MSD of phenol is computed with the aid of the gmx msd tool of gromacs. The diffusion coefficient D is calculated us-ing the Einstein relation MSD (t) = 6Dt , fitting a straight line to JournalName ,[year],[vol.],
+
+> 1–13 | 3
+
+the long-time behavior of the MSD (t).
+
+2.3 Diffusion through a pNIPAM membrane 
+
+Finally, we design a simulation to directly compare its outcomes with the ones obtained from DDFT. In this case, we study the dif-fusion of phenol molecules from one side to the other of a slit-like membrane. The membrane is an array of polymer chains simi-lar to those reported elsewhere 59–61 . However, in this case, each polymer chain is made of 20 monomers. Two layers of polymers are slightly overlapped along the z-axis, each layer being an ar-ray of 3x4 chains. Water molecules are placed on both sides of the membrane and inside its interior. Impermeable walls are im-posed at the borders z = 0 and z = lz, where lz is the length of the simulation cell. We have tried to minimize the adsorption of phe-nol molecules on them by imposing a soft repulsion. The cell has 
+
+lx = ly = 8.0 nm and lz = 20 nm. In this case, we consider a larger number of reciprocal lattice vectors in the z-direction, Kz, so that 
+
+Kz = lzKx/lx. Periodic boundary conditions are applied only on the x and y axes. This way, the membrane-like array may repre-sent a tiny region of the wall of a hollow and large hydrogel with its cavity separated from the exterior by a shell of polymer. We first insert all cargo molecules on the right side of the membrane (the outside of the hollow hydrogel). As the system evolves with time, cargo molecules should diffuse to reach the inner cavity of the membrane, passing through the membrane. Previous to the insertion of cargo molecules, we performed a semi-isotropic (1 bar and only lz is varied) thermalization of the water-membrane system during 50 ns at 315 K. We carried out a production run of 13 ns with a time step one fs. From here, the density profiles of polymer, solvent, and cargo are computed as a function of time. 
+
+# 3 Theory 
+
+The dynamical density functional theory (DDFT) is used to trace the time evolution of the density profiles of the cargo in an out-of-equilibrium process. The mass accumulation at a given position r
+
+and time t is given by 32,43,44 
+
+∂ ρ c(r,t)
+
+∂t = −∇ · Jc(r,t), (2) where Jc(r,t) and ρc(r,t) are the time and space-dependent mass flux and density of cargo molecules at r and t, respectively. As-suming a Fickian process, the flux is proportional to the gradient of the chemical potential scaled by the inverse temperature 
+
+Jc(r,t) = −D(r)ρc(r,t)∇β μ c(r,t), (3) where D(r) is the diffusion coefficient of the cargo molecules at position r and μc(r,t) is the chemical potential. Eqs. 2 and 3 are key components of the DDFT method. The other important component of the DDFT approach is re-lated to finding an expression for the chemical potential of the cargo, required to solve eqs. 2 and 3. The local chemical poten-tial at time t is given by 
+
+μc(r,t) = ∂ F[ρc(r,t)] 
+
+∂ ρ c(r,t) , (4) where F is a functional of ρc(r,t). The main approximation of the DDFT method relies on the assumption that the equilibrium ex-cess free energy functional can also be used in a non-equilibrium situation, replacing the equilibrium density profiles with non-equilibrium ones. Hence, the characteristic times of all varying external fields, such as the polymer profile, must be much larger than the diffusion times of the cargo molecules inside the gel (in our case, the external field, governed by the polymer profile, is fixed). We consider three contributions to the free-energy-functional. The equation reads 
+
+β F[ρc(r)] = 
+
+> Z
+
+ρc(r)[ ln (ρc(r)Λ3 
+
+> c
+
+) − 1]dr+
+
+> Z
+
+ρc(r)β ueff (r)dr +
+
+> Z
+
+β fHS (r)dr, (5) where Λc is the thermal wavelength of the cargo. The first term is the ideal gas contribution. The second term considers the in-teraction of the cargo particles with the polymer matrix, which can be seen as a fixed external potential. Finally, the last term accounts for the excess free energy due to the excluded volume of the other cargo particles. We are taking fHS as given by the Carnahan-Starling free energy density to consider the excluded volume of the cargo molecule. Without this term, which is small at low cargo concentrations, the DDFT is equivalent to the Smolu-chowski approach 70 .Performing the functional differentiation, the corresponding chemical potential reads as 32,33,44 
+
+β μ c(r,t) = ln 
+
+
+
+ρc(r,t)Λ3
+
+> c
+
+
+
++ β ueff (r)+φc(r,t) 8 − 9φc(r,t) + 3φc(r,t)2
+
+(1 − φc(r,t)) 3 , (6) where φc = 4πa3 
+
+> c
+
+ρc/3 and ac = 0.25 nm is the cargo radius. The model reliability relies upon the accurate definition of the free energy functional. Since we focus on the absorption (des-orption) of neutral molecules into (out of) neutral hydrogels, electrostatic interactions are neglected. In addition, the second term in eq. 5 arises due to the effective interaction potential be-tween cargo and polymer. Thus, ueff (r) is the necessary work needed to transport a cargo molecule from bulk water to position 
+
+(r) in terms of kBT . This energy might be positive or negative since it results from the interplay between repulsive and attrac-tive contributions to the overall force, which depends upon the chemical nature of the polymer, cargo, and solvent molecules. However, no further assumptions are needed for this term, as we obtain it directly from simulations (with a different name), 
+
+ueff (r) = ∆Gtrans /NA, NA being the Avogadro’s constant. In addition to μc(r,t), eq. 3 needs D(r) as an input. As ex-plained, we directly obtain this parameter from molecular dynam-ics simulations through the MSD of the cargo molecules inside the hydrogel. More precisely, we obtain D(φp), while we set φp(r), as explained in the following subsection. We implement the DDFT algorithm in a homemade c++ code,  
+
+> 4 | 1–13 JournalName ,[year],[vol.],
+
+which makes use of CUDA to take advantage of Graphics Pro-cessing Units (GPUs). To this end, we discretize eqs. 2 and 3 in space and time. Space is discretized by employing grids of different mesh sizes, ∆, the larger the gradients, the smaller ∆.Units are rescaled for distances with l0 = 1 nm, and for time with 
+
+τ0 = l20 /D0, where D0 is the cargo diffusion coefficient in bulk wa-ter, as computed from simulations. At the hydrogel interfaces, where gradients are large, the mesh size is minimum, ∆ = 0.02 l0.Conversely, inside and outside the gel, the mesh size can be larger. The time step is set in the interval 10 −4τ0 < ∆τ < 4−4τ0. To im-prove efficiency, the idea is to set the maximum time step leading to smoothly varying (in time and space) cargo profiles. 
+
+3.1 The hydrogel morphology 
+
+Hydrogels can show several morphologies such as capsules, brushesgrafted on surfaces, hollow particles, membranes, etc 16,71 . Here, we focus on the cases of hollow spherical hydro-gels and planar membranes. The cores of the hollow hydrogels are just a cavity filled with solvent molecules. For spherical hy-drogel particles, we set a spherical coordinate system, whereas we employed a rectangular one for a membrane. For the former case, eq. 2 is rewritten as 
+
+∂ ρ c(r,t)
+
+∂t = − 1
+
+r2
+
+∂∂ r
+
+
+
+r2J(r,t)
+
+
+
+, (7) where r is the position measured from the center of coordinates placed at the hydrogel’s center. For the second case, we have 
+
+∂ ρ c(z,t)
+
+∂t = − ∂ J(z,t)
+
+∂ z , (8) where z is measured from the leftmost boundary of the simulation cell, to compare the outcomes with membrane simulations. We assume that the internal region of the hydrogel (and the membrane) have a uniformly distributed polymer volume fraction 
+
+φ in  
+
+> p
+
+and that this concentration continuously vanishes towards the inside and the outside of the particle (membrane) throughout the corresponding internal and external hydrogel interfaces. Mathe-matically, such a profile can be given by 
+
+φp(x) = φ in 
+
+> p
+
+12 [erf (2(x − R1)/δ ) − erf (2(x − R2)/δ )] , (9) where x = r (x = z) is the distance measured from the center of the hydrogel (from the leftmost boundary of the simulation cell). 2δ
+
+provides the thickness of the polymer interface (both inner and outer), and R1 and R2 define the position where φp(x) ≈ φ in  
+
+> p
+
+/2.In addition, Rin = R1 − δ is the largest x value inside the cavity producing a φp(x) close to zero, and Rext = R2 + δ can be inter-preted as the hydrogel external radius (see the scheme inserted in Fig. 7). This functional dependence for the polymer volume frac-tion represents a fair description of the core-shell morphology of the hydrogel particles, having a more concentrated, highly cross-linked core, with uniform polymer mass distribution, surrounded by two fuzzy interfaces where the polymer density decays gradu-ally to zero 72,73 .
+
+3.2 Cargo uptake 
+
+Besides D(φp(x)) and μc(φp(x)) , we need boundary and initial conditions to solve eqs. 2 and 3. For membrane and hydrogel particles, we are setting a null flux at x = 0,
+
+Jc(x = 0,t) = 0 ∀t. (10) Depending on the initial conditions, we can study cargo uptake or release. In the case of cargo uptake, all cargo particles are placed outside the hydrogel (or at the right of the membrane), and the cargo density profile is given by 
+
+ρc(x) = 
+
+(
+
+0 x < Rext 
+
+ρbulk  
+
+> c
+
+x > Rext 
+
+. (11) For a diluted hydrogel suspension, far away from the hydrogel, the cargo concentration is constant and equal to the bulk con-centration. We consider x = 5Rext a far enough distance from the center of the hydrogel and fix it as the bulk concentration, 
+
+ρc(x → ∞,t) = ρbulk  
+
+> c
+
+. (12) This condition implies no mass conservation and the establish-ment of a variable mass flux from the outside. The flux from the outside turns zero only when reaching equilibrium. This situa-tion is different from the membrane since our MD simulations are performed in the (anisotropic) NPT ensemble, meaning that the number of particles is kept constant and no mass flux flows into the system. Hence, in this case we set Jc(x = L,t) = 0, ∀t.
+
+3.3 Cargo release 
+
+For desorption, we kept the first boundary condition; there is no flux at the center of the encapsulating particle (or at the left-most boundary of the simulation cell for the membrane case). On the other hand, the cargo is initially distributed homogeneously through all the hydrogel, and therefore 
+
+ρc(x) = 
+
+(
+
+0 x > R2
+
+ρin  
+
+> c
+
+x < R2
+
+. (13) Again, we consider a diluted hydrogel suspension so that the cargo concentration away from the central particle is practically zero, 
+
+ρc(x → ∞,t) = 0. (14) In this case, the mass flux flows from the inside to the outside of the system. 
+
+# 4 Results 
+
+4.1 Solvation and transfer free energies 
+
+We start presenting the MD simulation results for the transfer free energy at two temperatures, T =295 K and T =315 K, which cor-respond to a swollen and collapsed pNIPAM hydrogel particle, respectively. First, we show the solvation free energy in pure wa-ter and then include the pNIPAM chains for increasing values of 
+
+φp.At 295 K, we have obtained the following values for the free energy of solvation in pure water, ∆Gsolv = ( −20 .41 ± 0.04 ) kJ JournalName ,[year],[vol.],    
+
+> 1–13 | 5 phenol
+> 5-FU
+> methane Fig. 2Transfer free energy from bulk water to a water polymer mixture for phenol, a), 5-FU, b), and methane, c), as a function of the polymer volume fraction, φp.Black and red curves and symbols correspond to 295 K and 315 K, respectively.
+
+mol −1, (−107 .9 ± 0.1) kJ mol −1, and (9.30 ± 0.03 ) kJ mol −1,for phenol, 5-FU, and methane, respectively. The values can be compared with the experimental ones obtained at 298 K of 
+
+(−23 ± 3) kJ mol −1 74 , (−71 ± 4) kJ mol −1 75 , and (8.4 ± 0.8) kJ mol −1 76 , respectively. In addition, the obtained values at 315 Kare ∆Gsolv = ( −18 .42 ± 0.06 ) kJ mol −1, (−104 .7 ± 0.1) kJ mol −1,and (10 .34 ± 0.12 ) kJ mol −1 for the same molecules. As can be seen, irrespective of temperature, phenol and 5-FU show nega-tive values of ∆Gsolv , whereas methane produces positive ones, a fact related to the different chemical nature of the molecules. Methane only interacts with water through van der Waals, con-tributing to reducing enthalpy while perturbing the high-energy hydrogen bond network of water molecules. However, water molecules somehow manage to avoid this hydrogen network per-turbation by reorganizing around methane 77 . The net balance is a slight enthalpy decrease, ∆Hsolv < 0. In addition, entropy is dis-favored when a methane molecule is embedded into bulk water simply because it decreases the water available volume, which re-duces its configurational entropy 77–79 , ∆Ssolv < 0. This last term is common for all solutes since it is proportional to its solvent-accessible area. Hence, ∆Gsolv is governed by entropy for weakly interacting molecules with water, such as non-polar molecules, but turn enthalpy controlled for polar ones. Assuming ∆Hsolv 
+
+and ∆Ssolv remain constant with temperature (they do not), we get ∆Hsolv = ( −6 ± 2) kJ mol −1 and ∆Ssolv = ( −0.052 ± 0.008 ) kJ mol −1 K−1 from ∆Gsolv = ∆Hsolv − T ∆Ssolv , which reasonably com-pares with the experimental values of ∆Hsolv = −10 .9 kJ mol −1
+
+and ∆Ssolv = −0.063 kJ mol −1 K−1 at 298 K 80 .Phenol and 5-FU are polar molecules, but more importantly, they can form hydrogen bonds with water acting both as accep-tors and donors. Again, assuming constant ∆Hsolv and ∆Ssolv val-ues in the 295 - 315 K range, we get ∆Hsolv = ( −50 ± 2) kJ mol −1
+
+and ∆Ssolv = −0.10 ± 0.01 kJ mol −1 K−1 for phenol. Thus, the ab-solute value of ∆S practically doubles as compared to methane, following its increased solvent-accessible area (from 1.39 nm 2 to 
+
+2.58 nm 2), and ∆Hsolv changes sign and increases an order of magnitude due to hydrogen bonding. Assuming hydrogen bonds with 20 kJ mol −1 and neglecting other contributions to the en-thalpy, phenol would produce an average of 2.5 bonds with wa-ter, which roughly agrees with the 2.2 bonds we have estimated with the gmx hbond tool. On the other hand, 5-FU, which has two oxygen, two nitrogen, and one fluorine, all hydrogen-bond forming atoms 81 , leads to ∆Hsolv = ( −155 ± 4) kJ mol −1 and 
+
+∆Ssolv = ( −0.16 ± 0.01 ) kJ mol −1 K−1. The ∆Hsolv would be con-sistent with the formation of around 7.7 hydrogen bonds (again, under several assumptions) that is not that far from the 5.5 ones we obtain with gmx hbond , which does not consider those linked to the fluor atom. In addition, it should be noted that the absolute value of ∆Ssolv is larger for 5-FU than for phenol, despite having similar solvent-accessible areas ( 2.58 nm 2 and 2.66 nm 2 for phe-nol and 5-FU, respectively). We believe that 5-FU further restricts the orientations of the first shell of water molecules than phenol through hydrogen-bond formation, which, in turn, explains this difference. The ∆Gtrans values for the transfer of phenol, 5-FU, and methane from water to a water-polymer mixture with volume fraction φp are given in Fig. 2. Phenol, 5-FU, and methane results are depicted from top to bottom. In each panel, the black and red curves correspond to 295 K and 315 K, respectively. A nega-tive ∆Gtrans value means the molecule prefers the polymer mixture above water. Hence, phenol and 5-FU are more soluble when the polymer is present, for temperatures below and above the criti-cal, Tc ≈ 305 K. In addition, this preference does not seem to vary with temperature (we practically obtain the same curves irrespec-tive of T , which means that the pNIPAM conformation, coil or globule, does not affect ∆Gtrans ). Note that the Gibbs-Helmholtz equation, ∂ (∆Gtrans /T )/∂ T |P = −∆Htrans /T 2, applied to the trans-fer of phenol and 5-FU molecules yields a null ∆Htrans value, an athermic process, and so ∆Gtrans = −T ∆Strans for all φp. Thus, the entropy increase is ruling the phenol and 5-FU adsorption in pNIPAM. A relatively large cargo molecule, as compared to wa-ter, increases the number of water micro-states when attaching to the pNIPAM surface. In addition, since ∆Gtrans controls the parti-tion coefficient between the phases, this quantity stays constant when crossing Tc. Hence, there is no such thing as a squeezing ef-fect 82 , at least for these particular molecules. Finally, ∆Gtrans (φp)
+
+is linear for the whole φp we have studied. Indeed, we have con-ducted an extra determination for φp = 0.75 and phenol, which        
+
+> 6 | 1–13 JournalName ,[year],[vol.],Fig. 3Mean square displacement (MSD) as a function of time, t, for diluted phenol in pNIPAM-water mixtures at 295 K. The red and blue curves correspond to φp=0.07 and 0.44, as labeled. Note that the MSD scales differ a couple of orders of magnitude (red left, blue right).
+
+confirm the linear trend. This result is consistent with a virial expansion of the transfer free energy up to the first order of the polymer density, ∆Gtrans /RT ≈ 2B2ρp, where ρp is the number density of monomers and B2 is the second virial coefficient for the monomer-cargo effective interaction 83 .It is worth mentioning that there exist theoretical models and coarse-grained computer simulation results predicting a non-monotonic behavior of ∆Gtrans (φp) of molecules with an effective attraction with the hydrated polymer matrix, showing a mini-mum at some intermediate polymer volume fraction, of about 
+
+φp = 0.1 − 0.3 (which corresponds to a maximum in the parti-tion coefficient) 30,83 . This minimum is followed by an increase of ∆Gtrans (φp) with increasing φp due to volume exclusion effects induced by the presence of the polymer, which dominate over the attraction at high densities. However, these coarse-grained de-scriptions do not explicitly account for solvent molecules that also come into play in the free energy balance. In addition, we also think that the flexible polymer chains create available volume on demand by arranging and expelling water in the process. Note that the curve corresponding to ∆Gtrans of phenol is very similar to the one obtained for 5-FU, which may seem surpris-ing given the difference in ∆Gsolv we have found for bulk wa-ter. Indeed, as ∆Gtrans is the free energy difference between water-polymer and water solvation, the lesser number of hydro-gen bonds formed when replacing water with pNIPAM should, in principle, disfavor 5-FU. However, the ring structure of 5-FU can overcompensate the loss of hydrogen bonds by providing a low interaction energy with pNIPAM, explaining the vanishing ∆Htrans 
+
+values. Since phenol and 5-FU show null ∆Htrans values, it is not surprising that the corresponding ∆Gtrans = −T ∆Strans yield similar values. ∆Strans depends on the size of the molecules, and they are similar. The case of methane is especially interesting, as ∆Gtrans changes sign with temperature, implying a weakly endothermic transfer. Of course, we attribute this change to the pNIPAM-water restruc-                
+
+> Fig. 4Normalized diffusion coefficients as a function of φpfor 295 K(black) and 315 K (red). The black and red dashed lines are fits to the corresponding data, D/D0=10 −6.5φpand D/D0=10 −5.5φp, respectively.
+
+turing but not to methane itself. As mentioned, pNIPAM shows a conformation change that shifts from coil-to-globule when in-creasing temperature across Tc. When coil, pNIPAM is surrounded by water molecules so that methane cannot practically experi-ence the difference between the bulk of water and the hydrated pNIPAM. Indeed, ∆Gtrans values are always tiny. The small pos-itive ∆Gtrans values may only arise because detaching a water molecule from pNIPAM to make room is even slightly worse than making room inside pure water. But this situation changes (not very dramatically but enough to invert the sign) when T > Tc. In this case, the pNIPAM water mixture turns heterogeneous, where places of high and low local φp coexist. Then, if for instance, the molecule is transferred from bulk water to a high φp region, it sud-denly observes a less-polar environment (a not-so-bad place to be from a non-polar perspective). Conversely, there is still a chance to transfer a methanol molecule from bulk water to a pNIPAM-water interface, which produces a positive ∆Gtrans , but the pNI-PAM solvent-accessible area is smaller at high T . The final possi-ble moves of a methane molecule between similar regions yield no change. The average of the Gibbs changes associated with these possibilities weighted by their chances leads to a slightly negative ∆Gtrans showing a negative slope with φp, as depicted by the red curve of the bottom panel of Fig. 2. 
+
+4.2 Diffusion coefficients 
+
+In this Section, we present the simulation results regarding the calculation of the effective diffusion coefficient of the phenol in-side the polymer matrix of the pNIPAM hydrogel, D. Fig. 3 depicts the mean squared displacement (MSD) of phenol in hydrated polymer bulk with different volume fractions, φp, at 295 K. For low φp values, the time behavior of the MSD looks like the red curve of Fig. 3, i.e. it shows a linear growth from the beginning up to long times. In such cases, it is easy to perform a linear fit to de-termine the effective diffusion coefficient of the cargo molecule, 
+
+D.Conversely, at high φp values, the MSD looks like the blue JournalName ,[year],[vol.],
+
+> 1–13 | 7
+
+curve of Fig. 3, where three stages appear. This sort of behav-ior has been previously observed in dense polymer networks by Kanduˇ c et al. 39 . They found that, under conditions of large poly-mer crowding, the water molecules distribute heterogeneously in fractal-like clusters embedded in the nanometer-sized cavities of the polymer matrix. The nanoclustered water dominates the dif-fusion of the cargo molecule, which occurs via a hopping mecha-nism through wet transition states: the cargo molecules hop from one cavity to another using transient water channels opened by polymer fluctuations. Indeed, in our computer simulation, we find a linear behavior of the MSD with t, which last around 100 ns. In this time window, the molecules follow a diffusive regime be-fore getting stuck in the polymer network. As mentioned in the previous section, phenol has a preference for the hydrated pNI-PAM surface, replacing water molecules. When phenol attaches to the amide group of pNIPAM through hydrogen bonding, it stays there for a while trapped inside a cavity, leading to a continuous decrease of the MSD slope. At long times, phenol can hop from one cavity to another, regaining the diffusive (linear) regime. The long-time behavior defines D from a linear fit of the MSD against 
+
+t, as shown in Fig. 3. The obtained values of D for phenol in water are (0.96 ± 0.35 ) ×
+
+10 −9 m2 s−1 and (1.52 ± 0.56 ) × 10 −9 m2 s−1 at 295 K and 315 K, respectively, which compare well with the experimental values of 
+
+(1.013 ± 0.012 ) × 10 −9 m2 s−1 and (1.802 ± 0.036 ) × 10 −9 m2 s−1
+
+obtained at 298 .65 K and 323 .5 K 84 . It is custom to normalize the diffusion coefficients with a reference value, D0. In our case, we use the values obtained for pure water as a reference, each one at the corresponding temperature. In general, the diffusion of molecules inside hydrogels is a complex problem that involves several effects such as the hy-drogel free volume reduction, enhancing the hydrodynamic drag of the molecule, the increased path length due to obstruction, and a combination of hydrodynamic drag and obstruction effects, among others 85 . In addition, the relative importance of these effects depends on the polymer volume fraction. For small φp,
+
+D is expected to be controlled by the interaction of the cargo molecule with a single polymer chain. In contrast, for large φp,the hopping mechanism turns dominant 34 . The dependence of 
+
+D on the polymer volume fraction is different for each of these mechanisms. In our case, the normalized curves D/D0 for 295 Kand 315 K as a function of φp follow an exponential decay law with φp (see Fig. 4). The obtained exponential dependence in-terpolates smoothly between the low and high polymer density regime. The calculations performed at large φp required extend-ing the simulations to very long times ( 800 ns) to capture several of these rare hopping events. As mentioned, both curves at 295 K and 315 K are normalized, so thermal agitation is already taken into account. Thus, differ-ences between curves should be attributed to other factors. In ad-dition, we cannot attribute the differences between both curves in terms of the effective attraction of phenol with pNIPAM with temperature, as we have observed practically the same transfer free energies in Fig. 2. Hence, we need something else to ex-plain why the curve corresponding to 315 K goes above the one at 295 K. Again, we ascribe this difference in behavior to the fact that pNIPAM chains collapse and aggregate above 305 K, lead-ing to large polymer and water-rich regions. Thus, D measures a weighted average of molecules embedded in bulk water sur-rounded by polymer interfaces and those placed in polymer-rich regions. The firsts strongly contribute to D and overcompensate the others. Conversely, at 295 K, the chains are hydrated showing a coil conformation and well dispersed, defining a single homoge-neous phase. Thus, polymer chains, the attractive obstacles that a phenol must overcome to diffuse, are everywhere, making them attach continuously to the much larger solvent-accessible surface area they display. This thermal behavior of D is also observed for highly-grafted cylinders 7,86 .
+
+4.3 Comparing DDFT and MD outcomes 
+
+Before scaling the MD results with DDFT, we should compare their results at least for a small out-of-equilibrium system. For this purpose, we have built a simulation prism with a pNIPAM mem-brane splitting space into two regions, one (at the right) having phenol distributed homogeneously with a 0.3 M concentration. The pNIPAM membrane has an internal polymer volume fraction of φp = 0.5, which may represent a condition of collapsed micro-gels ( T = 315 K). During the simulations, we average the profile during 0.5 ns to avoid noise while trying to make a short-time averaging. In addition, we compute the cargo density integrals at the right, along, and left of the membrane and divide the re-sults with the corresponding integral widths. We are taking the integral limits where φp = 0.25 and then normalizing the results with the initial outside density. These computations are shown in panel c). The MD run lasted 13 ns which is far from the time needed to achieve the equilibrium state. We can only observe the first stages, where phenol accumulates at the pNIPAM water inter-face and slightly diffuse through the membrane (see Fig. 5 a) and b)). At this stage, only a few molecules manage to cross it (see panel c)). To correctly compare the simulations with the DDFT predictions, the diffusion coefficient and effective cargo-polymer interactions that enter the DDFT differential equations are taken from the simulation data for D(φp) and ∆Gtrans (φp), respectively. The comparison with the DDFT outcomes is good. At 13 ns, we have the same adsorption peak at the interface, which has ever increased its height from the initial state. Both peak heights also coincide during the time evolution of the cargo density profiles. In addition, the normalized extent of membrane crossing, as mea-sured by the three curves of panel c), also shows similar results. Thus, we conclude that the general behavior is well-captured with our DDFT implementation. Note that we should have waited over 
+
+200 ns to reach equilibrium, something we cannot afford with this system size. The good quantitative agreement between DDFT and MD makes us gain confidence in eq. 5, despite the simplicity of the free-energy functional and that our theoretical model does not take into account an effective attraction between phenol molecules in water (which does exist, as they phase separate at large phenol concentrations). Both assumptions seem not to af-fect the results.     
+
+> 8 | 1–13 JournalName ,[year],[vol.],a)
+> b)
+> c) Fig. 5Normalized density profiles as a function of time for the diffusion of phenol through a pNIPAM membrane at 315 K by means of MD, a), and DDFT, b). We use dark green and thick lines for the pNIPAM profile at time zero, which is set as similar as possible for MD and DDFT. The thin lines with different colors correspond to phenol profiles at different times, as labeled. c) The normalized extent of membrane crossing. Black, red, and blue lines and symbols correspond to the right, membrane, and left cargo normalized densities. The normalization is made by taking the initial density at the right as a reference. Lines correspond to theory and symbols to simulations. The inset of panel c) shows the same data in a log-log representation.
+> Fig. 6 Normalized density profiles of phenol during release (top panels) and load (bottom panels) of a hollow microgel particle. The gray areas represent the walls of the microgel and the light gray the interfaces. Lines of different colors correspond to the phenol profiles at different times. Left panels correspond to 295 K and right ones to 315 K. Note that bottom panels employ logarithmic scales for density profiles.
+
+4.4 Scaling MD through DDFT 
+
+We proceed to study the behavior of larger systems. Let us consider a spherical and hollow nanogel with Rin = 30 nm and 
+
+Rext = 50 nm, at 295 K and 315 K. As the pNIPAM expands at 
+
+T < Tc, we assume φ in p =0.25 for 295 K and φ in p =0.5 for 315 K, which in turn impact the values of ∆Gtrans and D. The actual val-ues of φ in p of a real nanogel depends on the details of its synthesis, but there is typically more than a factor of two between expanded and shrunk networks. Black lines Fig. 6 correspond to initial conditions. For release processes (see the upper panels), we assumed a homogeneous distribution of phenol inside the particle, including its walls. As in the previous section, we assumed φt=0 
+
+> c
+
+= 0.3 M for both load and release processes. In the first stages of the release process, phenol depletes close to the internal interface on the cavity side, and a huge peak develops at the wall side. This happens due to the high effective attraction existing between phenol and pNI-PAM. The peak is highest at around 0.025 μs, and then diffusion inside the wall makes it broaden and reduce its height. Mean-while, some of the phenol mass goes outside the particle through the outer interface. As time goes by, the cavity load reduces its content, always showing a depleted region close to the inner in-terface that settles the gradient and flux direction, keeping a rel-atively high phenol concentration inside the pNIPAM matrix and a constant one at the external interface. Hence, while some phe-nol remains inside the cavity, the release rate is kept practically constant given that the outside concentration is always close to zero and the outer interface has a nearly constant concentration. When the cavity runs out of phenol, the phenol concentration of the wall starts decreasing, at around 6 μs, which, in turn, slows the release rate. This final stage takes a lot of time compared to the first stage. The release process is strongly affected by temperature. As can be seen in the top-right panel, 260 ns are enough to empty the microgel content at 295 K but not at 315 K (note that we assume a constant particle size). The longer release times occurring at high temperatures are due to the increase of the effective phenol-wall attraction and the decrease of the phenol diffusion coefficient in-side the walls. Indeed, the diffusion coefficient shows a large im-pact at 315 K since the phenol concentration is always decreasing at the outer interface despite the high peak at the inner one. The load process occurs by fixing a constant phenol concen-tration far away from the particle, an initial condition where the exterior has a constant φt=0 
+
+> c
+
+= 0.3, and no phenol inside. Thus, the gradient and the flux are reversed. The external interface starts building a phenol peak, which spreads towards the inside of the wall. However, the peak never stops rising, and the spread-ing continuously increases the phenol concentration within the polymer network of the hollow hydrogel. Note that the phenol JournalName ,[year],[vol.],                                               
+
+> 1–13 | 9 Rext
+> Rin
+> R2
+> R12δ 2δ
+> 315K 295K
+> 295K  315K Fig. 7a) Normalized extent of release as a function of time from par-ticles with Rext =1.0 μm (green line), 2.0 μm (orange line), and 4.0 μm(blue line) at 315 K and φp=0.75 .The inset shows the scaling of the curves by replacing twith t/R2ext (the green and orange curves are below the blue one). b) Release halftime, τ1/2, for particles with Rext =23 μmand Rin /Rext =0 (black line), 0.25 (blue line), 0.5 (orange line), and 0.75 (green line), at 315 K as a function of φp. The red bullet corresponds to the experimental value reported by Si et al. 10 as obtained at 318 K (we neglected the temperature difference). The inset compares the theoret-ical extent of release for φ315K
+> p=0.83 with the one corresponding to the T-MIH (red circles) and T-NIH (orange squares) particles 10 . c) Release halftime, τ295K 1/2, at 295 K for microgels without cavity, Rext =23 μm, and
+> φ315K
+> p=0.7 (green line), 0.8 (orange line), and 0.9 (blue line), as a func-tion of q. The inset shows the release halftime ratio τ295K 1/2/τ315K 1/2between swollen and collapsed states as a function of q. The drawing on top of b) is a scheme showing the different parameters of eq. 9.
+
+density at the wall reaches very high values (note the logarithmic scale). Meanwhile, some phenol gets inside the cavity, but most of it concentrates on the walls. When reaching equilibrium, the cavity and the exterior attain the same concentration, and most of the load locates at the walls. Thus, for pNIPAM particles in wa-ter, the load capacity of phenol is much higher when there is no cavity. Finally, the load process is faster at 295 K ( 44 ns) than at 
+
+315 K ( 260 ns) for the same reasons as the release. Note also the much larger final phenol concentration at the polymer matrix at 315 K than at 295 K. These final uptake equilibrium states could also be considered as initial conditions for the release process. During a release process, one can integrate the density profiles inside the particle to calculate the load as a function of time. The normalized extent of release can then be computed as the differ-ence between the initial load and the load at time t, divided by the former. This quantity is shown in Fig. 7 a) as a function of time for particles with no cavity, φp =0.75, and different Rext val-ues. In a semi-log representation, all curves display a sigmoidal shape, signaling that the last release stage is very slow. All curves collapse by replacing t with t/R2ext since the characteristic time is given by τ0 = l20 /D0 (inset of Fig. 7 a)). Hence, rescaling the particle size while keeping Rin /Rext fixed simply leads to a redef-inition of the time step (neglecting the role played by δ ). For the same reason, the release halftime, τ1/2, also scales with R2ext 
+
+and the density profiles of Fig. 6 remain the same when replac-ing r with r/Rext and t with t/τ0. Indeed, the swelling kinetics of microgels also scales with R2ext since it involves the diffusion of small molecules through the particle 87,88 . Thus, there is no need to solve qs. 2 and 3 for micro-sized particles. For instance, from Fig. 7 a) we get τ1/2 = 1.462 s for Rext =1 μm, and thus a particle with Rext =23 μm has τ1/2 = 773 s for the release of phenol at 315 K and φp =0.75, a smaller time than that experimentally reported at 318 K (around 2200 s) 10 .Taking the collapsed state at 315 K as a reference and defining 
+
+q as the degree of swelling of the microgel, calculated as the ratio of the radii at T and 315 K, one gets q = 1 at 315 K and q > 1 at temperatures below the critical. For q = 1, R2 +δ = 23 μm, δ = 10 nm, D(φp) = D315K 0 10 −5.5φp with D315K 0 = 1.52 × 10 −9 m2s−1 (the fitted expression to the 315 K data of Fig. 4), ueff (φp) = −9.0φp
+
+(the fitted expression to the data of Fig. 2 a)), and R1/R2 = 0, 0.25, 0.5, and 0.75, we get from eq. 16 (see the Appendix) the black, blue, orange, and green lines shown in Fig. 7 b) as a func-tion of φp, respectively. This panel shows that the cavity size plays a role. Increasing Rin /Rext leads to shorter release times because decreasing the wall thickness reduces the region where phenol has slow diffusivity due to its interaction with the polymer. More importantly, from this panel, we note that for a microgel without a cavity we need φp ≃0.83 to agree with the experimental release halftime reported by Si et al. 10 . Although 0.83 looks large as compared to the experimentally reported values for the collapsed state around 0.7 of van Durme et al. 89 and Sasaki et al. 90 , Dong and Hoffman report 0.77 91 and computer simulation results are in the 0.76-0.94 range 39 . In addition, Si et al. 10 report a thermo-gravimetric analysis of their T-MIH and T-NIH particles, where only 13 % and 12 % water weight is lost below 550 K, respectively. The comparison of the theoretical extent of release with the ex-perimental data is given as an inset of Fig. 7 b) (neglecting the small temperature difference). Finally, it is interesting to compute the release halftime for the collapsed state at 295 K as a function of q, which is shown in Fig. 7 c). For this purpose, we set D(φp) = D295K 0 10 −6.5φp with 
+
+D295K 0 = 0.96 × 10 −9 m2s−1 (the fitted expression to the 295 K data of Fig. 4), and φ 295K  
+
+> p
+
+= φ 315K  
+
+> p
+
+q−3 with φ 315K  
+
+> p
+
+= 0.7 (green line), 0.8 (orange line), and 0.9 (blue line), and plotted τ295K 1/2
+
+as a function of q. Here, we have kept R2 + δ = 23 μm, δ = 10 nm, and function ueff (φp) fixed, as it does not practically change with T (see Fig. 2 a)). Note that in our case, eq. 16 simplifies since the second term turns dominant, as the first and third terms  
+
+> 10 | 1–13 JournalName ,[year],[vol.],
+
+vanish for R1 → δ → 0, which allows us to write a simple ex-pression for τ295K 1/2 /τ315K 1/2 (q) ≃ q2D315K 0 10 φ 315K  
+
+> p(6.5/q3−5.5)
+
+/D295K 0 . We show this ratio as an inset of panel 7 c). As observed, τ1/2 dras-tically decreases with q since the decrease of 10 φ 315K  
+
+> p(6.5/q3−5.5)
+
+overcompensates q2. However, this occurs up to q around 2.5, which depends on φ 315K  
+
+> p
+
+. In the limit of a very crosslinked mi-crogel, one would get a slower release at temperatures below 
+
+Tc, which is a consequence of having D295K (φp) < D315K (φp) for all φp. Notwithstanding, for reasonable values of q, above 1.1, one always gets τ295K 1/2 /τ315K 1/2 < 1. Finally, for q >3, we get that 
+
+τ295K 1/2 /τ315K 1/2 strongly depends on φ 315K  
+
+> p
+
+since it controls the refer-ence state but τ295K 1/2 yields practically the same values. 
+
+# 5 Conclusions 
+
+It is possible to scale up results from molecular dynamics to micro-sized systems by the DDFT theory to predict cargo and release halftimes of the order of seconds and more. In particular, for the release of phenol from homogeneous pNIPAM microgels with 23 
+
+μm of radius at 315 K, we capture the reported experimental 10 
+
+halftime τ315K 1/2 ≃ 2200 s for φ 315K  
+
+> p
+
+≃ 0.83. Additionally, this φ 315K 
+
+> p
+
+value is consistent with simulations 39 and relatively close to ex-perimental data 89–91 . τ295K 1/2 is given as a function of the degree of swelling of the hydrogel, q. We expect a similar τ1/2 behavior and even similar values for 5-FU than for phenol. The DDFT needs the definition of φp as a function of the space, that is the particle shape, size, and composition, and the functions 
+
+∆Gtrans (φp) and D(φp) as inputs. In addition, it needs boundary and initial conditions to completely define the problem. In our case, we get ∆Gtrans (φp) for pNIPAM interacting with three types of cargo molecules, methane, phenol, and 5-FU. We use Bennett’s acceptance ratio method for the cargo transfer between bulk wa-ter and water-pNIPAM mixtures. Phenol and 5-FU produce similar 
+
+∆Gtrans (φp) trends, practically linear for all studied φp range, neg-ative, and temperature independent (athermic). Conversely, the sign of ∆Gtrans (φp) changes when crossing Tc for methane from positive to negative (endothermic). In all cases, ∆Gtrans keeps a linear behavior with φp, contrasting with some theoretical predic-tions. We used MD to compute function D(φp) for phenol in water-pNIPAM mixtures in the diluted limit at temperatures above and below Tc. We observe differences between the curves even when normalizing D with the D0 value for bulk water at the correspond-ing temperature. The one obtained above Tc decays slower with 
+
+φp than the one obtained below it, signaling that it is more dif-ficult for a cargo molecule to transit across dispersed attractive chains than through aggregated ones at the same φp.In the case of phenol and for particles without cavity and small δ values, the release halftime can be approximated by 
+
+τ1/2 ∼ q2R2ext /(6D), a process controlled by diffusion only. In this case, the free energy of transfer only rules the cargo amount to be transported by the microgel by fixing the partition coefficient. However, in general, diffusion and free energy affect the release halftime. 
+
+# Conflicts of interest 
+
+There are no conflicts to declare. 
+
+# Acknowledgements 
+
+The authors thank Prof. Matej Kanduˇ c for helpful discussions. The authors thank CONACyT projects A1-S-9197 and A1-S-16002 for financial support. HAPR acknowledges a scolarship from CONACyT. A. M.-J acknowledges the financial support provided by the Spanish Junta de Andalucía and European Regional Devel-opment Fund – Consejería de Conocimiento, Investigación y Uni-versidad, Junta de Andalucía (Projects PY20-00241 and A-FQM-90-UGR20). 
+
+# Appendix: Calculation of the mean first pas-sage time for a hollow spherical hydrogel 
+
+In this section, we provide an analytical prediction of ⟨τ⟩ for the release process across a spherical hollow microgel particle. For this purpose, we define the collapsed state as a reference and q
+
+as the degree of swelling of the microgel. Hence, the radii of the shell of the hollow microgel are qR 1 and qR 2 at 295 K, where 
+
+R1 and R2 are the corresponding radii in the collapsed state at 315 K. In addition, qδ is the halfwidth of the interface at 295 K and δ is its value at 315 K. For a low concentration of cargo molecules, the cargo–cargo interactions are weak. Therefore, the release process can be modeled as a simple diffusion problem through a background effective potential induced by the hydro-gel, ueff (r) 92–94 . In other words, we are interested in the time spent by the molecules initially distributed homogeneosly inside the cavity to reach the external surface of the hydrogel, located at r > q(R2 + 2δ ) (we remind that 2δ is the thickness of the shell interface). Direct integration of the Smoluchowski equation leads to the following expression for the mean first passage time 95 
+
+τ1/2 ≃ ⟨ τ⟩ =  
+
+> Zq(R2+2δ)
+> s
+
+dr eβ ueff (r)
+
+D(r)r2 
+
+> Zr
+> 0
+
+dr ′r′2e−β ueff (r′), (15) where the integral limit s denotes the location of the center of mass of the molecules distributed inside the cavity at t = 0, given by s = qp3/5R1 for a cavity uniformly filled with cargo molecules. In order to perform the double integral and calculate ⟨τ⟩, we replace the smooth surfaces of the hydrogel shell with sharp in-terfaces, such that ueff (r) = ueff for qR 1 < r < qR 2, and ueff (r) = 0
+
+elsewhere. Analogously, D(r) = D for qR 1 < r < qR 2 and D(r) = D0
+
+elsewhere. Inserting these two simple prescriptions into Eq. 15, we find 
+
+τ1/2 ≃ ⟨ τ⟩ = q2R21
+
+15 D0
+
++ q2
+
+6D
+
+ 2R21(R2 −R1)
+
+R2
+
+(eβ ueff − 1)+ R22 −R21
+
+
+
++ q2
+
+6D0
+
+ 4(R32 −R31)δ
+
+(R2 +2δ )R2
+
+(e−β ueff −1)+ 4R2δ +4δ 2
+
+. (16) As seen, the time scales as ⟨τ⟩ ∼ q2, as expected for a diffusive release. For release processes across a very high energy barrier, 
+
+β ueff ≫ 1,τ1/2 is controlled by the exponential in the second term, so ⟨τ⟩ ∼ q2eβ ueff /D. Conversely, for strong cargo–hydrogel attrac-tions, β ueff ≪ − 1, the exponential in the third term plays the key JournalName ,[year],[vol.],
+
+> 1–13 | 11
+
+role, leading to ⟨τ⟩ ∼ q2e|β ueff |/D0. In addition, if the diffusion of the cargo is very slow inside the hydrogel shell compared to bulk diffusion, we find the scaling ⟨τ⟩ ∼ q2/D.
+
+# Notes and references 
+
+1 S. W. Kim, Y. H. Bae and T. Okano, Pharm. Res. , 1992, 9,283–290. 2 Y. Qiu and K. Park, Adv. Drug Deliv. Rev. , 2001, 53 , 321–339. 3 T. R. Hoare and D. S. Kohane, Polymer , 2008, 49 , 1993–2007. 4 R. R. Kokardekar, V. K. Shah, H. R. Mody and L. H. Hiranan-dani, Internet J. Medical Update , 2012, 7, 60–63. 5 J. Qian and F. Wu, J. Mater. Chem. B , 2013, 1, 3464–3469. 6 K. H. Bae, L.-S. Wang and M. Kurisawa, J. Mater. Chem. B ,2013, 1, 5371–5388. 7 L. Chu, J. Membr. Sci. , 2001, 192 , 27–39. 8 L.-Y. Chu, T. Niitsuma, T. Yamaguchi and S. ichi Nakao, AIChE Journal , 2004, 49 , 896–909. 9 Y. Yu, R. A. L. D. L. Cruz, B. D. Kieviet, H. Gojzewski, A. Pons, G. J. Vancso and S. D. Beer, Nanoscale , 2017, 1670–1675. 10 Z. Si, P. Yu, Y. Dong, Y. Lu, Z. Tan, X. Yu, R. Zhao and Y. Yan, 
+
+Front. Chem. , 2019, 6, 674. 11 J. Cabral and S. C. Moratti, Future Med. Chem. , 2011, 3,1877–1888. 12 M. Zhernenkov, R. Ashkar, H. Feng, O. O. Akintewe, N. D. Gallant, R. Toomey, J. F. Ankner and R. Pynn, ACS Appl. Mater. Interfaces , 2015, 7, 11857–11862. 13 B. V. Slaughter, S. S. Khurshid, O. Z. Fisher, A. Khademhos-seini and N. A. Peppas, Adv. Mater. , 2009, 21 , 3307–3329. 14 X. Xu, Y. Liu, W. Fu, M. Yao, Z. Ding, J. Xuan, D. Li, S. Wang, Y. Xia and M. Cao, Polymers , 2020, 12 , 580. 15 S. Mias, J. Sudor and H. Camon, Microsyst. Technol. , 2008, 
+
+14 , 747–751. 16 M. C. Koetting, J. T. Peters, S. D. Steichen and N. A. Peppas, 
+
+Mater. Sci. Eng: R , 2015, 93 , 1–49. 17 M. Heskins and J. E. Guillet, J. Macromol. Sci. Phys.: A , 1968, 
+
+2, 1441–1455. 18 G. Longhi, F. Lebon, S. Abbate and S. L. Fornili, Chem. Phys. Lett. , 2004, 386 , 123–127. 19 J. Walter, V. Ermatchkov, J. Vrabec and H. Hasse, Fluid Ph. Equilibria , 2010, 296 , 164–172. 20 K. Otake, H. Inomata, M. Konno and S. Saito, Macromolecules ,1990, 23 , 283–289. 21 S. Nayak, D. Gan, M. J. Serpe and L. A. Lyon, Small , 2005, 1,416–421. 22 R. Contreras-Cáceres, L. Schellkopf, C. Fernández-López, I. Pastoriza-Santos, J. Pérez-Juste and M. Stamm, Langmuir ,2015, 31 , 1142–1149. 23 M. Brugnoni, A. Scotti, A. A. Rudov, A. P. H. Gelissen, T. Cau-manns, A. Radulescu, T. Eckert, A. Pich, I. I. Potemkin and W. Richtering, Macromolecules , 2018, 51 , 2662–2671. 24 X.-Z. Zhang, D.-Q. Wu and C.-C. Chu, J. Polym. Sci. B , 2003, 
+
+41 , 582–593. 25 J. Li and D. J. Mooney, Nat. Rev. Mater. , 2016, 1, 16071. 26 W. Teng, J. Cappello and X. Wu, J. Control. Release , 2011, 
+
+156 , 186–194. 27 M. Kanduˇ c, R. Chudoba, K. Palczynski, W. K. Kim, R. Roa and J. Dzubiella, Phys. Chem. Chem. Phys. , 2017, 19 , 5906–5916. 28 I. Adroher-Benítez, A. Moncho-Jordá and J. Dzubiella, Lang-muir , 2017, 33 , 4567–4577. 29 W. K. Kim, A. Moncho-Jordá, R. Roa, M. Kanduˇ c and J. Dzu-biella, Macromolecules , 2017, 50 , 6227–6237. 30 L. Pérez-Mas, A. Martín-Molina, M. Quesada-Pérez and A. Moncho-Jordá, Phys. Chem. Chem. Phys. , 2018, 20 , 2814– 2825. 31 M. Kanduˇ c, W. K. Kim, R. Roa and J. Dzubiella, J. Phys. Chem. B, 2019, 123 , 720–728. 32 A. Moncho-Jordá, A. Germán-Bellod, S. Angioletti-Uberti, I. Adroher-Benítez and J. Dzubiella, ACS Nano , 2019, 13 ,1603–1616. 33 A. Moncho-Jordá, A. B. Jódar-Reyes, M. Kanduˇ c, A. Germán-Bellod, J. M. López-Romero, R. Contreras-Cáceres, F. Sarabia, M. García-Castro, H. A. Pérez-Ramírez and G. Odriozola, ACS Nano , 2020, 14 , 15227–15240. 34 M. Kanduˇ c, W. K. Kim, R. Roa and J. Dzubiella, ACS Nano ,2021, 15 , 614–624. 35 A. Domb, G. Davidson and L. M. Sanders, J. Control. Release ,1990, 14 , 133–144. 36 W. Saltzman and M. L. Radomsky, Chem. Eng. Sci. , 1991, 46 ,2429–2444. 37 S. H. Gehrke, J. P. Fisher, M. Palasis and M. E. Lund, Ann. N. Y. Acad. Sci. , 2006, 831 , 179–184. 38 J. Hansing and R. R. Netz, Macromolecules , 2018, 51 , 7608– 7620. 39 M. Kanduˇ c, W. K. Kim, R. Roa and J. Dzubiella, Macro-molecules , 2018, 51 , 4853–4864. 40 M. Yang, C. Liu, Y. Lian, K. Zhao, D. Zhu and J. Zhou, Soft Matter , 2017, 13 , 2663–2676. 41 C. G. Lopez, A. Scotti, M. Brugnoni and W. Richtering, Macro-mol. Chem. Phys. , 2019, 220 , 1800421. 42 R. R. Mashudi and N. M. Nizardo, AIP Conf. Proc. , 2021, 2374 ,040009. 43 U. M. B. Marconi and P. Tarazona, J. Chem. Phys. , 1999, 110 ,8032–8044. 44 S. Angioletti-Uberti, M. Ballauff and J. Dzubiella, Soft Matter ,2014, 10 , 7899–8134. 45 S. Angioletti-Uberti, M. Ballauff and J. Dzubiella, Mol. Phys. ,2018, 116 , 3154–3163. 46 G. Pan and K.-I. Kurumada, Chem. Eng. J. , 2008, 138 , 194– 199. 47 Z. Gong, S. Li, W. Han, J. Wang, J. Ma and X. Zhang, Appl. Surf. Sci. , 2016, 362 , 459–468. 48 Q. Wang, J. Shao, J. Xu, F. Dong, Y. Xiong and Q. Chen, J. Colloid Interface Sci. , 2022, 607 , 253–268. 49 A. M. Puga, A. C. Lima, J. F. Mano, A. Concheiro and C. Alvarez-Lorenzo, Carbohydr. Polym. , 2013, 98 , 331–340. 50 X. Qi, J. Li, W. Wei, G. Zuo, T. Su, X. Pan, J. Zhang and W. Dong, RSC Adv. , 2017, 7, 14337–14347. 51 C. A. Sabbagh, J. Seguin, E. Agapova, D. Kramerich, V. Boudy  
+
+> 12 | 1–13 JournalName ,[year],[vol.],
+
+and N. Mignet, Eur. J. Pharm. Biopharm. , 2020, 157 , 154– 164. 52 G. Dalei, S. Swain, S. Das and S. P. Das, ChemistrySelect , 2020, 
+
+5, 2168–2178. 53 W. L. Jorgensen, D. S. Maxwell and J. Tirado-Rives, J. Am. Chem. Soc. , 1996, 118 , 11225–11236. 54 Y. Tamai, H. Tanaka and K. Nakanishi, Macromolecules , 1996, 
+
+29 , 6761–6769. 55 J. Walter, J. Sehrt, J. Vrabec and H. Hasse, J. Phys. Chem. B ,2012, 116 , 5251–5259. 56 L. Lorbeer, M. Alaghemandi and E. Spohr, J. Mol. Liq. , 2014, 
+
+189 , 57–62. 57 F. Rodríguez-Ropero, T. Hajari and N. F. A. V. D. Vegt, J. Phys. Chem. B , 2015, 119 , 15780–15788. 58 V. Bo¸ tan, V. Ustach, R. Faller and K. Leonhard, J. Phys. Chem. B, 2016, 120 , 3434–3440. 59 I. Adroher-Benítez, A. Moncho-Jordá and G. Odriozola, J. Chem. Phys. , 2017, 146 , 194905. 60 H. A. Pérez-Ramírez, C. Haro-Pérez, E. Vázquez-Contreras, J. Klapp, G. Bautista-Carbajal and G. Odriozola, Phys. Chem. Chem. Phys. , 2019, 21 , 5106–5116. 61 H. A. Pérez-Ramírez, C. Haro-Pérez and G. Odriozola, ACS Appl. Polym. Mater. , 2019, 1, 2961–2972. 62 E. J. García and H. Hasse, Eur. Phys. J. Special Topics , 2019, 
+
+227 , 1547–1558. 63 L. Tavagnacco, E. Chiessi and E. Zaccarelli, Phys. Chem. Chem. Phys. , 2021, 23 , 5984–5991. 64 L. Tavagnacco, E. Zaccarelli and E. Chiessi, Phys. Chem. Chem. Phys. , 2022, 126 , 3778–3788. 65 S. W. I. Siu, K. Pluhackova and R. A. Böckmann, J. Chem. Theory Comput. , 2012, 8, 1459–1470. 66 M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess and E. Lindahl, SoftwareX , 2015, 1-2 , 19–25. 67 L. Tavagnacco, E. Chiessi, M. Zanatta, A. Orecchini and E. Za-ccarelli, J. Phys. Chem. Lett. , 2019, 10 , 870–876. 68 C. H. Bennett, J. Comput. Phys. , 1976, 22 , 245–268. 69 T. T. Pham and M. R. Shirts, J. Chem. Phys. , 2012, 136 ,124120. 70 W. K. Kim, S. Milster, R. Roa, M. Kanduˇ c and J. Dzubiella, 
+
+Macromolecules , 2022, 55 , 7327–7339. 71 D. Roy, W. L. Brooks and B. S. Sumerlin, Chem. Soc. Rev. ,2013, 7214–7243. 72 S. Meyer and W. Richtering, Macromolecules , 2005, 38 , 1517– 1519. 73 I. Berndt, J. S. Pedersen, P. Lindner and W. Richtering, Lang-muir , 2006, 22 , 459–468. 74 G. D. R. Matos, D. Y. Kyu, H. H. Loeffler, J. D. Chodera, M. R. Shirts and D. L. Mobley, J. Chem. Eng. Data , 2017, 62 , 1559– 1569. 75 M. T. Geballe, A. G. Skillman, A. Nicholls, J. P. Guthrie and P. J. Taylor, J. Comput.-Aided Mol. Des. , 2010, 24 , 259–279. 76 M. H. Abraham, G. S. Whiting, R. Fuchs and E. J. Chambers, 
+
+J. Chem. Soc., Perkin Trans. 2 , 1990, 291–300. 77 G. Graziano, Phys. Chem. Chem. Phys , 2019, 21 , 21418. 78 G. Graziano, Int. J. Biol. Macromol. , 2000, 27 , 89–97. 79 A. Pica and G. Graziano, Phys. Chem. Chem. Phys. , 2016, 18 ,25601–25608. 80 A. BenNaim and Y. Marcus, J. Chem. Phys. , 1984, 81 , 2016. 81 R. E. Rosenberg, J. Phys. Chem. A , 2012, 116 , 10842–10849. 82 A. Gutowska, J. S. Bark, I. C. Kwon, Y. H. Bae, Y. Cha and S. W. Kim, J. Control. Release , 1997, 48 , 141–148. 83 W. K. Kim, R. Chudoba, S. Milster, R. Roa, M. Kanduˇ c and J. Dzubiella, Soft Matter , 2020, 16 , 8144–8154. 84 J. Winkelmann, Diffusion in Gases, Liquids and Electrolytes ,Springer Berlin Heidelberg, 2018, pp. 841–843. 85 B. Amsden, Macromolecules , 1998, 31 , 8382–8395. 86 T. Peng and Y.-L. Cheng, J. Appl. Polym. Sci. , 1998, 70 , 2133– 2142. 87 T. Tanaka and D. J. Fillmore, J. Chem. Phys. , 1979, 70 , 1214. 88 J. Wahrmund, J.-W. Kim, L.-Y. Chu, C. Wang, Y. Li, A. Fernandez-Nieves, D. A. Weitz, A. Krokhin and Z. Hu, 
+
+Macromolecules , 2009, 42 , 9357–9365. 89 K. Van Durme, G. Van Assche and B. Van Mele, Macro-molecules , 2004, 37 , 9596–9605. 90 S. Sasaki, S. Koga and H. Maeda, Macromolecules , 1999, 32 ,4619–4624. 91 L. C. Dong and A. S. Hoffman, J. Control. Release , 1990, 13 ,21–31. 92 M. P. R. Klein, G.; Born, Soc. A-Math. Phys. , 1952, 211 , 431– 443. 93 A. Ansari, J. Chem. Phys. , 2000, 112 , 2516–2522. 94 H. W. J. G. W. D. A. P. D. L. Amato, D. V.; Lee, ACS Appl. Mater. Interfaces , 2017, 9, 3288–3293. 95 J. M. A. Deutch, J. Chem. Phys. , 1980, 73 , 4700–4701. JournalName ,[year],[vol.],

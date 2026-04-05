@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-04
-- 运行时间：2026-04-04 20:34:42 UTC
+- 最新运行日期：2026-04-05
+- 运行时间：2026-04-05 20:07:23 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日聚焦 GPU 加速的 TDDFT 新方法，攻克大型有机分子的高效计算难题。
-核心结论展示了最小辅助基组（MAB）策略在提升大规模体系模拟速度上的显著优势。
-推荐关注计算化学中“算法优化+硬件加速”的融合趋势，以应对复杂分子体系的仿真挑战。
-- 详情：[/202604/04/README](/202604/04/README)
+今日聚焦智能水凝胶释放动力学，探索跨尺度模拟新路径。
+研究通过结合分子动力学与动力学密度泛函理论，实现了对 pNIPAM 水凝胶中苯酚释放过程的精准建模。
+建议关注多尺度计算方法在优化药物递送系统设计中的实际应用。
+- 详情：[/202604/05/README](/202604/05/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules](/202604/04/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules)  
+1. [Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory](/202604/05/2603.28659v1-phenol-release-from-pnipam-hydrogels-scaling-molecular-dynamics-simulations-with-dynamical-density-functional-theory)  
    标签：评分：6.0/10、query:qmmm
-   evidence：针对高达3000个原子的大型有机系统的GPU加速TDDFT计算
+   evidence：分子动力学模拟与自由能计算
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,53 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-05T20:07:02.050844+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.28659v1",
+      "title": "Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory",
+      "abstract": "We employed molecular dynamics simulations (MD) and Bennett's acceptance ratio method to compute the free energy of transfer (Delta G_trans) of phenol, methane, and 5-fluorouracil (5-FU) between bulk water and water-pNIPAM mixtures with different polymer volume fractions (phi_p). To this end, we first calculate the solvation free energies in both media to obtain Delta G_trans. Phenol and 5-FU (a drug used in cancer treatment) adsorb onto the pNIPAM surface and exhibit negative values of Delta G_trans irrespective of temperature, both above and below the lower critical solution temperature (T_c) of pNIPAM. In contrast, methane changes the sign of Delta G_trans, being positive below and negative above T_c. In all cases, and in contrast with some theoretical predictions, Delta G_trans shows a linear dependence on pNIPAM concentration up to high polymer densities. We also compute the diffusion coefficient (D) of phenol in water-pNIPAM mixtures as a function of phi_p in the dilute limit. Both Delta G_trans and D as functions of phi_p are key inputs to estimate the release halftime of hollow pNIPAM microgels using dynamic density functional theory (DDFT). Our scaling approach reproduces the experimental value of 2200 s for microgels of 50 micrometer radius without a cavity, at phi_p approximately 0.83 and 315 K.",
+      "authors": [
+        "H. A. Pérez-Ramírez",
+        "A. Moncho-Jordá",
+        "G. Odriozola"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft"
+      ],
+      "published": "2026-03-30T16:45:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.28659v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "molecular dynamics simulations and free energy calculation",
+      "llm_evidence_cn": "分子动力学模拟与自由能计算",
+      "llm_evidence": "分子动力学模拟与自由能计算",
+      "canonical_evidence": "分子动力学模拟与自由能计算",
+      "llm_tldr_en": "Combines MD simulations with density functional theory to study phenol release from hydrogels.",
+      "llm_tldr_cn": "结合分子动力学模拟与密度泛函理论研究苯酚从水凝胶中的释放。",
+      "llm_tldr": "结合分子动力学模拟与密度泛函理论研究苯酚从水凝胶中的释放。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

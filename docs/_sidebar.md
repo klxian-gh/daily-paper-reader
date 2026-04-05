@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-05 <!--dpr-date:20260405-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/05/2603.28659v1-phenol-release-from-pnipam-hydrogels-scaling-molecular-dynamics-simulations-with-dynamical-density-functional-theory" data-sidebar-item="{&quot;title&quot;: &quot;Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.28659v1-phenol-release-from-pnipam-hydrogels-scaling-molecular-dynamics-simulations-with-dynamical-density-functional-theory&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;分子动力学模拟与自由能计算&quot;}">Phenol release from pNIPAM hydrogels: Scaling Molecular Dynamics simulations with Dynamical Density Functional Theory</a>
   * 2026-04-04 <!--dpr-date:20260404-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/04/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules" data-sidebar-item="{&quot;title&quot;: &quot;GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.29257v1-gpu-accelerated-minimal-auxiliary-basis-approach-tddft-for-large-organic-molecules&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;针对高达3000个原子的大型有机系统的GPU加速TDDFT计算&quot;}">GPU Accelerated Minimal Auxiliary Basis Approach TDDFT for Large Organic Molecules</a>
