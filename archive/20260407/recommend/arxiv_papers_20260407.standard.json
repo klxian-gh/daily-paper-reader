@@ -1,0 +1,288 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-07T20:24:09.093998+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.28478v1",
+      "title": "Physics-Enforced Neural Ordinary Differential Equation for Chemical Kinetics Optimization in Reaction-Diffusion Systems",
+      "abstract": "Calibrating chemical kinetics in a reaction-diffusion system is challenging because of complex dynamics governed by tightly coupled chemistry and transport, while experimental observations are often sparse and noisy. We propose a physics consistent diffusion-chemistry coupled neural ordinary differential equation (Diff-Chem Neural ODE) that embeds Arrhenius-structured reaction neurons into a fully differentiable streamline formulation and explicitly accounts for diffusion coupling. This design enables direct gradient-based analysis of kinetic parameters without sampling-based pretraining. We validate this method on burner-stabilized flat and stagnation reacting flows using mechanisms spanning different stiffness ranges. The proposed method reproduces species profiles with near-reference accuracy, whereas a pure chemistry Neural ODE that neglects diffusion coupling may misplace ignition and generate an incorrect thin reaction zone. Diff-Chem Neural ODE is more robust than pure chemistry Neural ODE and provides substantial speedups for gradient evaluation compared with fully discretized computations. In kinetics refinement, optimizing only a limited set of \"primal\" species reduces the loss by over 98% and simultaneously recovers unobserved variables, demonstrating physically consistent global control. Finally, tests with 1-20% noise in the objective show stable convergence without local overfitting, supporting its applicability under noisy measurements.",
+      "authors": [
+        "Feixue Cai",
+        "Hua Zhou",
+        "Zhuyin Ren"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-03-30T14:15:52+00:00",
+      "link": "https://arxiv.org/pdf/2603.28478v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "optimizing chemical kinetics in reaction systems",
+      "llm_evidence_cn": "优化反应系统中的化学动力学",
+      "llm_evidence": "优化反应系统中的化学动力学",
+      "canonical_evidence": "优化反应系统中的化学动力学",
+      "llm_tldr_en": "Proposes a physics-enforced neural ODE for calibrating chemical kinetics in complex reaction systems.",
+      "llm_tldr_cn": "提出一种物理约束的神经常微分方程，用于校准复杂反应系统中的化学动力学。",
+      "llm_tldr": "提出一种物理约束的神经常微分方程，用于校准复杂反应系统中的化学动力学。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.01983v1",
+      "title": "Towards Chemically Accurate and Scalable Quantum Simulations on IQM Quantum Hardware: A Quantum-HPC Hybrid Approach",
+      "abstract": "We present a large-scale experimental study of quantum-computing-based molecular simulation carried out on IQM's Sirius 24-qubit superconducting processor, utilizing up to 16 operational qubits. The work employs Sample-based Quantum Diagonalization (SQD) together with the Local Unitary Cluster Jastrow (LUCJ) ansatz to estimate ground-state energies for a set of benchmark molecules, including H$_2$, LiH, BeH$_2$, H$_2$O, and NH$_3$. In addition, we introduce a Linear-CNOT variant of the Unitary Coupled-Cluster Singles and Doubles (LCNot-UCCSD) ansatz within the SQD workflow, trading higher circuit depth for reduced classical preprocessing. A comparison between these ansätze is provided, clarifying their respective strengths, limitations, and suitability for near-term quantum hardware. We further explore potential energy landscapes through 1D scans for H$_2$ and HeH$^+$ using both STO-3G and 6-31G basis sets, and for LiH and BeH$_2$ in STO-3G. Extending beyond this, we demonstrate the experimental construction of a full 2D potential energy surface for the water molecule on quantum hardware, mapped over a 32 $\\times$ 32 grid in bond length and bond angle. To move beyond small benchmark systems, we combine SQD(LUCJ) with Density Matrix Embedding Theory (DMET) to compute active-space energies for a set of ligand-like molecules, as well as the pharmacologically relevant amantadine system. Across all studies, the majority of quantum-computed energies agree with reference FCI results, as well as with DMET-CASCI energies for embedded systems, to within chemical accuracy for the chosen basis sets. These results demonstrate the reliability of sample-based diagonalization approaches and underscore the potential of hybrid embedding strategies for extending quantum simulations to increasingly complex molecular systems, while also highlighting their practicality on current IQM quantum hardware.",
+      "authors": [
+        "Anurag K. S. V.",
+        "Ashish Kumar Patra",
+        "Manas Mukherjee",
+        "Alok Shukla",
+        "Sai Shankar P.",
+        "Ruchika Bhat",
+        "Radhika T. S. L.",
+        "Jaiganesh G"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "cs.ET",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-02T12:43:43+00:00",
+      "link": "https://arxiv.org/pdf/2604.01983v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum-computing-based molecular simulation",
+      "llm_evidence_cn": "基于量子计算的分子模拟",
+      "llm_evidence": "基于量子计算的分子模拟",
+      "canonical_evidence": "基于量子计算的分子模拟",
+      "llm_tldr_en": "Explores quantum-HPC hybrid approaches for chemically accurate molecular ground-state simulations.",
+      "llm_tldr_cn": "探索了用于化学精确分子基态模拟的量子-HPC混合方法。",
+      "llm_tldr": "探索了用于化学精确分子基态模拟的量子-HPC混合方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.02054v1",
+      "title": "Efficient Auxiliary-Field Quantum Monte Carlo using Isometric Tensor Hypercontraction",
+      "abstract": "Auxiliary Field Quantum Monte Carlo (AFQMC) has emerged as a powerful framework for treating strongly correlated electronic systems, offering a favorable balance between computational cost and accuracy. In this paper, we present a novel AFQMC method that uses the isometric tensor hypercontraction (ITHC) technique to diagonalize the two-body Coulomb interaction of molecular electronic Hamiltonians by introducing additional fictitious fermionic modes. Our method shows reduced theoretical complexity and better practical performance for both propagation and local energy evaluation compared to the standard AFQMC method. We demonstrate the efficacy of this approach by computing the ground-state energies of a linear $\\ce{H10}$-chain and the benzene molecule. Our results show that the extended-basis AFQMC recovers many-body correlations with a precision comparable to that of high-level wavefunction methods such as Coupled Clusters (CC) or Density Matrix Renormalization Group (DMRG), while offering significantly improved scaling.",
+      "authors": [
+        "Maxine Luo",
+        "Victor Chen",
+        "Yu Wang",
+        "Christian B. Mendl"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.str-el",
+        "quant-ph"
+      ],
+      "published": "2026-04-02T13:53:45+00:00",
+      "link": "https://arxiv.org/pdf/2604.02054v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Quantum Monte Carlo for molecular electronic Hamiltonians",
+      "llm_evidence_cn": "分子电子哈密顿量的量子蒙特卡罗模拟",
+      "llm_evidence": "分子电子哈密顿量的量子蒙特卡罗模拟",
+      "canonical_evidence": "分子电子哈密顿量的量子蒙特卡罗模拟",
+      "llm_tldr_en": "Introduces an efficient AFQMC method using tensor hypercontraction for molecular electronic systems.",
+      "llm_tldr_cn": "引入了一种利用张量超收缩处理分子电子系统的高效AFQMC方法。",
+      "llm_tldr": "引入了一种利用张量超收缩处理分子电子系统的高效AFQMC方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.02550v1",
+      "title": "Open-source implementation of the anti-Hermitian contracted Schrödinger equation for electronic ground and excited states",
+      "abstract": "Efficient simulation of strongly correlated electrons has become a routine tool in molecular electronic structure theory due to recent advances in approximate configuration interaction (CI) techniques. Nonetheless, the quantitative and predictive description of molecular electronic states remains a significant challenge due to the difficulty of computing all-electron correlation beyond CI. Here, we describe a new open-source implementation of the anti-Hermitian contracted Schrödinger equation (ACSE) for use in accurate simulation of all-electron correlation in molecules. In contrast to standard approaches via multireference perturbation theory, the scaling of the ACSE does not depend on the complexity of the strongly correlated reference wavefunction. Furthermore, the ACSE employs the exact electronic Hamiltonian, rather than an approximate perturbative Hamiltonian. Our benchmark results demonstrate good accuracy for main group and transition metal systems, in weakly and strongly correlated regimes, with various basis sets, and for ground and excited states. The results suggest that the ACSE has potential as a scalable and robust technique for simulating all-electron correlation in molecular ground and excited states.",
+      "authors": [
+        "Daniel Gibney",
+        "Anthony W Schlimgen",
+        "Jan-Niklas Boyn"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-02T22:00:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.02550v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Implementation for molecular electronic structure theory",
+      "llm_evidence_cn": "分子电子结构理论的实现",
+      "llm_evidence": "分子电子结构理论的实现",
+      "canonical_evidence": "分子电子结构理论的实现",
+      "llm_tldr_en": "Presents an open-source implementation of the ACSE for accurate molecular electronic correlation simulation.",
+      "llm_tldr_cn": "介绍了一种用于精确模拟分子电子相关性的ACSE开源实现。",
+      "llm_tldr": "介绍了一种用于精确模拟分子电子相关性的ACSE开源实现。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.03137v1",
+      "title": "Low-Scaling Many-Body Green's Function Calculations for Molecular Systems via Interacting-Bath Dynamical Embedding Theory",
+      "abstract": "We present a molecular extension of our recently proposed Green's function embedding method, interacting-bath dynamical embedding theory (ibDET), for computing charged excitation energies at the $GW$ and EOM-CCSD levels. Starting from atom-centered impurities, we construct bath representations that capture the frequency-dependent entanglement between the impurity and its environment and can be systematically improved via the construction of cluster-specific natural orbitals. Utilizing a $GW$ or coupled-cluster Green's function solver, the self-energy of the full system is assembled from all embedding problems to obtain the interacting Green's function. We show that ibDET provides accurate spectral properties with much reduced cost for a broad range of systems, including conjugated molecules and nanoclusters. Compared with full-system results, the errors in the predicted ionization potentials and electron affinities are around 0.1 eV or smaller, while each embedding problem includes only a small fraction of the total orbital space. This work provides an efficient and scalable framework for computing spectral properties of molecular systems.",
+      "authors": [
+        "Christian Venturella",
+        "Jiachen Li",
+        "Tianyu Zhu"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-03T15:57:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.03137v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "dynamical embedding theory for molecular systems and quantum chemistry solvers",
+      "llm_evidence_cn": "分子系统的动力学嵌入理论和量子化学求解器",
+      "llm_evidence": "分子系统的动力学嵌入理论和量子化学求解器",
+      "canonical_evidence": "分子系统的动力学嵌入理论和量子化学求解器",
+      "llm_tldr_en": "A Green's function embedding method for high-level quantum chemical calculations in large systems.",
+      "llm_tldr_cn": "一种用于大型系统高级量子化学计算的格林函数嵌入方法。",
+      "llm_tldr": "一种用于大型系统高级量子化学计算的格林函数嵌入方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.03911v1",
+      "title": "Align Your Structures: Generating Trajectories with Structure Pretraining for Molecular Dynamics",
+      "abstract": "Generating molecular dynamics (MD) trajectories using deep generative models has attracted increasing attention, yet remains inherently challenging due to the limited availability of MD data and the complexities involved in modeling high-dimensional MD distributions. To overcome these challenges, we propose a novel framework that leverages structure pretraining for MD trajectory generation. Specifically, we first train a diffusion-based structure generation model on a large-scale conformer dataset, on top of which we introduce an interpolator module trained on MD trajectory data, designed to enforce temporal consistency among generated structures. Our approach effectively harnesses abundant structural data to mitigate the scarcity of MD trajectory data and effectively decomposes the intricate MD modeling task into two manageable subproblems: structural generation and temporal alignment. We comprehensively evaluate our method on the QM9 and DRUGS small-molecule datasets across unconditional generation, forward simulation, and interpolation tasks, and further extend our framework and analysis to tetrapeptide and protein monomer systems. Experimental results confirm that our approach excels in generating chemically realistic MD trajectories, as evidenced by remarkable improvements of accuracy in geometric, dynamical, and energetic measurements.",
+      "authors": [
+        "Aniketh Iyengar",
+        "Jiaqi Han",
+        "Pengwei Sun",
+        "Mingjian Jiang",
+        "Jianwen Xie",
+        "Stefano Ermon"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "q-bio.QM"
+      ],
+      "published": "2026-04-05T00:37:28+00:00",
+      "link": "https://arxiv.org/pdf/2604.03911v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Generating molecular dynamics trajectories",
+      "llm_evidence_cn": "生成分子动力学轨迹",
+      "llm_evidence": "生成分子动力学轨迹",
+      "canonical_evidence": "生成分子动力学轨迹",
+      "llm_tldr_en": "Proposes a diffusion-based framework for generating molecular dynamics trajectories with temporal consistency.",
+      "llm_tldr_cn": "提出了一种基于扩散的模型，用于生成具有时间一致性的分子动力学轨迹。",
+      "llm_tldr": "提出了一种基于扩散的模型，用于生成具有时间一致性的分子动力学轨迹。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.04076v1",
+      "title": "PyGSC: A Python tool for correcting Kohn-Sham orbital energies by mitigating the delocalization error of density functional approximations",
+      "abstract": "Density functional approximations (DFAs) suffer from delocalization error, which limits their accuracy in predicting electron affinities (EAs), ionization potentials (IPs), and quasiparticle energies. In this work, we present a theoretical refinement of the quasiparticle energies from density functional theory (QE-DFT) method by improving the perturbative expression for the exchange-correlation potential, leading to a more consistent description of molecular systems. We further develop an open-source Python program, PyGSC, built upon the PySCF library, which implements the modified QE-DFT framework. Benchmark tests on main-group atoms and G2/97 molecules demonstrate that the modified QE-DFT method outperforms the original DFAs, with third-order corrections achieving mean absolute deviations below 0.3 eV for EA and IP predictions. Application to dipole-bound states of DNA/RNA nucleobases further validates the superiority of the QE-DFT approach over original DFAs, offering an efficient and accurate approach for predicting electronic properties in large molecular systems.",
+      "authors": [
+        "Zipeng An",
+        "Xiaolong Yang",
+        "Xiao Zheng",
+        "Weitao Yang"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-05T11:50:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.04076v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemical investigation and DFT refinement",
+      "llm_evidence_cn": "量子化学研究与DFT改进",
+      "llm_evidence": "量子化学研究与DFT改进",
+      "canonical_evidence": "量子化学研究与DFT改进",
+      "llm_tldr_en": "A Python tool for correcting DFT orbital energies to improve molecular system descriptions.",
+      "llm_tldr_cn": "一种用于修正DFT轨道能量以改进分子系统描述的Python工具。",
+      "llm_tldr": "一种用于修正DFT轨道能量以改进分子系统描述的Python工具。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
