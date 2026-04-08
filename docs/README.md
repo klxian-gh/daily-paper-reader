@@ -6,44 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-07
-- 运行时间：2026-04-07 20:25:00 UTC
+- 最新运行日期：2026-04-08
+- 运行时间：2026-04-08 21:10:16 UTC
 - 运行状态：成功
-- 本次总论文数：7
+- 本次总论文数：6
 - 精读区：0
-- 速读区：7
+- 速读区：6
 
 ### 今日简报（AI）
-今日探索量子-HPC混合架构与物理增强AI在复杂化学动力学模拟中的深度融合。
-亮点在于通过等距张量超收缩提升量子蒙特卡罗效率，以及利用神经微分方程精准优化反应扩散系统。
-建议关注混合算力与物理约束模型如何突破传统化学模拟的规模与精度瓶颈。
-- 详情：[/202604/07/README](/202604/07/README)
+今日聚焦多模态蛋白质设计与增强采样算法，探索分子模拟与化学编码的深度融合。
+重点推荐 DNA 编码化学的蛋白质设计新范式，以及利用信息熵作为通用集体变量提升采样效率的突破。
+建议关注这些计算工具如何通过跨学科方法，为复杂分子系统的精准表征与设计提供新路径。
+- 详情：[/202604/08/README](/202604/08/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Physics-Enforced Neural Ordinary Differential Equation for Chemical Kinetics Optimization in Reaction-Diffusion Systems](/202604/07/2603.28478v1-physics-enforced-neural-ordinary-differential-equation-for-chemical-kinetics-optimization-in-reaction-diffusion-systems)  
+1. [General Multimodal Protein Design Enables DNA-Encoding of Chemistry](/202604/08/2604.05181v1-general-multimodal-protein-design-enables-dna-encoding-of-chemistry)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：酶设计与催化活性位点几何结构
+2. [Information Entropy is a General-Purpose Collective Variable for Enhanced Sampling](/202604/08/2604.05239v1-information-entropy-is-a-general-purpose-collective-variable-for-enhanced-sampling)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：发现反应路径和过渡机制
+3. [A Residence-Time Approach for Determining Position-Dependent Diffusivities from Biased Molecular Simulations](/202604/08/2604.01940v1-a-residence-time-approach-for-determining-position-dependent-diffusivities-from-biased-molecular-simulations)  
    标签：评分：6.0/10、query:qmmm
-   evidence：优化反应系统中的化学动力学
-2. [Towards Chemically Accurate and Scalable Quantum Simulations on IQM Quantum Hardware: A Quantum-HPC Hybrid Approach](/202604/07/2604.01983v1-towards-chemically-accurate-and-scalable-quantum-simulations-on-iqm-quantum-hardware-a-quantum-hpc-hybrid-approach)  
+   evidence：从偏置分子模拟中确定扩散率
+4. [Jeffreys Flow: Robust Boltzmann Generators for Rare Event Sampling via Parallel Tempering Distillation](/202604/08/2604.05303v1-jeffreys-flow-robust-boltzmann-generators-for-rare-event-sampling-via-parallel-tempering-distillation)  
    标签：评分：6.0/10、query:qmmm
-   evidence：基于量子计算的分子模拟
-3. [Efficient Auxiliary-Field Quantum Monte Carlo using Isometric Tensor Hypercontraction](/202604/07/2604.02054v1-efficient-auxiliary-field-quantum-monte-carlo-using-isometric-tensor-hypercontraction)  
+   evidence：对具有粗糙能量面和罕见事件的物理系统进行采样
+5. [ORION: Unifying Top-Down and Bottom-Up Chemical Space Sampling for a Universal Organic Force Field](/202604/08/2604.05769v1-orion-unifying-top-down-and-bottom-up-chemical-space-sampling-for-a-universal-organic-force-field)  
    标签：评分：6.0/10、query:qmmm
-   evidence：分子电子哈密顿量的量子蒙特卡罗模拟
-4. [Open-source implementation of the anti-Hermitian contracted Schrödinger equation for electronic ground and excited states](/202604/07/2604.02550v1-open-source-implementation-of-the-anti-hermitian-contracted-schrdinger-equation-for-electronic-ground-and-excited-states)  
+   evidence：用于复杂凝聚相系统的通用有机力场
+6. [Effective Dynamics and Transition Pathways from Koopman-Inspired Neural Learning of Collective Variables](/202604/08/2604.05778v1-effective-dynamics-and-transition-pathways-from-koopman-inspired-neural-learning-of-collective-variables)  
    标签：评分：6.0/10、query:qmmm
-   evidence：分子电子结构理论的实现
-5. [Low-Scaling Many-Body Green's Function Calculations for Molecular Systems via Interacting-Bath Dynamical Embedding Theory](/202604/07/2604.03137v1-low-scaling-many-body-greens-function-calculations-for-molecular-systems-via-interacting-bath-dynamical-embedding-theory)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：分子系统的动力学嵌入理论和量子化学求解器
-6. [Align Your Structures: Generating Trajectories with Structure Pretraining for Molecular Dynamics](/202604/07/2604.03911v1-align-your-structures-generating-trajectories-with-structure-pretraining-for-molecular-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：生成分子动力学轨迹
-7. [PyGSC: A Python tool for correcting Kohn-Sham orbital energies by mitigating the delocalization error of density functional approximations](/202604/07/2604.04076v1-pygsc-a-python-tool-for-correcting-kohn-sham-orbital-energies-by-mitigating-the-delocalization-error-of-density-functional-approximations)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：量子化学研究与DFT改进
+   evidence：从复杂分子系统中提取转换路径
 
 
 <div class="dpr-home-promo-card">

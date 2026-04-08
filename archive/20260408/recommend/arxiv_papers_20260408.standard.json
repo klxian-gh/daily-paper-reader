@@ -1,0 +1,265 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-08T21:09:41.921142+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.05181v1",
+      "title": "General Multimodal Protein Design Enables DNA-Encoding of Chemistry",
+      "abstract": "Evolution is an extraordinary engine for enzymatic diversity, yet the chemistry it has explored remains a narrow slice of what DNA can encode. Deep generative models can design new proteins that bind ligands, but none have created enzymes without pre-specifying catalytic residues. We introduce DISCO (DIffusion for Sequence-structure CO-design), a multimodal model that co-designs protein sequence and 3D structure around arbitrary biomolecules, as well as inference-time scaling methods that optimize objectives across both modalities. Conditioned solely on reactive intermediates, DISCO designs diverse heme enzymes with novel active-site geometries. These enzymes catalyze new-to-nature carbene-transfer reactions, including alkene cyclopropanation, spirocyclopropanation, B-H, and C(sp$^3$)-H insertions, with high activities exceeding those of engineered enzymes. Random mutagenesis of a selected design further confirmed that enzyme activity can be improved through directed evolution. By providing a scalable route to evolvable enzymes, DISCO broadens the potential scope of genetically encodable transformations. Code is available at https://github.com/DISCO-design/DISCO.",
+      "authors": [
+        "Jarrid Rector-Brooks",
+        "Théophile Lambert",
+        "Marta Skreta",
+        "Daniel Roth",
+        "Yueming Long",
+        "Zi-Qi Li",
+        "Xi Zhang",
+        "Miruna Cretu",
+        "Francesca-Zhoufan Li",
+        "Tanvi Ganapathy",
+        "Emily Jin",
+        "Avishek Joey Bose",
+        "Jason Yang",
+        "Kirill Neklyudov",
+        "Yoshua Bengio",
+        "Alexander Tong",
+        "Frances H. Arnold",
+        "Cheng-Hao Liu"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-06T21:21:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.05181v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Enzyme design and catalytic active-site geometries",
+      "llm_evidence_cn": "酶设计与催化活性位点几何结构",
+      "llm_evidence": "酶设计与催化活性位点几何结构",
+      "canonical_evidence": "酶设计与催化活性位点几何结构",
+      "llm_tldr_en": "Introduces a model for co-designing protein sequence and structure around reactive intermediates for catalysis.",
+      "llm_tldr_cn": "引入了一种围绕反应中间体共同设计蛋白质序列和结构的模型，用于酶催化研究。",
+      "llm_tldr": "引入了一种围绕反应中间体共同设计蛋白质序列和结构的模型，用于酶催化研究。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.01940v1",
+      "title": "A Residence-Time Approach for Determining Position-Dependent Diffusivities from Biased Molecular Simulations",
+      "abstract": "We introduce a residence-time approach (RTA) for determining position-dependent diffusivities from biased molecular dynamics simulations. The method is formulated for trajectory segments in which the effective drift along the transport coordinate is negligible, as realized here using adaptive biasing force simulations. In this regime, local diffusivities are obtained directly from mean first-exit times out of finite spatial intervals. Unlike conventional fluctuation-based approaches, the RTA does not require dedicated harmonically restrained simulations or numerical integration of noisy time-correlation functions. We assess the method for oxygen diffusion across a hexadecane slab, water permeation across a lipid bilayer, and permeation of water and selected volatile organic compounds through a model skin-barrier membrane. In the slab system, the RTA reproduces independently determined bulk diffusivities within statistical uncertainty. In the membrane systems, the inferred diffusivity profiles are supported by propagator-level validation. These results establish the RTA as a practical approach for extracting position-dependent diffusivities from biased molecular simulations.",
+      "authors": [
+        "Rinto Thomas",
+        "Praveen Ranganath Prabhakar",
+        "Michael von Domaros"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft",
+        "physics.bio-ph",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-02T11:58:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.01940v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "determining diffusivities from biased molecular simulations",
+      "llm_evidence_cn": "从偏置分子模拟中确定扩散率",
+      "llm_evidence": "从偏置分子模拟中确定扩散率",
+      "canonical_evidence": "从偏置分子模拟中确定扩散率",
+      "llm_tldr_en": "Presents a residence-time approach to calculate position-dependent diffusivities from biased MD simulations.",
+      "llm_tldr_cn": "提出了一种从偏置分子动力学模拟中计算位置相关扩散率的驻留时间方法。",
+      "llm_tldr": "提出了一种从偏置分子动力学模拟中计算位置相关扩散率的驻留时间方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05239v1",
+      "title": "Information Entropy is a General-Purpose Collective Variable for Enhanced Sampling",
+      "abstract": "Enhanced sampling methods typically require predefined collective variables (CVs) that presuppose knowledge of reaction coordinates, restricting the discovery of unanticipated transition mechanisms or intermediates. Here, we show that a local measure of information entropy in atomistic systems is a general-purpose CV for rare event sampling across molecular and condensed-phase systems. The method biases simulations toward entropy-changing configurations following a well-tempered metadynamics approach, thus balancing novelty and thermodynamic accessibility. Blind exploration of potential energy surfaces enables unsupervised discovery of metastable basins and reaction pathways, including competing transition channels inaccessible to conventional order parameters. We demonstrate the generality of the method across five systems spanning conformational sampling, homogeneous nucleation, glass formation, and solid-state phase transformations.",
+      "authors": [
+        "Xiangrui Li",
+        "Daniel Schwalbe-Koda"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-06T23:02:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.05239v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "discovery of reaction pathways and transition mechanisms",
+      "llm_evidence_cn": "发现反应路径和过渡机制",
+      "llm_evidence": "发现反应路径和过渡机制",
+      "canonical_evidence": "发现反应路径和过渡机制",
+      "llm_tldr_en": "Proposes information entropy as a collective variable for enhanced sampling of reaction pathways.",
+      "llm_tldr_cn": "提出将信息熵作为集体变量，用于增强反应路径的采样。",
+      "llm_tldr": "提出将信息熵作为集体变量，用于增强反应路径的采样。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.05303v1",
+      "title": "Jeffreys Flow: Robust Boltzmann Generators for Rare Event Sampling via Parallel Tempering Distillation",
+      "abstract": "Sampling physical systems with rough energy landscapes is hindered by rare events and metastable trapping. While Boltzmann generators already offer a solution, their reliance on the reverse Kullback--Leibler divergence frequently induces catastrophic mode collapse, missing specific modes in multi-modal distributions. Here, we introduce the Jeffreys Flow, a robust generative framework that mitigates this failure by distilling empirical sampling data from Parallel Tempering trajectories using the symmetric Jeffreys divergence. This formulation effectively balances local target-seeking precision with global modes coverage. We show that minimizing Jeffreys divergence suppresses mode collapse and structurally corrects inherent inaccuracies via distillation of the empirical reference data. We demonstrate the framework's scalability and accuracy on highly non-convex multidimensional benchmarks, including the systematic correction of stochastic gradient biases in Replica Exchange Stochastic Gradient Langevin Dynamics and the massive acceleration of exact importance sampling in Path Integral Monte Carlo for quantum thermal states.",
+      "authors": [
+        "Guang Lin",
+        "Christian Moya",
+        "Di Qi",
+        "Xuda Ye"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.NA",
+        "physics.comp-ph",
+        "stat.ML"
+      ],
+      "published": "2026-04-07T01:17:53+00:00",
+      "link": "https://arxiv.org/pdf/2604.05303v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "sampling physical systems with rough energy landscapes and rare events",
+      "llm_evidence_cn": "对具有粗糙能量面和罕见事件的物理系统进行采样",
+      "llm_evidence": "对具有粗糙能量面和罕见事件的物理系统进行采样",
+      "canonical_evidence": "对具有粗糙能量面和罕见事件的物理系统进行采样",
+      "llm_tldr_en": "Introduces Jeffreys Flow to improve rare event sampling in physical systems with complex energy landscapes.",
+      "llm_tldr_cn": "引入 Jeffreys Flow 以改进具有复杂能量面的物理系统中的罕见事件采样。",
+      "llm_tldr": "引入 Jeffreys Flow 以改进具有复杂能量面的物理系统中的罕见事件采样。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05769v1",
+      "title": "ORION: Unifying Top-Down and Bottom-Up Chemical Space Sampling for a Universal Organic Force Field",
+      "abstract": "Empirical force fields remain the primary tool for large-scale molecular simulation, yet their limited flexibility and transferability often hinder predictive modeling in chemically complex condensed-phase systems. Here we present ORION, a universal machine-learning force field for C, H, O, N, S, and P systems developed within the Neuroevolution Potential (NEP) framework. To enhance transferability across diverse chemical environments, ORION was trained on a chemically rich dataset constructed through an integrated top-down and bottom-up strategy, enabling accurate descriptions of complex organic configurations, reactive intermediates, and weak intermolecular interactions. ORION achieves near-density-functional-theory accuracy while retaining the efficiency required for large-scale molecular dynamics simulations. On the test set, it predicts atomic forces with substantially higher accuracy than ReaxFF while running 215.5 times faster under identical hardware conditions, making simulations on the hundreds-of-nanoseconds timescale readily accessible. The model provides a balanced description of bond breaking and formation, aromatic growth, hydrogen bonding, van der Waals interactions, and π-stacking, demonstrating strong transferability across both reactive and nonreactive systems. These results establish ORION as a practical and general force field for predictive simulations in chemistry and materials science, and provide an effective route toward universal machine-learning force fields with both high accuracy and broad applicability.",
+      "authors": [
+        "Zherui Chen",
+        "Jiayu Zhang",
+        "Yuxuan Tian",
+        "Zhoulin Liu",
+        "Sining Dai",
+        "Yanghui Li",
+        "Cong Chen",
+        "Dingyuan Tang",
+        "Yajun Deng",
+        "Qingxia Liu"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-07T12:11:06+00:00",
+      "link": "https://arxiv.org/pdf/2604.05769v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "universal organic force field for complex condensed-phase systems",
+      "llm_evidence_cn": "用于复杂凝聚相系统的通用有机力场",
+      "llm_evidence": "用于复杂凝聚相系统的通用有机力场",
+      "canonical_evidence": "用于复杂凝聚相系统的通用有机力场",
+      "llm_tldr_en": "Introduces ORION, a universal ML force field for organic systems with near-DFT accuracy.",
+      "llm_tldr_cn": "介绍了 ORION，一种具有接近 DFT 精度的通用有机系统机器学习力场。",
+      "llm_tldr": "介绍了 ORION，一种具有接近 DFT 精度的通用有机系统机器学习力场。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05778v1",
+      "title": "Effective Dynamics and Transition Pathways from Koopman-Inspired Neural Learning of Collective Variables",
+      "abstract": "The ISOKANN (Invariant Subspaces of Koopman Operators Learned by Artificial Neural Networks) framework provides a data-driven route to extract collective variables (CVs) and effective dynamics from complex molecular systems. In this work, we integrate the theoretical foundation of Koopman operators with Krylov-like subspace algorithms, and reduced dynamical modeling to build a coherent picture of how to describe metastable transitions in high-dimensional systems based on CVs. Starting from the identification of CVs based on dominant invariant subspaces, we derive the corresponding effective dynamics on the latent space and connect these to transition rates and times, committor functions, and transition pathways. The combination of Koopman-based learning and reduced-dimensional effective dynamics yields a principled framework for computing transition rates and pathways from simulation data. Numerical experiments on one-, two-, and three-dimensional benchmark potentials illustrate the ability of ISOKANN to reconstruct the coarse-grained kinetics and reproduce transition times across enthalpic and entropic barriers.",
+      "authors": [
+        "Alexander Sikorski",
+        "Luca Donati",
+        "Marcus Weber",
+        "Christof Schütte"
+      ],
+      "primary_category": "math.DS",
+      "categories": [
+        "math.DS",
+        "physics.chem-ph",
+        "stat.ML"
+      ],
+      "published": "2026-04-07T12:16:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.05778v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "extracting transition pathways from complex molecular systems",
+      "llm_evidence_cn": "从复杂分子系统中提取转换路径",
+      "llm_evidence": "从复杂分子系统中提取转换路径",
+      "canonical_evidence": "从复杂分子系统中提取转换路径",
+      "llm_tldr_en": "A framework to extract collective variables and transition pathways from high-dimensional molecular systems.",
+      "llm_tldr_cn": "一种从高维分子系统中提取集体变量和转换路径的框架。",
+      "llm_tldr": "一种从高维分子系统中提取集体变量和转换路径的框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

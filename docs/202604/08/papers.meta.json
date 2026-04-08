@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-08",
+  "date": "2026-04-08",
+  "generated_at": "2026-04-08T21:10:25",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/08/2604.05181v1-general-multimodal-protein-design-enables-dna-encoding-of-chemistry",
+      "section": "quick",
+      "title_en": "General Multimodal Protein Design Enables DNA-Encoding of Chemistry",
+      "authors": "Jarrid Rector-Brooks, Théophile Lambert, Marta Skreta, Daniel Roth, Yueming Long, Zi-Qi Li, Xi Zhang, Miruna Cretu, Francesca-Zhoufan Li, Tanvi Ganapathy, Emily Jin, Avishek Joey Bose, Jason Yang, Kirill Neklyudov, Yoshua Bengio, Alexander Tong, Frances H. Arnold, Cheng-Hao Liu",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.05181v1",
+      "score": "7.0",
+      "evidence": "酶设计与催化活性位点几何结构",
+      "tldr": "本研究针对现有蛋白质设计模型需预设催化残基的局限，开发了多模态扩散模型DISCO。该模型能围绕任意生物分子协同设计蛋白质序列与三维结构。通过仅以反应中间体为条件，DISCO成功设计出多种新型血红素酶，可催化自然界不存在的卡宾转移反应（如环丙烷化、B-H和C-H插入），其活性优于现有工程酶，并证明了其具有进一步定向进化的潜力，极大地扩展了基因编码化学反应的范围。",
+      "tags": "query:qmmm",
+      "abstract_en": "Evolution is an extraordinary engine for enzymatic diversity, yet the chemistry it has explored remains a narrow slice of what DNA can encode. Deep generative models can design new proteins that bind ligands, but none have created enzymes without pre-specifying catalytic residues. We introduce DISCO (DIffusion for Sequence-structure CO-design), a multimodal model that co-designs protein sequence and 3D structure around arbitrary biomolecules, as well as inference-time scaling methods that optimize objectives across both modalities. Conditioned solely on reactive intermediates, DISCO designs diverse heme enzymes with novel active-site geometries. These enzymes catalyze new-to-nature carbene-transfer reactions, including alkene cyclopropanation, spirocyclopropanation, B-H, and C(sp$^3$)-H insertions, with high activities exceeding those of engineered enzymes. Random mutagenesis of a selected design further confirmed that enzyme activity can be improved through directed evolution. By providing a scalable route to evolvable enzymes, DISCO broadens the potential scope of genetically encodable transformations. Code is available at https://github.com/DISCO-design/DISCO.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.05239v1-information-entropy-is-a-general-purpose-collective-variable-for-enhanced-sampling",
+      "section": "quick",
+      "title_en": "Information Entropy is a General-Purpose Collective Variable for Enhanced Sampling",
+      "authors": "Xiangrui Li, Daniel Schwalbe-Koda",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.05239v1",
+      "score": "7.0",
+      "evidence": "发现反应路径和过渡机制",
+      "tldr": "针对增强采样中预定义集体变量（CV）依赖先验知识的局限性，本文提出将原子系统的局部信息熵作为一种通用的CV。通过结合回火元动力学，该方法能够无监督地探索势能面，发现未知的亚稳态和反应路径。在构象采样、成核及相变等多种复杂系统中的应用证明了其在平衡新颖性与热力学可及性方面的通用性和有效性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Enhanced sampling methods typically require predefined collective variables (CVs) that presuppose knowledge of reaction coordinates, restricting the discovery of unanticipated transition mechanisms or intermediates. Here, we show that a local measure of information entropy in atomistic systems is a general-purpose CV for rare event sampling across molecular and condensed-phase systems. The method biases simulations toward entropy-changing configurations following a well-tempered metadynamics approach, thus balancing novelty and thermodynamic accessibility. Blind exploration of potential energy surfaces enables unsupervised discovery of metastable basins and reaction pathways, including competing transition channels inaccessible to conventional order parameters. We demonstrate the generality of the method across five systems spanning conformational sampling, homogeneous nucleation, glass formation, and solid-state phase transformations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.01940v1-a-residence-time-approach-for-determining-position-dependent-diffusivities-from-biased-molecular-simulations",
+      "section": "quick",
+      "title_en": "A Residence-Time Approach for Determining Position-Dependent Diffusivities from Biased Molecular Simulations",
+      "authors": "Rinto Thomas, Praveen Ranganath Prabhakar, Michael von Domaros",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.01940v1",
+      "score": "6.0",
+      "evidence": "从偏置分子模拟中确定扩散率",
+      "tldr": "本研究提出了一种停留时间法（RTA），用于从偏置分子动力学模拟中提取位置相关的扩散系数。该方法利用自适应偏置力（ABF）消除有效漂移，通过计算有限空间间隔内的平均首次流出时间直接获取局部扩散率。相比传统方法，RTA无需谐波约束模拟或复杂的噪声相关函数积分，在十六烷、脂质双分子层及皮肤屏障模型中均得到了验证，为复杂膜系统的扩散研究提供了高效工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "We introduce a residence-time approach (RTA) for determining position-dependent diffusivities from biased molecular dynamics simulations. The method is formulated for trajectory segments in which the effective drift along the transport coordinate is negligible, as realized here using adaptive biasing force simulations. In this regime, local diffusivities are obtained directly from mean first-exit times out of finite spatial intervals. Unlike conventional fluctuation-based approaches, the RTA does not require dedicated harmonically restrained simulations or numerical integration of noisy time-correlation functions. We assess the method for oxygen diffusion across a hexadecane slab, water permeation across a lipid bilayer, and permeation of water and selected volatile organic compounds through a model skin-barrier membrane. In the slab system, the RTA reproduces independently determined bulk diffusivities within statistical uncertainty. In the membrane systems, the inferred diffusivity profiles are supported by propagator-level validation. These results establish the RTA as a practical approach for extracting position-dependent diffusivities from biased molecular simulations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.05303v1-jeffreys-flow-robust-boltzmann-generators-for-rare-event-sampling-via-parallel-tempering-distillation",
+      "section": "quick",
+      "title_en": "Jeffreys Flow: Robust Boltzmann Generators for Rare Event Sampling via Parallel Tempering Distillation",
+      "authors": "Guang Lin, Christian Moya, Di Qi, Xuda Ye",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05303v1",
+      "score": "6.0",
+      "evidence": "对具有粗糙能量面和罕见事件的物理系统进行采样",
+      "tldr": "针对复杂能量景观采样中的亚稳态和模式崩溃问题，本文提出 Jeffreys Flow 框架。该方法通过对称的 Jeffreys 散度，将并行回火（Parallel Tempering）轨迹中的经验采样数据蒸馏到生成模型中。相比传统的玻尔兹曼生成器，它能有效平衡局部精度与全局模式覆盖，在多维非凸基准测试中表现出更强的鲁棒性，并显著加速了量子热态的路径积分蒙特卡洛采样。",
+      "tags": "query:qmmm",
+      "abstract_en": "Sampling physical systems with rough energy landscapes is hindered by rare events and metastable trapping. While Boltzmann generators already offer a solution, their reliance on the reverse Kullback--Leibler divergence frequently induces catastrophic mode collapse, missing specific modes in multi-modal distributions. Here, we introduce the Jeffreys Flow, a robust generative framework that mitigates this failure by distilling empirical sampling data from Parallel Tempering trajectories using the symmetric Jeffreys divergence. This formulation effectively balances local target-seeking precision with global modes coverage. We show that minimizing Jeffreys divergence suppresses mode collapse and structurally corrects inherent inaccuracies via distillation of the empirical reference data. We demonstrate the framework's scalability and accuracy on highly non-convex multidimensional benchmarks, including the systematic correction of stochastic gradient biases in Replica Exchange Stochastic Gradient Langevin Dynamics and the massive acceleration of exact importance sampling in Path Integral Monte Carlo for quantum thermal states.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.05769v1-orion-unifying-top-down-and-bottom-up-chemical-space-sampling-for-a-universal-organic-force-field",
+      "section": "quick",
+      "title_en": "ORION: Unifying Top-Down and Bottom-Up Chemical Space Sampling for a Universal Organic Force Field",
+      "authors": "Zherui Chen, Jiayu Zhang, Yuxuan Tian, Zhoulin Liu, Sining Dai, Yanghui Li, Cong Chen, Dingyuan Tang, Yajun Deng, Qingxia Liu",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05769v1",
+      "score": "6.0",
+      "evidence": "用于复杂凝聚相系统的通用有机力场",
+      "tldr": "ORION是一个基于NEP框架的通用机器学习力场，涵盖C、H、O、N、S、P六种元素。通过结合自上而下和自下而上的化学空间采样策略，该模型在保持近DFT精度的同时，实现了极高的计算效率（比ReaxFF快215倍）。它能准确描述化学反应、分子间相互作用及复杂有机体系，为大规模分子动力学模拟提供了强有力的工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Empirical force fields remain the primary tool for large-scale molecular simulation, yet their limited flexibility and transferability often hinder predictive modeling in chemically complex condensed-phase systems. Here we present ORION, a universal machine-learning force field for C, H, O, N, S, and P systems developed within the Neuroevolution Potential (NEP) framework. To enhance transferability across diverse chemical environments, ORION was trained on a chemically rich dataset constructed through an integrated top-down and bottom-up strategy, enabling accurate descriptions of complex organic configurations, reactive intermediates, and weak intermolecular interactions. ORION achieves near-density-functional-theory accuracy while retaining the efficiency required for large-scale molecular dynamics simulations. On the test set, it predicts atomic forces with substantially higher accuracy than ReaxFF while running 215.5 times faster under identical hardware conditions, making simulations on the hundreds-of-nanoseconds timescale readily accessible. The model provides a balanced description of bond breaking and formation, aromatic growth, hydrogen bonding, van der Waals interactions, and π-stacking, demonstrating strong transferability across both reactive and nonreactive systems. These results establish ORION as a practical and general force field for predictive simulations in chemistry and materials science, and provide an effective route toward universal machine-learning force fields with both high accuracy and broad applicability.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/08/2604.05778v1-effective-dynamics-and-transition-pathways-from-koopman-inspired-neural-learning-of-collective-variables",
+      "section": "quick",
+      "title_en": "Effective Dynamics and Transition Pathways from Koopman-Inspired Neural Learning of Collective Variables",
+      "authors": "Alexander Sikorski, Luca Donati, Marcus Weber, Christof Schütte",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05778v1",
+      "score": "6.0",
+      "evidence": "从复杂分子系统中提取转换路径",
+      "tldr": "本研究基于ISOKANN框架，结合Koopman算子理论与神经网络，提出了一种从复杂分子系统中提取反应坐标（CVs）和有效动力学的方法。通过识别主不变子空间，该方法能在潜空间构建简化动力学模型，从而计算亚稳态间的转移速率、过渡路径及通率函数。实验证明，该框架能有效处理高维系统中的焓变和熵变势垒，准确重构粗粒化动力学特征。",
+      "tags": "query:qmmm",
+      "abstract_en": "The ISOKANN (Invariant Subspaces of Koopman Operators Learned by Artificial Neural Networks) framework provides a data-driven route to extract collective variables (CVs) and effective dynamics from complex molecular systems. In this work, we integrate the theoretical foundation of Koopman operators with Krylov-like subspace algorithms, and reduced dynamical modeling to build a coherent picture of how to describe metastable transitions in high-dimensional systems based on CVs. Starting from the identification of CVs based on dominant invariant subspaces, we derive the corresponding effective dynamics on the latent space and connect these to transition rates and times, committor functions, and transition pathways. The combination of Koopman-based learning and reduced-dimensional effective dynamics yields a principled framework for computing transition rates and pathways from simulation data. Numerical experiments on one-, two-, and three-dimensional benchmark potentials illustrate the ability of ISOKANN to reconstruct the coarse-grained kinetics and reproduce transition times across enthalpic and entropic barriers.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
