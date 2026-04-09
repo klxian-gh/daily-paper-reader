@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-09",
+  "date": "2026-04-09",
+  "generated_at": "2026-04-09T21:18:30",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/09/2604.07276v1-making-room-for-ai-multi-gpu-molecular-dynamics-with-deep-potentials-in-gromacs",
+      "section": "quick",
+      "title_en": "Making Room for AI: Multi-GPU Molecular Dynamics with Deep Potentials in GROMACS",
+      "authors": "Luca Pennati, Andong Hu, Ivy Peng, Lukas Müllender, Stefano Markidis",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07276v1",
+      "score": "6.0",
+      "evidence": "分子动力学通量下的近量子精度",
+      "tldr": "本研究将DeePMD-kit集成到GROMACS中，实现了支持多节点、多GPU加速的深度势能分子动力学模拟。通过扩展NNPot接口并引入解耦的领域分解层，该方案在NVIDIA A100和AMD MI250x上展现了良好的强弱扩展性。实验证明，在保持近量子力学精度的同时，该集成方案能够有效处理大规模生物分子系统，为高性能AI驱动的分子动力学研究奠定了基础。",
+      "tags": "query:qmmm",
+      "abstract_en": "GROMACS is a de-facto standard for classical Molecular Dynamics (MD). The rise of AI-driven interatomic potentials that pursue near-quantum accuracy at MD throughput now poses a significant challenge: embedding neural-network inference into multi-GPU simulations retaining high-performance. In this work, we integrate the MLIP framework DeePMD-kit into GROMACS, enabling domain-decomposed, GPU-accelerated inference across multi-node systems. We extend the GROMACS NNPot interface with a DeePMD backend, and we introduce a domain decomposition layer decoupled from the main simulation. The inference is executed concurrently on all processes, with two MPI collectives used each step to broadcast coordinates and to aggregate and redistribute forces. We train an in-house DPA-1 model (1.6 M parameters) on a dataset of solvated protein fragments. We validate the implementation on a small protein system, then we benchmark the GROMACS-DeePMD integration with a 15,668 atom protein on NVIDIA A100 and AMD MI250x GPUs up to 32 devices. Strong-scaling efficiency reaches 66% at 16 devices and 40% at 32; weak-scaling efficiency is 80% to 16 devices and reaches 48% (MI250x) and 40% (A100) at 32 devices. Profiling with the ROCm System profiler shows that >90% of the wall time is spent in DeePMD inference, while MPI collectives contribute <10%, primarily since they act as a global synchronization point. The principal bottlenecks are the irreducible ghost-atom cost set by the cutoff radius, confirmed by a simple throughput model, and load imbalance across ranks. These results demonstrate that production MD with near ab initio fidelity is feasible at scale in GROMACS.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.07322v1-explicit-electric-potential-embedded-machine-learning-framework-a-unified-description-from-atomic-to-electronic-scales",
+      "section": "quick",
+      "title_en": "Explicit Electric Potential-Embedded Machine Learning Framework: A Unified Description from Atomic to Electronic Scales",
+      "authors": "Jingwen Zhou, Yawen Yu, Xuwei Liu, Chungen Liu",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07322v1",
+      "score": "6.0",
+      "evidence": "用于从头算分子动力学和原子力的机器学习框架",
+      "tldr": "本研究提出了一种统一的显式电势嵌入机器学习框架，旨在实现电化学界面在原子和电子尺度上的精确模拟。该框架整合了高效的数据生成、基于MACE架构的力场模型（PE-MACE）以及电子密度预测模型（PE-EDP）。通过在Pt(111)/水界面上的应用，证明了该方法能准确预测任意电势下的原子力和电子分布，为研究复杂电化学过程提供了高效且精确的计算工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "To further develop accurate and large-scale simulations of electrochemical interfaces, we propose a unified explicit electric potential framework to simultaneously predict atomic forces and electron density distributions. The framework consists of three components: data generation, model training, and application. The data generation component, implemented in Hy-DFT, efficiently regulates the potential during constant-potential ab initio molecular dynamics (CP-AIMD), reducing the number of single-point calculations required for convergence. The model training component includes two modules: Potential-Embedded MACE (PE-MACE) and Potential-Embedded Electron Density Prediction (PE-EDP). PE-MACE implements an explicit electric potential machine learning force field (EEP-MLFF) based on the MACE architecture. We develop PE-EDP to overcome the limitation of EEP-MLFF in describing atom forces. PE-EDP, also based on equivariant graph neural networks, predicts electron density distributions under arbitrary potentials. Using the Pt(111)/water interface as a model system, both PE-MACE and PE-EDP show high accuracy on training and test sets. Radial distribution functions from CP-MLMD agree well with CP-AIMD, and long-timescale simulations reveal potential-induced reorganization of interfacial water. Planar-integrated charge profiles and Bader analysis from PE-EDP are consistent with DFT results. These results demonstrate that the framework can simultaneously describe atomic dynamics and electron density distributions under arbitrary potentials, providing a useful tool for studying electrochemical interfaces.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
