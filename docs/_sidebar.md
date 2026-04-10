@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-10 <!--dpr-date:20260410-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/10/2604.07979v1-differentiable-hybrid-force-fields-support-scalable-autonomous-electrolyte-discovery" data-sidebar-item="{&quot;title&quot;: &quot;Differentiable hybrid force fields support scalable autonomous electrolyte discovery&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.07979v1-differentiable-hybrid-force-fields-support-scalable-autonomous-electrolyte-discovery&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;融合物理与神经网络的混合力场&quot;}">Differentiable hybrid force fields support scalable autonomous electrolyte discovery</a>
   * 2026-04-09 <!--dpr-date:20260409-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/09/2604.07276v1-making-room-for-ai-multi-gpu-molecular-dynamics-with-deep-potentials-in-gromacs" data-sidebar-item="{&quot;title&quot;: &quot;Making Room for AI: Multi-GPU Molecular Dynamics with Deep Potentials in GROMACS&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.07276v1-making-room-for-ai-multi-gpu-molecular-dynamics-with-deep-potentials-in-gromacs&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;分子动力学通量下的近量子精度&quot;}">Making Room for AI: Multi-GPU Molecular Dynamics with Deep Potentials in GROMACS</a>

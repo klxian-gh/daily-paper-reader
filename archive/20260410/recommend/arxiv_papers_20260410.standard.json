@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-10T20:50:09.981190+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.07979v1",
+      "title": "Differentiable hybrid force fields support scalable autonomous electrolyte discovery",
+      "abstract": "Autonomous electrolyte discovery demands a computational engine that satisfies a critical trilemma: it must be fast enough for high-throughput screening, accurate enough for quantitative property prediction, and calibratable enough for online refinement. Classical empirical force fields (FFs) are fast but rely heavily on error cancellation, while standard machine learning interatomic potentials (MLIPs) are computationally expensive, lack rigorous long-range physics, and resist gradient-based calibration. In this Perspective, we highlight that differentiable hybrid FFs resolve this trilemma by fusing physically motivated functional forms with neural-network short-range corrections. Grounded in Energy Decomposition Analysis (EDA), state-of-the-art models such as PhyNEO-Electrolyte and ByteFF-Pol achieve zero-shot generalization to bulk phases, delivering throughputs on the order of tens of ns/day (up to $\\sim$50 ns/day, depending on model complexity) for 10,000-atom systems. Crucially, their physical skeletons provide a well-conditioned parameter space for differentiable molecular dynamics (dMD). This enables a dual-calibration paradigm: bottom-up \\textit{ab initio} parameterization combined with top-down fine-tuning from macroscopic experimental observables. We propose that this architecture meets the requirements of a ``ChemRobot-ready'' digital twin by integrating physics-grounded simulation with experimentally calibratable refinement, thereby enabling closed-loop autonomous electrolyte discovery.",
+      "authors": [
+        "Xintian Wang",
+        "Junmin Chen",
+        "Zhuoying Zhu",
+        "Peichen Zhong"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-09T08:51:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.07979v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "hybrid force fields fusing physics with neural networks",
+      "llm_evidence_cn": "融合物理与神经网络的混合力场",
+      "llm_evidence": "融合物理与神经网络的混合力场",
+      "canonical_evidence": "融合物理与神经网络的混合力场",
+      "llm_tldr_en": "Proposes differentiable hybrid force fields that bridge physical models and machine learning for simulations.",
+      "llm_tldr_cn": "提出了可微分混合力场，将物理模型与机器学习融合用于模拟。",
+      "llm_tldr": "提出了可微分混合力场，将物理模型与机器学习融合用于模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
