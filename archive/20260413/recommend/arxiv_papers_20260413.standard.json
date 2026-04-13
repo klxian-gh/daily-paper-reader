@@ -1,0 +1,133 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-13T21:39:16.940547+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.09320v1",
+      "title": "Transferable FB-GNN-MBE Framework for Potential Energy Surfaces: Data-Adaptive Transfer Learning in Deep Learned Many-Body Expansion Theory",
+      "abstract": "Mechanistic understanding and rational design of complex chemical systems depend on fast and accurate predictions of electronic structures beyond individual building blocks. However, if the system exceeds hundreds of atoms, first-principles quantum mechanical (QM) modeling becomes impractical. In this study, we developed FB-GNN-MBE by integrating a fragment-based graph neural network (FB-GNN) into the many-body expansion (MBE) theory and demonstrated its capacity to reproduce first-principles potential energy surfaces (PES) for hierarchically structured systems with manageable accuracy, complexity, and interpretability. Specifically, we divided the entire system into basic building blocks (fragments), evaluated their one-fragment energies using a QM model, and addressed many-fragment interactions using the structure-property relationships trained by FB-GNNs. Our investigation shows that FB-GNN-MBE achieves chemical accuracy in predicting two-body (2B) and three-body (3B) energies across water, phenol, and mixture benchmarks, as well as the one-dimensional dissociation curves of water and phenol dimers. To transfer the success of FB-GNN-MBE across various systems with minimal computational costs and data demands, we developed and validated a teacher-student learning protocol. A heavy-weight FB-GNN trained on a mixed-density water cluster ensemble (teacher) distills its learned knowledge and passes it to a light-weight GNN (student), which is later fine-tuned on a uniform-density (H2O)21 cluster ensemble. This transfer learning strategy resulted in efficient and accurate prediction of 2B and 3B energies for variously sized water clusters without retraining. Our transferable FB-GNN-MBE framework outperformed conventional non-FB-GNN-based models and showed high practicality for large-scale molecular simulations.",
+      "authors": [
+        "Siqi Chen",
+        "Zhiqiang Wang",
+        "Yili Shen",
+        "Xianqi Deng",
+        "Xi Cheng",
+        "Cheng-Wei Ju",
+        "Jun Yi",
+        "Guo Ling",
+        "Dieaa Alhmoud",
+        "Hui Guan",
+        "Zhou Lin"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.LG"
+      ],
+      "published": "2026-04-10T13:43:19+00:00",
+      "link": "https://arxiv.org/pdf/2604.09320v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reproduce first-principles potential energy surfaces for systems exceeding hundreds of atoms",
+      "llm_evidence_cn": "为超过数百个原子的系统重现第一性原理势能面",
+      "llm_evidence": "为超过数百个原子的系统重现第一性原理势能面",
+      "canonical_evidence": "为超过数百个原子的系统重现第一性原理势能面",
+      "llm_tldr_en": "A fragment-based GNN framework to reproduce QM potential energy surfaces for large complex chemical systems.",
+      "llm_tldr_cn": "一种基于片段的图神经网络框架，用于重现大型复杂化学系统的量子力学势能面。",
+      "llm_tldr": "一种基于片段的图神经网络框架，用于重现大型复杂化学系统的量子力学势能面。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.09228v1",
+      "title": "Methanimine as a sink in the HCN and HNC solid state hydrogenation network",
+      "abstract": "We aim to provide a systematic and quantitative description of the hydrogenation network connecting HCN and HNC to methylamine on interstellar water ices, while identifying dominant pathways and bottlenecks. To this end, we performed a comprehensive quantum-chemical investigation of H-addition, H-abstraction, reactions with H2, and water-assisted H-transfer isomerization, covering intermediates linking HCN and HNC to CH3NH2. Calculations were carried out on amorphous solid water clusters of 14 molecules. Using benchmarked density functional theory, we derived activation barriers, elucidated mechanisms, and determined the binding energy distribution of H2CN and CNH2, also assessing deuterium substitution effects. H-addition reactions generally involve activation barriers, except for radical species. Considering both barrier heights and tunneling crossover temperatures, the most favorable sequence originates from HNC rather than HCN. The network evolves toward methanimine (H2CNH), the central species, or the singlet carbene HC:NH2, from which further hydrogenation leads to methylamine. Along these paths, several reactions are barrierless, while some H-abstraction processes compete with addition. Reactions involving H2 are uncommon, as most are endoergic. Deuterium substitution weakly affects classical barriers but significantly influences tunneling efficiencies. Our results support efficient formation of methanimine and methylamine from HNC on cold interstellar ices, with methanimine acting as a chemical sink, whereas HCN is less reactive and more likely to persist. These findings provide quantitative constraints for astrochemical models.",
+      "authors": [
+        "Joan Enrique-Romero",
+        "Thanja Lamberts"
+      ],
+      "primary_category": "astro-ph.GA",
+      "categories": [
+        "astro-ph.GA"
+      ],
+      "published": "2026-04-10T11:36:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.09228v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum-chemical investigation of reaction mechanisms and pathways",
+      "llm_evidence_cn": "反应机理与路径的量子化学研究",
+      "llm_evidence": "反应机理与路径的量子化学研究",
+      "canonical_evidence": "反应机理与路径的量子化学研究",
+      "llm_tldr_en": "Uses DFT to elucidate hydrogenation reaction mechanisms and pathways on interstellar water ices.",
+      "llm_tldr_cn": "利用密度泛函理论阐明星际水冰上的加氢反应机理与路径。",
+      "llm_tldr": "利用密度泛函理论阐明星际水冰上的加氢反应机理与路径。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.09291v1",
+      "title": "Synergistic Interplay between Surface Polarons and Adsorbates for Photocatalytic Nitrogen Reduction on TiO$_2$(110)",
+      "abstract": "Photocatalytic nitrogen reduction under ambient conditions represents a promising pathway toward sustainable ammonia production. However, the fundamental mechanisms, particularly the role of photogenerated charge carriers and their interactions with surface defects and adsorbates, remain elusive. Here, we employ density functional theory with Hubbard U corrections and hybrid functionals to demonstrate that the synergistic interactions between photogenerated electron polarons and point defects are essential for enabling nitrogen reduction on TiO$_2$(110). We reveal that water adsorption promotes polaron migration from subsurface to surface sites, while subsequent water dissociation stabilizes polarons near oxygen vacancies through proton coupled electron polaron transfer (PCEpT). This surface localization of polarons is critical for effective N$_2$ adsorption and activation. Our findings are consistent with previous experimental reports utilizing EPR that confirm the presence of reduced Ti species and STM, which shows the presence of water dimers on the surface. Moreover, the simultaneous interaction between polarons and reaction intermediates facilitates polaron transfer, thereby driving the completion of the nitrogen reduction reaction. Our findings elucidate the pivotal role of surface polarons in photocatalytic nitrogen fixation and provide mechanistic insights applicable to a broad range of oxide surfaces and interfaces capable of hosting small polarons, offering new design principles for efficient photocatalysts operating under ambient conditions.",
+      "authors": [
+        "Manoj Dey",
+        "Ritesh Kumar",
+        "Abhishek Kumar Singh"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-10T13:01:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.09291v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "catalytic reaction mechanism and pathway",
+      "llm_evidence_cn": "催化反应机理与路径",
+      "llm_evidence": "催化反应机理与路径",
+      "canonical_evidence": "催化反应机理与路径",
+      "llm_tldr_en": "Uses DFT to investigate the fundamental mechanisms and pathways of photocatalytic nitrogen reduction.",
+      "llm_tldr_cn": "利用DFT研究光催化固氮的基本机理与反应路径。",
+      "llm_tldr": "利用DFT研究光催化固氮的基本机理与反应路径。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

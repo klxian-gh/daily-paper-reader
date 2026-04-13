@@ -1,0 +1,380 @@
+Title: Methanimine as a sink in the HCN and HNC solid state hydrogenation network
+
+URL Source: https://arxiv.org/pdf/2604.09228v1
+
+Published Time: Mon, 13 Apr 2026 00:59:48 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+Astronomy & Astrophysics manuscript no. aa59799-26corr ©ESO 2026 April 13, 2026 
+
+# Methanimine as a sink in the HCN and HNC solid state hydrogenation network 
+
+J. Enrique-Romero* 1 T. Lamberts 1, 2 
+
+> 1
+
+Leiden Institute of Chemistry, Gorlaeus Laboratories, Leiden University, PO Box 9502, 2300 RA Leiden, The Netherlands e-mail: j.enrique.romero@lic.leidenuniv.nl  
+
+> 2
+
+Leiden Observatory, Leiden University, P.O. Box 9513, 2300 RA Leiden, The Netherlands 
+
+ABSTRACT 
+
+Aims. We aim to provide a systematic and quantitative description of the hydrogenation network connecting HCN and HNC to methylamine on interstellar water ices, and to identify the dominant reaction pathways and potential bottlenecks. 
+
+Methods. We performed a comprehensive quantum-chemical investigation of H-addition, H-abstraction, reactions with H 2, and water-assisted H-transfer isomerization involving all intermediates connecting HCN and HNC up to CH 3NH 2, considering amorphous solid water molecular clusters composed of 14 water molecules. We employed benchmarked density functional theory to derive activation barriers, elucidate the reaction mechanisms, and determine the binding energy distribution of H 2CN and CNH 2. We also discuss the eff ect of deuterium substitutions on selected points of the network. 
+
+Results. H-addition reactions are generally mediated by activation energy barriers, except for radical reactants. Considering both barriers and the associated tunneling crossover temperatures, the most favorable hydrogenation sequence starts from HNC rather than from HCN. The network initially evolves toward either methanimine (H 2CNH; which emerges as the central species) or the singlet open-shell carbene 1[HC:NH 2]. Subsequent hydrogenation steps lead to methylamine (CH 3NH 2). Along these reaction paths, several processes are barrier-less (e.g., the hydrogenation of molecular radicals), while some H-abstraction reactions can compete with addition channels. Reactions involving H 2 as a reactant are rare, as most of these channels are endoergic. Deuterium substitution has only a minor impact on classical activation energies but significantly a ff ects the transition-state imaginary frequencies and, therefore, the expected tunneling e ffi ciencies. 
+
+Conclusions. Our results support the idea that methanimine and methylamine can e ffi ciently form from HNC on cold interstellar ices, with methanimine acting as a chemical sink within the network. HCN, on the other hand, is less reactive and hence has a higher chance of being preserved. The reaction network presented here provides quantitative constraints for astrochemical models of nitrogen-bearing organic chemistry in star-forming regions. 
+
+Key words. Astrochemistry, DFT, ISM, Interstellar ices, acetonitrile, nitriles, iCOMs, surface chemistry 
+
+1. Introduction 
+
+Numerous CN-bearing species have been detected in the inter-stellar medium (ISM), ranging from simple molecules such as HCN and CH 3CN to larger ones such as cyanopolyynes. Owing to their large dipole moments, these molecules are readily de-tectable in the gas phase using radioastronomical facilities, and as a result, they are routinely employed by astronomers to trace the physical conditions of the ISM, both in the Milky Way and in external galaxies (e.g., Schilke et al. 1992; Hacar et al. 2020; Le Gal et al. 2014; Öberg et al. 2015; Jin et al. 2015; Ilee et al. 2021; Tennis et al. 2023). From a chemical perspective, nitriles can appear as two dif-ferent isomers, such as HCN and HNC or CH 3CN and CH 3NC. They are particularly interesting in the context of prebiotic chemistry. For example, they can hydrolyse into carboxylic acids under suitable conditions (e.g., Miller 1953; Miller & Urey 1959), a process that potentially links them to the formation of amino acids (as exemplified by the Strecker synthesis; Strecker 1854), among other prebiotic species important for the RNA-world hypothesis (see, e.g., Oró & Kamat 1961; Oró 1961; Powner et al. 2009; Patel et al. 2015; Becker et al. 2019; Cap-pelletti & Rahm 2026; Jiménez-Serra et al. 2020). The simplest closed-shell CN-bearing species in the ISM are HCN and HNC, which have been extensively studied in the lit-erature. Their relative abundances are often used as a diagnostic tool for temperature (Hacar et al. 2020), and their emission can be used to trace dense gas regions; both are critical parameters for probing the ISM and other galaxies. Both HCN and HNC can be formed through gas-phase processes or on the surfaces of interstellar icy grains (see, e.g., Enrique-Romero & Lamberts 2024). Therefore, subsequent chemical evolution on interstellar ices should lead to more com-plex species. Observational evidence points to HCN surface hy-drogenation as the main path to methylamine formation (e.g., Suzuki et al. 2023); this is supported by the experiments of Theulé et al. (2011), which showed that HCN hydrogenation leads to CH 3NH 2, with CH 2NH as a likely intermediate. With computational chemistry, Woon (2002) investigated the hydro-genation of HCN and CH 2NH in the context of interstellar amor-phous solid water ices, using an implicit solvation model to ac-count for the e ff ect of the ice environment (i.e., without explicitly including water molecules). Their results show that hydrogena-tion at the carbon atom of HCN is significantly more favorable, with a lower activation barrier ( ∼30.5 kJ mol −1 1 ) compared to hydrogenation at the nitrogen atom ( ∼53.5 kJ mol −1 ). A sim-ilar trend was observed for CH 2NH, with barriers of approxi- 
+
+> 1
+
+To convert kJ mol −1 into K, one only needs to multiply by 120.27 K/kJ mol −1 .Article number, page 1 of 14  
+
+> arXiv:2604.09228v1 [astro-ph.GA] 10 Apr 2026 A&A proofs: manuscript no. aa59799-26corr
+
+mately 19.2 kJ mol −1 (C-hydrogenation) and 25.5 kJ mol −1 (N-hydrogenation). More recently, Molpeceres et al. (2024) inves-tigated the reaction of 3C + NH 3 on interstellar ice surfaces. As part of their reaction network, hydrogenation pathways of HCN and HNC were also considered, although limited to atomic hy-drogen and excluding molecular hydrogen (H 2) reactions. More broadly, numerous experimental studies have investi-gated the energetic processing of interstellar ice analogs con-taining cyanide-bearing molecules. Small nitriles such as HCN and CH 3CN are highly reactive when exposed to UV irradia-tion (e.g., Hudson & Moore 2000; Gerakines et al. 2004; Bern-stein et al. 2002; Danger et al. 2011b; Jiménez-Escobar et al. 2014; Bulak et al. 2021) or X-rays (e.g., Volosatova et al. 2021; Basalgète et al. 2021; Carvalho et al. 2022), as well as under ion and electron bombardment (e.g., Hudson & Moore 2000; Ger-akines et al. 2004; Hudson et al. 2008). These energetic pro-cesses lead to the formation of a wide range of products, includ-ing amines, amides, aminonitriles, and salts such as OCN – , par-ticularly when ammonia is present. A recurring observation in these experiments is that the presence of water enhances chemi-cal complexity, while both UV and X-ray irradiation can induce desorption processes. In addition, HCN is known to undergo polymerization under energetic processing (e.g., Gerakines et al. 2004; Volosatova et al. 2021). Despite the chemical richness observed in these experiments, the interpretation of results is often complicated by the lack of specificity in the reaction pathways. Multiple processes occur simultaneously, making it di ffi cult to isolate individual reaction channels or derive quantitative kinetic data and branching ratios. One example of a di ff erent approach is the work of Carvalho et al. (2022), who combined soft X-ray irradiation experiments on CH 3CN with a chemical network model to interpret the ob-served chemistry. Thanks to the use of a model and concomitant input parameters, they found that methyl cyanide can largely sur-vive energetic processing. In this context, theoretical studies such as the present one can help disentangle individual reaction pathways and provide the energetic information required to guide the interpretation of laboratory experiments and astrochemical models. At the same time, dedicated experiments targeting specific hydrogenation pathways of HCN and HNC on water-rich ice surfaces would be highly valuable for testing the mechanisms proposed here. To address these challenges and build upon our previous studies (Enrique-Romero & Lamberts 2024; Enrique-Romero & Lam-berts 2025a), we revisited the surface destruction pathways of HCN and HNC via successive hydrogen addition and abstrac-tion reactions involving H • and H 2.We aim to connect these two molecules to their fully hydro-genated counterpart, methylamine (CH 3NH 2). This is in qualita-tive agreement with the reaction sequence proposed by the only laboratory work available in the literature, Theulé et al. (2011), who connected HCN and HNC to methylamine through metha-nimine. Notice that the methanimine is also relevant in the prebi-otic formation of glycine (NH 2CH 2COOH) via the Strecker syn-thesis, where methanimine reacts with HCN (e.g., Danger et al. 2011a). 
+
+2. Methods 
+
+All calculations were performed using O rca 6.0.1 (Neese et al. 2020; Neese 2022). Benchmarked density functional calcula-tions were used across this work. Given the number of reac-tions studied in this work, we chose the triple-ζ-quality ma-def2-TZVP basis set (Zheng et al. 2011), balancing computational cost and accuracy for density functional calculations. We used multiple computational algorithms for this work, encompass ge-ometry optimizations, transition state searches, intrinsic reaction coordinate calculations to connect stationary points along the re-action pathway on the potential energy surface, potential energy surface scans, nudged elastic band calculations (Ásgeirsson et al. 2021), and frequency calculations to ensure that our geometries correspond to minima or first-order saddle points for transition states. Tight self-consistent field ( TightSCF ) convergence crite-ria and dense integration grids ( DEFGRID3 ). Unrestricted Kohn-Sham orbitals were used consistently, and for all open-shell sin-glet calculations, we employed the broken-spin-symmetry ap-proach via O rca ’s spin-flip routine. A comprehensive bench-mark comprising 13 reactions was performed (raw data avail-able on Zenodo Enrique-Romero & Lamberts 2026), where the performance of a wide range of functionals in combination with the ma-def2-TZVP basis set was tested against CCSD(T) /aug-cc-pVTZ reference data. Figure 1 summarizes the results by re-porting average energy deviations for selected functionals. Some functionals exhibit a marked di ff erence in performance between H/H2 addition reactions and water-assisted H-transfer (wHt) re-actions. To make this distinction clear, we report the results for these two subsets separately in Fig. 1, in addition to providing the overall average for reference. For the wHt reactions, ωB97m-D3(BJ) yields the highest accuracy. In contrast, for H /H2 addi-tions and abstraction reactions, M06-2X-D3(0) performs best. We therefore adopted a combined strategy, applying each func-tional to the reaction class for which it is most reliable. In ad-dition, the use of M06-2X-D3(0) is further supported by its successful application in our previous studies, thereby ensuring methodological consistency. From the reactions listed in Table A.1, we took H-addition reactions R1, R2, R3, R4, and R11; the H-abstraction reactions R26, R32 and R33; H 2-hydrogenation reactions R22 from cis- and from trans-HCNH; and the wHt re-actions R38, R39, and R40. Finally, M06-2X-D3(0) performs poorly for the H-abstraction reactions R25 and R31, yielding unrealistic ZPE corrections, exceeding 50 kJ mol −1 . For these cases, we in-stead employed the next-best functional from the benchmark, 
+
+ωB97m-D3(BJ), which produces physically reasonable ZPE cor-rections, with corrected activation barriers of 8.8 and 6.6 kJ mol −1 for reactions R25 and R31. In agreement with the liter-ature (Molpeceres et al. 2024). 
+
+3. Results 
+
+> 3.1. Chemical network
+
+Four main types of reactions are considered: (i) H-additions involving atomic hydrogen, (ii) H-additions involving molecu-lar hydrogen, (iii) H-abstractions by H atoms from molecular species (both closed-shell and radicals), and (iv) wHt isomeriza-tion reactions. To facilitate the presentation of our results, we or-ganized the reactions by the number of H atoms added to HCN and HNC up to the five hydrogen atoms of CH 3NH 2, and pro-vided the chemical network in Fig. 2. Furthermore, Table A.1, provides the complete list of reactions with complementary en-ergetic data and a comparison with works in the literature. To aid the reader, we have also included a condensed version of the full reaction network in Fig. 8, which details the reaction pathways that we deem most important for astronomical purposes.   
+
+> Article number, page 2 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network
+> Fig. 1. Selected functionals from the benchmark study. Three metrics are reported: (i) the average energy deviation excluding proton-transfer reactions, (ii) the average energy deviation for proton-transfer reactions only, and (iii) the global average of all reactions. These values are ob-tained from 13 benchmarked reactions (see the main text for details and the appendix for tabulated data).
+
+3.2. One hydrogen addition 
+
+Six reactions convert HCN and HNC to species with the {H2CN} general formula. The lowest activation energy barriers corre-spond to HNC hydrogenation, forming either the cis- or trans-isomers of HC •NH (reaction R4, Fig. 3), with barriers of 8.2 and 12.5 kJ mol −1 , respectively, while the barrier to form C •NH 2 is 55.9 kJ mol −1 . In contrast, H-addition to the more stable iso-mer HCN (reactions R1 and R2), involves substantially higher barriers of approximately 28.4 to form H 2CN •, 33.9 kJ mol −1 to form the cis-HC •NH and 41.7 for the trans-HC •NH isomer. The HNC → HCN conversion is disfavoured, as we find water-assisted proton transfer reactions (reaction R35-wHt) exhibit large activation barriers, at least 35.1 kJ mol −1 when mediated by three water molecules, in agreement with the work by Ba-iano et al. (2022), where a barrier of 49.6 kJ mol −1 for the same process involving two water molecules is reported. Given the relatively high barriers, all these reactions are ex-pected to proceed primarily via quantum tunneling given the relatively high crossover temperatures (see Table A.1), with the lowest barrier for reaction R4-cis (HNC to cis – HC •NH). Nonetheless, these first-step hydrogenation products are likely to be short-lived intermediates, as further H-addition or abstrac-tion reactions can take place, with either small or no barriers at all. In summary, the more reactive isomer between HCN and HNC toward H-addition is HNC, which leads to HC •NH. 
+
+3.3. Two hydrogen additions 
+
+Continuing along the hydrogenation sequence toward the 
+
+{H3CN} family, the intermediates produced from the first H-addition (cis- and trans-•HCNH, C •NH 2, and H 2CN •), undergo further hydrogenation. Within the {H3CN} family, the most sta-ble isomer is methanimine (H 2C – – NH), already hypothesized to be an intermediate along the reaction path by Theulé et al. (2011). The H-addition reactions on {H2CN} leading to methanimine are barrier-less (reactions R8, R5). In contrast, the formation of aminocarbene and methyl nitrene involves activation barriers of 25.8 and 13.5 kJ mol −1 , corresponding to reactions R9 (from the cis isomer) and R6, respectively. The remaining pathways, those involving the trans-•HCNH isomer and the reaction of C •NH 2
+
+with H • (reactions R9 and R7), are also barrier-less. The reac-tivity with molecular hydrogen (H 2) is limited to t-HC •NH +
+
+H2 → H2CNH + H• (reaction R22), which exhibits a barrier of 36.6 kJ mol −1 . Turning now toward H-abstraction reactions, the destruction of all H 2CN isomers back to HCN and HNC via H-abstraction with an H atom proceeds without activation barriers. The interconversion between cis- and trans-HCNH can pro-ceed either via direct isomerization (torsion around the dihedral angle) or through water-assisted proton transfer (reaction R37). The direct pathway involves a barrier of 23.9 kJ mol −1 , whereas the water-mediated mechanism exhibits a significantly higher barrier of 65.5 kJ mol −1 over three water molecules (see Fig. 4). In addition, two further wHt isomerization reactions were iden-tified, namely trans – HC •NH wHt 
+
+−−−→ H2CN • and C •NH 2wHt 
+
+−−−→
+
+trans – HC •NH, with activation barriers of 83.7 and 30.8 kJ mol −1 , respectively. Finally, it must be noted that methyl nitrene ( 3[H 3CN:]) and aminocarbene ( 1[HC:NH 2]) are higher-energy isomers of metha-nimine. These species exhibit non-octet electronic configura-tions at the nitrogen and carbon atoms, respectively, resulting in triplet and singlet ground states. To avoid ambiguity, we have explicitly indicated both their electronic state and the localiza-tion of the non-bonding electrons. Such spin configurations are characteristic of nitrenes and carbenes, where the distribution of unpaired electrons governs their reactivity and electronic struc-ture. In the case of aminocarbene, the singlet ground state is sta-bilized by interaction between the lone pair of the amino group and the empty p orbital of the carbene center, which lowers its energy relative to the corresponding triplet state. In summary, the most probable process at this stage of hydro-genation is H-addition to trans HC •NH, leading preferentially to methanimine or aminocarbene formation. In contrast, the pro-duction of methyl nitrene is less likely, as it requires the hydro-genation of H 2CN •, which itself forms via a barrier-mediated hydrogenation of HCN. 
+
+3.4. Three hydrogen additions 
+
+From the {H3CN} family, the main reactants involved in this third H-addition step are methanimine and aminocarbene. The hydrogenation of the former into H 3CN •H or H 2C•NH 2 (re-actions R12 and R11) exhibits activation barriers of 16.0 and 22.9 kJ mol −1 , respectively. In contrast, the conversion of aminocarbene to H 2C•NH 2 (reaction R13, Fig. 5) proceeds with a very low barrier of only 4.0 kJ mol −1 , making this the most favorable pathway. On the other hand, hydrogenation of the less relevant 3[H 3CN:] isomer is barrier-less, leading directly to H3CN •H (reaction R10). In addition, the isomerization through wHt from aminocar-bene to methanimine sports a very low barrier, of just 4.9 kJ mol −1 over three water molecules, indicating that methanimine might be a chemical “sink” in the sense that it is a main hub in the chemical network. Finally, we found HC •NH 3 to be highly unstable, as it barrier-lessy evolves into H 2C•NH 2 through a wHt reaction or can come back to 3[:CNH 3]. Hydrogen abstraction reactions from the {H3CN} family are generally characterized by the presence of activation barriers. Methanimine is relatively resistant to destruction via this mecha-nism, as the only exothermic pathway leads to cis – HC •NH over a barrier of 24.8 kJ mol −1 (reaction R22). Aminocarbene can be converted back to C •NH 2 (reaction R25), over a barrier of 8.8 kJ mol −1 or to trans – HC •NH (reaction R24) with a barrier of 14.8 
+
+> Article number, page 3 of 14
+
+A&A proofs: manuscript no. aa59799-26corr 
+
+Fig. 2. Schematic representation of the •CN chemical network on interstellar ice surfaces. The figure summarizes the reactions investigated in this work (the hydrogenation of HCN and HNC) together with related processes reported in previous studies (Enrique-Romero et al. 2022; Molpeceres et al. 2024; Enrique-Romero & Lamberts 2024; Enrique-Romero & Lamberts 2025b), shown as colored regions. Unless otherwise indicated, radical species have doublet spin multiplicity. Solid arrows denote barrier-less reactions, whereas dashed arrows indicate reactions with an activation barrier. Activation energies are given in kJ mol −1 . Arrow colors indicate reaction types: blue for H addition and abstraction, red for reactions with H 2, gray for wHts, and black for other processes (e.g., isomerization or radical–radical reactions). Energies are reported on a per-reaction basis, assuming e ffi cient thermalization on amorphous solid water, such that each activation barrier is referenced to the products of the preceding step. 
+
+Fig. 3. Geometries of the H-addition reactions on HNC leading to cis- and trans-HC •NH (reactions R4-cis and R4-trans). Distances are in Å. 
+
+kJ mol −1 . On the other hand, methyl nitrene is more prone to being destroyed into H 2CN • with a significantly lower barrier of only 6.7 kJ mol −1 (reaction R21). In summary, forming either methanimine or aminocarbene ensures the continuation of the hydrogenation sequence rather than cycling back to the {H2CN} family. In contrast, the route involving 3[H 3CN:] is of limited relevance, as its formation is kinetically unlikely and it is readily destroyed once formed. 
+
+3.5. Four hydrogen additions 
+
+The key radical intermediates H 3CN •H and H 2C•NH 2 both un-dergo barrier-less reactions with atomic hydrogen to produce the fully hydrogenated product, methylamine (CH 3NH 2). These rad-icals are accessible after the hydrogenation of methylamine and aminocarbene; the latter is the faster process, given its low en-ergy barrier. The H-abstraction reaction leading H 2C•NH 2 back to methanimine (reaction R29) is barrier-less, while the destruc-tion of H 3CN •H back to either methanimine or 3[H 3CN:] are characterized by barriers of 4.8 and 15.6 kJ mol −1 . We tried to also simulate the destruction of H 2CNH 2 into 1[HC:NH 2], all 
+
+Article number, page 4 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network     
+
+> Fig. 4. Geometries of the isomerization reactions from cis- to trans-HC •NH (reactions R37-isom and R37-wHt). In the upper panel, the reaction coordinate is the torsion angle of HC •NH. Distances are in Å.
+> Fig. 5. Molecular geometries of the lowest barrier channels involving the evolution of 1[HC:NH 2] into H 2C•NH 2(upper panels) or its water-assisted isomerization into H 2CNH (lower panels; reactions R13 and R39). Distances are in Å.
+
+our attempts ended up in the H-addition product, methylamine. These results further support methanimine’s role as a sink in the network. The isomerization of H 3CN •H into H 2C•NH 2 (reac-tion R40) requires a high activation energy barrier of 69.3 kJ mol −1 over two water molecules. Finally, once methylamine is formed, its destruction via H-abstraction to H 3CN •H or H 2C•NH 2 (reactions R33 and R32) exhibit high barriers of 48.0 and 30.2 kJ mol −1 , respectively. For the latter case, the nature of this barrier is related to the strong binding energy of the – NH 2 group to the water ice, since, if the H atom is found right under this group, reaction R32 has a much lower activation energy barrier of just 9.9 kJ mol −1 .These results suggest that, for this final round of H-additions and abstractions, the network is strongly biased toward the ac-cumulation of methylamine, as reverse pathways are generally hindered by activation barriers and local ice e ff ects. 
+
+3.6. Deuteration 
+
+Deuterium substitution was investigated for a selected set of ki-netically relevant reactions involving HNC and 1[HC:NH 2], i.e., the energetically most favorable paths that contribute to the evo-lution toward methanimine and methylamine. Figure 6 summa-rizes the possible products arising from D-substitution for H-addition reactions. A clear kinetic isotope e ff ect is observed only when a D atom is added, which manifests primarily in the imag-inary frequencies of the transition states, with shifts on the order of about -100 cm −1, while the corresponding changes in activa-tion energies are generally small. An exception is the reaction HNC + H → t-HC •NH, which already presents a relatively high activation barrier compared to the formation of the cis isomer and is, therefore, inherently less e ffi cient. A closer inspection of Fig. 6, taking into account both the energetics and the changes in barrier widths, suggests that the           
+
+> Article number, page 5 of 14 A&A proofs: manuscript no. aa59799-26corr
+> Fig. 6. Key D-substitution patterns for the energetically favored pathways leading to methanimine and methylamine from HNC and
+> 1[HC:NH 2]. Single deuterium substitutions are shown as color-coded H atoms. Bare values correspond to ZPE-corrected activation energies (in kJ mol −1; when present), and values in parentheses indicate the transition-state imaginary frequencies ( |ν‡|; in cm −1). Reaction steps without any activation energy value are barrier-less.
+
+direct addition of a D atom to either HNC or 1[HC:NH 2] is less effi cient than the addition of an H atom to a parent molecule that already contains a D • substitution, under the assumption that tunneling is mandatory. From the color-coded single D-for-H substitutions, it appears that the reaction DNC + H• prefer-entially leads to H 2CND, whereas HDCNH would more likely form via c-HC •NH + D•. Given the relatively high barrier asso-ciated with the formation of the trans-HC •NH isomer, the pro-duction of 1[HC:NH 2] is more likely to proceed through the reaction 3C + NH 3 Molpeceres et al. (2024). In this case, and following our previous discussion of H-addition and abstrac-tion reactions involving H 2C•NH 2, it is energetically more favor-able to add an H atom to the carbon center rather than abstract one of its hydrogen atoms, while abstraction from the nitrogen moiety remains feasible. Consequently, any D-substitution pat-tern in methylamine can be produced, whereas for methanimine, assuming the deuterium originates from NH 2D, the formation of H 2CND would be favored. Alternatively, if the D-addition proceeds via H 2C•NH 2 + D, the preferential product would be HDCNH. Among the isomerization channels, only the wHt reaction 
+
+> 1
+
+[HC:NH 2] −−−→ H2CNH presents a low activation barrier (4.9 kJ mol −1 ). As shown in Fig. 7, D substitution on 1[HC:NH 2]has a negligible impact on both the activation energy and the transition-state imaginary frequency. However, D substitution on the water molecules participating in the wHt mechanism in-creases the barrier by approximately 2–3 kJ mol −1 and reduces the imaginary frequency by about 100–130 cm −1, indicating a higher and wider barrier. For the wHt isomerization of HNC into HCN, a similarly weak dependence on D-substitution is observed when deuterium is initially located on DNC, although the absolute activation bar-riers remain comparatively high. 
+
+4. Discussion 
+
+4.1. Comparing to other works in the literature 
+
+Other works in the literature have partially explored the chem-ical network presented above, and here we provide a compari-son between our results and previous ones, summarized in Table A.1. Notably, Molpeceres et al. (2024) examined several of the reaction paths presented here while investigating the condensa-tion of carbon atoms on ammonia molecules on interstellar ices,    
+
+> Fig. 7. Key D-substitution patterns for the wHt-mediated isomerization of HNC to HCN and 1[HC:NH 2] to H 2CNH over three water molecules. Single deuterium substitutions are indicated by color-coded H atoms. Bare values give ZPE-corrected activation energies (in kJ mol −1; when present), while values in parentheses denote the transition-state imagi-nary frequencies ( |ν‡|; in cm −1).
+
+focusing mainly on H-addition and H-abstraction reactions to-gether with a limited number of wHt processes. While most re-actions exhibit similar energetic trends in the two studies, some di ff erences arise. These discrepancies can largely be attributed to three factors: (i) the local binding configuration on the ice sur-face, (ii) the influence of zero-point energy (ZPE) corrections, and (iii) methodological di ff erences between the computational approaches. Surface reactions on amorphous solid water depend strongly on the local binding environment, including variations in binding energies and in the hydrogen-bond network. On the one hand, for reaction R32, CH 3NH 2 + H• → H2C•NH 2 + H2, we iden-tified two barriers depending on the position of the incoming H atom relative to the – NH 2 group: 30.2 or 9.9 kJ mol −1 (see Fig. C.1). The higher value agrees well with literature values of 37.3 (Molpeceres et al. 2024) and 39.7 kJ mol −1 (Joshi & Lee 2022). The lower barrier arises from a configuration where the H atom reduces the interaction of the – NH 2 moiety with the ice surface, destabilizing the reactant complex and lowering the ap-parent barrier, also evident from the reaction energies (see Table A.1). While this configuration is likely unstable and transient in a dynamic system (the H atom could di ff use away), it high-lights the strong influence of the local ice environment on the resulting energetics. On the other hand, the wHt isomerization between 1[HC:NH 2] and methanimine (reaction R39) illustrates the role of ZPE corrections. In our work, the activation barrier is only 4.9 kJ mol −1 , whereas Molpeceres et al. (2024) and Fer-rero et al. (2024) reported values of 22.7 and 14.0 kJ mol −1 , re-spectively. In our calculations, the uncorrected ωB97m-D3(BJ) barrier is ∼17 kJ mol −1 , indicating that the ZPE correction plays a substantial role, while di ff erences in the local hydrogen-bond environment may further contribute. A similar case is reaction R38, for which Molpeceres et al. (2024) reported a barrier of 88.8 kJ mol −1 for formation of the trans isomer, whereas we obtain a barrier of 30.8 kJ mol −1 , much closer to their gas-phase value of 39.5 kJ mol −1 . The high bar-rier reported in that study led the authors to focus their discussion on cis – HC •NH, excluding the trans isomer. Although our value is significantly lower, this reaction is still unlikely to occur un-der pre-stellar conditions due to its very low tunneling crossover temperature (52 K), supporting their overall conclusions. Molpeceres et al. (2024) were also unable to identify suitable wHt channels for the conversion of cis – HC •NH into C •NH 2
+
+and •CH 2N. In their work, this limitation was attributed to the binding modes obtained for the reactants. From our perspective, however, it is more likely related to the greater geometric acces-sibility for H-transfer from the trans isomer compared with the  
+
+> Article number, page 6 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network
+
+cis configuration, which allows the wHt mechanism to operate more e ff ectively. A further discrepancy arises for reaction R29, which Molpeceres et al. (2024) considered non-viable on their ice model. In contrast, we find that this reaction proceeds without an activation barrier, with a reaction energy of 273.5 kJ mol −1 ,consistent with the gas-phase calculations of Joshi & Lee (2022). This di ff erence likely reflects the di ffi culty of locating transition states for this type of reaction on the ice surface. Finally, while HCN is less reactive than HNC against H-addition reactions in our network, one could ask whether reac-tions with other radicals might lead to a di ff erent conclusion. Indeed, although direct HCN + radical chemistry on interstel-lar ices remains largely unexplored, the study of Boland et al. (2024) still reinforces this selectivity: OH-addition pathways dif-fer strongly for HCN and HNC and generally proceed more read-ily from HNC. 
+
+4.2. Astrophysical implications 
+
+Our results on the hydrogenation of HCN and HNC on inter-stellar ices reveal a network comprising both barrier-less and barrier-mediated steps, many of which are likely enhanced by quantum tunneling. A key outcome is that HCN is expected to survive longer than HNC under interstellar conditions, owing to the higher reactivity of HNC toward atomic hydrogen. For clar-ity, a simplified representation of the chemical network is pro-vided in Fig. 8, which serves as a guide throughout the following discussion.      
+
+> Fig. 8. Simplified reaction network showing the main steps along the most e ffi cient path in the formation of methanimine and methylamine. Unless specified, the arrows indicate hydrogenation or hydrogen ab-straction steps. Solid lines indicate barrier-less channels, while dashed ones indicate the presence of an activation barrier. The entrance chan-nel through 3C+NH 3involves a minimum of two steps; see the main network in Fig. 2.
+
+As summarized in Fig. 8, hydrogenation preferentially pro-ceeds from HNC → HC •NH. From there, the system can evolve toward 1[HC:NH 2] → H2C•NH 2 → CH 3NH 2 or remain at the methanimine stage since the alternative route H 2CNH →
+
+H3CN •H → CH 3NH 2 is energetically less favorable. Starting from HNC, formation of HC •NH is associated with activation barriers of ∼8 and 13 kJ mol −1 , depending on the conformation of the product. In addition, H-abstraction reactions can also oc-cur, and in cases that involve a radical, they are barrier-less. This indicates that the relative orientation of the encounter between radicals and H atoms plays an important role in determining the reaction outcome, and suggests the presence of H-addition /H-abstraction loops within the network. Methanimine may act as a chemical sink, in the sense that one more step forward of back-ward in the network is mediated by a sizable activation energy barrier (of around 25 kJ mol −1 ), and therefore would require effi cient quantum tunneling, while other intermediates such as 
+
+> 1
+
+[HC:NH 2] show a small barrier to the next step (4.0 kJ mol −1 ). In addition, according to our calculations, wHt isomerizations between methanimine and 1[HC:NH 2] are only exothermic in the direction toward the formation of methanimine, with a low activation energy (4.9 kJ mol −1 ). One may ask what the importance of reactions involv-ing molecular hydrogen (H 2) is. Here we observe that not all radical + H2 → molecule + H are exoergic and therefore cannot take place under interstellar conditions. The only case where H 2
+
+participates as a reactant with a mild barrier is trans – HC •NH +
+
+H2 → H2CNH (with a barrier of 36.6 kJ mol −1 ), still rather high. Therefore, the presence of free H atoms in the environ-ment is rather important to fuel the network in Fig. 2. In any case, other channels exist that can lead to the formation of metha-nimine and methylamine, such as radical–radical chemistry (e.g., CH 3 + NH 2 Garrod et al. 2008; Enrique-Romero et al. 2022), gas-phase processes (e.g., Turner et al. 1999; Sil et al. 2018; Luthra et al. 2023), or a mix of the two (such as via H-abstraction from methylamine Joshi & Lee 2022). Similarly, the further evo-lution of methanimine and methylamine is not limited to surface chemistry, but gas-phase chemistry can also play an important role (Vazart et al. 2015; Vazart et al. 2016; Lupi et al. 2020; de Jesus et al. 2021). In addition to the final products of the hydrogenation net-work, there are intermediates that are worth exploring in more detail. San Andrés et al. (2023) propose that H 2CN •/C•NH 2
+
+can be used as temperature tracers, much like HCN /HNC is routinely used (Hacar et al. 2020). Looking at our network and the one by Molpeceres et al. (2024), H 2CN • is much more likely to be produced from the hydrogenation of HCN, while C •NH 2
+
+seems to be a product of an H-abstraction on 3[:CNH 3], formed from 3C + NH 3. The isomerization between these two isomers seems rather ine ff ective, since wHt reactions favor the formation of trans-HC •NH, and in addition, they can easily be destroyed by H-additions or abstractions. In any case, we calculated their binding energy distributions following the same approach as in Enrique-Romero & Lamberts (2024, see our Fig. B.1), finding that, on average, C •NH 2 binds more strongly to the water ice matrix than H 2CN •. The former shows a bimodal distribution with two peaks at around 42 and 58 kJ mol −1 , while the latter sports a single peak at ∼22 kJ mol −1 . In summary, these two species, if produced on interstellar ices, are quite likely to come from di ff erent direct parent species in our network. Methanimine and methylamine are important intermediates in astrochemistry, as both are potential precursors to pre-biotically relevant molecules such as glycine (NH 2CH 2COOH; Bernstein et al. 2002; Elsila et al. 2007). In any case, the H2C•NH 2 radical may play an important role in glycine formation through the radical–radical coupling with the HOC •O radical, as proposed in the reaction: HO •CO +
+
+> •
+
+CH 2NH 2 → NH 2CH 2COOH (Woon 2002). Methanimine is both e ffi ciently formed and relatively stable, and it is therefore expected to accumulate on interstellar ice surfaces. As a result, methanimine may serve as a key precursor to glycine formation. Although conversion to the H 2C•NH 2 radical requires over-coming a moderately high activation barrier (22.9 kJ mol −1 ), the enhanced abundance of methanimine can still facilitate its 
+
+> Article number, page 7 of 14
+
+A&A proofs: manuscript no. aa59799-26corr 
+
+involvement in downstream glycine-forming pathways. Finally, we examined the e ff ects of deuterium substitution along the main formation routes to methanimine and methy-lamine (see Sect. 3.6). Overall, D substitution has only a mi-nor impact on activation energies but leads to lower imaginary frequencies, indicating slightly wider e ff ective barriers and thus reduced tunneling e ffi ciency for reactions involving direct D ad-dition. As a result, H-addition pathways remain kinetically fa-vored, although the overall structure of the network is not al-tered. From an astrochemical perspective, this implies that mul-tiple deuteration pathways remain viable. In the case of metha-nimine, both DNC-derived routes and pathways involving NH 2Dcan contribute, while the weak sensitivity of wHt reactions to isotopic substitution suggests that exchange with the ice ma-trix can e ffi ciently redistribute deuterium. Consequently, we do not expect that the presence of singly deuterated methanimine uniquely constrains its formation pathway. A similar situation applies to methylamine. Its formation through successive hy-drogenation and abstraction steps allows multiple D-substitution patterns, with their relative abundances primarily governed by the local availability of deuterated precursor species rather than by a single dominant mechanism. All of this leads to the con-clusion that the most likely deuterated products are H 2CND (linked to DNC), HDCNH, and CH 3NHD (linked with NH 2D) and CH 2DNH 2.
+
+5. Conclusions 
+
+In this work we explored the hydrogenation network connect-ing HCN and HNC to methylamine on interstellar water ices. A schematic overview of the network is provided in Fig. 8. Our calculations show that HNC constitutes the most favorable en-try point into the hydrogenation sequence, as H addition lead-ing to cis-HC •NH proceeds over significantly lower barriers than the corresponding reactions involving HCN. Water-assisted HNC →HCN isomerization is also unlikely to compete under cold pre-stellar conditions due to the high associated barriers. These results suggest that HCN can survive longer on interstel-lar ice surfaces than its isomer HNC. Within the network, methanimine (H 2CNH) occupies a cen-tral position because several pathways converge toward this in-termediate. However, its further hydrogenation requires over-coming moderate activation barriers, which may slow its con-version and e ff ectively make it a chemical sink under inter-stellar conditions. The story is di ff erent for the two higher-energy isomers of methanimine. On the one hand, aminocar-bene ( 1[HC:NH 2]) provides an e ffi cient route toward full hydro-genation. The conversion of this intermediate to H 2C•NH 2 pro-ceeds over a very small barrier (4.0 kJ mol −1 ), facilitating rapid progression toward methylamine, whereas pathways leading to triplet methyl nitrene ( 3[H 3CN:]) are disfavored. In any case, if the radical intermediates H3CN •H or H2C•NH 2 are formed, the final hydrogenation step leading to methylamine (CH 3NH 2) is barrier-less, making the final satura-tion e ffi cient under H-rich conditions. Conversely, H-abstraction from methylamine generally involves sizable barriers. Reactions involving molecular hydrogen are instead mostly ine ffi cient, as they are associated with comparatively high activation barriers or are endoergic, highlighting the dominant role of atomic hy-drogen in driving this chemistry during the early stages of star formation. The local ice environment strongly influences reactivity. For instance, di ff erences in binding energies can lead to less sta-ble reactant configurations with lower relative activation barri-ers compared to cases where the adsorbate resides in a deeper binding site. Similarly, for wHt reactions, the structure of the hydrogen-bond network, such as the number of water molecules involved in the transference of the H atom, plays a critical role in determining the reaction energetics. Finally, we have also inves-tigated the e ff ect of deuterium substitution, which mainly a ff ects barrier widths associated with tunneling e ffi ciencies, having only a limited impact on barrier heights. Additional supporting infor-mation and optimized molecular geometries are available in the online repository (Enrique-Romero & Lamberts 2026).  
+
+> Acknowledgements. This project has received funding from the Horizon Europe Framework Programme (HORIZON) under the Marie Skłodowska-Curie grant agreement No 101149067, “ICE-CN”. Finally, this work was granted access to the HPC resources of the high-performance computer SNELLIUS, part of the SURF cooperative of educational and research institutions in the Netherlands, under project No EINF-12426.
+
+References 
+
+> Ásgeirsson, V., Birgisson, B. O., Bjornsson, R., et al. 2021, J. Chem. Theory Comput., 17, 4929 Baiano, C., Lupi, J., Barone, V., & Tasinato, N. 2022, Journal of Chemical The-ory and Computation, 18, 3111 Basalgète, R., Ocaña, A. J., Féraud, G., et al. 2021, Astrophys. J., 922, 213 Becker, S., Feldmann, J., Wiedemann, S., et al. 2019, Science, 366, 76 Bernstein, M. P., Dworkin, J. P., Sandford, S. A., Cooper, G. W., & Allamandola, L. J. 2002, Nature, 416, 401 Bernstein, M. P., Dworkin, J. P., Sandford, S. A., Cooper, G. W., & Allamandola, L. J. 2002, Nature, 416, 401 Boland, M., Chaquin, P., Volatron, F., & Markovits, A. 2024, Astron. Astrphys., 682, A13 Bulak, M., Paardekooper, D. M., Fedoseev, G., & Linnartz, H. 2021, Astron. Astrophys., 647, A82 Cappelletti, M. & Rahm, M. 2026, J. A. Chem. Soc. Carvalho, G. A., Pilling, S., & Galvão, B. R. L. 2022, Month. Not. R. Astron. Soc., 515, 3760 Danger, G., Borget, F., Chomat, M., et al. 2011a, Astron. Astrophys., 535, A47 Danger, G., Bossa, J. B., de Marcellus, P., et al. 2011b, Astron. Astrophys., 525, A30 de Jesus, D. N., da Silva, J. M. B. A., Tejero, T. N., et al. 2021, Month. Not. R. Astron. Soc., 501, 1202 Elsila, J. E., Dworkin, J. P., Bernstein, M. P., Martin, M. P., & Sandford, S. A. 2007, Astrophys. J., 660, 911 Enrique-Romero, J. & Lamberts, T. 2024, The Journal of Physical Chemistry Letters, 15, 7799 Enrique-Romero, J. & Lamberts, T. 2025a, Astron. Astrophys., 699, A235 Enrique-Romero, J. & Lamberts, T. 2025b, Astron. Astroph., vol Enrique-Romero, J. & Lamberts, T. 2026, Data set for HCN evolution article by Enrique-Romero and Lamberts Enrique-Romero, J., Rimola, A., Ceccarelli, C., et al. 2022, Astrophys. J. Supp. Ser., 259, 39 Ferrero, S., Ceccarelli, C., Ugliengo, P., Sodupe, M., & Rimola, A. 2024, Astro-phys. J., 960, 22 Garrod, R. T., Widicus Weaver, S. L., & Herbst, E. 2008, Astrophys. J., 682, 283 Gerakines, P. A., Moore, M. H., & Hudson, R. L. 2004, Icarus, 170, 202 Hacar, A., Bosman, A. D., & van Dishoeck, E. F. 2020, Astron. Astrphys., 635, A4 Hudson, R. L. & Moore, M. H. 2000, Astron. Astrophys., 357, 787 Hudson, R. L., Moore, M. H., Dworkin, J. P., Martin, M. P., & Pozun, Z. D. 2008, Astrobiology, 8, 771 Ilee, J. D., Walsh, C., Booth, A. S., et al. 2021, Astrophys. J. Supp. Ser., 257, 9 Jiménez-Escobar, A., Giuliano, B. M., Muñoz Caro, G. M., Cernicharo, J., & Marcelino, N. 2014, Astrophys. J., 788, 19 Jiménez-Serra, I., Martín-Pintado, J., Rivilla, V. M., et al. 2020, Astrobiology, 20, 1048 Jin, M., Lee, J.-E., & Kim, K.-T. 2015, Astrophys. J., Suppl. Ser., 219, 2 Joshi, P. R. & Lee, Y.-P. 2022, Comm. Chem., 5, 62 Le Gal, R., Hily-Blant, P., Faure, A., et al. 2014, Astron. Astrophys., 562, A83 Lupi, J., Puzzarini, C., & Barone, V. 2020, Astrophys. J. Lett., 903, L35 Luthra, H., Wakelam, V., Sharma, M. K., & Chandra, S. 2023, Month. Not. R. Astron. Soc., 521, 2181 Majumdar, L., Loison, J. C., Ruaud, M., et al. 2018, Month. Not. R. Astron. Soc., 473, L59
+
+Article number, page 8 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network 
+
+Miller, S. L. 1953, Science, 117, 528 Miller, S. L. & Urey, H. C. 1959, Science, 130, 245 Molpeceres, G., Tsuge, M., Furuya, K., et al. 2024, J. Phys. Chem. A, 128, 3874, pMID: 38709949 Neese, F. 2022, WIREs Computational Molecular Science, 12 Neese, F., Wennmohs, F., Becker, U., & Riplinger, C. 2020, J. Chem. Phys., 152, 224108 Öberg, K. I., Guzmán, V. V., Furuya, K., et al. 2015, Nature, 520, 198 Oró, J. 1961, Nature, 191, 1193 Oró, J. & Kamat, S. 1961, Nature, 190, 442 Patel, B. H., Percivalle, C., Ritson, D. J., Du ff y, C. D., & Sutherland, J. D. 2015, Nature chemistry, 7, 301 Powner, M. W., Gerland, B., & Sutherland, J. D. 2009, Nature, 459, 239 San Andrés, D., Colzi, L., Rivilla, V. M., et al. 2023, Month. Not. R. Astron. Soc., 523, 3239 Schilke, P., Walmsley, C. M., Pineau Des Forets, G., et al. 1992, Astron. Astr-phys., 256, 595 Sil, M., Gorai, P., Das, A., et al. 2018, Astrophys. J., 853, 139 Strecker, A. 1854, Liebigs Ann., 91, 349 Suzuki, T., Majumdar, L., Goldsmith, P. F., et al. 2023, Astrophys. J., 954, 189 Talbi, D. & Ellinger, Y. 1996, Chem. Phys. Lett., 263, 385 Tennis, J. D., Xue, C., Talbi, D., et al. 2023, Month. Not. R. Astron. Soc., 525, 2154 Theulé, P., Borget, F., Mispelaer, F., et al. 2011, Astron. Astrphys., 534, A64 Turner, B. E., Terzieva, R., & Herbst, E. 1999, Astrophys. J., 518, 699 Vazart, F., Calderini, D., Puzzarini, C., Skouteris, D., & Barone, V. 2016, J. Chem. Theo. Comp., 12, 5385 Vazart, F., Latouche, C., Skouteris, D., Balucani, N., & Barone, V. 2015, Astro-phys. J., 810, 111 Volosatova, A. D., Lukianova, M. A., Zasimov, P. V., & Feldman, V. I. 2021, Phys. Chem. Chem. Phys., 23, 18449 Woon, D. E. 2002, Astrophys. J. Lett., 571, L177 Zheng, J., Xu, X., & Truhlar, D. G. 2011, Theo. Chem. Acc., 128, 295 
+
+Article number, page 9 of 14 A&A proofs: manuscript no. aa59799-26corr 
+
+Appendix A: Reaction energetic descriptors 
+
+Table A.1. Reaction energetic descriptors and comparison to the literature. 
+
+Label Reaction ∆Urx ∆U† ∆U† Other Works Tc (K) 
+
+H-addition reactions 
+
+R1 HCN + H• → H2CN • -90.3 28.4 20.1 a, 30.5 b, 63.6 c, 28.3 d, 26.7 f 182 
+
+R2 -cis HCN + H• → cis – HC •NH -60.5 33.9 37.3 a, 53.5 b 261 
+
+R2 -trans HCN + H• → trans – HC •NH -78.5 41.7 74.4 c 280 
+
+R3 HNC + H• → C•NH 2 -43.7 55.9 55.6 a, 80.3 c 296 
+
+R4 -cis HNC + H• → cis – HC •NH -111.4 8.2 8.1 a 111 
+
+R4 -trans HNC + H• → trans – HC •NH -110.7 12.5 17.6 c 100 
+
+R5 H2CN • + H• → H2CNH -406.4* BL BL a
+
+R6 H2CN • + H• → 3[H 3CN:] -145.8 13.5 9.0 a 156 
+
+R7 C•NH 2 + H• → 1[HC:NH 2] -383.9* BL BL a
+
+R8 -cis cis – HC •NH + H• → H2CNH -450.8* BL BL a
+
+R8 -trans trans – HC •NH + H• → H2CNH -445.1* BL 
+
+R9 -cis cis – HC •NH + H• → 1[HC:NH 2] -328.7* BL BL a
+
+R9 -trans trans – HC •NH + H• → 1[HC:NH 2] -325.4* BL 
+
+R10 3[H 3CN:] + H• → H3CN •H -385.1* BL BL a
+
+R11 H2CNH + H• → H2CN •H2 -145.9 22.9 19.4 a, 25.5 b, 12.7 e, 17.7 f 186 
+
+R12 H2CNH + H• → H3CN •H -128.8 16.0 15.1 a, 19.2 b 171 
+
+R13 1[HC:NH 2] + H• → H2C•NH 2 -270.1 4.0 N/Aa 96 
+
+R14 1[HC:NH 2] + H• → HC •NH 3 -56.9 66.6 101.9 328 
+
+R15 H3CN •H + H• → CH 3NH 2 -446.7* BL BL a
+
+R16 H2C•NH 2 + H• → CH 3NH 2 -426.4* BL BL a
+
+H-abstraction and H 2-addition reactions 
+
+R17 H2CN • + H• → HCN + H2 -328.9 BL BL a
+
+R18 C•NH 2 + H• → HNC + H2 -383.8* BL BL a
+
+R19 -cis cis – HC •NH + H• → HCN + H2 -367.7 BL BL a
+
+R19 -trans trans – HC •NH + H• → HCN + H2 -351.1 2.2 162 
+
+R20 -cis cis – HC •NH + H• → HNC + H2 -335.8* BL BL a
+
+R20 -trans trans – HC •NH + H• → HNC + H2 -320.7* BL 
+
+R21 3[H 3CN:] + H• → H2CN • + H2 -279.6 6.7 BL a 135 
+
+R22 -cis H2CNH + H• → cis – HC •NH + H2 -33.9 24.8 45.0 a 340 
+
+R22 -trans trans – HC •NH + H2 → H2CNH + H• -24.7 36.6 371 
+
+R23 H2CNH + H• → H2CN • + H2 -54.0 29.4 406 
+
+R24 -cis 1[HC:NH 2] + H• → cis – HC •NH + H2 -138.5 28.3 22.7 a 349 
+
+R24 -trans 1[HC:NH 2] + H• → trans – HC •NH + H2 -140.7 14.7 22.7 a 349 
+
+R25 1[HC:NH 2] + H• → C•NH 2 + H2 -68.1** 8.8** 3.5 a 177 
+
+R26 H3CN •H + H• → 3[H 3CN:] + H2 -73.0 15.6 12.9 a 356 
+
+R27 H3CN •H + H• → H2CNH + H2 -301.7 4.8 1.8 a 129 
+
+R28 H2C•NH 2 + H• → 1[HC:NH 2] + H2 -154.4* BL N/Aa
+
+R29 H2C•NH 2 + H• → H2CNH + H2 -273.5 BL N/Aa
+
+R30 HC •NH 3 + H• → 1[HC:NH 2] + H2 -373.6 BL 
+
+R31 HC •NH 3 + H• → 3[:CNH 3] + H2 -52.7** 6.6** 57 
+
+R32 CH 3NH 2 + H• → H2C•NH 2 + H2 -67.3, -38.1 9.9, 30.2 37.3 a, 33.4 e 125, 337 
+
+R33 CH 3NH 2 + H• → H3CN •H + H2 -14.3 48.0 44.8 a, 39.7 e 414 
+
+R34 1[HC:NH 2] + H2 → CH 3NH 2† -231.7 102.6 270 
+
+Water-assisted H-transfer and isomerization reactions 
+
+R35 HNC wHt 
+
+−−−→ HCN -32.4, -33.7 35.1, 73.6 49.6 h 221, 149 
+
+R36 trans – HC •NH wHt 
+
+−−−→ H2CN • -32.9 83.7 
+
+R37 -isom cis – HC •NH isom 
+
+−−−→ trans – HC •NH -9.6 23.9 136 
+
+R37 -wHt cis – HC •NH wHt 
+
+−−−→ trans – HC •NH -22.6 65.5 196 
+
+R38 C•NH 2wHt 
+
+−−−→ trans – HC •NH -47.1 30.8 88.8 a 52 Continued on next page 
+
+Article number, page 10 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network 
+
+Table A.1. continued. 
+
+Label Reaction ∆Urx ∆U† ∆U† Other Works Tc (K) 
+
+R39 1[HC:NH 2] wHt 
+
+−−−→ H2CNH -106.1 4.9 22.7 a, 14.0 g 187 
+
+R40 H3CN •H wHt 
+
+−−−→ H2C•NH 2 -21.5 69.3 100 
+
+R41 HC •NH 3wHt 
+
+−−−→ H2C•NH 2 -209.3 BL BL a 
+
+> a
+
+Molpeceres et al. (2024) (ice), b Woon (2002) (gas), c Talbi & Ellinger (1996) (gas), d Majumdar et al. (2018) (gas), e Joshi & Lee (2022) (gas),  
+
+> f
+
+de Jesus et al. (2021) (gas), g Ferrero et al. (2024) (ice), h Baiano et al. (2022). * Calculated with respect to the asymptote, omitting ZPE corrections. ** Calculated with ωB97m-D3(BJ) /ma-def2-TZVP due to unrealistic ZPE correction at M062X-D3(0).  
+
+> †
+
+The reaction does not stop at H 2CNH 2 + H, but it directly evolves to methylamine over a very high barrier. Reaction R32 appears twice in the table because two di ff erent binding configurations of the reactants were identified, leading to distinct activation barriers (see Sect. 4). Reaction R35 is also listed twice, corresponding to water-assisted H-transfer (wHt) mechanisms involving three or two water molecules, respec-tively. The reactions 3[:CNH 3] + H• → HC •NH 3 and HC •NH 3wHt 
+
+−−−→ H2C•NH 2 (R42 and R43 ) are not included in this table, as they ultimately lead to H2C•NH 2 after direct optimization of HC •NH 3 in our model. 
+
+Notes. Summary of the reactions considered in this work and their energetics. Each reaction is assigned a label (R1, R2, ...) that is used throughout the text. Energy units are in kJ mol −1 . ∆Urx and ∆U‡ are the reaction and activation energies of each reaction, Tc is the tunneling crossover temperature. BL stands for barrier-less and N /A for “not an answer.” 
+
+Appendix B: BE distributions of CNH 2 and CH 2N
+
+The binding energy distributions for H 2CN • and C •NH 2 are shown in Fig. B.1. Representative examples of the most common interaction modes are presented in Fig. B.2, including one case for H 2CN and two for CNH 2. The first two structures correspond to adsorption on the same binding site, illustrating how small structural di ff erences, specifically the position of the two H atoms in the admolecule, can lead to significant di ff erences in binding energy. The third case corresponds to a deep binding site for CNH 2,where the NH 2 group is embedded within a small pocket-like structure in the ice, resulting in a substantially stronger interaction. 
+
+Appendix C: Effect of the binding mode on activation energy barriers 
+
+To illustrate the influence of the local binding configuration on the activation barrier, Fig. C.1 shows the stationary points corre-sponding to reaction R32 discussed in Sect. 4. Depending on the relative position of the incoming H atom with respect to the – NH 2
+
+group of methylamine, two di ff erent activation barriers are obtained. When the H atom resides directly beneath the – NH 2 group, the interaction of the amine moiety with the ice surface is weakened, destabilizing the reactant complex and resulting in a lower barrier (9.9 kJ mol −1 ). In contrast, when the H atom originates from a di ff erent binding site on the surface and does not perturb the interaction of CH 3NH 2 with the ice, the reactant configuration remains more stable, and the activation barrier increases to 30.2 kJ mol −1 .
+
+Appendix D: Benchmark data 
+
+A selection of 13 reactions was chosen to run a benchmark study. Table D.1 contains their relative energetics (barriers and reaction energies) at the reference level. The relative di ff erences of their activation energy with di ff erent functionals (in absolute value) can be found in D.2. Raw energies can be obtained in the Zenodo repository of this project, Enrique-Romero & Lamberts (2026). 
+
+Article number, page 11 of 14 A&A proofs: manuscript no. aa59799-26corr 
+
+Fig. B.1. Binding energy distributions for H 2CN (left) and CNH 2 (right) on 14 and 18 water ice molecule clusters. Article number, page 12 of 14 J. Enrique-Romero* T. Lamberts: Methanimine as a sink in the HCN and HNC solid state hydrogenation network 
+
+Fig. B.2. Geometries of the most frequent binding energies in Fig. B.1. From left to right: H 2CN (22.1 kJ mol −1 ), CNH 2 (42.5 and 55.9 kJ mol −1 ), and (H 2O) 14 .
+
+Fig. C.1. Stationary points along the potential energy surface for the H-abstraction reaction CH 3NH 2 + H• −−−→ H2C•NH 2 + H2. The upper panel shows the configuration where the incoming H atom is located beneath the – NH 2 group, weakening its interaction with the ice surface and leading to a lower activation barrier (9.9 kJ mol −1 ). The lower panel shows a configuration in which the H atom originates from a di ff erent binding site and does not perturb the interaction of CH 3NH 2 with the surface, resulting in a higher barrier (30.2 kJ mol −1 ). Bond distances are in Å. 
+
+Table D.1. Benchmark reference values. 
+
+∆E‡
+
+∆Er
+
+A 24.6 -153.0 B 40.2 -114.6 C 9.6 -145.4 D 54.2 -121.4 E 43.8 -41.0 F 46.5 -13.0 G 56.4 -5.0 H 14.9 -177.6 I 14.8 -82.3 J 42.1 -25.7 K 84.8 -65.1 L 128.4 -25.9 M 37.2 -116.4 
+
+Notes. Energetics obtained with the reference method CCSD(T) /aug-cc-pVTZ // M062X-D3(0) /ma-def2-TZVP. Values in kJ mol −1 . The considered reactions are A: HCN + H• → H2CN •, B: HCN + H• → HC •NH, C: HNC + H• → HC •NH, D: HNC + H• → C•NH 2, E: CH 3NH 2 +
+
+H• → H2C•NH 2 + H2, F: CH 3NH 2 + H → CH 3NH • + H2, G: H 2CNH + H• → cis – HC •NH + H2, H: H 2CNH + H• → H2C•NH 2, I: H 3CN •H +
+
+H• → 3[H 3CN:] + H2, J: trans – HC •NH + H2 → H2CNH + H•, K: wHt C •NH 2 → trans – HC •NH, L: wHt H 2C•NH 2 → H3CN •H and M: wHt 
+
+> 1
+
+[HC:NH 2] → CH 2NH. Article number, page 13 of 14 A&A proofs: manuscript no. aa59799-26corr 
+
+Table D.2. Benchmark energetic descriptors. 
+
+1 2 3 4 5 6 7A 8.4 0.7 3.3 1.4 6.4 0.3 0.4 B 9.7 0.3 5.1 0.1 11.3 2.5 2.1 C 5.3 3.3 1.4 1.4 4.5 1.9 2.6 D 8.0 3.4 1.9 4.3 8.8 0.8 0.2 E 12.6 0.2 6.4 4.8 16.1 7.2 6.1 F 10.7 4.3 0.8 4.7 13.1 3.7 2.4 G 12.4 2.2 7.2 8.3 17.6 8.3 7.3 H 7.2 0.9 2.1 0.5 7.3 1.2 0.3 I 5.8 2.1 1.3 4.1 8.9 0.4 0.6 J 10.2 0.3 5.7 5.2 16.6 6.5 5.3 K 13.4 16.7 0.3 6.7 9.7 4.5 6.8 L 15.7 27.5 24.8 8.9 22.5 12.6 15.6 M 4.4 11.5 5.1 4.3 3.9 0.5 1.6 Avg (all) 9.5 5.6 5.0 4.2 11.3 3.9 3.9 Avg (wHt) 11.2 18.6 10.1 6.7 12.0 5.9 8.0 Avg (no wHt) 9.0 1.8 3.5 3.5 11.0 3.3 2.7 
+
+Notes. Energy di ff erences in activation barriers ( ∆E‡) between the tested density functional approximations (DFAs) and the reference values for the reactions reported in Table D.1 (in kJ mol −1 ). Considered DFAs 1: BH&HLYP-D4, 2: M06-2X-D3(0), 3: MPWB1K-D3(BJ), 4: M08HX-D3(0), 5: PW6B95-D4, 6: ωB97m-D3(BJ), and 7: ωB97m-V. Article number, page 14 of 14
