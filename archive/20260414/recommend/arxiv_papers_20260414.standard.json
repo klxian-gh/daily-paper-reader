@@ -1,0 +1,282 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-14T22:06:12.500916+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [
+    {
+      "id": "2604.10487v1",
+      "title": "CovAngelo: A hybrid quantum-classical computing platform for accurate and scalable drug discovery",
+      "abstract": "We present a computational platform for modeling chemical reactions in complex molecular environments, focused on ligand-protein binding in drug discovery. The platform implements our new quantum-in-quantum-in-classical (QM/QM/MM) multiscale embedding model that integrates molecular dynamics with a quantum-information-enhanced density matrix embedding theory and quantum chemistry solvers, including explicit solvent. Quantum-information metrics are utilized to generate entanglement-consistent orbitals, enabling a high-accuracy description of strongly correlated regions. The framework supports multiple computational backends, including multi-CPU, NVIDIA multi-GPU architectures, and quantum hardware (IQM, IonQ, IBM) integrated under CUDA-Q, and is designed for compatibility with future fault-tolerant quantum systems. The new platform's capabilities are demonstrated by modeling covalent docking of zanubrutinib to Bruton's tyrosine kinase via a Michael addition mechanism, computing the full reaction energy profiles and energy barriers at a reduced computational cost relative to existing methods. As a 2nd-generation anticancer agent, zanubrutinib serves as a proof of concept for covalent inhibitor discovery. Accurate first-principles reaction barrier estimations provided by our method can contribute to reducing false positive and negative rates in drug discovery pipelines. Scalability is validated through benchmarks on GPU clusters, cloud-based CPU infrastructures. We demonstrate integration with quantum devices (up to 20 qubits), alongside resource estimates for fault-tolerant quantum computing, indicating potential speedups of up to 20x. Beyond single reactions, the platform supports the construction of reaction networks in chemical metric space, facilitating ligand screening and systematic exploration of reactive pathways.",
+      "authors": [
+        "Linn Evenseth",
+        "Kamil Galewski",
+        "Witold Jarnicki",
+        "Piero Lafiosca",
+        "Vyom N. Patel",
+        "Grzegorz Rajchel-Mieldzioć",
+        "Martin Šimka",
+        "Michał Szczepanik",
+        "Emil Żak"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.comp-ph",
+        "quant-ph"
+      ],
+      "published": "2026-04-12T06:42:33+00:00",
+      "link": "https://arxiv.org/pdf/2604.10487v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "QM/QM/MM multiscale embedding model for chemical reactions in complex molecular environments",
+      "llm_evidence_cn": "用于复杂分子环境中化学反应的QM/QM/MM多尺度嵌入模型",
+      "llm_evidence": "用于复杂分子环境中化学反应的QM/QM/MM多尺度嵌入模型",
+      "canonical_evidence": "用于复杂分子环境中化学反应的QM/QM/MM多尺度嵌入模型",
+      "llm_tldr_en": "Presents a hybrid quantum-classical platform using QM/QM/MM for accurate modeling of chemical reactions in proteins.",
+      "llm_tldr_cn": "提出一个使用QM/QM/MM的混合量子-经典平台，用于精确模拟蛋白质中的化学反应。",
+      "llm_tldr": "提出一个使用QM/QM/MM的混合量子-经典平台，用于精确模拟蛋白质中的化学反应。",
+      "llm_tags": [
+        "query:qmmm:composite"
+      ],
+      "matched_query_tag": "query:qmmm:composite",
+      "matched_query_text": "Papers central to 使用QM/MM手段研究糖苷转移酶催化反应机理的论文, especially work that connects or combines: combined quantum mechanics and molecular mechanics simulation; glycosyltransferase enzyme catalysis mechanism; catalytic reaction mechanism and pathway; QM/MM molecular dynamics simulations; enzymatic catalytic cycle and kinetics; QM/MM computational studies of glycoside hydrolase mechanisms; QM/MM studies on the catalytic mechanism of glycosyltransferases; quantum chemical investigation of glycosyltransferase enzymes.",
+      "matched_requirement_id": "req-composite-qmmm",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.07322v2",
+      "title": "Explicit Electric Potential-Embedded Machine Learning Framework: A Unified Description from Atomic to Electronic Scales",
+      "abstract": "To further develop accurate and large-scale simulations of electrochemical interfaces, we propose a unified explicit electric potential framework to simultaneously predict atomic forces and electron density distributions. The framework consists of three components: data generation, model training, and application. The data generation component, implemented in Hy-DFT, efficiently regulates the potential during constant-potential ab initio molecular dynamics (CP-AIMD), reducing the number of single-point calculations required for convergence. The model training component includes two modules: Potential-Embedded MACE (PE-MACE) and Potential-Embedded Electron Density Prediction (PE-EDP). PE-MACE implements an explicit electric potential machine learning force field (EEP-MLFF) based on the MACE architecture. We develop PE-EDP to overcome the limitation of EEP-MLFF in describing atom forces. PE-EDP, also based on equivariant graph neural networks, predicts electron density distributions under arbitrary potentials. Using the Pt(111)/water interface as a model system, both PE-MACE and PE-EDP show high accuracy on training and test sets. Radial distribution functions from CP-MLMD agree well with CP-AIMD, and long-timescale simulations reveal potential-induced reorganization of interfacial water. Planar-integrated charge profiles and Bader analysis from PE-EDP are consistent with DFT results. These results demonstrate that the framework can simultaneously describe atomic dynamics and electron density distributions under arbitrary potentials, providing a useful tool for studying electrochemical interfaces.",
+      "authors": [
+        "Jingwen Zhou",
+        "Yawen Yu",
+        "Xuwei Liu",
+        "Chungen Liu"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-08T17:37:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.07322v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ab initio molecular dynamics and electron density prediction",
+      "llm_evidence_cn": "从头算分子动力学与电子密度预测",
+      "llm_evidence": "从头算分子动力学与电子密度预测",
+      "canonical_evidence": "从头算分子动力学与电子密度预测",
+      "llm_tldr_en": "A machine learning framework for predicting atomic forces and electron density in AIMD simulations.",
+      "llm_tldr_cn": "一种用于在AIMD模拟中预测原子力和电子密度的机器学习框架。",
+      "llm_tldr": "一种用于在AIMD模拟中预测原子力和电子密度的机器学习框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08058v1",
+      "title": "Machine Learning the order-disorder Jahn-Teller transition in LaMnO$_3$",
+      "abstract": "We investigate the Jahn-Teller structural phase transition in LaMnO$_3$ at $T_{JT} \\simeq 750$ K using molecular dynamics simulations based on machine-learning force fields trained on ab initio data. Analysis of the site-site correlation function of the distortions reveals that the transition is driven by the ordering of the $Q_2$ Jahn-Teller distortion of the MnO$_6$ octahedra, which acts as the order parameter and establishes the order-disorder nature of the transition. Dynamical local distortions are found to persist above $T_{JT}$. Our results reproduce the experimental temperature dependence of both structural and phonon properties and highlight the presence of anharmonic effects at finite temperature. More broadly, the combined use of machine-learning molecular dynamics and velocity autocorrelation function analysis provides a robust framework for uncovering the microscopic mechanisms of structural phase transitions in correlated materials. In particular, this approach enables a clear distinction between order-disorder transitions and alternative mechanisms, such as displacive behavior, through the temperature evolution of vibrational properties.",
+      "authors": [
+        "Lorenzo Celiberti",
+        "Alexander Ehrentraut",
+        "Luca Leoni",
+        "Cesare Franchini"
+      ],
+      "primary_category": "cond-mat.stat-mech",
+      "categories": [
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-04-09T10:17:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.08058v1",
+      "tags": [
+        "keyword:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "molecular dynamics based on machine-learning force fields from ab initio data",
+      "llm_evidence_cn": "基于从头算数据训练的机器学习力场的分子动力学",
+      "llm_evidence": "基于从头算数据训练的机器学习力场的分子动力学",
+      "canonical_evidence": "基于从头算数据训练的机器学习力场的分子动力学",
+      "llm_tldr_en": "ML force fields trained on ab initio data enable molecular dynamics study of structural phase transitions.",
+      "llm_tldr_cn": "基于从头算数据训练的机器学习力场实现了对结构相变的分子动力学研究。",
+      "llm_tldr": "基于从头算数据训练的机器学习力场实现了对结构相变的分子动力学研究。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08128v1",
+      "title": "Crossing Seam Blockade",
+      "abstract": "Electronic degeneracies and near-degeneracies including conical intersections and avoided crossings, typically accompanied by strong vibronic couplings and nonadiabatic transitions, play fundamental roles in photochemical, photophysical and photobiological processes. However, its implications on excited-state chemical reactivities are not fully understood. In this theoretical study, we report a surprising phenomena that an open reaction channel can be \\emph{completely} blocked by a crossing seam in the molecular configuration space. Specifically, by numerically exact ab initio nonadiabatic full quantum geometrical molecular dynamics simulations, we show that the singlet fission channel in the hydrogen chain H$_4$, previously identified as a minimal model for singlet fission, is blocked due to electronic quantum geometry. We provide a chemically intuitive picture to understand this effect. Our results not only reveal a new mechanism for controlling photochemical reactions, but may also elucidate the mechanism of singlet fission.",
+      "authors": [
+        "Ruoxi Liu",
+        "Xiaotong Zhu",
+        "Bing Gu"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-09T11:47:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.08128v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ab initio nonadiabatic full quantum molecular dynamics simulations",
+      "llm_evidence_cn": "从头算非绝热全量子分子动力学模拟",
+      "llm_evidence": "从头算非绝热全量子分子动力学模拟",
+      "canonical_evidence": "从头算非绝热全量子分子动力学模拟",
+      "llm_tldr_en": "Investigates chemical reactivity and nonadiabatic transitions using quantum molecular dynamics simulations.",
+      "llm_tldr_cn": "利用量子分子动力学模拟研究化学反应活性和非绝热跃迁。",
+      "llm_tldr": "利用量子分子动力学模拟研究化学反应活性和非绝热跃迁。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.08128v2",
+      "title": "Crossing Seam Blockade",
+      "abstract": "Electronic degeneracies and near-degeneracies including conical intersections and avoided crossings, typically accompanied by strong vibronic couplings and nonadiabatic transitions, play fundamental roles in photochemical, photophysical and photobiological processes. However, its implications on excited-state chemical reactivities are not fully understood. In this theoretical study, we report a surprising phenomena that an open reaction channel can be completely blocked by a crossing seam in the molecular configuration space. Specifically, by numerically exact ab initio nonadiabatic full quantum geometrical molecular dynamics simulations, we show that the singlet fission channel in the hydrogen chain H4, previously identified as a minimal model for singlet fission, is blocked due to electronic quantum geometry. We provide a chemically intuitive picture to understand this effect. Our results not only reveal a new mechanism for controlling photochemical reactions, but may also elucidate the mechanism of singlet fission.",
+      "authors": [
+        "Ruoxi Liu",
+        "Xiaotong Zhu",
+        "Bing Gu"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-09T11:47:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.08128v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum geometrical molecular dynamics simulations",
+      "llm_evidence_cn": "量子几何分子动力学模拟",
+      "llm_evidence": "量子几何分子动力学模拟",
+      "canonical_evidence": "量子几何分子动力学模拟",
+      "llm_tldr_en": "Investigates chemical reactivity and reaction channels using nonadiabatic quantum molecular dynamics.",
+      "llm_tldr_cn": "通过非绝热全量子几何分子动力学模拟研究化学反应通道的阻塞现象。",
+      "llm_tldr": "通过非绝热全量子几何分子动力学模拟研究化学反应通道的阻塞现象。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.09769v1",
+      "title": "Differentiable free energy surface: a variational approach to directly observing rare events using generative deep-learning models",
+      "abstract": "Rare events are central to the evolution of complex many-body systems, characterized as key transitional configurations on the free energy surface (FES). Conventional methods require adequate sampling of rare event transitions to obtain the FES, which is computationally very demanding. Here we introduce the variational free energy surface (VaFES), a dataset-free framework that directly models FESs using tractable-density generative models. Rare events can then be immediately identified from the FES with their configurations generated directly via one-shot sampling of generative models. By extending a coarse-grained collective variable (CV) into its reversible equivalent, VaFES constructs a latent space of intermediate representation in which the CVs explicitly occupy a subset of dimensions. This latent-space construction preserves the physical interpretability and transparent controllability of the CVs by design, while accommodating arbitrary CV formulations. The reversibility makes the system energy exactly accessible, enabling variational optimization of the FES without pre-generated simulation data. A single optimization yields a continuous, differentiable FES together with one-shot generation of rare-event configurations. Our method can reproduce the exact analytical solution for the bistable dimer potential and identify a chignolin native folded state in close alignment with the experimental NMR structure. Our approach thus establishes a scalable, systematic framework for advancing the study of complex statistical systems.",
+      "authors": [
+        "Shuo-Hui Li",
+        "Chen Chen",
+        "Yao-Wen Zhang",
+        "Ding Pan"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cond-mat.stat-mech",
+        "cs.LG"
+      ],
+      "published": "2026-04-10T18:00:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.09769v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modeling free energy surfaces for rare events in complex systems",
+      "llm_evidence_cn": "对复杂系统中的稀有事件进行自由能面建模",
+      "llm_evidence": "对复杂系统中的稀有事件进行自由能面建模",
+      "canonical_evidence": "对复杂系统中的稀有事件进行自由能面建模",
+      "llm_tldr_en": "Introduces a deep-learning framework to directly model free energy surfaces and identify rare event transitions.",
+      "llm_tldr_cn": "引入深度学习框架直接建模自由能面并识别稀有事件转换。",
+      "llm_tldr": "引入深度学习框架直接建模自由能面并识别稀有事件转换。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.10984v1",
+      "title": "opt-DDAP: Optimisable density-derived atomic point charges via automatic differentiation",
+      "abstract": "Interatomic potentials which accurately describe long-range electrostatics require atom-centred charges. One such method to determine these atom-centred charges from density functional theory (DFT) calculations is the density-derived atomic point (DDAP) charge method. DDAP fits atom-centred Gaussians to the ground-state DFT charge density and preserves the multipole moments that govern long-range electrostatics. While these charges accurately predict long-range behaviour, in practice, they are limited by their reliance on fixed, heuristic parameters and a constrained solver that becomes numerically unstable for complex or covalent systems. In this work, we present opt-DDAP, which solves this limitation by reformulating the algorithm as a differentiable computational graph. This reformulation allows for the optimisation of Gaussian basis parameters and the reciprocal-space cutoff using automatic differentiation. To ensure numerical robustness through this automatic differentiation process, we replace the conventional Lagrange-multiplier approach with a pseudo-inverse solution followed by charge renormalisation, maintaining stability even in the presence of ill-conditioned matrices. We validate the framework on NaCl vacancy supercells and on MoS$_2$, demonstrating faithful reconstruction of both absolute and difference charge densities. The optimised charges are intended to serve as inputs to effective electrostatic models in machine-learning and empirical interatomic potentials that incorporate long-range interactions.",
+      "authors": [
+        "Mohith H.",
+        "Sudarshan Vijay"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-13T04:43:08+00:00",
+      "link": "https://arxiv.org/pdf/2604.10984v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "atomic point charges from DFT for interatomic potentials",
+      "llm_evidence_cn": "从DFT计算中获取原子点电荷用于原子间势能",
+      "llm_evidence": "从DFT计算中获取原子点电荷用于原子间势能",
+      "canonical_evidence": "从DFT计算中获取原子点电荷用于原子间势能",
+      "llm_tldr_en": "A method to derive atomic point charges from DFT, improving electrostatic descriptions in simulations.",
+      "llm_tldr_cn": "一种从DFT中导出原子点电荷的方法，改进了模拟中的静电描述。",
+      "llm_tldr": "一种从DFT中导出原子点电荷的方法，改进了模拟中的静电描述。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

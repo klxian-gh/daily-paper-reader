@@ -1,0 +1,864 @@
+Title: Differentiable free energy surface: a variational approach to directly observing rare events using generative deep-learning models
+
+URL Source: https://arxiv.org/pdf/2604.09769v1
+
+Published Time: Tue, 14 Apr 2026 00:15:33 GMT
+
+Number of Pages: 40
+
+Markdown Content:
+Differentiable free energy surface: a variational approach to directly observing rare events using generative deep-learning models 
+
+Shuo-Hui Li, 1, ∗ Chen Chen, 1 Yao-Wen Zhang, 1 and Ding Pan 1, 2, 3, †
+
+> 1
+
+Department of Physics, The Hong Kong University of Science and Technology, Hong Kong, China 
+
+> 2
+
+Department of Chemistry, The Hong Kong University of Science and Technology, Hong Kong, China 
+
+> 3
+
+IAS Center for AI for Scientific Discoveries, Hong Kong University of Science and Technology, Hong Kong, China 
+
+Abstract 
+
+Rare events are central to the evolution of complex many-body systems, characterized as key tran-sitional configurations on the free energy surface (FES). Conventional methods require adequate sampling of rare event transitions to obtain the FES, which is computationally very demanding. Here we introduce the variational free energy surface (VaFES), a dataset-free framework that di-rectly models FESs using tractable-density generative models. Rare events can then be immediately identified from the FES with their configurations generated directly via one-shot sampling of gener-ative models. By extending a coarse-grained collective variable (CV) into its reversible equivalent, VaFES constructs a latent space of intermediate representation in which the CVs explicitly occupy a subset of dimensions. This latent-space construction preserves the physical interpretability and transparent controllability of the CVs by design, while accommodating arbitrary CV formulations. The reversibility makes the system energy exactly accessible, enabling variational optimization of the FES without pre-generated simulation data. A single optimization yields a continuous, dif-ferentiable FES together with one-shot generation of rare-event configurations. Our method can reproduce the exact analytical solution for the bistable dimer potential and identify a chignolin native folded state in close alignment with the experimental NMR structure. Our approach thus establishes a scalable, systematic framework for advancing the study of complex statistical systems.  
+
+> ∗
+
+shuohuili@ust.hk  
+
+> †
+
+dingpan@ust.hk 
+
+1 
+
+> arXiv:2604.09769v1 [physics.comp-ph] 10 Apr 2026 I. INTRODUCTION
+
+Rare events often govern the key processes of complex statistical systems, ranging from chemical reactivity and biomolecular function to seismic activity. In atomistic simulations, these intrinsically slow processes require trajectories to traverse vast high-dimensional con-figuration spaces and cross high kinetic barriers between metastable basins, making sam-pling very costly: molecular dynamics (MD) may require exhaustive simulations reaching milliseconds to seconds or longer, while Markov chain Monte Carlo (MCMC) can demand prohibitively many accept–reject steps. In practice, rare-event sampling is therefore typi-cally performed in a reduced subspace of coarse-grained collective variables (CVs), which paves the foundation for influential computational methods such as umbrella sampling [1], thermodynamic integration [2, 3], the Wang–Landau algorithm [4], and metadynamics [5]. Despite operating in this coarse-grained subspace, these methods still face convergence dif-ficulties due to high barriers, low event probabilities, and technical issues such as poor CV choices or sampling parameter selections [6, 7]. The concept of the free energy surface (FES) follows naturally once all rare-event transitions associated with the CVs are identified and sufficiently sampled. Formally, through histogramming and reweighting, the FES value F (s)
+
+at a given CV coordinate s is obtained by integrating over the corresponding configurations: 
+
+F (s) = −T ln 
+
+Z
+
+exp ( −βE (x)) δ(s − S (x)) dx, (1) where β = 1 /T , x denotes a configuration with energy E(x), and the coarse-graining map 
+
+S converts x into the corresponding CV coordinate s. The FES emerges as an effective landscape governing the coarse-grained dynamics, therefore playing a central role in identi-fying metastable states, quantifying transition barriers, and elucidating reaction pathways. Nevertheless, because even a single rare-event transition is difficult to sample and converge, accurate estimation of the full FES remains exceptionally challenging for sampling-based methods. Variational methods offer a distinct alternative by targeting free energies directly [8]. Re-cent advances have employed tractable-density generative models [9–12] as highly expressive variational models capable of one-shot direct sampling from the target distribution [13– 16]. These approaches have demonstrated substantial success in estimating free energies for complex systems, including lattice models [13, 16], classical atomistic systems [17–19], 2and quantum atomic systems [20]. Remarkably, such neural networks exhibit superior scal-ability to high dimensionality, as routinely demonstrated in demanding machine-learning applications involving millions to billions of parameters [12, 21–28]. In principle, the FES should admit a similar variational treatment [29, 30], yet a key obstacle remains: exist-ing deep-learning variational formulations require the exact energy function in the original full configuration space, which is no longer accessible after coarse-graining onto CVs. Aframework that starts from the energy function and directly yields the FES as a continuous function of the CVs therefore remains an open challenge. Here we introduce the variational free energy surface (VaFES), a framework for directly modeling FESs with tractable-density generative models, in which the FES is first obtained as a characterizing map and then used to identify and generate rare-event configurations via one-shot sampling. The key idea underlying the variational formulation is to replace the coarse-grained CV transformation with a bijection. Exploiting the universality of bijective transformations—a concept that also underlies the universality of quantum computing [31]— we expand any given coarse-grained CV transformation into its reversible equivalent. The resulting construction embeds the CV coordinates into an intermediate representation with the same dimensionality as the original full space. Leveraging this reversibility, the system energy can be rewritten exactly, enabling variational optimization of the FES. With no need for external datasets or time-consuming MCMC/MD simulations in the optimization loop, the generative model is trained on self-generated one-shot configurations in a bootstrap man-ner. After training, the variational objective yields the FES as a continuous, differentiable function of the CVs, in contrast to the histogrammed, discrete free energy profiles produced by conventional deep-learning approaches [12, 32–34]. This allows rare-event transitions to be identified using methods such as the nudged elastic band (NEB) [35, 36] and the string method [37]. Subsequently, direct sampling from the model yields one-shot configurations conditioned on the identified CV values. A single optimization therefore provides both a continuous, differentiable FES and the corresponding rare-event configurations. The intermediate representation in VaFES combines physical interpretability with trans-parent controllability. By construction, the CVs explicitly occupy a subset of latent dimen-sions, therefore carrying clear physical or chemical meaning, unlike the opaque latent spaces produced by stochastic optimization [10, 12, 22, 38, 39]. The design also remains flexible enough to incorporate machine-learned or statistically derived CV coordinates. Further-3more, the universality of bijections removes structural restrictions on CV choice, allowing VaFES to work with arbitrary CV formulations beyond the limitations of conventional meth-ods [1–3]. At the same time, it enables systematic symmetry removal and the imposition of exact geometric constraints, providing an alternative to architectural inductive biases typically imposed by equivariant neural networks [40–43]. We demonstrate VaFES across applications of increasing complexity, from an analytically solvable toy model to atomistic systems, concluding in the protein chignolin. In the toy-model benchmark of Sec. II B, VaFES reproduces the analytical solution exactly. In Sec. II C and Sec. II D, the intermediate representation integrates physical and data-driven CVs seam-lessly, while local-frame constructions eliminate translational and rotational degrees of free-dom. Finally, in the chignolin application of Sec. II E, we employ a more sophisticated intermediate representation that converts all Cartesian coordinates into physics-informed latent dimensions, allowing exact geometric constraints such as bond-length upper bounds, L-type chirality, and planar aromatic rings represented in two-dimensional local frames. The resulting native folded state prediction achieves a C α root-mean-square deviation (C α-RMSD) of approximately 1Å from the experimental NMR structure, highlighting the ability of VaFES to recover realistic rare-event configurations with high structural fidelity.   
+
+> II. RESULTS AND DISCUSSION A. Variational free energy surface
+
+In this section, we describe the detailed design of the VaFES framework, schematically illustrated in Fig. 1. In VaFES, we first reformulate the coarse-grained CV transformation S
+
+as a reversible equivalent T , exploiting the fact that any transformation can be extended to a corresponding bijection [44, 45]. For a given input configuration x, the bijective transfor-mation T returns the original coarse-grained variables, the CVs s, together with additional dimensions, denoted by the auxiliary variables u, i.e. , (s, u) = T (x). We refer to the pair 
+
+(s, u) as the intermediate representation, which preserves all information in the original configuration x and therefore admits an inverse transformation. An immediate advantage of this representation is that, in the latent space spanned by (s, u), the FES in Eq. (1) can 4be rewritten in a clear form 
+
+F (s) = −T ln 
+
+Z
+
+exp 
+
+
+
+−β ˆE(s, u)
+
+
+
+du, (2) where the integration is performed only over the auxiliary variables u. The corresponding energy function of the intermediate representation, ˆE(s, u), follows directly from reversibility and the change-of-variables formula: 
+
+ˆE(s, u) = E(T −1(s, u)) − T ln det ∂T −1
+
+∂(s, u) , (3) where ∂T −1 
+
+> ∂(s,u)
+
+is the Jacobian matrix of the inverse transformation T −1.As a canonical ensemble, the energy function in Eq. (3) admits a Boltzmann distribution over the intermediate representation (s, u). Given a target CV value s, Eq. (3) can be regarded as an energy function of u alone, thereby defining the conditional Boltzmann distribution of the auxiliary variables: 
+
+π(u|s) = exp 
+
+
+
+−β ˆE(s, u)
+
+
+
+Z(s) , (4) where Z(s) = R exp( −β ˆE(s, u)) du, the negative logarithm of which is exactly Eq. (2) without the temperature factor T . To estimate Z(s), we introduce a variational model 
+
+pθ(u|s), parameterized by θ, and minimize the Kullback-Leibler divergence (KLD) [46], 
+
+DKL 
+
+
+
+pθ(u|s)|| π(u|s)
+
+
+
+= ln Z(s) + E
+
+> u∼ps,θ
+
+h
+
+ln pθ(u|s) + β ˆE(s, u)
+
+i
+
+. (5) Because the KLD is always non-negative, i.e. , DKL ≥ 0, the stochastic estimator T E
+
+> u∼ps,θ
+
+[ln pθ(u|s)+ 
+
+β ˆE(s, u)] provides an upper bound, denoted by ¯F (s), for the exact FES value F (s). Mini-mizing the KLD therefore yields a variational estimate of the FES. Next, rather than optimizing Eq. (5) separately at each CV point, we aim to access the FES over the entire CV space within a single optimization. By treating the CVs as external parameters in the Boltzmann distribution of the auxiliary variables (Eq. (4)), analogous to the inverse temperature β, we can adopt the variational optimization proposed in [16] to estimate the FES as a continuous function of the CVs. This leads to the loss function min  
+
+> θ
+
+E
+
+> s∼U, u∼ps,θ
+
+h
+
+T ln pθ(u|s) + ˆE(s, u)
+
+i
+
+= min  
+
+> θ
+
+E
+
+> s∼U
+
+¯F (s), (6) where U denotes a uniform distribution. 5Physical Space 
+
+Con fi guration Variables 
+
+ATOM X Y Z
+
+-------------------------
+
+N GLY1 7.4 5.4 1.3 
+
+CA GLY1 6.9 5.8 0.0 
+
+C GLY1 5.5 5.4 0.1 
+
+O GLY1 5.0 4.7 0.8 
+
+H GLY1 8.3 5.7 1.4 
+
+H2 GLY1 7.3 4.4 1.3 
+
+H3 GLY1 6.8 5.8 2.0 
+
+HA2 GLY1 7.5 5.4 0.7 
+
+HA3 GLY1 6.9 6.9 0.1 
+
+...... 
+
+<latexit sha1_base64="xA4KkthYHod2Kpjs0YcwhjWG8m0=">AAAB9HicbVDLSgMxFL1TX7W+qi7dBItQN2VGSnVZFMFlBfuAdiiZNNOGZjJjkimWod/hxoUibv0Yd/6NmXYW2nogcDjnXu7J8SLOlLbtbyu3tr6xuZXfLuzs7u0fFA+PWiqMJaFNEvJQdjysKGeCNjXTnHYiSXHgcdr2xjep355QqVgoHvQ0om6Ah4L5jGBtJPe23AuwHnl+8jQ77xdLdsWeA60SJyMlyNDoF796g5DEARWacKxU17Ej7SZYakY4nRV6saIRJmM8pF1DBQ6ocpN56Bk6M8oA+aE0T2g0V39vJDhQahp4ZjKNqJa9VPzP68bav3ITJqJYU0EWh/yYIx2itAE0YJISzaeGYCKZyYrICEtMtOmpYEpwlr+8SloXFadWqd1XS/XrrI48nMAplMGBS6jDHTSgCQQe4Rle4c2aWC/Wu/WxGM1Z2c4x/IH1+QNcW5Hb</latexit> 
+
+## E(x)
+
+Energy 
+
+Function 
+
+Physics-informed 
+
+Latent Space 
+
+<latexit sha1_base64="psqBc+AwN9IxmGortAeq+2tJmgw=">AAACCHicbZDLSsNAFIZP6q3WW9SlCweLUEFKIlJdFkVwWcFeoCllMp20QycXZiZCCVm68VXcuFDErY/gzrdx0kbQ6g8DH/85hznndyPOpLKsT6OwsLi0vFJcLa2tb2xumds7LRnGgtAmCXkoOi6WlLOANhVTnHYiQbHvctp2x5dZvX1HhWRhcKsmEe35eBgwjxGstNU3950RVslVWnF8rEaul8j0GH1znB71zbJVtaZCf8HOoQy5Gn3zwxmEJPZpoAjHUnZtK1K9BAvFCKdpyYkljTAZ4yHtagywT2UvmR6SokPtDJAXCv0Chabuz4kE+1JOfFd3ZivK+Vpm/lfrxso77yUsiGJFAzL7yIs5UiHKUkEDJihRfKIBE8H0roiMsMBE6exKOgR7/uS/0Dqp2rVq7ea0XL/I4yjCHhxABWw4gzpcQwOaQOAeHuEZXowH48l4Nd5mrQUjn9mFXzLevwDCBJnT</latexit> 
+
+ˆE(s, u)
+
+Latent 
+
+Energy 
+
+Collective 
+
+Variables 
+
+<latexit sha1_base64="3fRNEFWFVWNJTM+hkpy0cKXLd2g=">AAAB8XicbVDLSgMxFL1TX7W+qi7dBIvgqsyIVJdFNy4r2Ae2pWTSO21oJjMkGaEM/Qs3LhRx69+482/MtLPQ1gOBwzn3knOPHwuujet+O4W19Y3NreJ2aWd3b/+gfHjU0lGiGDZZJCLV8alGwSU2DTcCO7FCGvoC2/7kNvPbT6g0j+SDmcbYD+lI8oAzaqz02AupGftBqmeDcsWtunOQVeLlpAI5GoPyV28YsSREaZigWnc9Nzb9lCrDmcBZqZdojCmb0BF2LZU0RN1P54ln5MwqQxJEyj5pyFz9vZHSUOtp6NvJLKFe9jLxP6+bmOC6n3IZJwYlW3wUJIKYiGTnkyFXyIyYWkKZ4jYrYWOqKDO2pJItwVs+eZW0LqperVq7v6zUb/I6inACp3AOHlxBHe6gAU1gIOEZXuHN0c6L8+58LEYLTr5zDH/gfP4A+TKRIg==</latexit> 
+
+# s
+
+<latexit sha1_base64="FGxh4OzYwn2DCpnjFMkcdRbsJBc=">AAAB8XicbVDLSgMxFL3js9ZX1aWbYBFclRmR6rLoxmUF+8C2lEx6pw3NZIYkI5ahf+HGhSJu/Rt3/o2ZdhbaeiBwOOdecu7xY8G1cd1vZ2V1bX1js7BV3N7Z3dsvHRw2dZQohg0WiUi1fapRcIkNw43AdqyQhr7Alj++yfzWIyrNI3lvJjH2QjqUPOCMGis9dENqRn6QPk37pbJbcWcgy8TLSRly1Pulr+4gYkmI0jBBte54bmx6KVWGM4HTYjfRGFM2pkPsWCppiLqXzhJPyalVBiSIlH3SkJn6eyOlodaT0LeTWUK96GXif14nMcFVL+UyTgxKNv8oSAQxEcnOJwOukBkxsYQyxW1WwkZUUWZsSUVbgrd48jJpnle8aqV6d1GuXed1FOAYTuAMPLiEGtxCHRrAQMIzvMKbo50X5935mI+uOPnOEfyB8/kDANqRJw==</latexit> 
+
+# x
+
+Auxiliary 
+
+Variables 
+
+<latexit sha1_base64="bzpdFGfgIEORxca4rO4JqEAKvFc=">AAAB8XicbVDLSgMxFL1TX7W+qi7dBIvgqsyIVJdFNy4r2Ae2pWTSO21oJjMkGaEM/Qs3LhRx69+482/MtLPQ1gOBwzn3knOPHwuujet+O4W19Y3NreJ2aWd3b/+gfHjU0lGiGDZZJCLV8alGwSU2DTcCO7FCGvoC2/7kNvPbT6g0j+SDmcbYD+lI8oAzaqz02AupGftBmswG5Ypbdecgq8TLSQVyNAblr94wYkmI0jBBte56bmz6KVWGM4GzUi/RGFM2oSPsWippiLqfzhPPyJlVhiSIlH3SkLn6eyOlodbT0LeTWUK97GXif143McF1P+UyTgxKtvgoSAQxEcnOJ0OukBkxtYQyxW1WwsZUUWZsSSVbgrd88ippXVS9WrV2f1mp3+R1FOEETuEcPLiCOtxBA5rAQMIzvMKbo50X5935WIwWnHznGP7A+fwB/DyRJA==</latexit> 
+
+# u <latexit sha1_base64="LN/IUMhRUIYtffon8f17KWClfJg=">AAAB7XicbVBNS8NAEJ3Ur1q/qh69BIvgqSQi1WPRi8cK9gPaUCbbTbt2sxt2N0IJ/Q9ePCji1f/jzX/jts1BWx8MPN6bYWZemHCmjed9O4W19Y3NreJ2aWd3b/+gfHjU0jJVhDaJ5FJ1QtSUM0GbhhlOO4miGIectsPx7cxvP1GlmRQPZpLQIMahYBEjaKzU6iFPRtgvV7yqN4e7SvycVCBHo1/+6g0kSWMqDOGoddf3EhNkqAwjnE5LvVTTBMkYh7RrqcCY6iCbXzt1z6wycCOpbAnjztXfExnGWk/i0HbGaEZ62ZuJ/3nd1ETXQcZEkhoqyGJRlHLXSHf2ujtgihLDJ5YgUcze6pIRKiTGBlSyIfjLL6+S1kXVr1Vr95eV+k0eRxFO4BTOwYcrqMMdNKAJBB7hGV7hzZHOi/PufCxaC04+cwx/4Hz+AI8TjyM=</latexit> 
+
+ω <latexit sha1_base64="70lLMPLx7Mn8duaeTWcRM/zSQaw=">AAAB7HicbVBNS8NAEJ3Ur1q/qh69LBbBU0lEqseiF48VTFtoQ9lsN+3SzSbsToQS+hu8eFDEqz/Im//GbZuDVh8MPN6bYWZemEph0HW/nNLa+sbmVnm7srO7t39QPTxqmyTTjPsskYnuhtRwKRT3UaDk3VRzGoeSd8LJ7dzvPHJtRKIecJryIKYjJSLBKFrJ74cc6aBac+vuAuQv8QpSgwKtQfWzP0xYFnOFTFJjep6bYpBTjYJJPqv0M8NTyiZ0xHuWKhpzE+SLY2fkzCpDEiXalkKyUH9O5DQ2ZhqHtjOmODar3lz8z+tlGF0HuVBphlyx5aIokwQTMv+cDIXmDOXUEsq0sLcSNqaaMrT5VGwI3urLf0n7ou416o37y1rzpoijDCdwCufgwRU04Q5a4AMDAU/wAq+Ocp6dN+d92Vpyiplj+AXn4xvHaI6v</latexit> 
+
+ω
+
+<latexit sha1_base64="muzUIeYxUeBoMDCCLI2QqUEOOxU=">AAAB7XicbVDLSgNBEOyNrxhfUY9eBoPgKeyKRI9BLx4jmAckS5idzCZj5rHMzAphyT948aCIV//Hm3/jJNmDJhY0FFXddHdFCWfG+v63V1hb39jcKm6Xdnb39g/Kh0cto1JNaJMornQnwoZyJmnTMstpJ9EUi4jTdjS+nfntJ6oNU/LBThIaCjyULGYEWye1ekrQIe6XK37VnwOtkiAnFcjR6Je/egNFUkGlJRwb0w38xIYZ1pYRTqelXmpogskYD2nXUYkFNWE2v3aKzpwyQLHSrqRFc/X3RIaFMRMRuU6B7cgsezPxP6+b2vg6zJhMUkslWSyKU46sQrPX0YBpSiyfOIKJZu5WREZYY2JdQCUXQrD88ippXVSDWrV2f1mp3+RxFOEETuEcAriCOtxBA5pA4BGe4RXePOW9eO/ex6K14OUzx/AH3ucPk8OPJg==</latexit> 
+
+ω
+
+<latexit sha1_base64="JzeGqJpo/nc4vOTsUGEfP6CmayI=">AAAB63icbVBNSwMxEJ3Ur1q/qh69BIvgqeyKVI9FLx4r2A9ol5JNs21okl2SrFCW/gUvHhTx6h/y5r8x2+5Bqw8GHu/NMDMvTAQ31vO+UGltfWNzq7xd2dnd2z+oHh51TJxqyto0FrHuhcQwwRVrW24F6yWaERkK1g2nt7nffWTa8Fg92FnCAknGikecEptLg8TwYbXm1b0F8F/iF6QGBVrD6udgFNNUMmWpIMb0fS+xQUa05VSweWWQGpYQOiVj1ndUEclMkC1uneMzp4xwFGtXyuKF+nMiI9KYmQxdpyR2Yla9XPzP66c2ug4yrpLUMkWXi6JUYBvj/HE84ppRK2aOEKq5uxXTCdGEWhdPxYXgr778l3Qu6n6j3ri/rDVvijjKcAKncA4+XEET7qAFbaAwgSd4gVck0TN6Q+/L1hIqZo7hF9DHNyfRjlU=</latexit> 
+
+ω
+
+Y
+
+X
+
+... 
+
+Stochastic 
+
+Optimizer Gaussian 
+
+Variables 
+
+<latexit sha1_base64="WxNjfdaSKU3lDDP90mbL34C6SQw=">AAAB8XicbVDLSgMxFL3js9ZX1aWbYBFclRmR6rLoxmUF+8C2lEx6pw3NZIYkI9Shf+HGhSJu/Rt3/o2ZdhbaeiBwOOdecu7xY8G1cd1vZ2V1bX1js7BV3N7Z3dsvHRw2dZQohg0WiUi1fapRcIkNw43AdqyQhr7Alj++yfzWIyrNI3lvJjH2QjqUPOCMGis9dENqRn6QPk37pbJbcWcgy8TLSRly1Pulr+4gYkmI0jBBte54bmx6KVWGM4HTYjfRGFM2pkPsWCppiLqXzhJPyalVBiSIlH3SkJn6eyOlodaT0LeTWUK96GXif14nMcFVL+UyTgxKNv8oSAQxEcnOJwOukBkxsYQyxW1WwkZUUWZsSUVbgrd48jJpnle8aqV6d1GuXed1FOAYTuAMPLiEGtxCHRrAQMIzvMKbo50X5935mI+uOPnOEfyB8/kDA+SRKQ==</latexit> 
+
+# z
+
+Normalizing 
+
+Flow 
+
+Variational 
+
+Optimization 
+
+Auxiliary Distribution 
+
+<latexit sha1_base64="lxf9NO5S8N+WNN18YN7ONNEyo7I=">AAACCnicbZDLSsNAFIYn9VbrLerSTbQIdVMSkeqy6MZlBXuBJoTJdNIOnVyYORFKzNqNr+LGhSJufQJ3vo2TNoK2/jDw8Z9zmHN+L+ZMgml+aaWl5ZXVtfJ6ZWNza3tH393ryCgRhLZJxCPR87CknIW0DQw47cWC4sDjtOuNr/J6944KyaLwFiYxdQI8DJnPCAZlufph7KY2jCjgrGYHGEaenybZ/Q/K7MTVq2bdnMpYBKuAKirUcvVPexCRJKAhEI6l7FtmDE6KBTDCaVaxE0ljTMZ4SPsKQxxQ6aTTUzLjWDkDw4+EeiEYU/f3RIoDKSeBpzrzFeV8LTf/q/UT8C+clIVxAjQks4/8hBsQGXkuxoAJSoBPFGAimNrVICMsMAGVXkWFYM2fvAid07rVqDduzqrNyyKOMjpAR6iGLHSOmugatVAbEfSAntALetUetWftTXuftZa0YmYf/ZH28Q2Uo5t6</latexit> 
+
+pω (u|s)
+
+Model Distribution <latexit sha1_base64="T19YqFwKr1QIe08VkXDyZzuWAoQ=">AAAB73icbVDLSgNBEJyNrxhfUY9eBoMgHsKuSPQY9OIxgnlAEsPspDcZMju7zvQKYclPePGgiFd/x5t/4yTZgyYWNBRV3XR3+bEUBl3328mtrK6tb+Q3C1vbO7t7xf2DhokSzaHOIxnpls8MSKGgjgIltGINLPQlNP3RzdRvPoE2IlL3OI6hG7KBEoHgDK3U6uAQkD2c9Yolt+zOQJeJl5ESyVDrFb86/YgnISjkkhnT9twYuynTKLiESaGTGIgZH7EBtC1VLATTTWf3TuiJVfo0iLQthXSm/p5IWWjMOPRtZ8hwaBa9qfif104wuOqmQsUJguLzRUEiKUZ0+jztCw0c5dgSxrWwt1I+ZJpxtBEVbAje4svLpHFe9irlyt1FqXqdxZEnR+SYnBKPXJIquSU1UiecSPJMXsmb8+i8OO/Ox7w152Qzh+QPnM8fxNiPzw==</latexit> 
+
+ω→ <latexit  sha1_base64="psqBc+AwN9IxmGortAeq+2tJmgw=">AAACCHicbZDLSsNAFIZP6q3WW9SlCweLUEFKIlJdFkVwWcFeoCllMp20QycXZiZCCVm68VXcuFDErY/gzrdx0kbQ6g8DH/85hznndyPOpLKsT6OwsLi0vFJcLa2tb2xumds7LRnGgtAmCXkoOi6WlLOANhVTnHYiQbHvctp2x5dZvX1HhWRhcKsmEe35eBgwjxGstNU3950RVslVWnF8rEaul8j0GH1znB71zbJVtaZCf8HOoQy5Gn3zwxmEJPZpoAjHUnZtK1K9BAvFCKdpyYkljTAZ4yHtagywT2UvmR6SokPtDJAXCv0Chabuz4kE+1JOfFd3ZivK+Vpm/lfrxso77yUsiGJFAzL7yIs5UiHKUkEDJihRfKIBE8H0roiMsMBE6exKOgR7/uS/0Dqp2rVq7ea0XL/I4yjCHhxABWw4gzpcQwOaQOAeHuEZXowH48l4Nd5mrQUjn9mFXzLevwDCBJnT</latexit> 
+
+> ˆE(s, u)
+
+<latexit sha1_base64="3fRNEFWFVWNJTM+hkpy0cKXLd2g=">AAAB8XicbVDLSgMxFL1TX7W+qi7dBIvgqsyIVJdFNy4r2Ae2pWTSO21oJjMkGaEM/Qs3LhRx69+482/MtLPQ1gOBwzn3knOPHwuujet+O4W19Y3NreJ2aWd3b/+gfHjU0lGiGDZZJCLV8alGwSU2DTcCO7FCGvoC2/7kNvPbT6g0j+SDmcbYD+lI8oAzaqz02AupGftBqmeDcsWtunOQVeLlpAI5GoPyV28YsSREaZigWnc9Nzb9lCrDmcBZqZdojCmb0BF2LZU0RN1P54ln5MwqQxJEyj5pyFz9vZHSUOtp6NvJLKFe9jLxP6+bmOC6n3IZJwYlW3wUJIKYiGTnkyFXyIyYWkKZ4jYrYWOqKDO2pJItwVs+eZW0LqperVq7v6zUb/I6inACp3AOHlxBHe6gAU1gIOEZXuHN0c6L8+58LEYLTr5zDH/gfP4A+TKRIg==</latexit> 
+
+s
+
+Bĳective Transformation CV Transformation  <latexit sha1_base64="Gpsr2fEFD3uOeSe9y3N6SfnjQxM=">AAAB8nicjVBNS8NAFHypX7V+VT16CRbBU0lEqseiF48V2lpIQ9lsN+3SzW7YfRFK6M/w4kERr/4ab/4bN20PKgoOLAwz7/FmJ0oFN+h5H05pZXVtfaO8Wdna3tndq+4fdI3KNGUdqoTSvYgYJrhkHeQoWC/VjCSRYHfR5Lrw7+6ZNlzJNk5TFiZkJHnMKUErBf2E4JgSkbdng2rNr3tzuH+TGizRGlTf+0NFs4RJpIIYE/heimFONHIq2KzSzwxLCZ2QEQsslSRhJsznkWfuiVWGbqy0fRLdufp1IyeJMdMkspNFRPPTK8TfvCDD+DLMuUwzZJIuDsWZcFG5xf/dIdeMophaQqjmNqtLx0QTiralyv9K6J7V/Ua9cXtea14t6yjDERzDKfhwAU24gRZ0gIKCB3iCZwedR+fFeV2MlpzlziF8g/P2CZUkkXg=</latexit> 
+
+T
+
+Coupling 
+
+<latexit sha1_base64="w1AAxLBAaxv9nTM0HB7UAplgiKI=">AAAB/XicdVDLSsNAFJ34rPUVH7hxEyyCq5AIVt2VunEjtGAf0IQwmU7aoZMHMzdCDcVfceNCUbf+gF/gzo3f4qQV8Xlg4HDOvdwzx084k2BZr9rU9Mzs3Hxhobi4tLyyqq+tN2WcCkIbJOaxaPtYUs4i2gAGnLYTQXHoc9ryBye537qgQrI4OodhQt0Q9yIWMIJBSZ6+6YQY+gTz7GzkZQ70KeCRp5cs8zjHgWGb1hi/SamyVX9jD9Xnmqe/ON2YpCGNgHAsZce2EnAzLIARTkdFJ5U0wWSAe7SjaIRDKt1snH5k7CqlawSxUC8CY6x+3chwKOUw9NVknlX+9HLxL6+TQnDkZixKUqARmRwKUm5AbORVGF0mKAE+VAQTwVRWg/SxwARUYUVVwv9//yTNfdMum+W6aqOKJiigbbSD9pCNDlEFnaIaaiCCLtE1ukV32pV2o91rj5PRKe1jZwN9g/b0DmtqmZM=</latexit> 
+
+Mω
+
+<latexit sha1_base64="u/8Kffn0bW2zJXWTW2YrAbGiOHI=">AAACBHicbZDLSsNAFIZP6q3WW9RlN4NFqJuSiFSXRTcuK9gLNKFMppN26OTCzEQosQs3voobF4q49SHc+TZO2gja+sPAx3/OYc75vZgzqSzryyisrK6tbxQ3S1vbO7t75v5BW0aJILRFIh6Jrocl5SykLcUUp91YUBx4nHa88VVW79xRIVkU3qpJTN0AD0PmM4KVtvpm2YlZ1QmwGnl+mkzv0Q/L6UnfrFg1aya0DHYOFcjV7JufziAiSUBDRTiWsmdbsXJTLBQjnE5LTiJpjMkYD2lPY4gDKt10dsQUHWtngPxI6BcqNHN/T6Q4kHISeLozW1Eu1jLzv1ovUf6Fm7IwThQNyfwjP+FIRShLBA2YoETxiQZMBNO7IjLCAhOlcyvpEOzFk5ehfVqz67X6zVmlcZnHUYQyHEEVbDiHBlxDE1pA4AGe4AVejUfj2Xgz3uetBSOfOYQ/Mj6+AQPXmFo=</latexit> 
+
+## ω(u|s)
+
+Intermedia Representation FIG. 1: Schematic illustration of the VaFES framework. The coarse-grained collective variable (CV) transformation is expanded into a bijective transformation T ,simultaneously establishing two reversible mappings. It maps configuration variables of physical space, x, to the intermediate representation (s, u), where the CVs s explicitly occupy a subset of the dimensions and the remaining degrees of freedom are collected in the auxiliary variables u. The same T transformation also maps the physical energy function into the latent-space energy of intermediate representations, thereby defining the conditional distribution π(u|s) for the auxiliary variables u. A tractable-density generative model, illustrated here by a multi-coupling normalizing flow, parameterizes pθ(u|s) and enables one-shot direct sampling of auxiliary variables conditioned on the CVs. Minimizing the divergence between pθ(u|s) and π(u|s) yields a variational estimate of the free energy surface and, through the inverse map T −1, the corresponding physical configurations. As in standard variational methods, this objective requires evaluation of the normalized model density pθ(u|s). Efficient optimization of Eq. (6) further requires one-shot direct sampling from the variational model, making deep generative models a natural choice. Ac-6cordingly, VaFES adopts a tractable-density generative model as its variational model. Be-cause any such model can both evaluate normalized densities and generate one-shot samples directly, the framework is not tied to a specific architecture. For demonstration, in this section and in the applications below, we use a cubic-spline normalizing flow (cubic-spline flow) [47]. Because the auxiliary variables u are sampled directly from pθ(u|s), this optimization requires no pre-generated dataset. By contrast, conventional deep-learning generative ap-proaches [48–51] rely on large pre-generated datasets, making their performance sensitive to data quality and coverage; the resulting ensembles inevitably inherit biases present in the training data. VaFES avoids these limitations by starting directly from the energy function and formulating the FES variationally as a continuous function of the CVs. After optimiza-tion, for any specified CV value s, Eq. (6) yields the FES estimate ¯F (s), which is continuous and differentiable with respect to s and closely resembles an analytical solution. This differs from conventional deep-learning generative approaches [12, 32–34], which typically recover free energy profiles only indirectly through reweighting and histogramming sampled config-urations. Moreover, the generative model pθ(u|s) enables direct sampling of the rare-event configurations associated with a given CV. Thus, a single dataset-free optimization provides both a continuous FES over the CVs and one-shot generation of the corresponding rare-event configurations. Fig. 1 summarizes both the architecture and the workflow of VaFES. From bottom to top, one first specifies a target CV value s; during training, this value is typically sampled from a uniform distribution. The auxiliary variables, which supply the remaining information required for reversibility, are drawn from a prior distribution, e.g. , a Gaussian distribution, and then transformed by a multi-coupling cubic-spline flow Mθ conditioned on s to generate samples u from the parameterized model pθ(u|s). Together, s and u define the complete in-termediate representation, from which the physical configuration x is reconstructed through the inverse bijective CV transformation T −1. At this stage, both the configuration x and the probability density pθ(u|s) are available for optimization and for FES evaluation through Eq. (6). The resulting FES is a continuous, differentiable landscape, enabling methods such as the NEB [35, 36] and string method [37] to identify transition pathways. When s is chosen within the identified rare-event regions, the reconstructed configuration x provides a one-shot sample of the corresponding rare event. 7B. Application: bistable dimer potential 
+
+As a proof of concept, we first apply VaFES to a simple system for which analytical results are available: the bistable dimer potential, consisting of two particles [52]. The system’s energy function depends solely on the distance between the two particles, as in 
+
+E(x) = 4(1 − (|x| − 3.5) 2)2, (7) where x denotes the 3-dimensional vector (x0, x 1, x 2) connecting the two particles. Its magnitude |x| is the interparticle distance, which we take as the bond-length CV. As indi-cated by Eq. (7) and by the energy landscape shown in the inset of Fig. 2(a), the potential has two equivalent low-energy valleys at bond lengths of 2.5 and 4.5. Once the entropic contribution to the free energy is included, however, the lower free energy minimum shifts to the more extended state at bond length 4.5. This indicates that at finite temperature the system favors an extended bond. The coarse-grained CV mapping |x| = px20 + x21 + x22 admits the reversible equivalent 
+
+(|x|, u 0, u 1) = ( 
+
+q
+
+x20 + x21 + x22, sign( x1) x21
+
+x20 + x21
+
+, sign( x2) x22
+
+x20 + x21 + x22
+
+), (8) where |x| is the CV and u0 and u1 are auxiliary variables. The corresponding energy function in the intermediate representation then follows from Eq. (3). We next optimized VaFES using Eq. (6), yielding the FES estimates shown in Fig. 2(a). Because this is a low-dimensional model, the FES can also be computed analytically by exact integration. Fig. 2(a) shows that the VaFES results are in excellent agreement with the exact ones, indicating that VaFES accurately recovers the free energy profile. The result also confirms the preceding analysis: although the energy has a minimum at bond length 2.5, the free energy favors the more extended state at bond length 4.5.As a further demonstration, we also included temperature T as an external parameter during optimization, allowing VaFES to capture the FES as a continuous, differentiable function of both temperature and bond length. We plotted these results in Fig. 2(b). At low temperatures, the FES gradually approaches the underlying energy landscape, confirming that the preference for the extended bond length is entropic in origin. 8(b) (a) FIG. 2: Free energy surface of the bistable dimer. (a) The results obtained by VaFES are shown by the purple solid line and the exact results by the red dashed line. The temperature is fixed at T = 1 .0. The inset shows the potential energy landscape of the dimer. The CV is the bond length between the two particles. (b) The free energy landscape as a continuous function of temperature and bond length.  
+
+> C. Application: two paths in diazene evolution
+
+Diazenes constitute an important class of compounds with broad applications in synthesis and materials science. They are generally planar and can undergo cis–trans isomerization. The simplest member of this family, N 2H2, has therefore attracted extensive experimental and theoretical attention. Two principal mechanisms have been proposed for its cis–trans interconversion: an in-plane inversion pathway and an out-of-plane torsion pathway. Because the associated activation barriers are similar, the relative contributions and competition between these mechanisms have been the subject of continued discussion [53, 54]. To apply VaFES, we first constructed an intermediate representation. In physical Carte-sian space the molecule has 12 degrees of freedom, of which 6 can be removed by eliminating global translation and rotation. Specifically, we fixed atom N2 at the origin, placed atom N1 along the negative x-axis, and constrained atom H1 to the xy -plane, as shown in Fig. 3(b). This gives a 6-dimensional coordinate (x1, y 1, d, x 2, y 2, z 2) that retains all necessary in-formation, where (x1, y 1) is the in-plane position of H1 relative to N1, d is the N – N bond length, and (x2, y 2, z 2) is the full position of H2. Among these six variables, the y- and z-coordinates of H2, (y2, z 2), carry the essential 9information about the isomeric state: y2 implies the cis and trans configurations, while z2
+
+measures the out-of-plane displacement characterizing the torsion pathway. Furthermore, because y2 is a geometric coordinate rather than an order parameter that cleanly separates the two states, we introduced a data-driven refinement by training a learnable bijective transformation on y2 to produce a machine-learning CV s1. Specifically, we parameterized a sigmoid-based transformation s1 = Lσ (k(y2 − t)) + b, where k and t are outputs of a multilayer perceptron (MLP) that takes (x1, y 1, d, x 2, z 2) as input. The coefficients L and 
+
+b provide an affine rescaling that maps the output to [0 , 1] , with 0 corresponding to trans and 
+
+1 to cis. This transformation was trained with a supervised mean-squared-error loss on MD-generated cis and trans configurations. We therefore selected these two variables as the CVs, 
+
+i.e. , s = ( s1, z 2), leaving the remaining four variables (x1, y 1, d, x 2) as auxiliary variables. This defines an end-to-end bijective transformation from the physical configuration space of diazene to the latent space of the intermediate representation, with an analytically tractable Jacobian. The resulting FES estimate, obtained by optimizing VaFES with Eq. (6), is shown in Fig. 3(a) and reveals two candidate pathways corresponding to inversion and torsion. Be-cause VaFES produces a continuous and differentiable FES as a function of the CVs, we can apply the gradient-based NEB [35, 36] or the string method [37] to identify reaction paths with minimum free energy. Using two different initializations, NEB converges to two smooth pathways, shown in Fig. 3(a) as the inversion and torsion paths. The free energy profile of the inversion pathway is shown in Fig. 3(b), and that of the torsion pathway in Fig. 3(c). VaFES also enables direct sampling of physical configurations by specifying CV values along the pathways and completing them with auxiliary variables generated by the trained model. Representative molecular configurations generated in this way are shown in Fig. 3(b,c). These results are in excellent agreement with previous studies. This example shows that, in addition to conventional CVs with exact analytical forms, VaFES can also incorporate learnable machine-learning models to define CVs. Although re-versibility is required, there are at least two practical ways to satisfy this condition. First, as shown here, one can use an intrinsically reversible neural-network structure. In the present proof of concept, we adopted a simple sigmoid-based neural-network transformation as the machine-learning CV; however, far more expressive reversible deep-learning models have been developed, e.g. , Refs. [9, 55–57]. Second, many widely used statistical learning meth-10 ods, such as principal component analysis (PCA) and time-lagged independent component analysis (TICA) [58, 59], construct CVs through full-rank linear transformations, which are inherently bijective. In our next application, we therefore applied TICA to obtain a set of data-driven CV coordinates. (a)  (b) 
+
+(c) 
+
+X
+
+z
+
+Y
+
+<latexit sha1_base64="yorU9HrYzwFXZZ3VH5mLYU5SvRg=">AAAB8HicbVDLTgJBEJzFF+IL9ehlIzHxRHaNQY9ELxwxkYeBDZkdGpgwM7uZ6TWSDV/hxYPGePVzvPk3DrAHBSvppFLVne6uMBbcoOd9O7m19Y3Nrfx2YWd3b/+geHjUNFGiGTRYJCLdDqkBwRU0kKOAdqyBylBAKxzfzvzWI2jDI3WPkxgCSYeKDzijaKWHLsITpjV/2iuWvLI3h7tK/IyUSIZ6r/jV7UcskaCQCWpMx/diDFKqkTMB00I3MRBTNqZD6FiqqAQTpPODp+6ZVfruINK2FLpz9fdESqUxExnaTklxZJa9mfif10lwcB2kXMUJgmKLRYNEuBi5s+/dPtfAUEwsoUxze6vLRlRThjajgg3BX355lTQvyn6lXLm7LFVvsjjy5IScknPikytSJTVSJw3CiCTP5JW8Odp5cd6dj0VrzslmjskfOJ8/06mQcQ==</latexit> 
+
+H1 
+
+<latexit sha1_base64="0rAgzTOi3AG2Imhs2XF6BWvVj48=">AAAB8HicbVDLSgNBEOyNrxhfUY9eFoPgKeyKRI9BL54kgnlIsoTZySQZMjO7zPSKYclXePGgiFc/x5t/4yTZgyYWNBRV3XR3hbHgBj3v28mtrK6tb+Q3C1vbO7t7xf2DhokSTVmdRiLSrZAYJrhideQoWCvWjMhQsGY4up76zUemDY/UPY5jFkgyULzPKUErPXSQPWF660+6xZJX9mZwl4mfkRJkqHWLX51eRBPJFFJBjGn7XoxBSjRyKtik0EkMiwkdkQFrW6qIZCZIZwdP3BOr9Nx+pG0pdGfq74mUSGPGMrSdkuDQLHpT8T+vnWD/Mki5ihNkis4X9RPhYuROv3d7XDOKYmwJoZrbW106JJpQtBkVbAj+4svLpHFW9ivlyt15qXqVxZGHIziGU/DhAqpwAzWoAwUJz/AKb452Xpx352PemnOymUP4A+fzB9zNkHc=</latexit> 
+
+N1 
+
+<latexit sha1_base64="P7FXhlQA7TDSGGzXifJBrEUv0sc=">AAAB8HicbVDLSgNBEJz1GeMr6tHLYBA8hd0g0WPQiyeJYB6SLGF20kmGzM4uM71iWPIVXjwo4tXP8ebfOEn2oIkFDUVVN91dQSyFQdf9dlZW19Y3NnNb+e2d3b39wsFhw0SJ5lDnkYx0K2AGpFBQR4ESWrEGFgYSmsHoeuo3H0EbEal7HMfgh2ygRF9whlZ66CA8YXpbnnQLRbfkzkCXiZeRIslQ6xa+Or2IJyEo5JIZ0/bcGP2UaRRcwiTfSQzEjI/YANqWKhaC8dPZwRN6apUe7UfalkI6U39PpCw0ZhwGtjNkODSL3lT8z2sn2L/0U6HiBEHx+aJ+IilGdPo97QkNHOXYEsa1sLdSPmSacbQZ5W0I3uLLy6RRLnmVUuXuvFi9yuLIkWNyQs6IRy5IldyQGqkTTkLyTF7Jm6OdF+fd+Zi3rjjZzBH5A+fzB95SkHg=</latexit> 
+
+N2 
+
+<latexit sha1_base64="22r9+RnssK2eCywy/oMKU0+1U4A=">AAAB8HicbVDLTgJBEOz1ifhCPXqZSEw8kV1i0CPRC0dM5GFgQ2aHASbM7G5meo1kw1d48aAxXv0cb/6NA+xBwUo6qVR1p7sriKUw6Lrfztr6xubWdm4nv7u3f3BYODpumijRjDdYJCPdDqjhUoS8gQIlb8eaUxVI3grGtzO/9ci1EVF4j5OY+4oOQzEQjKKVHrrInzCtlae9QtEtuXOQVeJlpAgZ6r3CV7cfsUTxEJmkxnQ8N0Y/pRoFk3ya7yaGx5SN6ZB3LA2p4sZP5wdPyblV+mQQaVshkrn6eyKlypiJCmynojgyy95M/M/rJDi49lMRxgnykC0WDRJJMCKz70lfaM5QTiyhTAt7K2EjqilDm1HehuAtv7xKmuWSVylV7i6L1ZssjhycwhlcgAdXUIUa1KEBDBQ8wyu8Odp5cd6dj0XrmpPNnMAfOJ8/1S6Qcg==</latexit> 
+
+H2 
+
+FIG. 3: Free energies of diazene (N 2H2) at 120 K. (a) Estimated free energy surface of diazene. The CVs are a machine-learning coordinate indicating the trans state at 0 and the cis state at 1 on the x-axis, and the z-displacement of H2 on the y-axis. Two reaction paths identified by NEB are shown: the inversion path (red line) and the torsion path (green line). (b) Free energy profile along the inversion pathway projected onto the x-axis, together with representative diazene configurations. The local-frame coordinate definitions are illustrated using the first configuration. (c) Free energy profile along the torsion pathway projected onto the x-axis, together with representative diazene configurations. 
+
+D. Application: alanine dipeptide using data-driven CVs 
+
+As a third example, we consider transitions in alanine dipeptide in vacuum, where the rare-event configurations are more intricate and physically relevant. Unlike the diazene case, which used a combination of one analytical CV and one machine-learning CV, here we adopt a fully data-driven set of CVs obtained from TICA. For a concise representation, we first treated all methyl groups as rigid bodies. In physical 11 Cartesian space, alanine dipeptide thus comprises 13 atoms, yielding 39 degrees of freedom. We then eliminated six more dimensions by fixing translation and rotation through a con-strained coordinate system, as in the diazene example. Specifically, we fixed the C α atom at the origin, placed the C-terminal carbonyl carbon along the positive y-axis, constrained the amide nitrogen attached to C α to the xy -plane, and pointed the C β carbon to the positive 
+
+z-axis, resulting in a 33 -dimensional coordinate that retains all internal degrees of freedom. We show the coordinate system in Fig. 4(a). To define the CVs, we performed TICA on configuration data generated from long MD simulations. The MD trajectory was first converted into the 33 -dimensional coordinate representation, after which TICA was used to identify the dominant slow modes. The first two components, which capture the most relevant collective behaviors, were selected as the CVs. Notably, the TICA projection from the 33 -dimensional coordinate to independent-component space, after whitening, is an orthogonal transformation, and is therefore bijective, satisfying the requirement of VaFES. An additional benefit of this orthogonal transformation is that the determinant of its Jacobian is simply 1, giving a particularly concise form of Eq. (3). Aside from the two most prominent components, all remainings were treated as auxiliary variables. Based on this intermediate representation, we trained the cubic-spline flow following the VaFES procedure described in Sec. II A. The resulting FES is shown in Fig. 4(c). Because the VaFES estimate is continuous and differentiable with respect to the CVs, the NEB method can again be used to identify a minimum-free-energy reaction path. We selected the two local minima separated by the largest distance in CV space as two NEB endpoints, and obtained the path shown in Fig. 4(c). The free energy profile along this path is shown in Fig. 4(d). It is well known that the two backbone dihedral angles ψ and ϕ defined in Fig. 4(a) dominate the collective behavior of alanine dipeptide. We therefore also computed the corresponding values of ψ and ϕ along the reaction path, as shown in Fig. 4(d). Our result is in excellent agreement with previous ones. First, the two TICA CVs effectively capture the two backbone dihedral angles, as different CV locations along the reaction path correspond to different (ψ, ϕ ) configurations. Second, the low- and high-free-energy regions, together with their associated dihedral-angle values, agree well with the widely accepted free energy landscape in the dihedral-angle space. By complementing the CV values with auxiliary variables generated by the VaFES cubic-spline flow, we recovered the full molecular 12 configurations. Figure 4(b) shows some key transition structures along the NEB path. (a) 
+
+(c) 
+
+X
+
+Y
+
+<latexit sha1_base64="TDZ5kXVcRihTN/44IH5FtXDuleA=">AAAB63icbVBNS8NAEJ3Ur1q/qh69LBbBU0lEWo9FLx4r2A9oQ9lsN83S3U3Y3Qgl9C948aCIV/+QN/+NmzYHbX0w8Hhvhpl5QcKZNq777ZQ2Nre2d8q7lb39g8Oj6vFJV8epIrRDYh6rfoA15UzSjmGG036iKBYBp71gepf7vSeqNIvlo5kl1Bd4IlnICDa5NEwiNqrW3Lq7AFonXkFqUKA9qn4NxzFJBZWGcKz1wHMT42dYGUY4nVeGqaYJJlM8oQNLJRZU+9ni1jm6sMoYhbGyJQ1aqL8nMiy0nonAdgpsIr3q5eJ/3iA14Y2fMZmkhkqyXBSmHJkY5Y+jMVOUGD6zBBPF7K2IRFhhYmw8FRuCt/ryOule1b1GvfFwXWvdFnGU4QzO4RI8aEIL7qENHSAQwTO8wpsjnBfn3flYtpacYuYU/sD5/AEXGo5K</latexit> 
+
+ω <latexit sha1_base64="JzeGqJpo/nc4vOTsUGEfP6CmayI=">AAAB63icbVBNSwMxEJ3Ur1q/qh69BIvgqeyKVI9FLx4r2A9ol5JNs21okl2SrFCW/gUvHhTx6h/y5r8x2+5Bqw8GHu/NMDMvTAQ31vO+UGltfWNzq7xd2dnd2z+oHh51TJxqyto0FrHuhcQwwRVrW24F6yWaERkK1g2nt7nffWTa8Fg92FnCAknGikecEptLg8TwYbXm1b0F8F/iF6QGBVrD6udgFNNUMmWpIMb0fS+xQUa05VSweWWQGpYQOiVj1ndUEclMkC1uneMzp4xwFGtXyuKF+nMiI9KYmQxdpyR2Yla9XPzP66c2ug4yrpLUMkWXi6JUYBvj/HE84ppRK2aOEKq5uxXTCdGEWhdPxYXgr778l3Qu6n6j3ri/rDVvijjKcAKncA4+XEET7qAFbaAwgSd4gVck0TN6Q+/L1hIqZo7hF9DHNyfRjlU=</latexit> 
+
+ω
+
+z (b) 
+
+(d)  <latexit sha1_base64="JzeGqJpo/nc4vOTsUGEfP6CmayI=">AAAB63icbVBNSwMxEJ3Ur1q/qh69BIvgqeyKVI9FLx4r2A9ol5JNs21okl2SrFCW/gUvHhTx6h/y5r8x2+5Bqw8GHu/NMDMvTAQ31vO+UGltfWNzq7xd2dnd2z+oHh51TJxqyto0FrHuhcQwwRVrW24F6yWaERkK1g2nt7nffWTa8Fg92FnCAknGikecEptLg8TwYbXm1b0F8F/iF6QGBVrD6udgFNNUMmWpIMb0fS+xQUa05VSweWWQGpYQOiVj1ndUEclMkC1uneMzp4xwFGtXyuKF+nMiI9KYmQxdpyR2Yla9XPzP66c2ug4yrpLUMkWXi6JUYBvj/HE84ppRK2aOEKq5uxXTCdGEWhdPxYXgr778l3Qu6n6j3ri/rDVvijjKcAKncA4+XEET7qAFbaAwgSd4gVck0TN6Q+/L1hIqZo7hF9DHNyfRjlU=</latexit> 
+
+ω
+
+<latexit sha1_base64="TDZ5kXVcRihTN/44IH5FtXDuleA=">AAAB63icbVBNS8NAEJ3Ur1q/qh69LBbBU0lEWo9FLx4r2A9oQ9lsN83S3U3Y3Qgl9C948aCIV/+QN/+NmzYHbX0w8Hhvhpl5QcKZNq777ZQ2Nre2d8q7lb39g8Oj6vFJV8epIrRDYh6rfoA15UzSjmGG036iKBYBp71gepf7vSeqNIvlo5kl1Bd4IlnICDa5NEwiNqrW3Lq7AFonXkFqUKA9qn4NxzFJBZWGcKz1wHMT42dYGUY4nVeGqaYJJlM8oQNLJRZU+9ni1jm6sMoYhbGyJQ1aqL8nMiy0nonAdgpsIr3q5eJ/3iA14Y2fMZmkhkqyXBSmHJkY5Y+jMVOUGD6zBBPF7K2IRFhhYmw8FRuCt/ryOule1b1GvfFwXWvdFnGU4QzO4RI8aEIL7qENHSAQwTO8wpsjnBfn3flYtpacYuYU/sD5/AEXGo5K</latexit> 
+
+ω
+
+FIG. 4: Structural change and free energy landscape of alanine dipeptide at 300 K. (a) The structure of the dipeptide molecule defines the local-frame coordinate and the two backbone dihedral angles ψ and ϕ. (b) Molecular configurations along the reaction path identified by the NEB method. (c) Estimated free energy surface of alanine dipeptide obtained by VaFES. The CV coordinates are the two dominant components identified by TICA. A reaction path (red line) was identified using NEB, with endpoints fixed at the two local minima separated by the greatest distance. (d) Free energy profile along the reaction path in (c). The backbone dihedral angles, ψ and ϕ, are shown by the dashed blue and dash-dot pink lines, respectively. 
+
+E. Application: chignolin 
+
+After successfully validating our method using three well-studied examples, we now turn to a more complicated case. We consider the 10 -residue protein chignolin [60], which may fold into a stable β-hairpin. To challenge the VaFES method, we chose the native structure (PDB 1UAO), which has multiple metastable states as the misfolded and intermediate structures, and is thus more difficult to study than its more stable mutant CLN025 [61, 62]. We modeled the system using the Amber14 force field and the GBN2 implicit water model at 350 K. To construct a concise representation of the protein, we ignored all hydrogen atoms from explicit sampling, which can be easily recovered during energy evaluation using local molecular geometry [63], thereby reducing the chignolin molecule to 77 heavy atoms. We 13 further reduced six global translational and rotational degrees of freedom by fixing the molecule in a restricted frame, putting C α8 at the origin, C α3 on the positive y-axis, and Cα1 in the x-y plane. After these, there are 225 internal degrees of freedom left. As for CVs, we selected two inter-C α distances that monitor folding progress: |Cα3−Cα8|, which captures the key hydrogen-bond contact across the β-hairpin turn [64], and |Cα1−Cα10 |,which measures end-to-end compaction. These CVs form the first two dimensions of our intermediate representation, while the remaining 223 auxiliary dimensions are optimized by VaFES via a cubic-spline flow. Unlike the small molecules in previous examples, proteins require a highly structured bijective transformation to convert Cartesian coordinates into an intermediate representation suitable for variational modeling. Including the CV dimensions, this process maps all 225 
+
+dimensions into physically meaningful internal coordinates, such as bond lengths, bond angles, and dihedral angles. We therefore constructed a composite bijection by sequentially applying four elementary reversible maps, each with a closed-form Jacobian determinant, to specific heavy-atom subsets according to their chemical functions: (1) a spherical coordinate transformation that converts displacement vectors between these CV-related C α atoms into the two distance CVs plus auxiliaries of angular and distance variables; (2) a local-frame coordinate transformation that, for each residue, decomposes its backbone triad (N – C α – C) into Euler angles and frame-geometry scalars, and represents all its atoms in the triad-defined local frame. (3) a torsion transformation representing terminal atoms in bonded quadruples via bond lengths, bond angles, and dihedral angles; and (4) a planar local-frame transformation expressing aromatic rings and carboxylate groups in local 2D frames. Consequently, the full 225 -dimensional intermediate representation comprises the 2 CVs, 4
+
+angular and distance variables, 30 Euler angles, 41 dihedral angles, 41 bond lengths, 41 
+
+bond angles, and 66 local-frame variables. Full mathematical definitions and atom-level assignments are provided in the Supplementary Information [65]. To model this high-dimensional and complex system, we replaced the simple MLPs used in the previous examples with a more expressive neural-network architecture. Specifically, the spline parameters in each coupling layer are generated by a hybrid residual network (ResNet) [66] and MLP architecture, in which the inputs are first projected onto high-dimensional feature vectors by an MLP and then processed by residual one-dimensional convolutional blocks. Finally, to reduce the risk of trapping in local minima, we incorpo-14 rated temperature as an additional external parameter using the variational temperature-differentiable (VaTD) framework developed by us previously [16]. The FES obtained by our VaFES method suggests two possible folding pathways as shown in Fig. 5. The upper pathway in Fig. 5(b) begins with hydrophobic closure between C α1
+
+and C α10 , followed by turn formation that reduces the distance between C α3 and C α8. This pathway has a relatively high free energy barrier, suggesting that it is unlikely to be the dominant folding route of chignolin. The lower pathway in Fig. 5(b), which is more likely, has a smaller barrier and proceeds in three stages. Folding first involves hydrophobic assembly of the two aromatic rings together with the formation of a nascent turn, leading to a moderate simultaneous reduction in both |Cα1−Cα10 | and |Cα3−Cα8| as the system evolves from the unfolded state iv to intermediate state iii. Next, |Cα3−Cα8| decreases from more than 8 Å to about 6 Å with almost unchanged |Cα1−Cα10 |, indicating formation of a tight turn structure in the transition from intermediate state iii to intermediate state ii. Final folding then proceeds with a further collapse of the hydrophobic core, transforming intermediate state ii into the native folded state i. These findings agree well with long-timescale MD simulations [67], the FES reported in a previous study [68], and general views [69, 70] suggesting that local structure forms early, followed by later specific core packing during protein folding. As this is primarily a methodology study, we do not claim a definitive folding mechanism for chignolin, because the detailed folding behavior also heavily depends on the choice of force field and on whether the solvent is modeled explicitly or implicitly [61]. Instead, our goal is to test the technical capabilities of the VaFES framework. At the microscopic level, the native folded state i is identified as the local minimum in the lower-right region of the FES, where both CVs take small values. These configurations ex-hibited compact π-turns with radii of about 5–6Å, consistent with previous MD results [68]. Compared to the experimental NMR structure, the directly sampled native folded structures achieved a minimum C α-RMSD of about 1Å and remained within 1.5Å, comparable to the level reported in Ref. [60]. These results show that VaFES captures the dominant micro-scopic folding structure of chignolin with high fidelity, further implying the accuracy of the estimated FES. More broadly, these also highlight the ability of VaFES to recover one-shot realistic rare-event configurations directly from the energy function, without pre-generated datasets or extended MCMC/MD simulations. 15 (a)   
+
+> vi: Intermediate v: Intermediate
+> Hydrophobic first
+> (b)
+> Turn-formation first
+> ii: Intermediate iii: Intermediate
+> iv: Unfolded i: Native folded
+
+FIG. 5: Free energy profile and key configurations of chignolin (PDB 1UAO) at 350 K. (a) The estimated free energy surface. The CVs are the two inter-C α distances |Cα1−Cα10 | and 
+
+|Cα3−Cα8|. Six regions in CV space are boxed and labeled as key states. (b) Two folding pathways implied by the estimated FES. In the upper pathway, folding is initiated by the hydrophobic collapse from unfolded state iv to intermediate state v then vi, followed by turn formation from intermediate state vi to native folded state i. In the lower pathway, folding is initiated by turn formation: the two β-strands approach each other with modest hydrophobic closure and nascent turn formation from unfolded state iv to intermediate state iii, followed by tight turn formation from intermediate state iii to intermediate state ii and final hydrophobic collapse from intermediate state ii to native folded state i. 
+
+III. CONCLUSION 
+
+In this paper, we introduced VaFES, a dataset-free variational framework that uses tractable-density generative models to compute the FES directly from the system energy function. This enables subsequent identification of rare-event pathways with methods such as the NEB [35, 36] and the string method [37], as well as one-shot generation of rare-event configurations by direct sampling from the generative model. Compared with conventional sampling-based approaches [1–5], which rely on costly rare-event sampling through MCMC or MD, VaFES instead follows an FES-first strategy that targets the free energy landscape directly. Compared with existing deep-learning variational methods [13–20], which require the exact energy in the original full configuration space and therefore break down after coarse-graining onto CVs, VaFES overcomes this obstacle by replacing the coarse-grained 16 CV transformation with a reversible equivalent. By the universality of bijective transfor-mations, any coarse-grained transformation can be rigorously expanded into a bijection by incorporating auxiliary variables, in a process that can be automated by compiler-like al-gorithms [71]. This construction admits a latent space of intermediate representation, a joint of coarse-grained CV and auxiliaries, with the same dimensionality as the original full space. The reversibility further allows the energy to be rewritten exactly in this latent space, making the FES directly accessible to variational optimization. This proposed framework offers several advantages. As a variational optimization scheme, the deep-learning model is trained on self-generated one-shot configurations, without the need for pre-generated datasets. In contrast to the histogrammed, discrete free energy pro-files produced by conventional deep-learning approaches [12, 32–34], VaFES yields the FES as a continuous, differentiable function of the CVs, enabling gradient-based methods such as the NEB and string method for the identification of rare events. Rare-event configurations can then be sampled directly through one-shot generation from the trained model condi-tioned on the corresponding CV values. Thus, a single variational optimization yields both a continuous, differentiable FES and direct one-shot generation of rare-event configurations. Furthermore, VaFES constructs its latent space by expanding coarse-grained CV trans-formations into bijections. The resulting latent variables, the intermediate representation, remain physically interpretable by construction, as the CVs explicitly occupy a subset of its dimensions, thereby preserving compatibility with established CV-based intuition. By the universality of bijections, this construction accommodates arbitrary CV formulations with no restriction, including data-driven coordinates, machine-learned and statistically derived CVs, and advanced deep-learning reaction coordinates [72–74]. The intermediate representation also provides a practical route to handling symmetry and geometric constraints in complex systems. In contrast to approaches that encode physical structure directly into specialized equivariant architectures [75–77], VaFES offers an alternative by transforming the system into coordinates in which global symmetries are removed systematically and local constraints are imposed exactly. More broadly, VaFES is compatible with any tractable-density genera-tive model and can in principle be combined with more accurate energy functions, including quantum Hamiltonians. By linking rare-event configuration generation, coarse-grained ther-modynamics, and a differentiable free energy landscape within a single framework, VaFES offers a systematic and scalable route to studying transition behavior and rare events in 17 complex statistical systems.   
+
+> IV. METHODS A. Variational training of tractable-density models over a continuous external pa-rameter
+
+Generative deep-learning models are designed to produce samples from complex high-dimensional distributions, such as natural images [9, 78, 79]. Tractable-density generative models form a special class for which the probability density is explicitly available. They can therefore both evaluate exact sample probability and draw one-shot samples directly from the learned distribution. Representative examples include autoregressive models, such as PixelCNN and PixelRNN [11], and normalizing flows (NFs), such as RealNVP [10] and the cubic-spline flow. Variational training of a tractable-density model starts from a physical system with an explicit energy function E(x), where x denotes a configuration. The objective is to minimize the KLD between the model distribution pθ(x) and the Boltzmann distribution π(x) defined by E:
+
+DKL 
+
+ pθ(x)|| π(x) = E
+
+> x∼pθ
+
+[ln pθ(x) − ln π(x)] = ln Z + E
+
+> x∼pθ
+
+[ln pθ(x) + βE (x)] .
+
+(9) Because the KLD is non-negative, i.e. , E
+
+> x∼pθ
+
+[ln pθ(x) + βE (x)] ≥ − ln Z, the estimator 
+
+E
+
+> x∼pθ
+
+[ln pθ(x) + βE (x)] provides an upper bound on the exact free energy − ln Z. Minimizing the KLD therefore yields a variational free energy estimate. At the optimum, the model distribution approaches the target Boltzmann distribution; because the model is generative, physical configurations can then be sampled directly in a one-shot style. Reference [16] introduced the VaTD framework, which extends this optimization to a continuously varying external parameter such as temperature. In that setting, the integral form of Eq. (9) over a continuous temperature range is estimated using randomly sampled temperatures: min  
+
+> θ
+
+E
+
+> β∼U, x∼pθ
+
+[ln pθ(x; β) + βE (x)] (10) After optimization, the free energy estimate becomes a continuous, differentiable function of 18 temperature. The trained model also acquires the ability to generate accurate samples across a continuous range of temperature. The VaTD formulation is not restricted to temperature and can be generalized to other external parameters of the system.  
+
+> B. Cubic-spline flow
+
+A NF [80, 81] models a complex distribution as a composition of bijective transformations. Starting from latent variables z drawn from a simple prior q (e.g. , uniform or Gaussian), the flow applies a parameterized bijection x = Mθ(z) to generate samples from the target distribution. Because the mapping is bijective, the probability density of x is obtained exactly from the change-of-variables formula: 
+
+ln pθ(x) = ln q(z) − ln det ∂Mθ
+
+∂z . (11) In practice, Mθ is implemented as a stack of coupling layers [10]. Each layer partitions the variables into two groups: one remains unchanged and conditions a neural network whose outputs parameterize an elementwise reversible transformation of the other group. This construction yields a triangular Jacobian, so the determinant reduces to a product of one-dimensional derivatives and can be evaluated efficiently. In a cubic-spline flow [47], each coupling layer uses an elementwise monotonic piecewise-cubic spline. For K bins on [0 , 1] , the parameter network outputs K bin widths, K bin heights and two boundary derivatives for each transformed variable. These quantities define a continuously differentiable monotone cubic spline through Steffen interpolation [82, 83]. As K increases, the spline can approximate any continuous monotone function arbitrarily well while retaining an analytically tractable Jacobian determinant.  
+
+> C. Universality of bijective transformation
+
+A fundamental result in reversible computing is the universality of bijective transforma-tions: for any deterministic map s = F(x), there exists an equivalent bijective program T
+
+acting on an extended state space, (x, u′) → (s, u). Here u′ denotes auxiliary bits or vari-ables, typically initialized to zero, and u denotes the transformed anciliaries. Crucially, T
+
+preserves all input information, so it can be reversed exactly while still returning s = F(x)
+
+on the primary output [44, 45]. 19 From a thermodynamic perspective, preserving information through auxiliary bits avoids the Landauer cost of kT ln 2 per erased bit and provides a theoretical route to energy-efficient computation. Combined with universality, this implies that any computation can in princi-ple be implemented without intrinsic dissipation, approaching thermodynamic reversibility at the Landauer limit [84]. The same principle also underlies quantum computation and quantum circuits [31], linking reversible classical computation to universal quantum pro-cessing. This paradigm also admits constructive automation: compiler-like procedures can syn-thesize a reversible program T directly from F [71]. Such synthesis is essential in practical quantum computing, where classical functions must be converted into unitary gate sequences while preserving reversibility [85].  
+
+> V. CODE AVAILABILITY
+
+Our code implementation is opensourced on Github [86]. 
+
+> ACKNOWLEDGMENTS
+
+We thank Tao Li and Chu Li for many useful discussions. S.-H.L. and D.P. acknowledge support from Hong Kong Research Grants Council (RGC) (GRF-16302423). D.P. acknowl-edges support from Hong Kong RGC (GRF-16301723, GRF-16310225), National Natural Science Foundation of China/RGC Joint Research Scheme (N_HKUST664/24). Part of this work was carried out using computational resources from the National Supercomputer Center in Guangzhou, China, and the X-GPU cluster supported by the RGC Collaborative Research Fund C6021-19EF.   
+
+> [1] G. Torrie and J. Valleau, Nonphysical sampling distributions in monte carlo free-energy esti-mation: Umbrella sampling, Journal of Computational Physics 23 , 187 (1977). [2] E. Carter, G. Ciccotti, J. T. Hynes, and R. Kapral, Constrained reaction coordinate dynamics for the simulation of rare events, Chemical Physics Letters 156 , 472 (1989).
+
+20 [3] M. Sprik and G. Ciccotti, Free energy from constrained molecular dynamics, The Journal of Chemical Physics 109 , 7737 (1998), https://pubs.aip.org/aip/jcp/article-pdf/109/18/7737/19114804/7737_1_online.pdf. [4] F. Wang and D. P. Landau, Efficient, multiple-range random walk algorithm to calculate the density of states, Phys. Rev. Lett. 86 , 2050 (2001). [5] A. Laio and M. Parrinello, Escaping free-energy minima, Proceedings of the National Academy of Sciences 99 , 12562 (2002), https://www.pnas.org/doi/pdf/10.1073/pnas.202427399. [6] A. Barducci, M. Bonomi, and M. Parrinello, Metadynamics, WIREs Computational Molecular Science 1, 826 (2011), https://wires.onlinelibrary.wiley.com/doi/pdf/10.1002/wcms.31. [7] A. Laio and F. L. Gervasio, Metadynamics: a method to simulate rare events and reconstruct the free energy in biophysics, chemistry and material science, Reports on Progress in Physics 
+
+71 , 126601 (2008). [8] M. I. Jordan, Z. Ghahramani, T. S. Jaakkola, and L. K. Saul, An introduction to variational methods for graphical models, Machine Learning 37 , 183 (1999). [9] D. P. Kingma and P. Dhariwal, Glow: Generative flow with invertible 1x1 convolutions, in 
+
+Advances in Neural Information Processing Systems , Vol. 31, edited by S. Bengio, H. Wallach, H. Larochelle, K. Grauman, N. Cesa-Bianchi, and R. Garnett (Curran Associates, Inc., 2018). [10] L. Dinh, J. Sohl-Dickstein, and S. Bengio, Density estimation using real nvp (2017), arXiv:1605.08803 [cs.LG]. [11] A. van den Oord, N. Kalchbrenner, and K. Kavukcuoglu, Pixel recurrent neural networks, in Proceedings of The 33rd International Conference on Machine Learning , Proceedings of Machine Learning Research, Vol. 48, edited by M. F. Balcan and K. Q. Weinberger (PMLR, New York, New York, USA, 2016) pp. 1747–1756. [12] F. Noé, S. Olsson, J. Köhler, and H. Wu, Boltzmann generators: Sampling equilibrium states of many-body systems with deep learning, Science 365 , eaaw1147 (2019). [13] S.-H. Li and L. Wang, Neural network renormalization group, Phys. Rev. Lett. 121 , 260601 (2018), arXiv:1802.02840. [14] D. Wu, L. Wang, and P. Zhang, Solving statistical mechanics using variational autoregressive networks, Phys. Rev. Lett. 122 , 080602 (2019). [15] H.-Y. Hu, S.-H. Li, L. Wang, and Y.-Z. You, Machine learning holographic mapping by neural network renormalization group, Phys. Rev. Research 2, 023369 (2020), arXiv:1903.00804. 
+
+21 [16] S.-H. Li, Y.-W. Zhang, and D. Pan, Deep generative modeling of the canonical ensemble with differentiable thermal properties, Phys. Rev. Lett. , (2025). [17] P. Wirnsberger, G. Papamakarios, B. Ibarz, S. Racanière, A. J. Ballard, A. Pritzel, and C. Blundell, Normalizing flows for atomic solids, Machine Learning: Science and Technology 
+
+3, 025009 (2022). [18] R. Ahmad and W. Cai, Free energy calculation of crystalline solids using normalizing flows, Modelling and Simulation in Materials Science and Engineering 30 , 065007 (2022). [19] S.-H. Li, C.-X. Dong, L. Zhang, and L. Wang, Neural canonical transformation with symplectic flows, Phys. Rev. X 10 , 021020 (2020), arXiv:1910.00024. [20] H. Xie, Z.-H. Li, H. Wang, L. Zhang, and L. Wang, Deep variational free energy approach to dense hydrogen, Physical Review Letters 131 , 126501 (2023). [21] L. Zhang, J. Han, H. Wang, R. Car, and W. E, Deep potential molecular dynamics: A scalable model with the accuracy of quantum mechanics, Phys. Rev. Lett. 120 , 143001 (2018). [22] J. Ho, A. Jain, and P. Abbeel, Denoising diffusion probabilistic models, Advances in neural information processing systems 33 , 6840 (2020). [23] A. Radford, K. Narasimhan, T. Salimans, and I. Sutskever, Improving language understanding by generative pre-training, OpenAI Blog 3 (2018). [24] R. K. Cersonsky, B. Cheng, M. De Vivo, and P. Tiwary, Machine learning and statistical mechanics: Shared synergies for next generation of chemical theory and computation, Journal of Chemical Theory and Computation 21 , 5359 (2025). [25] E. C. Goonetilleke, B. Liu, Y. Wu, M. S. O’Connor, and X. Huang, A practical guide to transi-tion state analysis in biomolecular simulations with ts-dar, The Journal of Physical Chemistry B 129 , 12133 (2025). [26] P. Tiwary, L. Herron, R. John, S. Lee, D. Sanwal, and R. Wang, Genera-tive ai for computational chemistry: A roadmap to predicting emergent phenom-ena, Proceedings of the National Academy of Sciences 122 , e2415655121 (2025), https://www.pnas.org/doi/pdf/10.1073/pnas.2415655121. [27] R. John, Y. Qiu, L. Herron, and P. Tiwary, Combined representation and generation with diffusive state predictive information bottleneck (2025), arXiv:2510.09784 [cs.LG]. [28] E. R. Beyerle and P. Tiwary, Inferring the isotropic-nematic phase transition with generative machine learning, Phys. Rev. Lett. 135 , 068102 (2025). 
+
+22 [29] T.-S. Lee, B. K. Radak, A. Pabis, and D. M. York, A new maximum likelihood approach for free energy profile construction from molecular simulations, Journal of Chemical Theory and Computation 9, 153 (2013). [30] O. Valsson and M. Parrinello, Variational approach to enhanced sampling and free energy calculations, Phys. Rev. Lett. 113 , 090601 (2014). [31] M. A. Nielsen and I. L. Chuang, Quantum computation and quantum information (Cambridge university press, 2010). [32] M. Schebek, M. Invernizzi, F. Noé, and J. Rogal, Efficient mapping of phase diagrams with con-ditional Boltzmann generators, Machine Learning: Science and Technology 5, 045045 (2024). [33] S. Falkner, A. Coretti, S. Romano, P. L. Geissler, and C. Dellago, Conditioning Boltzmann generators for rare event sampling, Machine Learning: Science and Technology 4, 035050 (2023). [34] Y. Xie, L. Winkler, L. Sun, S. Lewis, A. E. Foster, J. Jimenez-Luna, T. Hempel, M. Gastegger, Y. Chen, I. Zaporozhets, C. Clementi, C. M. Bishop, and F. Noé, Enhanced diffusion sampling: efficient rare event sampling and free energy calculation with diffusion models, arXiv preprint arXiv:2602.16634 (2026). [35] H. JÓNSSON, G. MILLS, and K. W. JACOBSEN, Nudged elastic band method for finding minimum energy paths of transitions, in Classical and Quantum Dynamics in Condensed Phase Simulations , pp. 385–404. [36] G. Mills, H. Jónsson, and G. K. Schenter, Reversible work transition state theory: application to dissociative adsorption of hydrogen, Surface Science 324 , 305 (1995). [37] W. E, W. Ren, and E. Vanden-Eijnden, String method for the study of rare events, Phys. Rev. B 66 , 052301 (2002). [38] D. P. Kingma and M. Welling, Auto-encoding variational bayes (2022), arXiv:1312.6114 [stat.ML]. [39] I. J. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio, Generative adversarial networks (2014), arXiv:1406.2661 [stat.ML]. [40] Y. Li, H. Yi, C. Bender, S. Shan, and J. B. Oliva, Exchangeable neural ode for set modeling, Advances in Neural Information Processing Systems 33 , 6936 (2020). [41] M. Biloš and S. Günnemann, Scalable normalizing flows for permutation invariant densities, in 
+
+Proceedings of the 38th International Conference on Machine Learning , Proceedings of Machine 
+
+23 Learning Research, Vol. 139, edited by M. Meila and T. Zhang (PMLR, 2021) pp. 957–967. [42] V. G. Satorras, E. Hoogeboom, and M. Welling, E (n) equivariant graph neural networks, in 
+
+International conference on machine learning (PMLR, 2021) pp. 9323–9332. [43] R. Winter, M. Bertolini, T. Le, F. Noe, and D.-A. Clevert, Unsupervised learning of group invariant and equivariant representations, Advances in Neural Information Processing Systems 
+
+35 , 31942 (2022). [44] C. H. Bennett, Logical reversibility of computation, IBM Journal of Research and Development 
+
+17 , 525 (1973). [45] K. S. Perumalla, Introduction to reversible computing (CRC Press, 2013). [46] S. Kullback and R. A. Leibler, On information and sufficiency, The annals of mathematical statistics 22 , 79 (1951). [47] C. Durkan, A. Bekasov, I. Murray, and G. Papamakarios, Cubic-spline flows, arXiv preprint arXiv:1906.02145 (2019). [48] S. Zheng, J. He, C. Liu, Y. Shi, Z. Lu, W. Feng, F. Ju, J. Wang, J. Zhu, Y. Min, H. Zhang, S. Tang, H. Hao, P. Jin, C. Chen, F. Noé, H. Liu, and T.-Y. Liu, Predicting equilibrium distributions for molecular systems with deep learning, Nature Machine Intelligence 6, 558 (2024). [49] S. Lewis, T. Hempel, J. Jimenez-Luna, M. Gastegger, Y. Xie, A. Y. K. Foong, V. Garcia Sator-ras, O. Abdin, B. S. Veeling, I. Zaporozhets, Y. Chen, S. Yang, A. Schneuing, J. Nigam, F. Bar-bero, V. Stimper, A. Campbell, J. Yim, M. Lienen, Y. Shi, S. Zheng, H. Schulz, U. Munir, C. Clementi, and F. Noé, Scalable emulation of protein equilibrium ensembles with generative deep learning, Science 387 , eadv9817 (2025). [50] J. Abramson, J. Adler, J. Dunger, R. Evans, T. Green, A. Pritzel, O. Ronneberger, L. Will-more, A. J. Ballard, J. Bambrick, S. W. Bodenstein, D. A. Evans, C.-C. Hung, M. O’Neill, D. Reiman, K. Tunyasuvunakool, Z. Wu, A. Žemgulyt˙ e, E. Arvaniti, C. Beattie, O. Bertolli, A. Bridgland, A. Cherepanov, M. Congreve, A. I. Cowen-Rivers, A. Cowie, M. Figurnov, F. B. Fuchs, H. Gladman, R. Jain, Y. A. Khan, C. M. R. Low, K. Perlin, A. Potapenko, P. Savy, S. Singh, A. Stecula, A. Thillaisundaram, C. Tong, S. Yakneen, E. D. Zhong, M. Zielinski, A. Žídek, V. Bapst, P. Kohli, M. Jaderberg, D. Hassabis, and J. M. Jumper, Accurate struc-ture prediction of biomolecular interactions with alphafold 3, Nature 630 , 493 (2024). 
+
+24 [51] Y. Wang, J. Lu, N. Jaitly, J. Susskind, and M. A. Bautista, Simplefold: Folding proteins is simpler than you think (2025), arXiv:2509.18480 [cs.LG]. [52] J. P. Nilmeier, G. E. Crooks, D. D. L. Minh, and J. D. Chodera, Nonequilibrium candidate monte carlo is an efficient tool for equilibrium simulation, Proceedings of the National Academy of Sciences 108 , E1009 (2011), https://www.pnas.org/doi/pdf/10.1073/pnas.1106094108. [53] D.-Y. Hwang and A. M. Mebel, Reaction mechanism of n2/h2 conversion to nh3: A theoretical study, The Journal of Physical Chemistry A 107 , 2865 (2003), https://doi.org/10.1021/jp0270349. [54] A. M. Sand, C. A. Schwerdtfeger, and D. A. Mazziotti, Strongly correlated barriers to rotation from parametric two-electron reduced-density-matrix methods in application to the isomeriza-tion of diazene, The Journal of Chemical Physics 136 , 034112 (2012). [55] J. Behrmann, W. Grathwohl, R. T. Q. Chen, D. Duvenaud, and J.-H. Jacobsen, Invertible residual networks, in Proceedings of the 36th International Conference on Machine Learning ,Proceedings of Machine Learning Research, Vol. 97, edited by K. Chaudhuri and R. Salakhut-dinov (PMLR, 2019) pp. 573–582. [56] W. Grathwohl, R. T. Q. Chen, J. Bettencourt, I. Sutskever, and D. Duvenaud, Ffjord: Free-form continuous dynamics for scalable reversible generative models (2018), arXiv:1810.01367 [cs.LG]. [57] R. T. Q. Chen, Y. Rubanova, J. Bettencourt, and D. Duvenaud, Neural ordinary differential equations (2019), arXiv:1806.07366 [cs.LG]. [58] L. Molgedey and H. G. Schuster, Separation of a mixture of independent signals using time delayed correlations, Phys. Rev. Lett. 72 , 3634 (1994). [59] G. Pérez-Hernández, F. Paul, T. Giorgino, G. De Fabritiis, and F. Noé, Identification of slow molecular order parameters for markov model construction, The Journal of Chemical Physics 
+
+139 , 015102 (2013). [60] D. Satoh, K. Shimizu, S. Nakamura, and T. Terada, Folding free-energy landscape of a 10-residue mini-protein, chignolin, FEBS letters 580 , 3422 (2006). [61] Y. Maruyama, S. Koroku, M. Imai, K. Takeuchi, and A. Mitsutake, Mutation-induced change in chignolin stability from π-turn to α-turn, RSC advances 10 , 22797 (2020). [62] A.-L. M. Fischer, A. Tichy, J. Kokot, V. J. Hoerschinger, R. F. Wild, J. R. Riccabona, J. R. Lo-effler, F. Waibl, P. K. Quoika, P. Gschwandtner, S. Forli, A. B. Ward, K. R. Liedl, M. Zacharias, 
+
+25 and M. L. Fernández-Quintero, The role of force fields and water models in protein folding and unfolding dynamics, Journal of Chemical Theory and Computation 20 , 2321 (2024). [63] P. Kunzmann, J. M. Anter, and K. Hamacher, Adding hydrogen atoms to molecular models via fragment superimposition, Algorithms for Molecular Biology 17 , 7 (2022). [64] P. Kang, E. Trizio, and M. Parrinello, Computing the committor with the committor to study the transition state ensemble, Nature Computational Science 4, 451 (2024). [65] See the SI for details about (a). the force field information, the deep-learning model struc-ture, and extra parameters used in each applications; (b) the detailed scheme of bijective transformations used in each applications. The SI cites [16, 47, 66, 87–89]. [66] K. He, X. Zhang, S. Ren, and J. Sun, Deep residual learning for image recognition, in Proceed-ings of the IEEE conference on computer vision and pattern recognition (2016) pp. 770–778. [67] R. Harada and A. Kitao, Exploring the folding free energy landscape of a β-hairpin miniprotein, chignolin, using multiscale free energy landscape calculation method, The Journal of Physical Chemistry B 115 , 8806 (2011). [68] A. Suenaga, T. Narumi, N. Futatsugi, R. Yanai, Y. Ohno, N. Okimoto, and M. Taiji, Folding dynamics of 10-residue β-hairpin peptide chignolin, Chemistry–An Asian Journal 2, 591 (2007). [69] I. A. Hubner, E. J. Deeds, and E. I. Shakhnovich, Understanding ensemble protein folding at atomic detail, Proceedings of the National Academy of Sciences 103 , 17747 (2006). [70] K. Lindorff-Larsen, S. Piana, R. O. Dror, and D. E. Shaw, How fast-folding proteins fold, Science 334 , 517 (2011). [71] A. N. Al-Rabadi, Reversible logic synthesis: from fundamentals to quantum computing 
+
+(Springer Science & Business Media, 2012). [72] B. Liu, J. G. Boysen, I. C. Unarta, X. Du, Y. Li, and X. Huang, Exploring transition states of protein conformational changes via out-of-distribution detection in the hyperspherical latent space, Nature Communications 16 , 349 (2025). [73] B. Liu, S. Cao, J. G. Boysen, M. Xue, and X. Huang, Memory kernel minimization-based neural networks for discovering slow collective variables of biomolecular dynamics, Nature Computational Science 5, 562 (2025). [74] B. Liu, M. Xue, Y. Qiu, K. A. Konovalov, M. S. O’Connor, and X. Huang, Graphvampnets for uncovering slow collective variables of self-assembly dynamics, The Journal of Chemical Physics 159 (2023). 
+
+26 [75] J. Köhler, L. Klein, and F. Noé, Equivariant flows: sampling configurations for multi-body systems with symmetric energies, arXiv preprint arXiv:1910.00753 (2019). [76] L. Klein, A. Krämer, and F. Noé, Equivariant flow matching, Advances in Neural Information Processing Systems 36 , 59886 (2023). [77] G. Kanwar, M. S. Albergo, D. Boyda, K. Cranmer, D. C. Hackett, S. Racaniere, D. J. Rezende, and P. E. Shanahan, Equivariant flow-based sampling for lattice gauge theory, Physical Review Letters 125 , 121601 (2020). [78] I. Goodfellow, Nips 2016 tutorial: Generative adversarial networks (2017), arXiv:1701.00160 [cs.LG]. [79] I. Goodfellow, Y. Bengio, and A. Courville, Deep Learning (MIT Press, 2016) http://www. deeplearningbook.org .[80] G. Papamakarios, E. Nalisnick, D. J. Rezende, S. Mohamed, and B. Lakshminarayanan, Nor-malizing flows for probabilistic modeling and inference, The Journal of Machine Learning Research 22 , 2617 (2021). [81] D. Rezende and S. Mohamed, Variational inference with normalizing flows, in International conference on machine learning (PMLR, 2015) pp. 1530–1538. [82] F. N. Fritsch and R. E. Carlson, Monotone piecewise cubic interpolation, SIAM Journal on Numerical Analysis 17 , 238 (1980). [83] M. Steffen, A simple method for monotonic interpolation in one dimension, Astronomy and Astrophysics, Vol. 239, NO. NOV (II), P. 443, 1990 239 , 443 (1990). [84] R. Landauer, Irreversibility and heat generation in the computing process, IBM journal of research and development 5, 183 (1961). [85] M. Saeedi and I. L. Markov, Synthesis and optimization of reversible circuits—a survey, ACM Computing Surveys (CSUR) 45 , 1 (2013). [86] See https://github.com/li012589/vafes for a PyTorch implementation. [87] N. Schmid, A. P. Eichenberger, A. Choutko, S. Riniker, M. Winger, A. E. Mark, and W. F. van Gunsteren, Definition and testing of the gromos force-field versions 54a7 and 54b7, European Biophysics Journal 40 , 843 (2011). [88] A. K. Malde, L. Zuo, M. Breeze, M. Stroet, D. Poger, P. C. Nair, C. Oostenbrink, and A. E. Mark, An automated force field topology builder (atb) and repository: Ver-sion 1.0, Journal of Chemical Theory and Computation 7, 4026 (2011), pMID: 26598349, 
+
+27 https://doi.org/10.1021/ct200196m. [89] M. Stroet, B. Caron, K. M. Visscher, D. P. Geerke, A. K. Malde, and A. E. Mark, Au-tomated topology builder version 3.0: Prediction of solvation free enthalpies in water and hexane, Journal of Chemical Theory and Computation 14 , 5834 (2018), pMID: 30289710, https://doi.org/10.1021/acs.jctc.8b00768. 
+
+28 Supplementary Information  
+
+> Appendix A: Supplementary for the bistable dimer potential application 1. Technical details in training
+
+The bistable dimer potential of Eq. (7) acts on a 3-dimensional vector x = ( x0, x 1, x 2)
+
+connecting the two particles. Its bijective transformation maps x to (|x|, u 0, u 1). |x| is the bond-length CV in a range of [1 , 6] and the two auxiliary variables u0, u 1 are sampled from a uniform prior on [0 , 1] . In a second training, temperature T was included as an additional environmental parameter, uniformly sampled from [0 .3, 1.6] , so that one optimization yields a temperature-continuous FES estimate. The cubic-spline flow model used in these two VaFES optimizations is the same, and has the same structure as the one introduced in [47] with the parameter neural network being an MLP network. A typical checkerboard partition is used for the coupling layers of the cubic-spline flow. The remaining hyperparameters are listed in Table S1. TABLE S1: VaFES hyperparameters for the bistable dimer potential application.                          
+
+> Parameter Value Spline bins K50 Coupling layers 16 MLP hidden dimensions 20 ,50 ,100 ,150
+> Activation ELU Prior distribution Uniform Optimizer Adamax Learning rate 7×10 −4
+> LR schedule StepLR (step 1000 ,γ= 0 .8)Batch size 512 Bond-length CV range [1 ,6]
+> Temperature Trange [0 .3,1.6]
+
+29 2. Details about the reversible transformation and its Jacobian 
+
+For the bistable dimer potential, the reversible CV transformation used is as follows 
+
+(x0, x 1, x 2) T
+
+7−→ (|x|, u 0, u 1),
+
+with |x| =
+
+q
+
+x20 + x21 + x22,u0 = sign( x1) x21
+
+x20 + x21
+
+,u1 = sign( x2) x22
+
+x20 + x21 + x22
+
+.
+
+(S1) Notably, this transformation is not bijective, but it is reversible within the variable ranges used in training. A proper bijective distance computation admits a more complex form, and is therefore postponed to the chignolin application. The corresponding Jacobian matrix, ∂(|x|, u 0, u 1)/∂ (x0, x 1, x 2), is 
+
+J =
+
+
+
+x0
+
+|x|
+
+x1
+
+|x|
+
+x2
+
+|x|−2 sign( x1) x0x21
+
+(x20 + x21)2 2 sign( x1) x20x1
+
+(x20 + x21)2 0
+
+−2 sign( x2)x0x22
+
+|x|4 −2 sign( x2)x1x22
+
+|x|4 2 sign( x2)x2(x20 + x21)
+
+|x|4
+
+
+
+. (S2) 
+
+3. Analytical results of the FES as a continuous function of the temperature 
+
+As a ground truth for comparison, we show the analytical results of the FES of the bistable dimer potential as a continuous function of the temperature in Fig. S1. 
+
+Appendix B: Supplementary for the diazene application 1. Technical details in training 
+
+We used the Gromos 54A7 force field [87]. The force field parameters of N 2H2 were generated using the Automated Topology Builder (ATB) [88, 89]. The thermodynamic temperature is set to approximately 120 K. Throughout the atomistic applications, energies are measured in kJ/mol, so the temperature variable T in VaFES denotes the thermal energy 
+
+kB Tphys expressed in kJ/mol rather than the temperature in kelvin. For 120 K, this gives 
+
+T ≈ 1.0kJ mol −1.30 2 3 4 5
+
+Bond length, |x|
+
+0.21.12.0
+
+> Temperature,  T
+> −404812 16 20 24 28
+
+FIG. S1: The analytical results of the FES of the bistable dimer potential system as a continuous function of the temperature and the bond length CV. The machine-learning CV s1 was trained by a single-layer sigmoid-based transformation with an MLP of hidden dimensions [10 , 10] . The training used MD trajectory data of cis and trans configurations, split into training and test sets at a ratio of 0.8, and optimized for 
+
+100 epochs with a batch size of 256 .The model architecture of the cubic-spline flow model used in VaFES is the same as in [47] with the parameter neural network being an MLP network. A typical checkerboard partition is used for the coupling layers of the cubic-spline flow. The ranges of each dimen-sion were determined from the data collected in the machine-learning CV training. The hyperparameters are listed in Table S2. 31 TABLE S2: Hyperparameters for the diazene application. 
+
+Parameter Value Spline bins K 50 Coupling layers 16 MLP hidden dimensions (20 , 50 , 100 , 150) 
+
+Activation ELU Prior distribution Uniform Optimizer Adamax Learning rate 7 × 10 −4
+
+LR schedule StepLR (step 1000 , γ = 0 .8)Batch size 512 
+
+2. Details about the bijective transformation and its Jacobian 
+
+For the diazene application, from the 6-dimensional state, (x1, y 1, d, x 2, y 2, z 2), we ap-plied an additional bijective transformation on y2 to define the machine-learning CV s1 ∈
+
+[0 , 1] . We first rescale y2 ∈ [−0.18 , 0.18] to ˜y2 ∈ [0 , 1] using a linear transformation, and then apply 
+
+s1 = L σ (k(˜ y2 − t)) + b, 
+
+with σ(x) = 11 + e−x , L = (1 + ekt )(1 + ek(1 −t))
+
+ek − 1 , b = 1 + ek(1 −t)
+
+1 − ek ,
+
+(S3) where k and t are parameters from the output of an MLP network with (x1, y 1, d, x 2, z 2)
+
+as its input. We then ensure k > 0 and t ∈ [0 , 1] , implemented correspondingly by softplus and sigmoid. This formulation of L and b in Eq. (S3) also enforces s1(˜ y2 = 0) = 0 and 
+
+s1(˜ y2 = 1) = 1 .Then, the end-to-end bijective transformation to the intermediate representation latent space is as follows 
+
+(x1, y 1, d, x 2, y 2, z 2) T
+
+7−→ (x1, y 1, d, x 2, s 1, z 2). (S4) Because all variables other than y2 are unchanged by T , the Jacobian matrix is lower tri-angular with unit diagonal entries except for the y2 7 → s1 entry. Its determinant therefore 32 reduces to 
+
+det J = ∂s 1
+
+∂y 2
+
+= Lk 
+
+0.36 σ(k(˜ y2 − t)) [1 − σ(k(˜ y2 − t))] . (S5)  
+
+> Appendix C: Supplementary for the alanine dipeptide application 1. Technical details in training
+
+The parameters of the classical force field used for the alanine dipeptide molecule are from the Amber99SB force field. The thermodynamic temperature is set at 300 K. As above, energies are measured in kJ/mol, so the temperature variable T in VaFES denotes the thermal energy kB Tphys in kJ/mol. For 300 K, this gives T ≈ 2.49kJ mol −1.The MD trajectory used for TICA was first converted from the 13 -atom representation into the 33 -dimensional concise representation. Before applying TICA, we whitened this 
+
+33 -dimensional representation using its covariance matrix. TICA was then performed in the whitened space, so that the end-to-end transformation from the 33 -dimensional coordinates to the TICA coordinates is a full-rank orthogonal transformation. The first two components were selected as CVs, and the boundary ranges for all 33 components were determined from the data. The prior distributions for the 31 auxiliary dimensions are uniform distributions over the ranges determined from the data. During training, the two CV dimensions are independently and uniformly sampled over their respective ranges. The model architecture of the cubic-spline flow model used in VaFES is the same as in [47] with the parameter neural network being an MLP network. A typical checkerboard partition is used for the coupling layers of the cubic-spline flow. The hyperparameters are listed in Table S3.  
+
+> Appendix D: Supplementary for the chignolin application 1. Details about the bijective transformation and its Jacobian
+
+The full-atom Cartesian coordinates of the chignolin protein are converted into an in-termediate representation by the sequential application of four reversible transformations, each equipped with a closed-form log-Jacobian determinant. The four transformations are described in the following sections, followed by a description of how these four bijective trans-33 TABLE S3: Hyperparameters for the alanine dipeptide application.                       
+
+> Parameter Value Temperature 2.49kJ mol −1(300 K)
+> Spline bins K50 Coupling layers 12 MLP hidden dimensions (512 ,512 ,512 ,1024 ,1024)
+> Activation ELU Prior distribution Uniform Optimizer Adamax Learning rate 7×10 −4
+> LR schedule StepLR (step 1000 ,γ= 0 .8)Batch size 512
+
+formations compose the overall bijective transformation to the latent space of intermediate representation.  
+
+> a. Bijective version of the spherical coordinate transformation
+
+Given a displacement vector x = ( x, y, z ) between two reference atoms, the modified spherical coordinate transformation maps it to (r, a, b ) defined by 
+
+r = px2 + y2 + z2, a = zr , b = atan2( y, x ). (S6) Here r is the inter-atomic distance, a ∈ [−1, 1] is the normalized z-projection, i.e. , the cosine of the polar angle, and b ∈ (−π, π ] is the azimuthal angle. The Jacobian matrix, 
+
+J = ∂(r, a, b )/∂ (x, y, z ), can be computed analytically, the log-absolute-determinant of which is 
+
+log |det J| = −2 log r. (S7) 34 b. Bijective version of the local-frame coordinate transformation 
+
+Given a set of N ≥ 3 atoms with positions p1, . . . , pN , the first three points A = p1,
+
+B = p2, C = p3 define a local orthonormal frame as follows. Let 
+
+ˆu = B − A
+
+∥B − A∥, w = ( C − A) − (C − A) · ˆu ˆu, ˆv = w
+
+∥w∥, ˆw = ˆ u × ˆv. (S8) The rotation matrix R = [ ˆ u, ˆv, ˆw] is parameterized by Euler angles (α, β, γ ) with the ZYX convention. The frame geometry is captured by three scalars 
+
+s1 = ∥B − A∥, p = ( C − A) · ˆu, s = ∥(C − A) − p ˆu∥, (S9) where s1 is the distance AB , p is the projection of AC onto ˆu, and s is the perpendicular distance of C from the line AB . Every remaining atom pi (i > 3) is expressed in the local frame as qi = R⊤(pi − A).The complete output of the transformation is 
+
+(p1, . . . , pN ) T
+
+7−→ (Ax, A y, A z , α, β, γ, s 1, p, s, q4, . . . , qN ). (S10) The log-absolute-determinant of the Jacobian is 
+
+log |det J| = −2 log s1 − log s − log |cos β|. (S11)  
+
+> c. Bijective version of the torsion transformation
+
+Given four ordered atom positions N, A, B, X , this transformation replaces the Cartesian position of the terminal atom X with the internal coordinates (r, θ, χ ) defined by 
+
+r = ∥X − B∥, θ = arccos 
+
+(A − B) · (X − B)
+
+∥A − B∥ ∥ X − B∥
+
+
+
+, χ = atan2  −nBA · (t × u), t · u,
+
+(S12) where θ is the bond angle ∠ABX , χ is the dihedral (torsion) angle about the A–B bond, and 
+
+t = ( A − N ) × (B − A), u = ( B − A) × (X − B), nBA = B − A
+
+∥B − A∥. (S13) The positions of N , A, and B are kept unchanged. The log-absolute-determinant of the Jacobian is 
+
+log |det J| = −2 log r − log sin θ. (S14) 35 The inverse transformation reconstructs X from (r, θ, χ ) by building a local cylindrical frame from N , A, B:
+
+ˆz = A − B
+
+∥A − B∥, ˆx = (N − A) − [( N − A) · ˆz] ˆ z
+
+∥· · ·∥ , ˆy = ˆ z × ˆx, (S15) and then 
+
+X = B + r cos θ ˆz + sin θ (cos χ ˆx + sin χ ˆy). (S16)  
+
+> d. Bijective version of the planar local-frame coordinate transformation
+
+Given N ≥ 3 atom positions where the first three points p1, p2, p3 are coplanar reference atoms, e.g. atoms in an aromatic ring, a local orthonormal frame is built as 
+
+ˆex = p2 − p1
+
+∥p2 − p1∥, ˆez = (p2 − p1) × (p3 − p1)
+
+∥(p2 − p1) × (p3 − p1)∥, ˆey = ˆ ez × ˆex. (S17) Each remaining atom pi (i > 3) is then expressed in this frame as 
+
+qi = R⊤(pi − p1), R = [ˆ ex, ˆey, ˆez ]. (S18) Since R is an orthogonal matrix that depends only on the reference atoms and the transfor-mation of the remaining atoms is a rigid rotation and translation, the Jacobian determinant of this transformation is unity, i.e. , log |det J| = 0 . This transformation is applied to planar groups such as aromatic rings and carboxylate groups.  
+
+> e. The overall bijective transformation and the definition of intermediate representation
+
+The chignolin protein in this study contains 77 atoms after removing all hydrogen atoms, giving 231 Cartesian degrees of freedom. A preprocessing step fixes the six rigid-body degrees of freedom (three translations and three rotations) by choosing the four reference Cα atoms—C α1 (GLY1), C α3 (ASP3), C α8 (THR8), and C α10 (GLY10)—with C α8 placed at the origin, C α3 on the positive y-axis, C α1 in the x-y plane, and C α10 on the positive-z
+
+side. After preprocessing, the remaining 225 internal degrees of freedom are extracted by the bijective transformation described below. 36 Basis vectors (6 dimensions). Two displacement vectors between reference C α atoms are converted by the bijective spherical coordinate transformation: the vector from C α8 to Cα1, and the vector from C α1 to C α10 . The transformed vectors are represented as 
+
+Cα8−Cα1 7 → (r1, a 1, b 1), Cα1−Cα10 7 → (r2, a 2, b 2). (S19) Because the preprocessing constrains C α8 to the origin and C α3 to the positive y-axis, the component a1 is fixed to zero and is replaced by yCα3 , the y-coordinate of C α3. The six transformed variables are assembled as 
+
+zbasis = ( r2, y Cα3 , r 1, b 1, a 2, b 2), (S20) with the first two being the CVs – the distance of C α1 – C α10 and C α3 – C α8.
+
+Residue frames (60 dimensions). The backbone heavy atoms of every residue, the C α
+
+and its two bonded neighbors (N and C), are organized into 10 groups. The bijective local-frame coordinate transformation is then applied to all groups, each producing a 9-variable output: the origin position (Ax, A y, A z ), three Euler angles (α, β, γ ), and three frame-geometry scalars (s1, p, s ). The origins of these frames, except C α1, C α10 , C α3 and C α8
+
+processed above as basis vectors, will be transformed in the next step and are thus dropped here. As a result, only 6-variable output per group is retained, yielding 60 dimensions. 
+
+Torsion coordinates (123 dimensions). The bijective torsion transformation is applied to 
+
+41 groups of four sequentially bonded atoms. First, these comprise 6 peptide-bond quadru-ples, (N i, Cαi, Ci, Ni+1 ), that connect consecutive residues along the backbone. After trans-formation, each peptide-bond quadruple yields the bond length r, the bond angle θ, and the dihedral angle χ, thereby connecting two adjacent residue frames. Then, 35 side-chain quadruples extending outward from each residue’s C α are transformed via the same bijective torsion transformation. The 35 side-chain quadruples follow a hierar-chical pattern: the first layer determines atoms bonded directly to the backbone (carbonyl oxygens O and first side-chain atoms C β ), the second layer extends to C γ , and deeper layers continue outward to the tips of each side chain. Each group produces the bond length r,bond angle θ, and dihedral angle χ of the terminal atom, giving a total of 41 × 3 = 123 
+
+dimensions. 
+
+Planar-group atoms (36 dimensions). Aromatic rings and carboxylate groups contain atoms constrained to lie approximately in a plane. These are handled by 6 independent 37 applications of the bijective planar local-frame transformation: TYR2 ring: (CG , CD 1, CE 1, CD 2, CE 2, CZ , OH); 
+
+TRP9 five-membered ring: (CG , CD 2, CE 2, NE 1, CD 1); 
+
+TRP9 six-membered ring: (CE 2, CD 2, CE 3, CZ 2, CZ 3, CH 2); 
+
+GLY10 terminus: (C α, C, O, OXT); 
+
+ASP3 carboxylate: (C β , Cγ , OD 1, OD 2); 
+
+GLU5 carboxylate: (C γ , Cδ, OE 1, OE 2).
+
+As defined previously, in each group, the first three atoms define the reference frame and the remaining atoms are expressed in local Cartesian coordinates. This produces 12 local-coordinate vectors of dimension 3, for a total of 36 dimensions. 
+
+Reordering and final output. We first divide the 60 dimensions from residue frames into two groups, one is the frame angles (α, β, γ ), the other is the frame geometry (s1, p, s ).Then, the 41 torsion dihedral angles χ are reordered so that the 19 most physically significant ones—the 6 peptide-bond dihedrals and 13 key side-chain dihedrals including N – C α – C β – C γ
+
+rotamers—appear first. The remaining (r, θ )s from the bijective torsion transformation follow these dihedral angles. Following this, a final overall reordering gives the full 225 -dimensional intermediate representation as 
+
+(s, u) =   |Cα1−Cα10 |, |Cα3−Cα8|, ubasis 
+
+| {z } 
+
+> 4
+
+, uframe-angle 
+
+| {z }
+
+> 30
+
+, utorsion-χ
+
+| {z }
+
+> 41
+
+, utorsion-r,θ 
+
+| {z }
+
+> 82
+
+, uframe-geometry 
+
+| {z }
+
+> 30
+
+, uplanar 
+
+| {z } 
+
+> 36
+
+.
+
+(S21) The overall log-Jacobian determinant of the end-to-end transformation is the sum of the individual contributions: 
+
+log |det J| =  − log r1
+
++ −2 log r2
+
++
+
+> 10
+
+X
+
+> j=1
+
+ −2 log s1,j −log sj −log |cos βj |+
+
+> 41
+
+X
+
+> k=1
+
+ −2 log rk−log sin θk
+
+,
+
+(S22) where the first two terms are the spherical-coordinate contributions from the two basis vectors, the second sum corresponds to the local-frame transformations, and the third to the torsion transformations. Notably, the first basis vector r1 is constrained to the xy -plane by preprocessing, so its transformation is effectively two-dimensional with Jacobian − log r1;the second basis vector r2 is unconstrained and carries the full three-dimensional spherical Jacobian −2 log r2. The planar local-frame transformation has a unit Jacobian and does not contribute. 38 2. Technical details in training 
+
+The classical force field used for the chignolin protein is the Amber14 force field combined with the GBN2 implicit solvent model. As above, energies are measured in kJ/mol, so the temperature variable T in VaFES denotes the thermal energy kB Tphys in kJ/mol. For 350 
+
+K, this gives T ≈ 2.91kJ mol −1 and therefore β = 1 /T ≈ 0.35mol kJ −1. All hydrogen atoms are removed before applying the bijective transformation, yielding 77 heavy atoms and 225 
+
+internal degrees of freedom in the intermediate representation. During energy evaluation, hydrogen atoms are reconstructed from heavy-atom positions by local geometry templates. The two CVs are inter-C α distances: |C3 
+
+> α
+
+− C8
+
+> α
+
+| with a range of [3 .4, 17] Å, and |C1 
+
+> α
+
+− C10  
+
+> α
+
+|
+
+with a range of [4 .5, 10] Å. During training, the two CVs are uniformly sampled over their respective ranges. The prior distribution for the 223 -dimensional auxiliary variables is a truncated Gaussian whose mean and deviation are learnable parameters. The chignolin application employed the same cubic-spline flow as in the previous cases, except that we used a more capable parameter neural network; the spline parameters in each coupling layer are produced by a joint MLP with ResNet1d [66]. This network first maps the input through a MLP to a high-dimensional vector, which is reshaped into a multi-channel 1D signal. The signal passes through an initial 1D convolution, followed by a stack of residual 1D-convolutional blocks with bottleneck structure, and finally through point-wise fully connected layers to produce the spline parameters. Each residual block consists of a 
+
+1×1 projection to a narrower hidden channel width, a 1D convolution, and a 1×1 expansion back to the full width. Using different partition schemes, the coupling structure proceeds in three stages. In the first stage, there are three sequential coupling layers with increasing size: dimensions 2–5
+
+(basis variables), then 6–41 (frame angles and significant torsions), then 42 –54 (remaining key torsions), each conditioned on all previously transformed dimensions. In the second stage, 14 coupling layers with a typical checkerboard partition iterating between them, mixing all degrees of freedom. A single coupling layer then transforms dimensions 55 –
+
+224 conditioned on all preceding dimensions of 2–54 . In the final stage, 8 coupling layers with another typical checkerboard partition over all 223 auxiliary dimensions provide global mixing. During training, to overcome local minima and metastable states, we used the VaTD [16] 39 training scheme with the inverse temperature β as the external parameter, sampled contin-uously over [0 .1, 0.6] . The remaining hyperparameters are listed in Table S4. TABLE S4: VaFES hyperparameters for the chignolin application. 
+
+Parameter Value Temperature β 0.35mol kJ −1 (≈ 350 K) 
+
+Spline bins K 32 
+
+Coupling layers (stage 1 / 2 / 3) 3 / 14 + 1 / 8
+
+MLP hidden dims (512 , 1024 , 1024) 
+
+ResNet1d channels / hidden channels 256 / 128 
+
+ResNet1d kernel size 25 
+
+ResNet1d residual conv layers 8
+
+ResNet1d point-wise FC layers 4
+
+ResNet1d hidden FC width 128 
+
+Activation ELU Prior distribution Truncated Gaussian Optimizer Adamax Learning rate 2 × 10 −4
+
+LR schedule StepLR (step 1000 , γ = 0 .8)Batch size 128 
+
+40

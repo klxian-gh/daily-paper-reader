@@ -1,0 +1,747 @@
+Title: Machine Learning the order-disorder Jahn-Teller transition in LaMnO$_3$
+
+URL Source: https://arxiv.org/pdf/2604.08058v1
+
+Published Time: Fri, 10 Apr 2026 01:07:51 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# Machine Learning the order-disorder Jahn-Teller transition in LaMnO 3
+
+Lorenzo Celiberti, 1, 2, a) Alexander Ehrentraut, 1, a) Luca Leoni, 3 and Cesare Franchini 1, 3 
+
+> 1)
+
+University of Vienna, Faculty of Physics, Vienna, Austria 
+
+> 2)
+
+University of Vienna, Vienna Doctoral School in Physics, Vienna, Austria 
+
+> 3)
+
+Department of Physics and Astronomy, University of Bologna, Bologna, Italy 
+
+(*Corresponding author: cesare.franchini@univie.ac.at) (Dated: 10 April 2026) 
+
+We investigate the Jahn-Teller structural phase transition in LaMnO 3 at TJT ≃ 750 K using molecular dynamics sim-ulations based on machine-learning force fields trained on ab initio data. Analysis of the sitesite correlation function of the distortions reveals that the transition is driven by the ordering of the Q2 JahnTeller distortion of the MnO 6 oc-tahedra, which acts as the order parameter and establishes the orderdisorder nature of the transition. Dynamical local distortions are found to persist above TJT . Our results reproduce the experimental temperature dependence of both structural and phonon properties and highlight the presence of anharmonic effects at finite temperature. More broadly, the combined use of machine-learning molecular dynamics and velocity autocorrelation function analysis provides a robust framework for uncovering the microscopic mechanisms of structural phase transitions in correlated materials. In particular, this approach enables a clear distinction between orderdisorder transitions and alternative mechanisms, such as displacive behavior, through the temperature evolution of vibrational properties. 
+
+I. INTRODUCTION 
+
+Phase transitions are ubiquitous in materials and encompass a wide variety of phenomena, ranging from classical transi-tions driven by thermal fluctuations, such as structural phase transitions, to quantum phase transitions controlled by inter-actions and quantum fluctuations, exemplified by supercon-ductivity. From a theoretical perspective, the common lan-guage to decipher the evolution of a transition and understand the driving mechanism is statistical mechanics. To contribute to this Festschrift in honor of Christoph Dellago, we apply statistical-mechanical tools to interpret the temperature-driven order–disorder transition in the Jahn–Teller–active magnetic insulator LaMnO 3, a paradigmatic example of a correlated transition-metal system. The statistically relevant dataset is obtained using machine-learning force fields trained on ac-curate ab initio simulations that explicitly include electron– electron correlations and magnetic interactions. Transition metal oxides feature many of the most intriguing effects in condensed matter physics such as metal-insulator transition 1, high-Tc superconductivity 2, colossal magnetore-sistance (CMR) 3, orbital physics 4 and multiferroicity 5. The perovskite LaMnO 3 (LMO), the parent compound of colos-sal magnetoresistance manganites, is a prototypical transition-metal oxide in which several key aspects of correlated-electron physics coexist. In LMO the Mn 3+ ion adopts a high-spin d4 configuration, with the crystal field of the surrounding oxygen octahedron splitting the Mn d levels into lower-energy 
+
+t32g and higher-energy, doubly degenerate e1 
+
+> g
+
+states. The par-tial occupation of the eg manifold renders this configuration unstable, and the resulting JahnTeller (JT) effect 6–8 lifts the degeneracy by coupling the electronic states to specific lat-tice distortions of the MnO 6 octahedra, described by the Eg
+
+vibrational modes Q2 and Q3. This electron-lattice coupling 
+
+> a) These authors contributed equally to this work.
+
+is central to the structural, electronic, and magnetic properties of LMO. At low temperatures, LaMnO 3 is an orthorhombic ( Pbnm )Mott-Hubbard insulator exhibiting cooperative Jahn-Teller distortions of the MnO 6 octahedra and long-range orbital order 9–13 associated with the formation of two long, two medium, and two short MnO bonds, see Fig. 1. In particu-lar, the crystal field induced by the Q2 distortions favors the occupation of different linear combinations of the Mn eg or-bitals. Depending on the sign of Q2 orbitals with lobes point-ing toward the x- or y-bond are occupied 14–16 . Below the Néel temperature TN ≈ 140 K, the coupling between orbital or-der and superexchange interactions stabilizes A-type antifer-romagnetic order, with ferromagnetic alignment within the ab 
+
+planes and antiferromagnetic coupling along the c axis 7,9,10 .The low temperature phase has been the subject of numer-ous ab-initio atomistic 17–20 and effective Hamiltonian stud-ies 14,21–23 Upon heating above TN , long-range magnetic or-der is lost and the system becomes paramagnetic, while re-maining insulating. At higher temperatures, around TJT ≃
+
+750 K, LMO showcases an order-disorder transition which results in a structural transition from orthorhombic to metri-cally (pseudo-cubic) cubic phase 12,24,25 . In this regime the cooperative Jahn-Teller distortion and static orbital order are suppressed, leading to a transition toward a more symmetric perovskite structure with dynamically fluctuating distortions. Notably, the MnO 6 octahedra retain nonzero, disordered JT distortions up to 1150 K 14,26,27 . This phase is particularly interesting because Sr or Ca doping transforms it into a fer-romagnetic state exhibiting colossal magnetoresistance at low temperature 26 . At sufficiently high temperatures, LaMnO 3 ap-proaches an almost undistorted perovskite phase, underscor-ing the strong interplay among lattice, charge, orbital, and spin degrees of freedom that governs its phase behavior 14,28 .The microscopic origin of the unusual transition to the metrically cubic phase above TJT = 750 K remains debated; however, there is broad consensus that it is closely related to the disordered distribution of JahnTellerdistorted octa-
+
+> arXiv:2604.08058v1 [cond-mat.stat-mech] 9 Apr 2026
+
+2hedra 11,26,28–30 . Standard first-principles atomistic calcula-tions 31 and molecular dynamics simulations based on clas-sical force fields 32 have helped to shed light on the Jahn-Teller transition; however, the small system sizes accessi-ble to electronic-structure calculations and the absence of temperature-dependent electronic degrees of freedom in clas-sical MD prevent an accurate description of this complex order-disorder electronlattice phase transition. The advent of machine-learned interatomic potentials (MLIPs), which enable large-scale and long-time molecular dynamics simulations with near first-principles accuracy, has opened new avenues for the modeling of complex phase tran-sitions. Recent studies have demonstrated the capability of MLIPs to successfully capture the electronlattice transition in LMO 33,34 .Jansen et al .33 reported that on-the-fly machine-learned force fields implemented in the Vienna Ab Initio Simula-tion Package (VASP 35,36 ) predict an almost complete sup-pression of JahnTeller modes above 800 K, provided that an on-site Hubbard U, accounting for electron-correlation effects, is included in the training of the force fields. Based on this data set, Batnaran et al .34 performed MD simulations using a parametrized ML interatomic potential based on NequIP 37 , obtaining pair distribution functions and temperature-dependent octahedral distortion dynamics in agreement with experiment. Here, building on the MLIP procedure adopted in Ref. 33, we re-examine the JT transition in LMO by monitoring the temperature evolution of the Q 2 and Q 3 JT modes across the orderdisorder transition. Our data describe well the progres-sive quenching of the JT modes with temperature and provide clear evidence for the persistence of dynamical JT distortions at high temperatures, as extracted from the site-site correla-tion function. Furthermore, we calculated the phonon disper-sion and identified the Ag(1) mode having the same symme-try as the static distortion pattern in the ordered phase. By Fourier transforming the velocity autocorrelation function of this mode, we obtained its temperature dependent spectral function, revealing strong anharmonic effects consistent with an orderdisorder phase transition.  
+
+> II. METHODOLOGY
+
+Our training and production simulations were conducted using the on-the-fly MLFF method implemented in the VASP package 35,36,39 within density functional theory (DFT) us-ing the generalized Perdew-Burke-Ernzerhof (PBE) 40 gradi-ent approximation and including a local + U correction accord-ing to the Dudarev approach 41 .Following Ref. 33, a √2a × √2b × c supercell, rotated by 45 ◦ around the c axis, containing eight formula units was em-ployed for training the MLFF. For the production runs, this su-percell was replicated three times along each lattice direction, resulting in a simulation cell comprising 216 formula units, corresponding to a total of 1080 atoms. A larger cell was also tested for finite size effects. We found no significant devia-tions (see Supplementary Materials). Force fields were trained for three values of the effective on-site interaction, Ueff = 0, 2, and 3.5 eV. All training runs shared a 4 × 4 × 4 k-point grid and a plane-wave energy cutoff of Ecut = 500 eV. The magnetic moments were initialized in an A-type antiferromagnetic configuration, with local magnetic moments of 4 
+
+μB on the Mn sites. Molecular dynamics simulations were performed using time steps of 0.5 fs for the training runs, 2 fs for the NPT and NVT production runs and 0.4 fs for the NVE runs. The training simulations consisted of a linear temperature ramp from 600 K to 1100 K over a total of 125 000 time steps, cor-responding to a heating rate of 8 K/ps. The cutoff radii for the radial and angular descriptors were set to 6 Å and 5 Å, respectively. Production simulations were carried out both under a linear temperature ramp from 100 K to 1100 K with a heating rate of 2 K/ps tests for different heating rates are reported in the Supplementary Materials and at fixed temperatures of 100 K, 400 K, 600 K, 700 K, 800 K, and 900 K. A Langevin thermo-stat and the Parrinello-Rahman barostat were employed in the NPT and NVT simulations. Analysis of the JT normal coordinates was done using the VanVleckCalculator 42,43 . The JT normal coordinates are de-fined as linear combinations of the Cartesian displacements 
+
+Xi, Yi, and Zi of the oxygen atoms relative to their positions in an undistorted reference octahedron. In particular, we will focus our analysis on the relevant Q 2 and Q 3 modes defined as (see Fig.1b,c): 
+
+Q2 = X2 − X5 −Y3 +Y6
+
+2 , (1) 
+
+Q3 = 2Z1 − 2Z4 − X2 + X5 −Y3 +Y6
+
+2√3 . (2) For phonon calculations we employed the finite difference method. First, we relaxed a 4 formula unit cell, large enough to host the A-AFM and the checkerboard JT ordering, by using a 8 × 8 × 8 Γ-centered k-points grid, with a plane-wave energy cutoff of 500 eV, a 10 −6 eV energy tolerance, 0.001 eV/Åforce tolerance and U = 3.5 eV. We generated a 3×3×3 supercell and displacements using Phonopy 44,45 . En-ergy and forces on the supercell were calculated only on the Γ
+
+point.  
+
+> III. RESULTS AND DISCUSSION
+
+We begin by validating our computational setup and MLIP predictions against available experimental data. Figure 2 shows the temperature evolution of the relevant structural pa-rameters. Panels (a) and (b) highlight the crucial role of the Hubbard U correction in capturing electron-lattice JT distor-tions in this correlated insulator 17,46 . When U is neglected, the Q 2 and Q 3 modes are strongly underestimated and dis-play only a weak temperature dependence, failing to show any signature of the structural transition. The inclusion of 
+
+U substantially improves the description, leading to a pro-gressive suppression of the JT modes and octahedral rota-3
+
+FIG. 1: a) Crystal structure of orthorhombic LMO. The orthorhombic Pbnm (a, b, c) and pseudocubic (x, y, z) axes are shown. b) and c) distortion pattern of the cooperative JT modes Q2 and Q3 respectively. The VESTA software 38 was used for the creation of this figure. tion angles with increasing temperature, in agreement with Neutron-diffraction data 24,28 . Therefore, all following re-ported results are obtained using U=3.5 eV. The predicted transition occurs around T cJT ≃ 600 K, which is lower than the experimentally observed transition at TJT = 750 K (see vertical lines). Increasing U may improve the quantitative agreement between the calculated and experimental transi-tion temperatures. However, it is well known that Dudarevs correction with a single U parameter, while yielding a satis-factory qualitative description of LMO, does not simultane-ously reproduce quantitatively accurate electronic and lattice properties 47 . More advanced exchangecorrelation function-als, such as hybrid functionals 46 or the random phase approx-imation 48,49 , are known to yield quantitatively more accurate predictions, albeit at a significantly higher computational cost. Further evidence supporting the ability of the MLIP to de-scribe the transition is provided in Fig. 2 (c,d), where we re-port the temperature dependence of the averaged lattice pa-rameters and of the long, medium, and short MnO bond lengths, in comparison with X-ray and neutron scattering data 28 . Besides accounting for the low-T cooperative JT or-bitally ordered state, the calculations reproduce the main fea-tures of the orthorhombic-to-pseudocubic transition, signaled by the progressive convergence of the lattice parameters to-ward similar pseudocubic values in the 570-620 K tempera-ture range. We note that the JT modes do not collapse to zero at the transition but instead persist at higher temperatures, in agree-ment with experimental observations, which is suggestive of an order-disorder dynamical transition. 26,27 . These aspects are examined in detail in the remainder of this study. Figure 3 collects representative information at selected tem-peratures below (400 K), across (600 K), and above (800 K) the transition. At 400 K, the distribution of the octahedra within the ( Q2, Q3) plane displays two bright spots (Fig. 3(a)), indicating a high probability for the octahedra to adopt these configurations, consistent with the C-type ordering of the Q2
+
+modes. Across the transition at 600 K, these two features progressively merge into a broader region of the configura-tional space (Fig. 3(d)). At 800 K, the distribution becomes centered around the origin, signaling a strong suppression of long-range orbital order while retaining finite, dynamically fluctuating distortions. Interestingly, the distribution shows only two peaks instead of the three expected from the tricorn potential of an isolated eg ⊗ Eg JT site. This deviation has been attributed by Popovic and Satpathy 50 to the interaction between the JT modes in the crystal (cooperative JT effect). The transition from a double to a single peak structure is transparently visualized by the corresponding probability dis-tributions of Q 2 shown in the middle column. These distri-butions are obtained by integrating over Q3 the two dimen-sional distributions of Fig. 3(a,d,g). The evolution from a two-peak structure to a broader distribution at high tempera-ture is in good agreement with that of the correlations between quadrupole moments extracted from high-resolution neutron scattering data reported in Ref. 27. This behavior is not sur-prising, as the Eg (and T2g) JT distortions of an octahedron and quadrupolar moments both transform according to the same irreducible representations of Oh.Next we study the auto- and cross-correlation functions of the Q2 modes Ci j (
+
+τ) defined as 
+
+Ci j (
+
+τ) = ⟨Q2,i(t +
+
+τ)Q2, j(t)⟩ (3) where i and j are site indices and the average is taken over time and NVE MD trajectories 51 . In particular, ten trajecto-ries of 200 ps length where considered. For 
+
+τ = 0 we get the equal-time correlation function and, by averaging over site pairs with the same distance, we obtain the site-site correlation function resolved along the pseudocubic directions as 
+
+C 
+
+> α
+
+(n) = 1
+
+nN site Nsite 
+
+# ∑
+
+> i=1
+
+# ∑  
+
+> |i−j|
+> α=n
+
+Ci j (0) (4) where the second sum is restricted to the n-th nearest neigh-bor along the pseudocubic direction 
+
+α = x, y, z. The results for 4
+
+FIG. 2: a-b) Temperature evolution of the Q 2 and Q 3 JT modes during T-ramp obtained for different values of on-site U. c-d) Temperature evolution of reduced lattice parameters as defined in Ref. 33 and Mn-O bond lengths during T-ramp obtained for on-site U = 3.5 eV. a-d) Oscillating signals (brighter colors) indicate the original time series while full lines (darker colors) represent a moving average of intervals of 400 configurations ( ∼ 4000 time steps over ∼ 8 ps). Black crosses indicate experimental reference data taken from Ref. 28. Vertical bars indicate predicted (T cJT = 590 K) and experimental (T JT = 750 K) transition temperatures. 400 K, 600 K and 800 K are shown in Fig. 3(c,f,i) respectively. For all three temperatures Cx and Cy coincide (squares and dots) and symmetrically oscillate between positive and nega-tive values, whereas Cz remains always positive. This trend corresponds to the well known checkerboard Jahn-Teller dis-tortion pattern of LMO 12,14,24,26,27 also depicted in Fig. 1. In particular, for T < T cJT sites are perfectly (anti-)correlated in-dependently from the distance, as expected in a long range or-der phase. Slightly above the transition T ≳ T cJT , at 600 K, the correlation starts to decrease with octahedra separation but re-main considerable even at the third nearest neighbor distance (∼ 12 Å). Above the transition the long range order is com-pletely melted and the correlation remains sizable only at the first nearest neighbor. At the same time, the Q2 modes fluc-tuate at each octahedron around a small but non-zero value (see Fig. 2), thus confirming the order-disorder nature of the transition. In order to further characterize the transition, we move to the study of the velocity auto-correlation function (VACF). The Fourier transform of the velocity autocorrelation function (VACF), summed over all atoms, yields the phonon spectral function, while projecting the VACF onto the phonon eigen-vectors allows one to obtain the spectral function of a specific mode. 51 . In particular, we projected the oxygen ions velocities along the pseudocubic directions with the right sign to obtain the Q2 velocity ˙Q2,i of each octahedron. By summing ˙Q2,i50.50 0.25 0.00 0.25 0.50 
+
+Q2 (Å)
+
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Q3 (Å)
+
+400 K 
+
+a)       
+
+> 0.6 0.4 0.2 0.0 0.2 0.4 0.6
+
+Q2 (Å)
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> P(Q2)
+
+b)    
+
+> 0123
+
+n.n. 
+
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> C
+
+c)     
+
+> Cx
+> Cy
+> Cz
+> 0.50 0.25 0.00 0.25 0.50
+
+Q2 (Å)
+
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Q3 (Å)
+
+600 K 
+
+d)       
+
+> 0.6 0.4 0.2 0.0 0.2 0.4 0.6
+
+Q2 (Å)
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> P(Q2)
+
+e)    
+
+> 0123
+
+n.n. 
+
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> C
+
+f)     
+
+> Cx
+> Cy
+> Cz
+> 0.50 0.25 0.00 0.25 0.50
+
+Q2 (Å)
+
+> 0.6
+> 0.4
+> 0.2
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Q3 (Å)
+
+800 K 
+
+g)       
+
+> 0.6 0.4 0.2 0.0 0.2 0.4 0.6
+
+Q2 (Å)
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> P(Q2)
+
+h)    
+
+> 0123
+
+n.n. 
+
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> C
+
+i) 
+
+> Cx
+> Cy
+> Cz
+
+FIG. 3: Statistical analysis of the Jahn-Teller vibrational modes Q2 and Q3 at three characteristic temperatures: T = 400 K (a–c), 600 K (d–f), and 800 K (g–i). Left: distribution of MnO 6 octahedra in the (Q2, Q3) plane. Middle: probability distributions of the Q2 mode. Right: site-site correlation functions. with a (−1)ix+iy phase we obtain the in-phase anti-stretching mode Ag(1), which has the same distortion pattern of the static distortion in the ordered phase 52–54 . The spectral function of the Ag(1) mode for 300 K, 500 K, 600 K and 800 K are re-ported in Fig. 4(a). At 300 K a peak is observed at 438 cm −1, slightly lower in frequency than the corresponding Ag(1) phonon at 444 cm −1
+
+obtained from DFT (see Fig. 4(b)). The peaks frequency and width have been extracted with a Lorentzian fit, justified within the phonon quasi-particle picture 51,55 . The results are reported in Fig. 4(c,d). The peak at 300 K is relatively sharp and well described by a Lorentzian function, yet it exhibits a double-peak structure, indicating that anharmonic effects are already strong enough at 300 K to break the phonon quasi-particle picture. The peak monotonically softens and broad-ens with increasing temperature, in good qualitative agree-60 100 200 300 400 500 600 
+
+(cm 1)       
+
+> Intensity (a.u.)
+> 300K
+> 500K
+> 600K
+> 800K
+> exp. Ag(1)
+> SU
+> 0
+> 100
+> 200
+> 300
+> 400
+> 500
+> 600
+> (cm  1)
+> Ag(1) DFT
+> Ag(1) exp.
+> 300 400 500 600 700 800
+
+T (K)      
+
+> 0.6
+> 0.8
+> 1.0
+> 0/ 0(300 K)
+> 300 400 500 600 700 800
+
+T (K) 
+
+> 50
+> 100
+> FWHM ( cm  1)
+
+a) 
+
+b) c) 
+
+d) 
+
+FIG. 4: Spectral properties: a) Spectral function of the Ag(1) mode as a function of temperature. b) phonon spectrum of the orthorhombic phase. The phonon band that at Γ corresponds to the Ag(1) mode is highlighted in red. c-d) Parameters extracted from the Lorentzian fit of the mean peak: c) peak frequency 
+
+ν0; d) full width at half maximum (FWHM). ment with Raman measurements 54 . However, we note that the 
+
+Ag(1) phonon frequency is underestimated by approximately 10% with respect to the value of 490 cm −1 reported from ex-periments 52,53 . Moreover, it exhibits a significantly stronger temperature-induced softening. Consistently, the more rapid broadening is reflected in a faster increase of the FWHM com-pared to the experimental fit 54 , which may reflect an overesti-mation of anharmonic effects and the limitation of the DFT+U approach 52,53 .Importantly, the progressive softening of the in-phase anti-stretching phonon mode across the transition is a clear fin-gerprint of its orderdisorder character. This behaviour is fundamentally different from that observed in other types of phase transitions occurring in closely related transition-metal compounds. In incipient ferroelectrics such as KTaO 356 and SrTiO 349 , the transition toward the ferroelectric state is pre-dominantly displacive 57,58 , with the soft anharmonic phonon driving the transition becoming progressively harder upon in-creasing temperature. 
+
+IV. CONCLUSION 
+
+In this work, we have clarified the nature of the structural phase transition in LaMnO 3 at TJT ≃ 750 K through molecular dynamics simulations based on a machine-learning force field, 7complemented by analysis of distortion correlation and veloc-ity autocorrelation functions. Our results demonstrate that the transition is driven by the ordering of the Q2 JahnTeller mode of the MnO 6 octahedra. Our results reproduce the temperature dependence of the lattice parameters and provide compelling evidence that the symmetrized Q2 distortion acts as the order parameter of the transition, in agreement with previous MLFF studies 33,34 and experimental observations 27,28,50,54 . The order-disorder na-ture of the transition is further established through site-site correlation functions, which reveal the disappearance of long-range order above the critical temperature and the emergence of small, spatially incoherent fluctuations of the Jahn-Teller 
+
+Q2 modehallmarks of a genuine order-to-disorder transition. Additional insight is obtained from the analysis of phonon properties computed at the DFT+ U level for the magnetically ordered phase, together with the velocity autocorrelation func-tion from molecular dynamics. This combined approach en-ables a detailed characterization of the transition via the tem-perature evolution of the spectral function of the in-phase anti-stretching Ag(1) phonon mode, in good agreement with Ra-man spectroscopy measurements 54 . At the same time, the pro-nounced temperature dependence of this mode reveals strong anharmonic effects, which lead to a breakdown of the phonon quasiparticle picture already well below the transition temper-ature. From a broader perspective, this work highlights the po-tential of combining machine-learning interatomic potentials with high-level ab initio molecular dynamics as a general and powerful framework for the microscopic investigation of structural phase transitions in condensed matter systems. This approach enables direct access to finite-temperature lattice dy-namics and local order parameters on length and time scales that are not accessible with either classical force fields or con-ventional ab initio molecular dynamics alone. Within this framework, we identify the temperature evolution of the driv-ing phonon mode and associated phonon properties as key fingerprints to discriminate between order-disorder and dis-placive transitions in transition metal perovskites, paving the way for systematic, predictive studies of anharmonic and elec-tronically driven transitions in complex materials. 
+
+SUPPLEMENTARY MATERIAL 
+
+The Supplementary Material provides additional details on the groupsubgroup relationships of LaMnO 3, together with analyses of the training dataset, as well as heating rate and supercell size effects. 
+
+ACKNOWLEDGMENTS 
+
+This research was funded by the Austrian Science Fund (FWF) 10.55776/F8100. The computational results have been achieved using the Austrian Scientific Computing (ASC) in-frastructure. We gratefully acknowledge insightful discus-sions with Andrea Angeletti and Matthew Houtput. 
+
+DATA AVAILABILITY STATEMENT 
+
+The data that support the findings of this study and the scripts used to extract them are available in the PHAIDRA repository of the University of Vienna at: https:// phaidra.univie.ac.at/o:2196925 .
+
+> 1
+
+M. Imada, A. Fujimori, and Y. Tokura, “Metal-insulator transitions,” Rev. Mod. Phys. 70 , 1039–1263 (1998). 
+
+> 2
+
+J. G. Bednorz and K. A. Müller, “Possible high-Tc superconductivity in the Ba-La-Cu-O system,” Zeitschrift für Physik B Condensed Matter 64 , 189– 193 (1986). 
+
+> 3
+
+A. Urushibara, Y. Moritomo, T. Arima, A. Asamitsu, G. Kido, and Y. Tokura, “Insulator-metal transition and giant magnetoresistance in La 1−xSr xMnO 3,” Phys. Rev. B 51 , 14103–14109 (1995). 
+
+> 4
+
+Y. Tokura and N. Nagaosa, “Orbital physics in transition-metal oxides,” Science 288 , 462–468 (2000). 
+
+> 5
+
+K. Wang, J.-M. Liu, and Z. Ren, “Multiferroicity: the coupling be-tween magnetic and polarization orders,” Advances in Physics 58 , 321–448 (2009). 
+
+> 6
+
+H. A. Jahn and E. Teller, “Stability of polyatomic molecules in degenerate electronic states - IOrbital degeneracy,” Proceedings of the Royal Society of London. A. Mathematical and Physical Sciences 161 , 220–235 (1937). 
+
+> 7
+
+E. O. Wollan and W. C. Koehler, “Neutron diffraction study of the mag-netic properties of the series of perovskite-type compounds [ (1 − x)La, x
+
+Ca]MnO 3,” Phys. Rev. 100 , 545–563 (1955). 
+
+> 8
+
+J. Kanamori, “Crystal distortion in magnetic compounds,” Journal of Ap-plied Physics 31 , S14–S23 (1960). 
+
+> 9
+
+L. Mihály, D. Talbayev, L. F. Kiss, J. Zhou, T. Fehér, and A. Jánossy, “Field-frequency mapping of the electron spin resonance in the paramag-netic and antiferromagnetic states of LaMnO 3,” Phys. Rev. B 69 , 024414 (2004). 
+
+> 10
+
+Q. Huang, A. Santoro, J. W. Lynn, R. W. Erwin, J. A. Borchers, J. L. Peng, and R. L. Greene, “Structure and magnetic order in undoped lanthanum manganite,” Phys. Rev. B 55 , 14987–14999 (1997). 
+
+> 11
+
+Y. Murakami, J. P. Hill, D. Gibbs, M. Blume, I. Koyama, M. Tanaka, H. Kawata, T. Arima, Y. Tokura, K. Hirota, and Y. Endoh, “Resonant X-Ray Scattering from Orbital Ordering in LaMnO 3,” Phys. Rev. Lett. 81 ,582–585 (1998). 
+
+> 12
+
+M. C. Sánchez, G. Subías, J. García, and J. Blasco, “Cooperative Jahn-Teller phase transition in LaMnO 3 studied by x-ray absorption spec-troscopy,” Phys. Rev. Lett. 90 , 045503 (2003). 
+
+> 13
+
+U. D. Wdowik, B. Ouladdiaf, and T. Chatterji, “Structural and thermal properties of LaMnO 3 from neutron diffraction and first principles studies,” Journal of Physics: Condensed Matter 23 , 245402 (2011). 
+
+> 14
+
+E. Pavarini and E. Koch, “Origin of Jahn-Teller distortion and orbital order in LaMnO 3,” Phys. Rev. Lett. 104 , 086402 (2010). 
+
+> 15
+
+C. Franchini, R. Kováik, M. Marsman, S. Sathyanarayana Murthy, J. He, C. Ederer, and G. Kresse, “Maximally localized wannier functions in LaMnO 3 within PBE+U, hybrid functionals and partially self-consistent GW: an efficient route to construct ab-initio tight-binding parameters for 
+
+eg perovskites,” Journal of Physics: Condensed Matter 24 , 235602 (2012). 
+
+> 16
+
+D. I. Khomskii and S. V. Streltsov, “Orbital effects in solids: Basics, recent progress, and opportunities,” Chemical Reviews 121 , 2992–3030 (2021). 
+
+> 17
+
+J. He and C. Franchini, “Screened hybrid functional applied to 3 d0→3d8
+
+transition-metal perovskites La MO3 (M = Sc-Cu): Influence of the ex-change mixing parameter on the structural, electronic, and magnetic prop-erties,” Phys. Rev. B 86 , 235117 (2012). 
+
+> 18
+
+Z. Ergönenc, B. Kim, P. Liu, G. Kresse, and C. Franchini, “Converged gw 
+
+quasiparticle energies for transition metal oxide perovskites,” Phys. Rev. Mater. 2, 024601 (2018). 
+
+> 19
+
+L. Varrassi, P. Liu, Z. E. Yavas, M. Bokdam, G. Kresse, and C. Franchini, “Optical and excitonic properties of transition metal oxide perovskites by the Bethe-Salpeter equation,” Phys. Rev. Mater. 5, 074601 (2021). 
+
+> 20
+
+J. H. Lee and B. Kim, “Revisiting LaMnO 3: A density functional theory study,” Current Applied Physics 78 , 7–14 (2025). 
+
+> 21
+
+A. J. Millis, “Cooperative Jahn-Teller effect and electron-phonon coupling in La 1−xAxMnO 3,” Phys. Rev. B 53 , 8434–8441 (1996). 8
+
+> 22
+
+L. F. Feiner and A. M. Ole´ s, “Electronic origin of magnetic and orbital ordering in insulating LaMnO 3,” Phys. Rev. B 59 , 3295–3298 (1999). 
+
+> 23
+
+C. Ederer, C. Lin, and A. J. Millis, “Structural distortions and model hamil-tonian parameters: From LSDA to a tight-binding description of LaMnO 3,” Phys. Rev. B 76 , 155105 (2007). 
+
+> 24
+
+J. Rodríguez-Carvajal, M. Hennion, F. Moussa, A. H. Moudden, L. Pinsard, and A. Revcolevschi, “Neutron-diffraction study of the Jahn-Teller transi-tion in stoichiometric LaMnO 3,” Phys. Rev. B 57 , R3189–R3192 (1998). 
+
+> 25
+
+E. Granado, J. A. Sanjurjo, C. Rettori, J. J. Neumeier, and S. B. Oseroff, “Order-disorder in the Jahn-Teller transition of LaMnO 3: A Raman scatter-ing study,” Phys. Rev. B 62 , 11304–11307 (2000). 
+
+> 26
+
+X. Qiu, T. Proffen, J. F. Mitchell, and S. J. L. Billinge, “Orbital Correlations in the Pseudocubic O and Rhombohedral R Phases of LaMnO 3,” Phys. Rev. Lett. 94 , 177203 (2005). 
+
+> 27
+
+A. Sartbaeva, S. A. Wells, M. F. Thorpe, E. S. Božin, and S. J. L. Billinge, “Quadrupolar ordering in LaMnO 3 revealed from scattering data and geo-metric modeling,” Phys. Rev. Lett. 99 , 155503 (2007). 
+
+> 28
+
+P. M. M. Thygesen, C. A. Young, E. O. R. Beake, F. D. Romero, L. D. Con-nor, T. E. Proffen, A. E. Phillips, M. G. Tucker, M. A. Hayward, D. A. Keen, and A. L. Goodwin, “Local structure study of the orbital order/disorder transition in LaMnO 3,” Phys. Rev. B 95 , 174107 (2017). 
+
+> 29
+
+J.-S. Zhou and J. B. Goodenough, “Paramagnetic phase in single-crystal LaMnO 3,” Phys. Rev. B 60 , R15002–R15004 (1999). 
+
+> 30
+
+M. R. Ahmed and G. A. Gehring, “Volume collapse in LaMnO 3 studied using an anisotropic Potts model,” Phys. Rev. B 79 , 174106 (2009). 
+
+> 31
+
+M. M. Schmitt, Y. Zhang, A. Mercy, and P. Ghosez, “Electron-lattice in-terplay in LaMnO 3 from canonical Jahn-Teller distortion notations,” Phys. Rev. B 101 , 214304 (2020). 
+
+> 32
+
+X.-Y. Qu, X.-F. Gou, and T.-G. Wang, “A highly accurate interatomic potential for LaMnO 3 perovskites with temperature-dependence of struc-ture and thermal properties,” Computational Materials Science 193 , 110406 (2021). 
+
+> 33
+
+T. Jansen, G. Brocks, and M. Bokdam, “Phase transitions of LaMnO 3 and SrRuO 3 from DFT+U based machine learning force fields simulations,” Phys. Rev. B 108 , 235122 (2023). 
+
+> 34
+
+B. Batnaran, A. L. Goodwin, M. A. Hayward, and V. L. Deringer, “The microscopic nature of orbital disorder in LaMnO 3,” (2025), arXiv:2510.25414 [cond-mat.mtrl-sci]. 
+
+> 35
+
+G. Kresse and J. Furthmüller, “Efficient iterative schemes for ab initio total-energy calculations using a plane-wave basis set,” Physical Review B 54 ,11169–11186 (1996). 
+
+> 36
+
+G. Kresse and D. Joubert, “From ultrasoft pseudopotentials to the projector augmented-wave method,” Physical Review B 59 , 1758–1775 (1999). 
+
+> 37
+
+S. Batzner, A. Musaelian, L. Sun, M. Geiger, J. P. Mailoa, M. Kornbluth, N. Molinari, T. E. Smidt, and B. Kozinsky, “E(3)-Equivariant Graph Neural Networks for Data-Efficient and Accurate Interatomic Potentials,” Nature Communications 13 , 2453 (2022). 
+
+> 38
+
+K. Momma and F. Izumi, “ VESTA3 for three-dimensional visualization of crystal, volumetric and morphology data,” Journal of Applied Crystallogra-phy 44 , 1272–1276 (2011). 
+
+> 39
+
+R. Jinnouchi, J. Lahnsteiner, F. Karsai, G. Kresse, and M. Bokdam, “Phase transitions of hybrid perovskites simulated by machine-learning force fields trained on the fly with bayesian inference,” Phys. Rev. Lett. 122 , 225701 (2019). 
+
+> 40
+
+J. P. Perdew, K. Burke, and M. Ernzerhof, “Generalized gradient approxi-mation made simple,” Phys. Rev. Lett. 77 , 3865–3868 (1996). 
+
+> 41
+
+S. L. Dudarev, G. A. Botton, S. Y. Savrasov, C. J. Humphreys, and A. P. Sutton, “Electron-energy-loss spectra and the structural stability of nickel oxide: An LSDA+U study,” Phys. Rev. B 57 , 1505–1509 (1998). 
+
+> 42
+
+L. A. V. Nagle-Cocco and S. E. Dutton, “Van Vleck analysis of angularly distorted octahedra using VanVleckCalculator ,” Journal of Applied Crystal-lography 57 , 20–33 (2024). 
+
+> 43
+
+L. A. V. Nagle-Cocco, “VanVleckCalculator: A Python Package for Van Vleck Analysis of Distorted Octahedra,” https://github.com/ lnaglecocco/VanVleckCalculator (2023), gitHub repository. 
+
+> 44
+
+A. Togo, L. Chaput, T. Tadano, and I. Tanaka, “Implementation strate-gies in phonopy and phono3py,” Journal of Physics: Condensed Matter 35 ,353001 (2023). 
+
+> 45
+
+A. Togo, “First-principles phonon calculations with phonopy and phono3py,” Journal of the Physical Society of Japan 92 , 012001 (2023), https://doi.org/10.7566/JPSJ.92.012001. 
+
+> 46
+
+J. He, M.-X. Chen, X.-Q. Chen, and C. Franchini, “Structural transitions and transport-half-metallic ferromagnetism in LaMnO 3 at elevated pres-sure,” Phys. Rev. B 85 , 195135 (2012). 
+
+> 47
+
+T. A. Mellan, F. Corà, R. Grau-Crespo, and S. Ismail-Beigi, “Importance of anisotropic coulomb interaction in lamno 3,” Phys. Rev. B 92 , 085151 (2015). 
+
+> 48
+
+F. Jia, G. Kresse, C. Franchini, P. Liu, J. Wang, A. Stroppa, and W. Ren, “Cubic and tetragonal perovskites from the random phase approximation,” Phys. Rev. Mater. 3, 103801 (2019). 
+
+> 49
+
+C. Verdi, L. Ranalli, C. Franchini, and G. Kresse, “Quantum paraelectricity and structural phase transitions in strontium titanate beyond density func-tional theory,” Phys. Rev. Mater. 7, L030801 (2023). 
+
+> 50
+
+Z. Popovic and S. Satpathy, “Cooperative Jahn-Teller coupling in the man-ganites,” Phys. Rev. Lett. 84 , 1603–1606 (2000). 
+
+> 51
+
+J. Lahnsteiner and M. Bokdam, “Anharmonic lattice dynamics in large thermodynamic ensembles with machine-learning force fields: CsPbBr 3,a phonon liquid with Cs rattlers,” Phys. Rev. B 105 , 024302 (2022). 
+
+> 52
+
+M. N. Iliev, M. V. Abrashev, H.-G. Lee, V. N. Popov, Y. Y. Sun, C. Thom-sen, R. L. Meng, and C. W. Chu, “Raman spectroscopy of orthorhombic perovskitelike YMnO 3 and LaMnO 3,” Phys. Rev. B 57 , 2872–2877 (1998). 
+
+> 53
+
+M. N. Iliev, M. V. Abrashev, J. Laverdière, S. Jandl, M. M. Gospodinov, Y.-Q. Wang, and Y.-Y. Sun, “Distortion-dependent Raman spectra and mode mixing in RMnO 3 perovskites (R=La,Pr,Nd,Sm,Eu,Gd,Tb,Dy,Ho,Y),” Phys. Rev. B 73 , 064302 (2006). 
+
+> 54
+
+L. Martín-Carrón and A. de Andrés, “Melting of the cooperative Jahn-Teller distortion in LaMnO 3 single crystal studied by Raman spectroscopy,” The European Physical Journal B - Condensed Matter and Complex Systems 
+
+22 , 11–16 (2001). 
+
+> 55
+
+T. Sun, X. Shen, and P. B. Allen, “Phonon quasiparticles and anharmonic perturbation theory tested by molecular dynamics on a model system,” Phys. Rev. B 82 , 224304 (2010). 
+
+> 56
+
+L. Ranalli, C. Verdi, L. Monacelli, G. Kresse, M. Calandra, and C. Fran-chini, “Temperature-dependent anharmonic phonons in quantum paraelec-tric KTaO 3 by first principles and machine-learned force fields,” Advanced Quantum Technologies 6, 2200131 (2023). 
+
+> 57
+
+J. Schmidt and N. A. Spaldin, “Machine-learning-enabled ab initio study of quantum phase transitions in SrTiO 3,” (2025), arXiv:2508.10735 [cond-mat.mtrl-sci]. 
+
+> 58
+
+Y. Zhu, L. Ranalli, T. Chen, W. Ren, and C. Franchini, “Temperature dependent ferroelectricity in strained KTaO 3 with machine learned force field,” (2025), arXiv:2510.26693 [cond-mat.mtrl-sci]. Supplementary Materials: Machine Learning the order-disorder Jahn-Teller transition in LaMnO 3
+
+Lorenzo Celiberti ∗
+
+University of Vienna, Faculty of Physics, Vienna, Austria and University of Vienna, Vienna Doctoral School in Physics, Vienna, Austria 
+
+Alexander Ehrentraut ∗
+
+University of Vienna, Faculty of Physics, Vienna, Austria 
+
+Luca Leoni 
+
+Department of Physics and Astronomy, University of Bologna, Bologna, Italy 
+
+Cesare Franchini 
+
+University of Vienna, Faculty of Physics, Vienna, Austria and Department of Physics and Astronomy, University of Bologna, Bologna, Italy 
+
+(*Corresponding author: cesare.franchini@univie.ac.at) (Dated: April 10, 2026)  
+
+> ∗These authors contributed equally to this work.
+
+1I. GROUP-SUBGROUP RELATIONSHIP 
+
+The Pbnm (same space group as Pnma with different labeling convention of the crystal axes) orthorhombic structure of LaMnO 3 can be obtained by distorting the standard Pm 3m perovoskite structure. In Fig. S1 we report the group-subgroup graph connecting Pm 3m to Pnma in LaMnO 3
+
+obtained with SUBGROUPGRAPH tool [1]. P bam P nma P mmn Cmcm Cmmm Imma P 4/mmm P 4/mbm P 4/nmm P m ¯3m
+
+FIG. S1: Group-subgroup graph for LaMnO 3.The specific distortions of the Pm 3m perovskite producing LaMnO 3 Pnma structure can be obtained with the AMPLIMODES tool of the Bilbao Crystallography Server [2, 3]. We report them in Tab. S1. 2k-vector Irrep. Direction Isotropy Subgroup Dimension Amplitude (Å) R= (1/2, 1/2, 1/2) R− 
+
+> 4
+
+(0, a, −a) Imma (74 ) 2 0.0623 R= (1/2, 1/2, 1/2) R− 
+
+> 5
+
+(0, a, a) Imma (74 ) 1 0.6886 X= (0, 1/2, 0) X− 
+
+> 5
+
+(0, 0, 0, −a, 0, 0) Cmcm (63 ) 2 0.3421 M= (1/2, 1/2, 0) M+ 
+
+> 2
+
+(a, 0, 0) P4/mbm (127 ) 1 1.0155 M= (1/2, 1/2, 0) M+ 
+
+> 3
+
+(a, 0, 0) P4/mbm (127 ) 1 0.3242 
+
+TABLE S1: Distortion modes of the standard perovskite cell giving rise to LaMnO 3 Pnma unit cell. Amplitudes are normalized with respect to the primitive unit cell of the Pm 3m structure. 
+
+II. TRAINING DATASET ANALYSIS 
+
+In Fig. S2 we analyze the training dataset contained in VASP’s ML_AB file. In particular, we report the distribution within the dataset of energies and values of the order parameter Qstag 
+
+2 and average Q2 distortion. The dataset well represents both the ordered and disordered phases. 318 317 316 315 314 
+
+> Energy (eV)
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+
+a)       
+
+> 0.4 0.3 0.2 0.1 0.0 0.1 0.2
+> order parameter ( Å)
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+
+b)        
+
+> Qstag
+> 2
+> Q2
+> 0.4 0.3 0.2 0.1 0.0 0.1 0.2
+> Qstag
+> 2(Å)
+> 318
+> 317
+> 316
+> 315
+> 314
+> Energy (eV)
+
+c)        
+
+> 0.4 0.3 0.2 0.1 0.0 0.1 0.2
+> Q2(Å)
+> 318
+> 317
+> 316
+> 315
+> 314
+> Energy (eV)
+
+d) 
+
+FIG. S2: Training dataset analysis. a) distribution of energies b) distributions of Qstag 
+
+2 (blue) and 
+
+⟨Q2⟩ (red) c) distribution in the training structures in the Qstag 
+
+2 -Energy plane d) distribution in the training structures in the ⟨Q2⟩-Energy plane. 3III. HEATING RATE AND SUPERCELL EFFECTS 
+
+We calculated the calculated the lattice parameters as function of temperature reported in Fig. 2(c) of the main text for different heating rates and for a larger 4 × 4 × 4 supercell. The results are reported in Fig. S3 and Fig. S4 respectively. Error bars are estimated by performing a blocking analysis with a block dimension of 20 points. We observe no significant deviation within the range of parameters explored. 400 600 800     
+
+> T (K)
+> 5.58
+> 5.60
+> 5.62
+> 5.64
+> 5.66
+> 5.68
+> a ( Å)
+> 4 K/ps
+> 2 K/ps
+> 1 K/ps
+> 400 600 800
+> 5.65
+> 5.70
+> 5.75
+> 5.80
+> 5.85
+> 5.90
+> 5.95
+> b ( Å)
+> 4 K/ps
+> 2 K/ps
+> 1 K/ps
+> 400 600 800
+> 5.45
+> 5.50
+> 5.55
+> 5.60
+> 5.65
+> 5.70
+> c ( Å)
+> 4 K/ps
+> 2 K/ps
+> 1 K/ps
+
+FIG. S3: Reduced lattice constants as a function of temperature for different heating rates. 400 600 800     
+
+> T (K)
+> 5.58
+> 5.60
+> 5.62
+> 5.64
+> 5.66
+> 5.68
+> a ( Å)
+> 4 × 4 × 4
+> 3 × 3 × 3
+> 400 600 800
+> 5.65
+> 5.70
+> 5.75
+> 5.80
+> 5.85
+> 5.90
+> 5.95
+> b ( Å)
+> 4 × 4 × 4
+> 3 × 3 × 3
+> 400 600 800
+> 5.45
+> 5.50
+> 5.55
+> 5.60
+> 5.65
+> 5.70
+> c ( Å)
+> 4 × 4 × 4
+> 3 × 3 × 3
+
+FIG. S4: Reduced lattice constants as function of temperature for different supercell size. 4[1] S. Ivantchev, E. Kroumova, G. Madariaga, J. M. Pérez-Mato, and M. I. Aroyo, Journal of Applied Crystallography 33 , 1190 (2000). [2] D. Orobengoa, C. Capillas, M. I. Aroyo, and J. M. Perez-Mato, Journal of Applied Crystallography 
+
+42 , 820 (2009). [3] J. M. Perez-Mato, D. Orobengoa, and M. I. Aroyo, Acta Crystallographica Section A 66 , 558 (2010). 
+
+5
