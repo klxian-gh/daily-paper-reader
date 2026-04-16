@@ -1,0 +1,166 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-16T21:11:59.700825+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.12639v1",
+      "title": "Exact tunneling splittings from path-integral hybrid Monte Carlo with enveloping bridging potentials",
+      "abstract": "A path-integral hybrid Monte Carlo approach with enveloping bridging potentials (PIHMC-EBP) is proposed for calculating numerically exact tunneling splittings in molecular systems. The central idea is to construct an approximately barrierless bridging potential that smoothly connects symmetry-related regions of ring-polymer phase space, enabling direct sampling of the free-energy profile from which the relevant splittings are obtained. Two tailored nonlocal updates are designed to enhance the sampling of slow collective motions. Compared with path-integral molecular dynamics using thermodynamic integration, PIHMC-EBP requires neither quadrature nor time-step convergence checks, thereby substantially reducing the manual effort required to analyze the results. Applications to malonaldehyde (and its deuterated isotopologue) and the HCl dimer using state-of-the-art potential energy surfaces provide the most precise tunneling splittings reported to date for both systems, while simultaneously reducing the overall computational cost by several times and three orders of magnitude, respectively. Finally, application to the water dimer yields the first numerically exact path-integral calculations of the ground-state tunneling splittings on three different potential energy surfaces, all obtained simultaneously by reweighting a single set of trajectories.",
+      "authors": [
+        "Yu-Chen Wang",
+        "Jeremy O. Richardson"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-14T12:10:50+00:00",
+      "link": "https://arxiv.org/pdf/2604.12639v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "calculating tunneling splittings in molecular systems for reaction pathways",
+      "llm_evidence_cn": "计算分子系统中反应路径的隧穿分裂",
+      "llm_evidence": "计算分子系统中反应路径的隧穿分裂",
+      "canonical_evidence": "计算分子系统中反应路径的隧穿分裂",
+      "llm_tldr_en": "Proposes a path-integral hybrid Monte Carlo method for exact tunneling splittings in molecular systems.",
+      "llm_tldr_cn": "提出了一种路径积分混合蒙特卡罗方法，用于计算分子系统中的精确隧穿分裂。",
+      "llm_tldr": "提出了一种路径积分混合蒙特卡罗方法，用于计算分子系统中的精确隧穿分裂。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12749v1",
+      "title": "Perspective on a challenge: predicting the photochemistry of cyclobutanone",
+      "abstract": "This Perspective is part of a Special Topic that explored the maturity of nonadiabatic molecular dynamics for predicting photochemical processes. In 2023, a prediction challenge was issued to the community of computational photochemists to simulate the photochemistry of cyclobutanone, photoexcited at 200 nm, and the resulting time-resolved MeV-UED signal. The challenge attracted 15 theoretical predictions from more than 70 researchers, employing a wide range of strategies for electronic structure and nonadiabatic molecular dynamics to predict the time-resolved MeV-UED signal before the experiment had been conducted at SLAC (Stanford, USA). The MeV-UED instrument at Shanghai Jiao Tong University was also used to provide a second independent time-resolved MeV-UED signal for the photochemistry of cyclobutanone.   This Perspective discusses the various approaches and strategies used by the participants to predict the photochemistry of cyclobutanone. This work also summarizes the strengths and weaknesses of various methods used for photoexcitation, electronic structure, nonadiabatic dynamics, and calculation of observables, as agreed by the participants during a CECAM workshop dedicated to the results of the challenge and organized in Lausanne in April 2025. This Perspective also collects all the predicted time-resolved MeV-UED signals into a single figure, together with the experimental signal. This challenge (i) demonstrated the qualitative predictive power of nonadiabatic molecular dynamics and (ii) underscore the impact of electronic-structure theory on the outcome of the excited-state dynamics and the need for its careful benchmarking. This effort allowed the community to share practical strategies to perform nonadiabatic dynamics (discussed in the present Perspective) and constitutes a 'calibration' exercise for computational photochemistry.",
+      "authors": [
+        "Jiří Janoš",
+        "Nanna Holmgaard List",
+        "Andrew J. Orr-Ewing",
+        "Jiří Suchan",
+        "Mario Barbatti",
+        "Olivia Bennett",
+        "Marcus Brady",
+        "Javier Carmona-García",
+        "Rachel Crespo-Otero",
+        "Julien Eng",
+        "O. Jonathan Fajen",
+        "Marco Garavelli",
+        "Sandra Gómez",
+        "Alice E. Green",
+        "Federico J. Hernández",
+        "Daniel Hollas",
+        "Lewis Hutton",
+        "Lea M. Ibele",
+        "Adam Kirrander",
+        "Zhenggang Lan",
+        "Yorick Lassmann",
+        "Joseph E. Lawrence",
+        "Benjamin G. Levine",
+        "Dmitry V. Makhov",
+        "Jonathan R. Mannouch",
+        "Xincheng Miao",
+        "Roland Mitrić",
+        "Shane M. Parker",
+        "Thomas J. Penfold",
+        "Jiawei Peng",
+        "Jeremy O. Richardson",
+        "Dmitrii Shalashilin",
+        "Petr Slavíček",
+        "K. Eryn Spinlove",
+        "Patricia Vindel-Zandbergen",
+        "Federica Agostini",
+        "Sara Bonella",
+        "Todd J. Martínez",
+        "Graham A. Worth",
+        "Basile F. E. Curchod"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-14T13:59:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.12749v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "nonadiabatic molecular dynamics for photochemical processes",
+      "llm_evidence_cn": "光化学过程的非绝热分子动力学",
+      "llm_evidence": "光化学过程的非绝热分子动力学",
+      "canonical_evidence": "光化学过程的非绝热分子动力学",
+      "llm_tldr_en": "Evaluates the maturity of molecular dynamics in predicting complex photochemical reaction pathways.",
+      "llm_tldr_cn": "评估了分子动力学在预测复杂光化学反应路径方面的成熟度。",
+      "llm_tldr": "评估了分子动力学在预测复杂光化学反应路径方面的成熟度。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.13213v1",
+      "title": "Rare Event Analysis via Stochastic Optimal Control",
+      "abstract": "Rare events such as conformational changes in biomolecules, phase transitions, and chemical reactions are central to the behavior of many physical systems, yet they are extremely difficult to study computationally because unbiased simulations seldom produce them. Transition Path Theory (TPT) provides a rigorous statistical framework for analyzing such events: it characterizes the ensemble of reactive trajectories between two designated metastable states (reactant and product), and its central object--the committor function, which gives the probability that the system will next reach the product rather than the reactant--encodes all essential kinetic and thermodynamic information. We introduce a framework that casts committor estimation as a stochastic optimal control (SOC) problem. In this formulation the committor defines a feedback control--proportional to the gradient of its logarithm--that actively steers trajectories toward the reactive region, thereby enabling efficient sampling of reactive paths. To solve the resulting hitting-time control problem we develop two complementary objectives: a direct backpropagation loss and a principled off-policy Value Matching loss, for which we establish first-order optimality guarantees. We further address metastability, which can trap controlled trajectories in intermediate basins, by introducing an alternative sampling process that preserves the reactive current while lowering effective energy barriers. On benchmark systems, the framework yields markedly more accurate committor estimates, reaction rates, and equilibrium constants than existing methods.",
+      "authors": [
+        "Yuanqi Du",
+        "Jiajun He",
+        "Dinghuai Zhang",
+        "Eric Vanden-Eijnden",
+        "Carles Domingo-Enrich"
+      ],
+      "primary_category": "stat.ML",
+      "categories": [
+        "stat.ML",
+        "cs.LG",
+        "math.OC",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-14T18:34:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.13213v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Analysis of rare events like chemical reactions and conformational changes",
+      "llm_evidence_cn": "化学反应和构象变化等罕见事件的分析",
+      "llm_evidence": "化学反应和构象变化等罕见事件的分析",
+      "canonical_evidence": "化学反应和构象变化等罕见事件的分析",
+      "llm_tldr_en": "Introduces a stochastic optimal control framework for analyzing rare events like chemical reactions.",
+      "llm_tldr_cn": "引入了一种随机最优控制框架，用于分析化学反应等罕见事件。",
+      "llm_tldr": "引入了一种随机最优控制框架，用于分析化学反应等罕见事件。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

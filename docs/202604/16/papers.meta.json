@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-16",
+  "date": "2026-04-16",
+  "generated_at": "2026-04-16T21:12:35",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/16/2604.12639v1-exact-tunneling-splittings-from-path-integral-hybrid-monte-carlo-with-enveloping-bridging-potentials",
+      "section": "quick",
+      "title_en": "Exact tunneling splittings from path-integral hybrid Monte Carlo with enveloping bridging potentials",
+      "authors": "Yu-Chen Wang, Jeremy O. Richardson",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12639v1",
+      "score": "6.0",
+      "evidence": "计算分子系统中反应路径的隧穿分裂",
+      "tldr": "本研究提出了一种基于包络桥接势的路径积分混合蒙特卡罗方法（PIHMC-EBP），用于计算分子系统中的精确隧道分裂。该方法通过构建近似无势垒的桥接势连接对称区域，并结合非局部更新策略，显著提高了采样效率。相比传统方法，它无需积分或步长收敛检查，大幅降低了计算成本和人工干预。在丙二醛、氯化氢二聚体及水二聚体上的应用证明了其卓越的精度和效率，为复杂分子系统的量子效应研究提供了强有力的工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "A path-integral hybrid Monte Carlo approach with enveloping bridging potentials (PIHMC-EBP) is proposed for calculating numerically exact tunneling splittings in molecular systems. The central idea is to construct an approximately barrierless bridging potential that smoothly connects symmetry-related regions of ring-polymer phase space, enabling direct sampling of the free-energy profile from which the relevant splittings are obtained. Two tailored nonlocal updates are designed to enhance the sampling of slow collective motions. Compared with path-integral molecular dynamics using thermodynamic integration, PIHMC-EBP requires neither quadrature nor time-step convergence checks, thereby substantially reducing the manual effort required to analyze the results. Applications to malonaldehyde (and its deuterated isotopologue) and the HCl dimer using state-of-the-art potential energy surfaces provide the most precise tunneling splittings reported to date for both systems, while simultaneously reducing the overall computational cost by several times and three orders of magnitude, respectively. Finally, application to the water dimer yields the first numerically exact path-integral calculations of the ground-state tunneling splittings on three different potential energy surfaces, all obtained simultaneously by reweighting a single set of trajectories.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.12749v1-perspective-on-a-challenge-predicting-the-photochemistry-of-cyclobutanone",
+      "section": "quick",
+      "title_en": "Perspective on a challenge: predicting the photochemistry of cyclobutanone",
+      "authors": "Jiří Janoš, Nanna Holmgaard List, Andrew J. Orr-Ewing, Jiří Suchan, Mario Barbatti, Olivia Bennett, Marcus Brady, Javier Carmona-García, Rachel Crespo-Otero, Julien Eng, O. Jonathan Fajen, Marco Garavelli, Sandra Gómez, Alice E. Green, Federico J. Hernández, Daniel Hollas, Lewis Hutton, Lea M. Ibele, Adam Kirrander, Zhenggang Lan, Yorick Lassmann, Joseph E. Lawrence, Benjamin G. Levine, Dmitry V. Makhov, Jonathan R. Mannouch, Xincheng Miao, Roland Mitrić, Shane M. Parker, Thomas J. Penfold, Jiawei Peng, Jeremy O. Richardson, Dmitrii Shalashilin, Petr Slavíček, K. Eryn Spinlove, Patricia Vindel-Zandbergen, Federica Agostini, Sara Bonella, Todd J. Martínez, Graham A. Worth, Basile F. E. Curchod",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12749v1",
+      "score": "6.0",
+      "evidence": "光化学过程的非绝热分子动力学",
+      "tldr": "本文总结了2023年发起的一项计算化学挑战赛，旨在预测环丁酮在200nm光激发下的光化学过程及超快电子衍射（MeV-UED）信号。来自全球的70多位研究者提交了15项预测，涵盖了多种电子结构和非绝热动力学方法。通过与SLAC和上海交大的实验数据对比，该挑战评估了当前理论模拟的预测能力，探讨了不同方法的优劣，为计算光化学领域提供了重要的基准参考。",
+      "tags": "query:qmmm",
+      "abstract_en": "This Perspective is part of a Special Topic that explored the maturity of nonadiabatic molecular dynamics for predicting photochemical processes. In 2023, a prediction challenge was issued to the community of computational photochemists to simulate the photochemistry of cyclobutanone, photoexcited at 200 nm, and the resulting time-resolved MeV-UED signal. The challenge attracted 15 theoretical predictions from more than 70 researchers, employing a wide range of strategies for electronic structure and nonadiabatic molecular dynamics to predict the time-resolved MeV-UED signal before the experiment had been conducted at SLAC (Stanford, USA). The MeV-UED instrument at Shanghai Jiao Tong University was also used to provide a second independent time-resolved MeV-UED signal for the photochemistry of cyclobutanone.   This Perspective discusses the various approaches and strategies used by the participants to predict the photochemistry of cyclobutanone. This work also summarizes the strengths and weaknesses of various methods used for photoexcitation, electronic structure, nonadiabatic dynamics, and calculation of observables, as agreed by the participants during a CECAM workshop dedicated to the results of the challenge and organized in Lausanne in April 2025. This Perspective also collects all the predicted time-resolved MeV-UED signals into a single figure, together with the experimental signal. This challenge (i) demonstrated the qualitative predictive power of nonadiabatic molecular dynamics and (ii) underscore the impact of electronic-structure theory on the outcome of the excited-state dynamics and the need for its careful benchmarking. This effort allowed the community to share practical strategies to perform nonadiabatic dynamics (discussed in the present Perspective) and constitutes a 'calibration' exercise for computational photochemistry.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/16/2604.13213v1-rare-event-analysis-via-stochastic-optimal-control",
+      "section": "quick",
+      "title_en": "Rare Event Analysis via Stochastic Optimal Control",
+      "authors": "Yuanqi Du, Jiajun He, Dinghuai Zhang, Eric Vanden-Eijnden, Carles Domingo-Enrich",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.13213v1",
+      "score": "6.0",
+      "evidence": "化学反应和构象变化等罕见事件的分析",
+      "tldr": "针对生物分子构象变化等稀有事件模拟难题，本文基于过渡路径理论（TPT），将提交函数（committor function）的估计转化为随机最优控制（SOC）问题。通过引入反馈控制引导轨迹进入反应区域，并提出直接反向传播和离策略价值匹配两种优化目标，结合改进的采样策略克服亚稳态障碍，显著提升了反应速率和平衡常数的计算精度。",
+      "tags": "query:qmmm",
+      "abstract_en": "Rare events such as conformational changes in biomolecules, phase transitions, and chemical reactions are central to the behavior of many physical systems, yet they are extremely difficult to study computationally because unbiased simulations seldom produce them. Transition Path Theory (TPT) provides a rigorous statistical framework for analyzing such events: it characterizes the ensemble of reactive trajectories between two designated metastable states (reactant and product), and its central object--the committor function, which gives the probability that the system will next reach the product rather than the reactant--encodes all essential kinetic and thermodynamic information. We introduce a framework that casts committor estimation as a stochastic optimal control (SOC) problem. In this formulation the committor defines a feedback control--proportional to the gradient of its logarithm--that actively steers trajectories toward the reactive region, thereby enabling efficient sampling of reactive paths. To solve the resulting hitting-time control problem we develop two complementary objectives: a direct backpropagation loss and a principled off-policy Value Matching loss, for which we establish first-order optimality guarantees. We further address metastability, which can trap controlled trajectories in intermediate basins, by introducing an alternative sampling process that preserves the reactive current while lowering effective energy barriers. On benchmark systems, the framework yields markedly more accurate committor estimates, reaction rates, and equilibrium constants than existing methods.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
