@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-17",
+  "date": "2026-04-17",
+  "generated_at": "2026-04-17T22:05:34",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/17/2604.14784v1-interfacial-electric-fields-in-water-nanodroplets-are-weakly-dependent-on-curvature-and-ph",
+      "section": "quick",
+      "title_en": "Interfacial Electric Fields in Water Nanodroplets are Weakly Dependent on Curvature and pH",
+      "authors": "Gabriele Amante, Fortunata Panzera, Gabriele Centi, Jing Xie, Ali Hassanali, A. Marco Saitta, Giuseppe Cassone",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14784v1",
+      "score": "7.0",
+      "evidence": "结合深度学习分子动力学的量子力学表征",
+      "tldr": "本研究探讨了水微滴反应活性增强的物理机制，重点分析了界面电场（IEF）的作用。通过结合深度学习分子动力学与从头算重采样技术，研究者对不同曲率和pH值下的气-水界面电场进行了量子力学表征。结果显示，IEF强度约为1.0-1.2 V/Å，且与局部氢键网络密切相关。研究发现曲率和pH对IEF的影响微乎其微，表明该电场并非驱动微米级液滴高反应活性的主要因素，而是界面的局域电子特性。",
+      "tags": "query:qmmm",
+      "abstract_en": "The origin of enhanced reactivity in aqueous microdroplets remains debated, with interfacial electric fields (IEFs) often invoked as catalytic drivers. Here, we provide a quantum-mechanical, spatially resolved characterization of the electric field at air-water interfaces by combining deep-learning molecular dynamics with \\emph{ab initio} re-sampling. Across planar interfaces and nanodroplets of varying curvature and charge state, we find an outward-oriented field of $\\sim 1.0$--$1.2$ V/Å along the intrinsic surface normal. Crucially, its magnitude scales linearly with the average number of hydrogen bonds per interfacial molecule, directly tying the field to the local hydrogen-bond network. Despite its large magnitude and contrary to common expectations, we find that curvature and pH exert only a minor influence on the IEF, becoming negligible at experimentally relevant droplet sizes and pH. Consequently, the reactivity differences observed in $μ$m-sized droplets cannot be ascribed to variations in the IEF, which changes by a factor of only $\\sim10^{-5}$ between $3$ and $40μ$m-sized droplets. Moreover, the IEF is localized inside the interfacial region and rapidly vanishes within a few Å. This strong spatial confinement renders the IEF strongly tied to the local electronic structure, identifying it as a local property of the air-water boundary rather than an independent physical driver of ``on-water'' catalysis.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/17/2604.14904v1-frozen-density-embedding-with-pccd-electron-densities",
+      "section": "quick",
+      "title_en": "Frozen density embedding with pCCD electron densities",
+      "authors": "Rahul Chakraborty, Paweł Tecmer",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14904v1",
+      "score": "7.0",
+      "evidence": "大型化学结构的量子化学嵌入策略",
+      "tldr": "本文提出了一种基于对耦合簇倍加（pCCD）电子密度的冻结密度嵌入方案，旨在解决强相关系统在大规模应用中的计算瓶颈。该方法利用pCCD响应方程计算成本低的优势，通过片段化策略和自洽迭代生成嵌入势，从而在保持高精度的同时显著提升了处理大型化学结构的效率。",
+      "tags": "query:qmmm",
+      "abstract_en": "The pair-coupled-cluster doubles (pCCD) method has emerged as a viable approach for quantum-chemical studies of strongly correlated systems. Despite its lower formal scaling (O(N$^4$)) compared to other versions of coupled cluster (CC) theory, applications to large chemical structures are still expensive. Fragmentation and embedding strategies offer a viable approach in such cases. In this work, we present a simple and efficient density-embedding scheme based on pCCD electron densities. The main computational benefit arises from the fact that pCCD response $Λ$-equations are much cheaper to compute than those of standard CC methods, providing easy access to one-electron properties. The pCCD densities of the individual subsystems are used to generate static embedding potentials that capture the environment's effect on the embedded system. The individual fragment energies are then iteratively converged in a self-consistent fashion. We demonstrate the reliable performance of this scheme with the estimation of dipole moments of the weakly bound CO2$\\cdots$Rg (Rg = He, Ne, Ar, and Kr) complexes and with the modeling of vertical excitations of some microsolvated molecules.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/17/2604.12699v1-transferable-excited-state-dynamics-enable-screening-of-fluorescent-protein-chromophores",
+      "section": "quick",
+      "title_en": "Transferable excited-state dynamics enable screening of fluorescent protein chromophores",
+      "authors": "Rhyan Barrett, Sophia Wesely, Julia Westermayr",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12699v1",
+      "score": "6.0",
+      "evidence": "用于激发态动力学和光化学路径的机器学习势能",
+      "tldr": "本研究开发了X-MACE，一种可迁移的激发态动力学机器学习势能面，并结合曲率驱动面跳跃算法，实现了光化学路径的高效筛选。通过对绿色荧光蛋白（GFP）发光团变体的研究，该方法仅需极少量参考数据即可准确预测结构修饰对激发态寿命和光异构化产率的影响。研究揭示了空间位阻和共轭延伸对荧光性能的调控规律，为大规模激发态筛选和光物理性质的可解释设计提供了通用框架。",
+      "tags": "query:qmmm",
+      "abstract_en": "Transferable excited-state dynamics offer a route to efficient screening of photophysical behavior across molecular systems, but conventional nonadiabatic simulations remain prohibitively expensive. Here we introduce X-MACE, a transferable machine-learning potential for excited-state dynamics that predicts multiple potential energy surfaces, forces and oscillator strengths, and combine it with curvature-driven surface hopping to enable data-efficient screening of photochemical pathways. We apply this framework to fluorescent chromophores as an example application, using green fluorescent protein chromophore variants to demonstrate how subtle structural modifications reshape excited-state relaxation, lifetimes and photoisomerization yields. Fine-tuning a single pretrained model with fewer than 100 reference geometries per derivative yields accurate dynamics across a chemically diverse set of analogues. The screening reveals two governing design principles: steric crowding on the phenolate ring lowers the torsional barrier and accelerates access to twisted conical intersections, whereas conjugation extension stabilizes planar excited-state configurations, suppresses non-radiative decay and prolongs fluorescence. More broadly, this workflow provides a general framework for scalable excited-state screening and interpretable design of photophysical properties.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/17/2604.13659v1-ion-specific-anomalous-water-diffusion-in-aqueous-electrolytes-a-machine-learned-many-body-force-field-study-with-mace",
+      "section": "quick",
+      "title_en": "Ion-Specific Anomalous Water Diffusion in Aqueous Electrolytes: A Machine-Learned Many-Body Force Field Study with MACE",
+      "authors": "Massimo Ciacchi, Ilnur Saitov, Nico Di Fonte, Isabella Daidone, Carlo Pierleoni",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13659v1",
+      "score": "6.0",
+      "evidence": "基于密度泛函理论数据训练的机器学习力场",
+      "tldr": "本研究利用基于MACE等变图神经网络的多体机器学习力场，探讨了电解质溶液中水扩散的离子特异性异常现象。通过对revPBE-D3能级数据的训练，模拟成功重现了CsI溶液中水扩散加速和NaCl溶液中扩散受阻的实验结果。研究揭示了Na+的第一和第二水合壳层对水分子的阻碍作用，以及I-弱结构化水合壳层对扩散的促进机制，为理解电解质微观动力学提供了高精度视角。",
+      "tags": "query:qmmm",
+      "abstract_en": "The dynamics of water in electrolyte solutions exhibits a striking, ion-specific anomaly: the diffusion coefficient of water is enhanced relative to the neat liquid in chaotropic CsI solutions, yet suppressed in kosmotropic NaCl solutions. This phenomenon, long challenging for classical force-field-based molecular dynamics, is studied here using classical molecular dynamics simulations with a many-body machine-learned force field (MLFF) trained within the MACE equivariant graph neural network framework. The force field is trained on energies, forces, and stresses computed at the density functional theory level with the revPBE-D3 exchange--correlation functional, which provides a reliable balance between accuracy and computational efficiency for aqueous systems. Simulations of NaCl and CsI aqueous solutions at ambient conditions over a concentration range of 0.89--3.56~mol/kg reproduce the experimentally observed anomalous diffusion and show a quantitative improvement over previous results obtained with the DeePMD framework, trained on the same theory, particularly for NaCl solutions. This improvement is traced to a stronger Na$^{+}$--water interaction in the first hydration shell and the non-negligible retarding contribution of the second hydration shell of Na$^{+}$. For CsI solutions, the water acceleration is shown to be primarily driven by the anion I$^{-}$, whose diffuse and weakly structured hydration shell facilitates rapid water exchange with the bulk. These results are rationalised through a shell-decomposition analysis of time-dependent water diffusivities and ion--oxygen potentials of mean force providing a coherent microscopic picture of the acceleration--retardation mechanism in the studied aqueous electrolytes.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
