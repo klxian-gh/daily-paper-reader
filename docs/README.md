@@ -6,35 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-17
-- 运行时间：2026-04-17 22:05:24 UTC
+- 最新运行日期：2026-04-18
+- 运行时间：2026-04-18 20:22:02 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：2
 - 精读区：0
-- 速读区：4
+- 速读区：2
 
 ### 今日简报（AI）
-今日速读 4 篇前沿论文，深入探讨了纳米液滴界面电场、量子化学嵌入模型及荧光蛋白筛选技术。
-重点发现水纳米液滴电场受曲率和 pH 影响微弱，且激发态动力学可显著提升荧光蛋白发色团的筛选效率。
-推荐关注计算化学在微观界面物理与生物传感材料设计中的最新进展。
-- 详情：[/202604/17/README](/202604/17/README)
+今日聚焦 AI 赋能科学模拟，探索大体系势函数构建与量子模拟智能体生成。
+重点关注 NEPMaker 利用主动学习优化大胞机器学习势，以及任务驱动的量子模拟自动化方案。
+建议科研人员关注 AI 代理与主动学习如何简化复杂物理体系的建模流程。
+- 详情：[/202604/18/README](/202604/18/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Interfacial Electric Fields in Water Nanodroplets are Weakly Dependent on Curvature and pH](/202604/17/2604.14784v1-interfacial-electric-fields-in-water-nanodroplets-are-weakly-dependent-on-curvature-and-ph)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：结合深度学习分子动力学的量子力学表征
-2. [Frozen density embedding with pCCD electron densities](/202604/17/2604.14904v1-frozen-density-embedding-with-pccd-electron-densities)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：大型化学结构的量子化学嵌入策略
-3. [Transferable excited-state dynamics enable screening of fluorescent protein chromophores](/202604/17/2604.12699v1-transferable-excited-state-dynamics-enable-screening-of-fluorescent-protein-chromophores)  
+1. [NEPMaker: Active learning of neuroevolution machine learning potential for large cells](/202604/18/2604.13848v1-nepmaker-active-learning-of-neuroevolution-machine-learning-potential-for-large-cells)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于激发态动力学和光化学路径的机器学习势能
-4. [Ion-Specific Anomalous Water Diffusion in Aqueous Electrolytes: A Machine-Learned Many-Body Force Field Study with MACE](/202604/17/2604.13659v1-ion-specific-anomalous-water-diffusion-in-aqueous-electrolytes-a-machine-learned-many-body-force-field-study-with-mace)  
+   evidence：具有第一性原理精度的机器学习势能用于大规模模拟
+2. [El Agente Forjador: Task-Driven Agent Generation for Quantum Simulation](/202604/18/2604.14609v1-el-agente-forjador-task-driven-agent-generation-for-quantum-simulation)  
    标签：评分：6.0/10、query:qmmm
-   evidence：基于密度泛函理论数据训练的机器学习力场
+   evidence：用于量子化学和量子动力学的智能体生成
 
 
 <div class="dpr-home-promo-card">

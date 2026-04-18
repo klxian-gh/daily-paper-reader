@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-18",
+  "date": "2026-04-18",
+  "generated_at": "2026-04-18T20:22:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/18/2604.13848v1-nepmaker-active-learning-of-neuroevolution-machine-learning-potential-for-large-cells",
+      "section": "quick",
+      "title_en": "NEPMaker: Active learning of neuroevolution machine learning potential for large cells",
+      "authors": "Junjie Wang, Shuning Pan, Haoting Zhang, Qiuhan Jia, Chi Ding, Zheyong Fan, Jian Sun",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13848v1",
+      "score": "6.0",
+      "evidence": "具有第一性原理精度的机器学习势能用于大规模模拟",
+      "tldr": "针对机器学习势函数在处理训练集外原子环境时易失效的问题，本文开发了基于D-最优准则的主动学习框架NEPMaker。该框架集成于GPUMD的神经演化势（NEP）中，通过实时识别外推原子环境并将其嵌入局部周期性结构进行标注，有效降低了大规模模拟中的标注成本。NEPMaker显著提升了模型在缺陷、界面和相变等复杂系统中的鲁棒性与迁移率，为构建可靠的大规模MLP提供了高效路径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Machine learning potentials (MLPs) achieve near first-principles accuracy but often fail for atomic environments outside the training distribution. Active learning can mitigate this limitation; however, its application to large-scale simulations is hindered by the prohibitive cost of labeling entire configurations. Here, we develop a D-optimality-driven active learning framework for the neuroevolution potential (NEP) implemented within the GPUMD package, named NEPMaker. Extrapolative atomic environments are identified on-the-fly and embedded into locally periodic structures, where boundary atoms are optimized to remain close to the training distribution. This strategy enables large-scale simulations to directly contribute to dataset construction, significantly reducing extrapolation errors while improving model robustness and transferability. The proposed framework provides a scalable route for constructing reliable machine learning potentials in complex materials systems, including those involving defects, interfaces, and phase transitions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/18/2604.14609v1-el-agente-forjador-task-driven-agent-generation-for-quantum-simulation",
+      "section": "quick",
+      "title_en": "El Agente Forjador: Task-Driven Agent Generation for Quantum Simulation",
+      "authors": "Zijian Zhang, Aiwei Yin, Amaan Baweja, Jiaru Bai, Ignacio Gustin, Varinia Bernales, Alán Aspuru-Guzik",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14609v1",
+      "score": "6.0",
+      "evidence": "用于量子化学和量子动力学的智能体生成",
+      "tldr": "针对当前科学AI智能体依赖静态工具集、难以适应新领域的局限，本文提出El Agente Forjador框架。该框架通过分析、生成、执行和评估四个阶段，使通用编程智能体能够自主锻造、验证并复用计算工具。在量子化学和动力学任务中的实验表明，该方法显著提升了任务准确率，降低了API成本，并实现了跨领域工具的灵活组合，为自主科学发现提供了新范式。",
+      "tags": "query:qmmm",
+      "abstract_en": "AI for science promises to accelerate the discovery process. The advent of large language models (LLMs) and agentic workflows enables the expediting of a growing range of scientific tasks. However, most of the current generation of agentic systems depend on static, hand-curated toolsets that hinder adaptation to new domains and evolving libraries. We present El Agente Forjador, a multi-agent framework in which universal coding agents autonomously forge, validate, and reuse computational tools through a four-stage workflow of tool analysis, tool generation, task execution, and iterative solution evaluation. Evaluated across 24 tasks spanning quantum chemistry and quantum dynamics on five coding agent setups, we compare three operating modes: zero-shot generation of tools per task, reuse of a curriculum-built toolset, and direct problem-solving with the coding agents as the baseline. We find that our tool generation and reuse framework consistently improves accuracy over the baseline. We also show that reusing a toolset built by a stronger coding agent can reduce API cost and substantially raises the solution quality for weaker coding agents. Case studies further demonstrate that tools forged for different domains can be combined to solve hybrid tasks. Taken together, these results show that LLM-based agents can use their scientific knowledge and coding capabilities to autonomously build reusable scientific tools, pointing toward a paradigm in which agent capabilities are defined by the tasks they are designed to solve rather than by explicitly engineered implementations.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

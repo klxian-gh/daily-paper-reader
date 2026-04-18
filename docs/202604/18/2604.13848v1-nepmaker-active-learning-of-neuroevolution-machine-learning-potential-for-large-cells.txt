@@ -1,0 +1,327 @@
+Title: 2604.13848v1.pdf
+
+URL Source: https://arxiv.org/pdf/2604.13848v1
+
+Published Time: Thu, 16 Apr 2026 00:57:59 GMT
+
+Number of Pages: 27
+
+Markdown Content:
+NEPMaker: Active learning of neuroevolution machine learning potential for large cells 
+
+Junjie Wang( 王俊杰 ), 1 Shuning Pan( 潘书宁 ), 1 Haoting Zhang( 张皓庭 ), 1 Qiuhan Jia( 贾秋涵 ), 1 Chi Ding( 丁驰 ), 1 Zheyong Fan( 樊哲勇 ), 2 and Jian Sun( 孙建 )1, ∗ 
+
+> 1
+
+National Laboratory of Solid State Microstructures, School of Physics and Collaborative Innovation Center of Advanced Microstructures, Nanjing University, Nanjing 210093, China  
+
+> 2
+
+College of Physical Science and Technology, Bohai University, Jinzhou, P. R. China. 
+
+# Abstract 
+
+Machine learning potentials (MLPs) achieve near first-principles accuracy but often fail for atomic environments outside the training distribution. Active learning can mitigate this limitation; however, its application to large-scale simulations is hindered by the prohibitive cost of labeling entire configurations. Here, we develop a D-optimality–driven active learning framework for the neuroevolution potential (NEP) implemented within the GPUMD package, named NEPMaker. Extrapolative atomic environments are identified on-the-fly and embedded into locally periodic structures, where boundary atoms are optimized to remain close to the training distribution. This strategy enables large-scale simulations to directly contribute to dataset construction, significantly reducing extrapolation errors while improving model robustness and transferability. The proposed framework provides a scalable route for constructing reliable machine learning potentials in complex materials systems, including those involving defects, interfaces, and phase transitions.  
+
+> ∗
+
+Corresponding author.  jiansun@nju.edu.cn 
+
+These authors contributed equally: Junjie Wang, Shuning Pan Introduction 
+
+Molecular dynamics (MD) simulations are a cornerstone of materials modeling, providing atomistic insight into the structural, thermal, and mechanical properties. Traditional MD typically relies on classical interatomic potentials, which are computationally efficient but often lack sufficient accuracy for complex materials. In recent years, machine learning potentials 1 (MLP) have emerged as a transformative approach. By extracting local descriptors for each atom, MLP can predict per-atom energies using linear regression 2–4 , Gaussian process regression 5,6 , or, most commonly, neural networks 7–12 . This combination of flexible descriptors and powerful regression models allows MLP to achieve near first-principles accuracy while maintaining computational efficiency suitable for large-scale simulations. As a result, MLP have been widely applied in MD simulations with considerable success. 
+
+Despite their high accuracy, neural network–based models remain fundamentally black boxes, and their predictions can be unreliable for atomic environments outside the training distribution 13–15 . In such cases, the model may produce significantly erroneous results, potentially leading to incorrect dynamical behavior or even simulation instability, especially in systems involving defects, phase transitions, or far-from-equilibrium processes. Consequently, reliable uncertainty quantification (UQ) is essential to guide model development and assess MLP applicability in unexplored configuration spaces 16 . Several approaches exist for estimating uncertainty. Ensemble learning 17,18 trains multiple models with different initializations, and the spread of predictions reflects the uncertainty. However, this method is relatively inefficient due to training and inferring with multiple models, and may underestimate true uncertainty. Bayesian methods 14–16 , such as Gaussian process regression (GPR), provide direct uncertainty estimates, but their training complexity scales cubically with dataset size, and prediction scales quadratically. Another approach is to use distances in descriptor or latent space 19 ; however, these approaches typically require additional calibration to relate distances to uncertainty, and their performance can be sensitive to the choice and scaling of descriptors, introducing further complexity. 
+
+An alternative UQ strategy for MLP is based on the D-optimality criterion 20 ,originally developed in the context of optimal experimental design. D-optimality quantifies the information content of a candidate training set via the determinant of the design matrix. The derived extrapolation grade directly indicates whether a given atomic environment is an interpolation of the training data or an extrapolation. D-optimality requires only a single model evaluation, enabling efficient on-the-fly identification of informative and extrapolative configurations during MD simulations. This approach has been successfully applied to MLP such as moment tensor potential (MTP) 21 and atomic cluster expansion (ACE) 22 , demonstrating its effectiveness for active learning in atomistic simulations. 
+
+In this work, we implement a D-optimality-based active learning framework NEPMaker within the neuroevolution potential 23,24 (NEP) and integrate it into GPUMD 10,25 package, a GPU-accelerated MD engine optimized for large-scale simulations. The central innovation of this work is a scalable strategy for active learning in large simulation cells. Instead of labeling entire configurations, we identify and extract high-uncertainty local atomic environments from large-scale simulations on-the-fly. This allows large-scale simulations to be incorporated into the active learning process. Furthermore, in contrast to extracting atomic environments as non-periodic clusters as in MLIP-3 26 , our method constructs periodic cells and optimizes the positions of atoms near the boundaries. This preserves the target atomic environment while ensuring that surrounding environments to be physically meaningful and benefit first-principles convergence. Across multiple representative systems, we demonstrate that this approach enables users to construct reliable potentials from scratch. By iteratively refining extrapolative atomic environments, the method systematically improves model stability and accuracy, ultimately enabling reliable large-scale MD simulations. 
+
+# Methods A. Neuroevolution potential 
+
+In NEP potential, the local environment of atom i is embedded in a descriptor vector {𝑞𝑞 𝑛𝑛 𝑖𝑖 , 𝑞𝑞 𝑛𝑛𝑛𝑛 𝑖𝑖 } , where 𝑞𝑞 𝑛𝑛 𝑖𝑖 is the radial part and 𝑞𝑞 𝑛𝑛𝑛𝑛 𝑖𝑖 is the angular part. The descriptors depend on the chemical species and relative positions of neighboring atoms within a cutoff radius. And they are constructed to be invariant with respect to permutation, translation, and rotation. The descriptor vector is used as an input to a single layer neural network to fit the potential energy 𝐸𝐸 𝑖𝑖 of the i-th atom: 
+
+𝐸𝐸 𝑖𝑖 = ∑ 𝑤𝑤 𝜇𝜇 tanh �∑ 𝑤𝑤 𝜇𝜇𝜇𝜇 𝑞𝑞 𝜇𝜇  
+
+> 𝑖𝑖
+
+− 𝑏𝑏 𝜇𝜇 𝑁𝑁 des  
+
+> 𝜇𝜇 =1
+
+� − 𝑏𝑏 𝑁𝑁 neu 𝜇𝜇=1 (1) 
+
+where 𝑤𝑤 and 𝑏𝑏 are the trainable parameters of the neural network. 
+
+B. Estimation of uncertainty 
+
+To enable active learning, it is essential to quantify the reliability of model predictions for unseen atomic environments. In this work, we adopt a D-optimality-based criterion to estimate the extrapolation degree of atomic configurations within the NEP framework. The key idea of D-optimality is to measure how well a given atomic environment is represented by the existing training set in the descriptor space. Intuitively, environments that lie outside the span of the training data correspond to extrapolation regions, where the model predictions are less reliable. 
+
+1. Linear extrapolation grades 
+
+For a simple case of linear potential, the potential energy is expressed as the linear expansion of the descriptor vector: 
+
+𝐸𝐸 = � 𝑤𝑤 𝜇𝜇 𝑞𝑞 𝜇𝜇  
+
+> 𝑁𝑁 des
+> 𝜇𝜇 =1
+
+(2) 
+
+Suppose there are 𝑁𝑁 descriptors in the training set, we can put them into a matrix: 𝑄𝑄 = �𝑞𝑞 11 ⋯ 𝑞𝑞 𝑁𝑁 des 1⋮ ⋱ ⋮𝑞𝑞 1𝑁𝑁 ⋯ 𝑞𝑞 𝑁𝑁 des 𝑁𝑁 � = �𝒒𝒒 1⋮𝒒𝒒 𝑁𝑁 � (3) 
+
+Then the predicted energy 𝐸𝐸 predict of each atom in the training set is: 
+
+𝐸𝐸 predict = �𝐸𝐸 predict 1⋮𝐸𝐸 predict 𝑁𝑁 � = �𝑞𝑞 11 ⋯ 𝑞𝑞 𝑁𝑁 des 1⋮ ⋱ ⋮𝑞𝑞 1𝑁𝑁 ⋯ 𝑞𝑞 𝑁𝑁 des 𝑁𝑁 � � 𝑤𝑤 1⋮𝑤𝑤 𝑁𝑁 des � = 𝑄𝑄𝑄𝑄 (4) 
+
+The training process is equivalent to finding the weight parameters  𝑄𝑄  that minimize the difference between 𝐸𝐸 predict and 𝐸𝐸 real . Since 𝑁𝑁 is normally much larger than 𝑁𝑁 des , we can find a subset of 𝑄𝑄 that consists of 𝑁𝑁 des descriptors to determine  𝑄𝑄 . This subset of descriptors is called active set 𝐴𝐴 :
+
+𝐴𝐴 = �𝑞𝑞 11 ⋯ 𝑞𝑞 𝑁𝑁 des 1⋮ ⋱ ⋮𝑞𝑞 1𝑁𝑁 des ⋯ 𝑞𝑞 𝑁𝑁 des 𝑁𝑁 des � = �𝒒𝒒 1⋮𝒒𝒒 𝑁𝑁 des � (5) 
+
+The descriptors in this active set are most linear independent, and they span the largest volume in the descriptor space (have the largest determinant). Then any descriptor vectors can be expressed as a linear combination of the descriptor vector in the active set: 
+
+𝒒𝒒 = � 𝛾𝛾 𝑘𝑘 𝒒𝒒 𝑘𝑘 𝑁𝑁 des 𝑘𝑘=1 
+
+= 𝜸𝜸𝐴𝐴 (6) 
+
+Since the descriptors in the active set have the largest determinant, the absolute value of the expansion coefficients 𝜸𝜸 of all the descriptors in 𝑄𝑄 are less or equal to one |𝛾𝛾 𝑘𝑘 | ≤ 1 . We can compute the 𝜸𝜸 vector of each atom by 𝜸𝜸 = 𝒒𝒒𝐴𝐴 −1 , and the active set inverse 𝐴𝐴 −1 instead of 𝐴𝐴 is saved during the computation process. 
+
+2. Nonlinear extrapolation grades In most cases, the potential is nonlinear and the D-optimality criterion has been extended to nonlinear potentials 22,27 . The descriptor vector 𝒒𝒒 is replaced by another vector: 
+
+𝑩𝑩 = � 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑐𝑐 1
+
+, 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑐𝑐 2
+
+, … , 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑐𝑐 𝑚𝑚 � (7) 
+
+where 𝑐𝑐 are the trainable parameters, and 𝑚𝑚 is the number of all trainable parameters. The 𝒒𝒒 in linear potential is a special case of more general 𝑩𝑩 vector. For computational efficiency, we limit the trainable parameters to neuron network parameters, and neglect the parameters of the radial functions in the descriptor 22 .Specifically, according to Eq. 1 the components of 𝑩𝑩 for an NEP potential is: 
+
+𝐵𝐵 𝑤𝑤 𝜇𝜇 = 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑤𝑤 𝜇𝜇 
+
+= tanh � � 𝑤𝑤 𝜇𝜇𝜇𝜇 𝑞𝑞 𝜇𝜇  − 𝑏𝑏 𝜇𝜇 𝑁𝑁 𝑑𝑑𝑑𝑑𝑑𝑑 
+
+> 𝜇𝜇 =1
+
+� (8) 
+
+𝐵𝐵 𝑤𝑤 𝜇𝜇𝜇𝜇 = 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑤𝑤 𝜇𝜇𝜇𝜇 
+
+= 𝑤𝑤 𝜇𝜇 𝑞𝑞 𝜇𝜇  �1 − tanh 2 � � 𝑤𝑤 𝜇𝜇𝜇𝜇 𝑞𝑞 𝜇𝜇  − 𝑏𝑏 𝜇𝜇 𝑁𝑁 des 
+
+> 𝜇𝜇 =1
+
+�� (9) 
+
+𝐵𝐵 𝑏𝑏 𝜇𝜇 = 𝜕𝜕 𝐸𝐸 
+
+𝜕𝜕𝑏𝑏 𝜇𝜇 
+
+= −𝑤𝑤 𝜇𝜇 �1 − tanh 2 � � 𝑤𝑤 𝜇𝜇𝜇𝜇 𝑞𝑞 𝜇𝜇  − 𝑏𝑏 𝜇𝜇 𝑁𝑁 des 
+
+> 𝜇𝜇 =1
+
+�� (10) 
+
+After obtaining the 𝑩𝑩 vector of all the atoms in the training set, an active set is selected with the MaxVol algorithm 28 . We implement the MaxVol algorithm with the CuPy package 29 , which can be executed with high efficiency on GPU. 
+
+3. Performance of D-optimality criterion 
+
+To validate the effectiveness of the D-optimality criterion within the NEP framework, we applied it to the GAP dataset of silicon 30 . The GAP dataset consists of various silicon phases, including diamond phase, β-Sn phase, hexagonal phase, etc. The NEP model is trained using 90% of the configurations from the diamond and β-Sn phases, while the remaining configurations are used for testing. Additional silicon phases that are not included in the training set are used to assess extrapolation behavior. 
+
+Fig 1. (a) Force errors versus the extrapolation grade in D-optimality for the Si datasets. Blue and yellow points represent the training and test sets respectively, containing configurations from the diamond and β-Sn phases only. Gray points denote the full dataset, including all phases. (b) Violin plots of force errors and extrapolation grades across different types of structures. 
+
+Fig. 1(a) shows the relationship between the force prediction error and the extrapolation grade γ. A clear positive correlation between γ and the prediction error is observed. For configurations in the training set, all γ values are smaller than 1, indicating that these environments are well represented by the training data. In contrast, a subset of configurations in the test set exhibits larger γ values accompanied by increased prediction errors, suggesting that these environments lie outside the training domain. For the silicon phases that are entirely absent from the training set marked as grey points in Fig .1(a), both γ values and prediction errors are significantly larger. The distributions of γ and force errors for different phases are further illustrated in Fig. 1(b). The results consistently show that structures with larger γ values tend to have higher prediction errors across all phases. These results demonstrate that the extrapolation grade γ provides a reliable and physically meaningful indicator of model uncertainty, justifying its use in the active learning framework. 
+
+4. Multiple elements For multi-element materials, the NEP potential employs different parameters for different elements, and the atomic environments of different elements naturally differ. As a result, the values of the B vectors can vary by several orders of magnitude. Directly applying the MaxVol algorithm to the combined B matrix of all atoms may therefore lead to biased selection, where atomic environments from certain elements dominate while others are underrepresented. A possible solution is to first cluster the B vectors and then apply the MaxVol algorithm within each cluster 31,32 . However, in the context of large-scale active learning, such clustering requires storing all candidate environments and introduces substantial computational and implementation overhead. Instead, we adopt a simpler and more efficient strategy by partitioning atomic environments according to their chemical species and applying the MaxVol algorithm independently to each group. This approach effectively alleviates the scale imbalance in the B vectors while ensuring a balanced selection across different elements. 
+
+C. Local fragment extraction 
+
+To combine active learning with large-scale MD simulations, it is essential to generate physically meaningful first-principles data for extrapolative atomic environments identified in large simulation cells. In MLIP-3 26 , the target atomic environment is extracted based on a cutoff radius and placed in vacuum. However, this strategy leads to non-physical structures and introduces ambiguity in atomic energy assignment due to contributions from out-of-distribution environments. An alternative approach proposed by Jalolov et al. 33 constructs periodic configurations from cut fragments, followed by first-principles relaxation of atoms outside the extrapolation region while keeping the target environment fixed. This ensures that the extrapolative atomic environment remains unchanged during relaxation. This approach improves the physical consistency of the generated structures compared to vacuum-based cluster methods, and can enhance the stability and accuracy of MLP training. However, it requires additional first-principles relaxation, leading to increased computational cost. To address this problem, In-Distribution substructure Embedding Active Learner (IDEAL) 34 optimizes the surrounding environment using an uncertainty-based criterion rather than first-principles energies. This strategy reduces the reliance on expensive first-principles calculations while constraining the surrounding environments to remain close to the training distribution, thereby reducing ambiguity in atomic energy assignment and improving both the stability and accuracy of model training. 
+
+Here, we adopt a strategy similar to IDEAL. We first extract the region containing the target atomic environment from the whole structure and then optimize the atoms outside this region by minimizing an uncertainty-based objective. The main difference is that IDEAL first determines the lattice via random search and keeps it fixed during subsequent optimization, whereas in our approach, the lattice and atomic positions are optimized simultaneously. Moreover, IDEAL keeps the atoms within the local atomic environment fixed, but during optimization, external atoms may enter this cutoff region, causing the atomic environment to change. We avoid this by introducing an additional hard-sphere potential. Additionally, IDEAL employs M3GNet 35 for the MD simulations and estimates uncertainty using SOAP descriptors calculated by DScribe package 36 combined with the Mahalanobis distance. In contrast, our method computes uncertainty consistently with the MLP used in the simulation, using the γ vector obtained from NEP for uncertainty estimation as: 
+
+Unc 𝑝𝑝 = � max �‖𝛾𝛾 𝑖𝑖 ‖ 𝑝𝑝 , 1 �𝑖𝑖 
+
+(11) 
+
+where ‖𝛾𝛾‖ 𝑝𝑝 = �∑ 𝛾𝛾 𝑑𝑑 𝑝𝑝 𝑑𝑑 �1𝑝𝑝  is p-norm of γ vector to obtain a smooth approximation of max( γ), and we set p=6 in our subsequent calculations. The use of max �‖𝛾𝛾 𝑖𝑖 ‖ 𝑝𝑝 , 1 �
+
+ensures that atomic environments within the interpolation regime do not contribute to further optimization. Without this constraint, the optimization would tend to artificially drive γ values toward zero, leading to non-physical configurations. 
+
+To demonstrate the optimization of boundaries and its importance in our method, we consider the silicon system described above. A NEP potential with a cutoff radius of 3 Å is trained using all non-liquid structures and applied to a large-cell liquid silicon dataset. For the extrapolated liquid atomic environments identified using gamma as a 
+
+criterion, we first extracted a cubic region of 5 Å side length centered on each 
+
+environment and added a vacuum layer. As shown in Fig. 2b, this naive truncation leads to artificially large γ values for boundary atoms, deviating significantly from those in the original liquid environment. This effect is further illustrated in the principal component analysis (PCA) map of the local atomic descriptors ( Fig. 2c ), where truncated structures produce outlier environments far from the training distribution. After applying our optimization procedure, the target local environments remain unchanged as indicated by the stable gamma values of the central atoms, while the uncertainties of boundary atoms are reduced ( Fig. 2d ). This results in physically more consistent structures and avoids the introduction of out-of-distribution environments into the active learning dataset. Fig 2. Uncertainty-based optimization of boundary atomic environments. Extrapolation grade is computed using an NEP potential trained on all non-liquid structures, with atoms colored from white to red according to their grade. (a) Target environment identified in a liquid supercell. (b) A cutout cell with added vacuum, where periodic boundaries introduce spurious extrapolative environments. (c) PCA visualization of atomic descriptors: gray points (training set), blue circles (liquid), red stars (identified extrapolative points), yellow squares (raw cutout), and purple squares (after uncertainty-based optimization). Outliers appear in the upper-right region before optimization. (d) Optimized structure preserving environments within the cutoff while adjusting atoms outside the sphere and the lattice to reduce overall uncertainty. 
+
+D. Framework of NEP active learning 
+
+The analysis above demonstrates that the D-optimality criterion provides a reliable quantitative indicator for identifying extrapolative atomic environments within the NEP framework. Moreover, for locally periodic fragments extracted from large supercells, uncertainty-driven structural optimization preserves the target local environment while guiding surrounding atoms toward configurations consistent with the training distribution. Based on these observations, we construct an automated active-learning workflow for NEP potentials as shown in Fig.3, consisting of the following steps: 
+
+(1) Initial training. An initial training set is prepared, either manually or from prior datasets, to fit a baseline NEP potential. Subsequent iterations update the training set automatically. 
+
+(2) Active set construction. The MaxVol algorithm is applied to the current training dataset to select a representative active set, which serves as the reference for extrapolation detection. 
+
+(3) Exploration. MD simulations are performed under target thermodynamic conditions, and configurations with large γ values are identified as candidates for extrapolation. (4) Selection and refinement. Extrapolative configurations are merged with the existing dataset, followed by a second MaxVol selection to identify informative structures. A random down-selection can be applied to control the number of added samples. For large supercell simulations, local atomic environments are further extracted and their boundaries optimized to ensure physical consistency. 
+
+(5) First-principles labeling. Density functional theory (DFT) calculations are carried out for the selected structures, and the resulting data are incorporated into the training set. 
+
+Steps (1) – (5) are repeated until no extrapolative environments are detected. 
+
+Fig 3. Framework of NEP active learning. Starting from an initial training set, a NEP potential is iteratively improved through exploration, selection, and retraining. Extrapolative atomic environments are identified using the γ-based uncertainty criterion during MD simulations. For large-scale systems, local environments are extracted and optimized to ensure physical consistency. Selected structures are labeled by first-principles calculations and incorporated into the training set until convergence. 
+
+Results 
+
+A. Melting of sodium 
+
+We first validate the active learning procedure on the melting of sodium in small cell. Sodium is a simple system suitable for demonstrating the workflow . As a simple metallic system with a single valence electron, sodium enables computationally efficient first-principles calculations while retaining essential physics. The initial training set consists of 20 slightly perturbed solid Na structures. MD simulations were performed on a 250-atom system, which was first heated from 250 K to 500 K and then cooled back to 250 K. Since the system size is within the feasible range for DFT, full first-principles calculations were performed on the selected structures without local cutouts. To accelerate sampling, eight MD trajectories with different random seeds were run in parallel. 
+
+In each active learning iteration, up to 20 new structures were added to the training set. As shown in Fig. 4a, the number of completed MD steps increases with iteration number as the training set grows. By the sixth iteration, all MD trajectories reach completion, although some extrapolative structures with high γ values still appear (Fig. 4b) and should be added to the training set. Notably, the number of extrapolative structures added in Fig. 4b exhibits a non-monotonic trend, first increasing and then decreasing. This behavior arises because, in the early stages of active learning, simulations terminate rapidly due to model instability, resulting in limited sampling. As the model improves, longer trajectories enable more extensive exploration and thus the identification of a larger number of extrapolative configurations. In the later iterations, the decline reflects the progressive convergence of the potential, with fewer configurations exceeding the extrapolation threshold. In the seventh iteration, all MD trajectories run to completion, and no structures exceed the predefined extrapolation threshold γlow . The active learning loop converges after seven iterations, yielding a final training set of 130 structures. The NEP potential obtained at each iteration was evaluated against the final training set, and the root-mean-square errors (RMSE) were found to decrease and converge with increasing iteration number (Fig. 4c). 
+
+The converged NEP potential was further validated by calculating the melting point of sodium at 0 GPa using the two-phase method. Coexistence cells containing 20,000 atoms with both solid and liquid regions were constructed for temperatures ranging from 330 K to 380 K. For each temperature, the system was equilibrated at the target pressure, the solid region was melted at 500 K, and the liquid was cooled back to the target temperature, followed by a 1 ns NPH simulation to allow the solid and liquid phases to reach equilibrium. The temperature at which the solid and liquid coexist stably was identified as the melting point. The calculated melting point under ambient pressure is around 350 K, which is closed to the experimental value 370 K. 
+
+Fig 4. Analysis of the active learning procedure and melting-point calculations for sodium. (a–c) Quantities shown as a function of iteration: (a) Number of successfully completed MD steps. (b) Evolution of the training-set size and number of structures exceeding the extrapolation threshold γ. (c) Force RMSE of the NEP model on the final training set. (d) Temperature evolution in NPH simulations initiated at different temperatures. B. Solid-solid phase transitions in CsPbI 3
+
+We then apply the active learning procedure to the inorganic halide perovskite CsPbI ₃, a prototypical system exhibiting pronounced anharmonic lattice dynamics and multiple temperature-driven structural phase transitions. Similar to other halide perovskites, the perovskite phases of CsPbI ₃ are connected through soft phonon modes, making static calculations insufficient to describe its finite-temperature behavior. Accurate characterization of the phase transitions therefore requires MD simulations capable of accessing long time scales and sufficiently large system sizes. CsPbI ₃
+
+crystallizes in three perovskite phases: the high-temperature cubic α phase, the intermediate tetragonal β phase, and the low-temperature orthorhombic γ phase, which transform into one another upon heating and cooling 37 . We therefore take the low-temperature γ phase as the initial structure, heat the system from 20 K to 620 K, and subsequently cool it back to 20 K. The active learning procedure converges after 23 iterations, yielding a training set comprising 401 structures. 
+
+With the converged potential, we perform MD simulations with larger cells to check the phase transition temperature. A supercell containing 23 040 atoms was constructed by replicating the orthorhombic γ-phase unit cell, which has been shown in previous studies 38,39 to effectively mitigate size effects and yield well-converged results, enabling the explicit treatment of lattice distortions and anisotropic strain associated with the phase transitions. The system was first equilibrated at 100 K under the NPT ensemble and then continuously heated from 100 K to 600 K in 5ns with fully flexible cell degrees of freedom, allowing the lattice parameters to evolve naturally with temperature. From the evolution of the lattice constants according to temperature as shown in Fig. 5, we observe that the dynamical trajectories generated by the present potential correctly reproduce the solid–solid phase transition sequence. With increasing temperature, the lattice constants a and c increase while b decreases. Around 280 K, where a = b , the system undergoes a transition from the orthorhombic γ phase to the tetragonal β phase. Upon further heating, a and b continue to increase whereas cdecreases, until all three lattice constants converge to the same value at approximately 400 K, indicating a transition into the cubic α phase. These results are in good agreement with previously reported transition temperatures and pathways, demonstrating that a physically meaningful and transferable interatomic potential has been successfully learned from scratch. 
+
+Fig 5 Lattice parameters as a function of temperature from simulation. The red, blue, and yellow lines correspond to the simulation results obtained by this work, Fransson (ref 1) 38 , and Chen (ref 2) 39 , respectively. All these data were generated using NEP models in combination with GPUMD simulations and labeled with PBE calculations. 
+
+C.B4-B1 phase transitions in GaN 
+
+Finally, we employ the large-supercell active learning approach to investigate the solid-solid phase transition in GaN. This system exhibits pronounced size effects during the B4–B1 phase transition 40–42 , making it an ideal benchmark for assessing the capability of large-scale simulations and the effectiveness of active learning strategies. The proposed active learning framework enables on-the-fly sampling and model updates directly during MD simulations of large supercells. This allows the active learning procedure to naturally capture complex configurations emerging during the phase transition, including local lattice distortions, phase interfaces, and inhomogeneous strain, thereby alleviating the biases associated with conventional small-scale sampling. 
+
+The initial dataset consisted of 200 random GaN configurations 41 . Metadynamics simulations were conducted at 300 K and 50 GPa using GPU-MetaD 43 , starting from a B4-phase GaN supercell containing 2048 atoms, with coordination number and volume selected as collective variables (CVs) to facilitate the B4-B1 phase transition. Compared to the previous simulation starting from scratch, the number of iterations was reduced by employing random structures as initial configurations. The active learning procedure converged after 12 iterations, yielding a training set of 1565 structures. Starting from this model, we subsequently apply the workflow to a larger supercell containing 27,648 atoms. Due to size effects, distinct transition pathways emerge in the larger system, leading to additional extrapolative configurations during metadynamics. The active learning process converges after 9 iterations, resulting in a final training set of approximately 2,000 structures. 
+
+Since the simulations were performed directly with large supercells, the target MD trajectories are obtained simultaneously with model construction. In the simulation with 2048 atoms, we identify two distinct transformation mechanisms from the metadynamics trajectories as shown in Fig.6. In the first pathway (a-b 1 -c 1 -d), the hexagonal rings undergo reconstruction within the plane normal to the b axis, which initiates the formation of a B4-B1 interface. This interface subsequently propagates through the lattice, ultimately transforming the entire supercell into the B1 phase. Alternatively, the second pathway (a-b 2 -c 2 -d) proceeds via compression along the c axis, generating a metastable intermediate structure characterized by five-fold-coordinated atoms. Bond breaking and reformation then occur within the plane normal to the c axis, driving the system toward the final B1 configuration. In the 27,648-atom supercell simulations, the crystal lattice experiences cyclic elongations and contractions, eventually yielding a reticulated pattern of striated domains populated by 5-fold-coordinated atoms, which is consistent with prior studies conducted under analogous thermodynamic conditions 40 . Subsequently, nucleation sites featuring 6-fold-coordinated atomic environments develop within this mesh-like architecture. These results illustrate our ability to execute active learning procedures in large supercells intractable for first-principles simulation, extracting extrapolative atomic environments on-the-fly and bringing simulations to completion within these extended systems. 
+
+Fig 6. The pathways of GaN B4-B1 phase transitions with simulation cells containing 2 thousand atoms. (a-b1-c1-d) path shows hexagonal rings reconstruction in plane normal to b axis, forming a B4-B1 interface, which then propatgation and turning the cell into B1 phase. In (a-b2-c2-d) path the cell goes through a c-axis compression, forming a 5-fold-coordinated intermediate structure. Bond breaking and reformation then occur in plane normal to c axis, resulting in the final transformation to the B1 phase. 
+
+Computational Details 
+
+All first-principles calculations were performed using the Vienna ab initio simulation package (VASP) 44 . The projector augmented-wave (PAW) together with the Perdew–Burke–Ernzerhof (PBE) 45,46 exchange correlation functional was employed. Brillouin zone sampling was carried out using a Γ-centered k-point grid with a spacing less than 0.5 Å ⁻¹. A plane-wave energy cutoff of 125 eV, 220 eV and 520 eV was used for Na, CsPbI ₃, and GaN. 
+
+To train the machine learning potentials, the NEP4 version was employed. For all systems, the basis sizes for radial and angular functions were both set to 8. For Na and CsPbI ₃, the radial and angular cutoffs were set to 8 Å and 4 Å, respectively. The 
+
+maximum angular momentum quantum numbers were chosen as lₘₐₓ = 4, 2, and 0 for the three-body, four-body, and higher-order terms, respectively. For GaN, the radial and angular cutoffs were set to 4 Å and 3 Å, and the corresponding maximum angular 
+
+momentum quantum numbers were lₘₐₓ = 4, 0, and 0. Upon convergence of the active learning iterations, the resulting NEP models achieve RMSE for energy per atom, forces, and virials of 0.41 meV/atom, 10.38 meV/Å, and 3.78 meV/atom for Na; 0.69 meV/atom, 43.38 meV/Å, and 6.67 meV/atom for CsPbI ₃; and 15.24 meV/atom, 274.44 meV/Å, and 87.15 meV/atom for GaN, respectively. 
+
+Conclusions 
+
+In this work, we propose and validate a D-optimality-based active learning framework that enables the training dataset of the neuroevolution potential (NEP) to be continuously and automatically refined during structural exploration with GPUMD. By identifying and selectively extracting atomic environments with high uncertainty on the fly, this approach achieves systematic and efficient iterative optimization of machine-learned interatomic potentials without the prohibitive cost of retraining on entire large-scale configurations. The introduction of a periodic atomic environment extraction strategy with optimized boundary atoms further improves the convergence of first-principles calculations and effectively minimizes the interference of surrounding environments on the target atomic environments. Moreover, our workflow can be seamlessly integrated into ongoing MD simulations, enabling automated, on-the-fly potential refinement. The robustness and transferability of the proposed workflow are demonstrated across three representative systems, including the melting of sodium, solid-solid phase transitions in CsPbI ₃, and the B4–B1 phase transition in GaN. In all cases, the resulting NEP models reproduce the reported phase transition pathways and characteristic temperatures, confirming the reliability of the active learning strategy. Overall, this framework provides a general and scalable solution for the automated, on-the-fly construction of machine learning potentials in complex dynamical processes, combining first-principles accuracy with uncertainty control in large-scale MD simulations. 
+
+Acknowledgements 
+
+This work was supported by the National Natural Science Foundation of China (Grants No.12125404, T2495231, and 12504277), the National Key R&D Program of China (Grant No. 2022YFA1403201), the Advanced Materials-National Science and Technology Major Project (Grant 2024ZD0607000), the Basic Research Program of Jiangsu (Grants BK20233001, BK20241253), the Jiangsu Funding Program for Excellent Postdoctoral Talent (Grants 2024ZB002, 2024ZB075), the Postdoctoral Fellowship Program of CPSF (Grant GZC20240695), Fundamental and Interdisciplinary Disciplines Breakthrough Plan of the Ministry of Education of China (JYB2025XDXM413), Science Challenge Project (No. TZ2025013), the AI & AI for Science program of Nanjing University, Artificial Intelligence and Quantum physics (AIQ) program of Nanjing University, and the Fundamental Research Funds for the Central Universities. The calculations were carried out using supercomputers at the High-Performance Computing Center of Collaborative Innovation Center of Advanced Microstructures, the high-performance supercomputing center of Nanjing University. 
+
+Code Available 
+
+The NepMaker package is freely available at https://gitlab.com/bigd4/activemiao. Reference 
+
+1. Unke, O. T., Chmiela, S., Sauceda, H. E., Gastegger, M., Poltavsky, I., Schütt, K. T., Tkatchenko, A. & Müller, K.-R. Machine Learning Force Fields. Chem. Rev. 121 ,10142–10186 (2021). 
+
+2. Shapeev, A. V. Moment Tensor Potentials: A Class of Systematically Improvable Interatomic Potentials. Multiscale Model. Simul. 14 , 1153–1173 (2016). 
+
+3. Drautz, R. Atomic cluster expansion for accurate and transferable interatomic potentials. Phys. Rev. B 99 , 014104 (2019). 
+
+4. Thompson, A. P., Swiler, L. P., Trott, C. R., Foiles, S. M. & Tucker, G. J. Spectral neighbor analysis method for automated generation of quantum-accurate interatomic potentials. J. Comput. Phys. 285 , 316–330 (2015). 
+
+5. Bartók, A. P., Payne, M. C., Kondor, R. & Csányi, G. Gaussian Approximation Potentials: The Accuracy of Quantum Mechanics, without the Electrons. Phys. Rev. Lett. 104 , 136403 (2010). 
+
+6. Bartók, A. P., Kondor, R. & Csányi, G. On representing chemical environments. Phys. Rev. B 87 , 184115 (2013). 
+
+7. Behler, J. & Parrinello, M. Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces. Phys. Rev. Lett. 98 , 146401 (2007). 
+
+8. Wang, H., Zhang, L., Han, J. & E, W. DeePMD-kit: A deep learning package for many-body potential energy representation and molecular dynamics. Comput. Phys. Commun. 228 , 178–184 (2018). 
+
+9. Wang, J., Wang, Y., Zhang, H., Yang, Z., Liang, Z., Shi, J., Wang, H.-T., Xing, D. & Sun, J. E(n)-Equivariant cartesian tensor message passing interatomic potential. Nat. Commun. 15 , 7607 (2024). 
+
+10. Fan, Z., Wang, Y., Ying, P., Song, K., Wang, J., Wang, Y., Zeng, Z., Xu, K., Lindgren, E., Rahm, J. M., Gabourie, A. J., Liu, J., Dong, H., Wu, J., Chen, Y., Zhong, Z., Sun, J., Erhart, P., Su, Y. & Ala-Nissila, T. GPUMD: A package for constructing accurate machine-learned potentials and performing highly efficient atomistic simulations. J. Chem. Phys. 157 , 114801 (2022). 
+
+11. Batzner, S., Musaelian, A., Sun, L., Geiger, M., Mailoa, J. P., Kornbluth, M., Molinari, N., Smidt, T. E. & Kozinsky, B. E(3)-equivariant graph neural networks for data-efficient and accurate interatomic potentials. Nat. Commun. 13 , 2453 (2022). 
+
+12. Batatia, I., Kovacs, D. P., Simm, G. N. C., Ortner, C. & Csanyi, G. MACE: Higher Order Equivariant Message Passing Neural Networks for Fast and Accurate Force Fields. in Advances in Neural Information Processing Systems (eds Oh, A. H., Agarwal, A., Belgrave, D. & Cho, K.) (2022). 
+
+13. Fu, X., Wu, Z., Wang, W., Xie, T., Keten, S., Gomez-Bombarelli, R. & Jaakkola, T. Forces are not Enough: Benchmark and Critical Evaluation for Machine Learning Force Fields with Molecular Simulations. Preprint at https://doi.org/10.48550/arXiv.2210.07237 (2023). 
+
+14. Vandermause, J., Torrisi, S. B., Batzner, S., Xie, Y., Sun, L., Kolpak, A. M. & Kozinsky, B. On-the-fly active learning of interpretable Bayesian force fields for atomistic rare events. Npj Comput. Mater. 6, 20 (2020). 
+
+15. Vandermause, J., Xie, Y., Lim, J. S., Owen, C. J. & Kozinsky, B. Active learning of reactive Bayesian force fields applied to heterogeneous catalysis dynamics of H/Pt. 
+
+Nat. Commun. 13 , 5183 (2022). 
+
+16. Deringer, V. L., Bartók, A. P., Bernstein, N., Wilkins, D. M., Ceriotti, M. & Csányi, G. Gaussian Process Regression for Materials and Molecules. Chem. Rev. 121 ,10073–10141 (2021). 
+
+17. Smith, J. S., Nebgen, B., Lubbers, N., Isayev, O. & Roitberg, A. E. Less is more: Sampling chemical space with active learning. J. Chem. Phys. 148 , 241733 (2018). 
+
+18. Zhang, Y., Wang, H., Chen, W., Zeng, J., Zhang, L., Wang, H. & E, W. DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models. Comput. Phys. Commun. 253 , 107206 (2020). 
+
+19. Janet, J. P., Duan, C., Yang, T., Nandy, A. & Kulik, H. J. A quantitative uncertainty metric controls error in neural network-driven chemical discovery. Chem. Sci. 10 ,7913–7922 (2019). 
+
+20. Settles, B. Active Learning Literature Survey .https://minds.wisconsin.edu/handle/1793/60660 (2009). 
+
+21. Podryabinkin, E. V. & Shapeev, A. V. Active learning of linearly parametrized interatomic potentials. Comput. Mater. Sci. 140 , 171–180 (2017). 
+
+22. Lysogorskiy, Y. Active learning strategies for atomic cluster expansion models. 
+
+Phys. Rev. Mater. 7, (2023). 
+
+23. Fan, Z., Zeng, Z., Zhang, C., Wang, Y., Song, K., Dong, H., Chen, Y. & Ala-Nissila, T. Neuroevolution machine learning potentials: Combining high accuracy and low cost in atomistic simulations and application to heat transport. Phys. Rev. B 104 ,104309 (2021). 
+
+24. Fan, Z. Improving the accuracy of the neuroevolution machine learning potential for multi-component systems. J. Phys. Condens. Matter 34 , 125902 (2022). 
+
+25. Xu, K., Bu, H., Pan, S., Lindgren, E., Wu, Y., Wang, Y., Liu, J., Song, K., Xu, B., Li, Y., Hainer, T., Svensson, L., Wiktor, J., Zhao, R., Huang, H., Qian, C., Zhang, S., Zeng, Z., Zhang, B., Tang, B., Xiao, Y., Yan, Z., Shi, J., Liang, Z., Wang, J., Liang, T., Cao, S., Wang, Y., Ying, P., Xu, N., Chen, C., Zhang, Y., Chen, Z., Wu, X., Jiang, W., Berger, E., Li, Y., Chen, S., Gabourie, A. J., Dong, H., Xiong, S., Wei, N., Chen, Y., Xu, J., Ding, F., Sun, Z., Ala-Nissila, T., Harju, A., Zheng, J., Guan, P., Erhart, P., Sun, J., Ouyang, W., Su, Y. & Fan, Z. GPUMD 4.0: A high-performance molecular dynamics package for versatile materials simulations with machine-learned potentials. Mater. Genome Eng. Adv. 3, e70028 (2025). 
+
+26. Podryabinkin, E., Garifullin, K., Shapeev, A. & Novikov, I. MLIP-3: Active learning on atomic environments with moment tensor potentials. J. Chem. Phys. 159 ,084112 (2023). 
+
+27. Gubaev, K., Podryabinkin, E. V., Hart, G. L. W. & Shapeev, A. V. Accelerating high-throughput searches for new alloys with active learning of interatomic potentials. Comput. Mater. Sci. 156 , 148–156 (2019). 
+
+28. Goreinov, S. A., Oseledets, I. V., Savostyanov, D. V., Tyrtyshnikov, E. E. & Zamarashkin, N. L. How to Find a Good Submatrix. in Matrix Methods: Theory, Algorithms and Applications 247–256 (WORLD SCIENTIFIC, 2010). doi:10.1142/9789812836021_0015. 29. Okuta, R., Unno, Y., Nishino, D., Hido, S. & Loomis, C. CuPy: A NumPy-Compatible Library for NVIDIA GPU Calculations. in Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Thirty-first Annual Conference on Neural Information Processing Systems (NIPS) (2017). 
+
+30. Bartók, A. P., Kermode, J., Bernstein, N. & Csányi, G. Machine Learning a General-Purpose Interatomic Potential for Silicon. Phys. Rev. X 8, 041048 (2018). 
+
+31. Qi, J., Ko, T. W., Wood, B. C., Pham, T. A. & Ong, S. P. Robust training of machine learning interatomic potentials with dimensionality reduction and stratified sampling. 
+
+Npj Comput. Mater. 10 , 43 (2024). 
+
+32. Shuang, F., Wei, Z., Liu, K., Gao, W. & Dey, P. Model accuracy and data heterogeneity shape uncertainty quantification in machine learning interatomic potentials. Mach. Learn. Sci. Technol. 7, 025002 (2026). 
+
+33. Jalolov, F. N., Podryabinkin, E. V., Oganov, A. R., Shapeev, A. V. & Kvashnin, A. G. Mechanical Properties of Single and Polycrystalline Solids from Machine Learning. Adv. Theory Simul. 7, 2301171 (2024). 
+
+34. Kong, L., Li, J., Sun, L., Yang, H., Hao, H., Chen, C., Artrith, N., Torres, J. A. G., Lu, Z. & Zhou, Y. Overcoming the Size Limit of First Principles Molecular Dynamics Simulations with an In-Distribution Substructure Embedding Active Learner. Preprint at https://doi.org/10.48550/arXiv.2311.08177 (2023). 
+
+35. Chen, C. & Ong, S. P. A universal graph deep learning interatomic potential for the periodic table. Nat. Comput. Sci. 2, 718–728 (2022). 
+
+36. Himanen, L., Jäger, M. O. J., Morooka, E. V., Federici Canova, F., Ranawat, Y. S., Gao, D. Z., Rinke, P. & Foster, A. S. DScribe: Library of descriptors for machine learning in materials science. Comput. Phys. Commun. 247 , 106949 (2020). 
+
+37. Steele, J. A., Jin, H., Dovgaliuk, I., Berger, R. F., Braeckevelt, T., Yuan, H., Martin, C., Solano, E., Lejaeghere, K., Rogge, S. M. J., Notebaert, C., Vandezande, W., Janssen, K. P. F., Goderis, B., Debroye, E., Wang, Y.-K., Dong, Y., Ma, D., Saidaminov, M., Tan, H., Lu, Z., Dyadkin, V., Chernyshov, D., Van Speybroeck, V., Sargent, E. H., Hofkens, J. & Roeffaers, M. B. J. Thermal unequilibrium of strained black CsPbI3 thin films. Science 365 , 679–684 (2019). 
+
+38. Fransson, E., Wiktor, J. & Erhart, P. Phase Transitions in Inorganic Halide Perovskites from Machine-Learned Potentials. J. Phys. Chem. C 127 , 13773–13781 (2023). 
+
+39. Chen, C., Li, Y., Zhao, R., Liu, Z., Fan, Z., Tang, G. & Wang, Z. NepTrain and NepTrainKit: Automated active learning and visualization toolkit for neuroevolution potentials. Comput. Phys. Commun. 317 , 109859 (2025). 
+
+40. Yao, Y. & Klug, D. D. $B4\ensuremath{-}B1$ phase transition of GaN under isotropic and uniaxial compression. Phys. Rev. B 88 , 014113 (2013). 
+
+41. Tong, Q., Luo, X., Adeleke, A. A., Gao, P., Xie, Y., Liu, H., Li, Q., Wang, Y., Lv, J., Yao, Y. & Ma, Y. Machine learning metadynamics simulation of reconstructive phase transition. Phys. Rev. B 103 , 054107 (2021). 
+
+42. Santos-Florez, P. A., Yanxon, H., Kang, B., Yao, Y. & Zhu, Q. Size-Dependent Nucleation in Crystal Phase Transition from Machine Learning Metadynamics. Phys. Rev. Lett. 129 , 185701 (2022). 43. Zhang, H., Jia, Q., Zhang, Z., Zhu, Y., Zhang, Z., Wang, J., Shi, J., Fan, Z. & Sun, J. GPU-MetaD: Full-Life-Cycle GPU Accelerated Metadynamics with Machine Learning Potentials. Preprint at https://doi.org/10.48550/arXiv.2510.06873 (2026). 
+
+44. Kresse, G. & Furthmüller, J. Efficient iterative schemes for ab initio total-energy calculations using a plane-wave basis set. Phys. Rev. B 54 , 11169–11186 (1996). 
+
+45. Kresse, G. & Joubert, D. From ultrasoft pseudopotentials to the projector augmented-wave method. Phys. Rev. B 59 , 1758–1775 (1999). 
+
+46. Perdew, J. P., Burke, K. & Ernzerhof, M. Generalized Gradient Approximation Made Simple. Phys. Rev. Lett. 77 , 3865–3868 (1996).

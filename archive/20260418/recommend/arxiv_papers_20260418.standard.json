@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-18T20:21:46.451725+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.13848v1",
+      "title": "NEPMaker: Active learning of neuroevolution machine learning potential for large cells",
+      "abstract": "Machine learning potentials (MLPs) achieve near first-principles accuracy but often fail for atomic environments outside the training distribution. Active learning can mitigate this limitation; however, its application to large-scale simulations is hindered by the prohibitive cost of labeling entire configurations. Here, we develop a D-optimality-driven active learning framework for the neuroevolution potential (NEP) implemented within the GPUMD package, named NEPMaker. Extrapolative atomic environments are identified on-the-fly and embedded into locally periodic structures, where boundary atoms are optimized to remain close to the training distribution. This strategy enables large-scale simulations to directly contribute to dataset construction, significantly reducing extrapolation errors while improving model robustness and transferability. The proposed framework provides a scalable route for constructing reliable machine learning potentials in complex materials systems, including those involving defects, interfaces, and phase transitions.",
+      "authors": [
+        "Junjie Wang",
+        "Shuning Pan",
+        "Haoting Zhang",
+        "Qiuhan Jia",
+        "Chi Ding",
+        "Zheyong Fan",
+        "Jian Sun"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-15T13:18:23+00:00",
+      "link": "https://arxiv.org/pdf/2604.13848v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning potentials for large-scale simulations with first-principles accuracy",
+      "llm_evidence_cn": "具有第一性原理精度的机器学习势能用于大规模模拟",
+      "llm_evidence": "具有第一性原理精度的机器学习势能用于大规模模拟",
+      "canonical_evidence": "具有第一性原理精度的机器学习势能用于大规模模拟",
+      "llm_tldr_en": "Develops active learning for machine learning potentials to enable large-scale simulations with DFT accuracy.",
+      "llm_tldr_cn": "开发了机器学习势能的主动学习框架，以实现具有DFT精度的大规模模拟。",
+      "llm_tldr": "开发了机器学习势能的主动学习框架，以实现具有DFT精度的大规模模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.14609v1",
+      "title": "El Agente Forjador: Task-Driven Agent Generation for Quantum Simulation",
+      "abstract": "AI for science promises to accelerate the discovery process. The advent of large language models (LLMs) and agentic workflows enables the expediting of a growing range of scientific tasks. However, most of the current generation of agentic systems depend on static, hand-curated toolsets that hinder adaptation to new domains and evolving libraries. We present El Agente Forjador, a multi-agent framework in which universal coding agents autonomously forge, validate, and reuse computational tools through a four-stage workflow of tool analysis, tool generation, task execution, and iterative solution evaluation. Evaluated across 24 tasks spanning quantum chemistry and quantum dynamics on five coding agent setups, we compare three operating modes: zero-shot generation of tools per task, reuse of a curriculum-built toolset, and direct problem-solving with the coding agents as the baseline. We find that our tool generation and reuse framework consistently improves accuracy over the baseline. We also show that reusing a toolset built by a stronger coding agent can reduce API cost and substantially raises the solution quality for weaker coding agents. Case studies further demonstrate that tools forged for different domains can be combined to solve hybrid tasks. Taken together, these results show that LLM-based agents can use their scientific knowledge and coding capabilities to autonomously build reusable scientific tools, pointing toward a paradigm in which agent capabilities are defined by the tasks they are designed to solve rather than by explicitly engineered implementations.",
+      "authors": [
+        "Zijian Zhang",
+        "Aiwei Yin",
+        "Amaan Baweja",
+        "Jiaru Bai",
+        "Ignacio Gustin",
+        "Varinia Bernales",
+        "Alán Aspuru-Guzik"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-16T04:28:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.14609v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "agent generation for quantum chemistry and quantum dynamics",
+      "llm_evidence_cn": "用于量子化学和量子动力学的智能体生成",
+      "llm_evidence": "用于量子化学和量子动力学的智能体生成",
+      "canonical_evidence": "用于量子化学和量子动力学的智能体生成",
+      "llm_tldr_en": "A multi-agent framework that automates computational tools for quantum chemistry and dynamics tasks.",
+      "llm_tldr_cn": "一种多智能体框架，可自动构建用于量子化学和动力学任务的计算工具。",
+      "llm_tldr": "一种多智能体框架，可自动构建用于量子化学和动力学任务的计算工具。",
+      "llm_tags": [
+        "query:qmmm:composite"
+      ],
+      "matched_query_tag": "query:qmmm:composite",
+      "matched_query_text": "Papers central to 使用QM/MM手段研究糖苷转移酶催化反应机理的论文, especially work that connects or combines: combined quantum mechanics and molecular mechanics simulation; glycosyltransferase enzyme catalysis mechanism; catalytic reaction mechanism and pathway; QM/MM molecular dynamics simulations; enzymatic catalytic cycle and kinetics; QM/MM computational studies of glycoside hydrolase mechanisms; QM/MM studies on the catalytic mechanism of glycosyltransferases; quantum chemical investigation of glycosyltransferase enzymes.",
+      "matched_requirement_id": "req-composite-qmmm",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
