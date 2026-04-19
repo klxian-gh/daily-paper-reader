@@ -6,29 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-18
-- 运行时间：2026-04-18 20:22:02 UTC
+- 最新运行日期：2026-04-19
+- 运行时间：2026-04-19 19:33:38 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦 AI 赋能科学模拟，探索大体系势函数构建与量子模拟智能体生成。
-重点关注 NEPMaker 利用主动学习优化大胞机器学习势，以及任务驱动的量子模拟自动化方案。
-建议科研人员关注 AI 代理与主动学习如何简化复杂物理体系的建模流程。
-- 详情：[/202604/18/README](/202604/18/README)
+今日聚焦多步代谢途径设计的计算框架，助力生物合成路径的精准构建。
+该研究通过系统化计算方法，显著提升了复杂代谢流程的设计效率与可行性。
+推荐关注合成生物学与自动化设计工具的读者快速浏览其核心算法思路。
+- 详情：[/202604/19/README](/202604/19/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [NEPMaker: Active learning of neuroevolution machine learning potential for large cells](/202604/18/2604.13848v1-nepmaker-active-learning-of-neuroevolution-machine-learning-potential-for-large-cells)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：具有第一性原理精度的机器学习势能用于大规模模拟
-2. [El Agente Forjador: Task-Driven Agent Generation for Quantum Simulation](/202604/18/2604.14609v1-el-agente-forjador-task-driven-agent-generation-for-quantum-simulation)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：用于量子化学和量子动力学的智能体生成
+1. [Computational framework for multistep metabolic pathway design](/202604/19/2604.13471v1-computational-framework-for-multistep-metabolic-pathway-design)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：代谢途径设计与酶模板
 
 
 <div class="dpr-home-promo-card">

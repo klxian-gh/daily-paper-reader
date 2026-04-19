@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-19 <!--dpr-date:20260419-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/19/2604.13471v1-computational-framework-for-multistep-metabolic-pathway-design" data-sidebar-item="{&quot;title&quot;: &quot;Computational framework for multistep metabolic pathway design&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.13471v1-computational-framework-for-multistep-metabolic-pathway-design&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;代谢途径设计与酶模板&quot;}">Computational framework for multistep metabolic pathway design</a>
   * 2026-04-18 <!--dpr-date:20260418-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/18/2604.13848v1-nepmaker-active-learning-of-neuroevolution-machine-learning-potential-for-large-cells" data-sidebar-item="{&quot;title&quot;: &quot;NEPMaker: Active learning of neuroevolution machine learning potential for large cells&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.13848v1-nepmaker-active-learning-of-neuroevolution-machine-learning-potential-for-large-cells&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;具有第一性原理精度的机器学习势能用于大规模模拟&quot;}">NEPMaker: Active learning of neuroevolution machine learning potential for large cells</a>
