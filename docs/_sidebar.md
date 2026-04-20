@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-20 <!--dpr-date:20260420-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/20/2604.12607v1-hierarchical-generative-modeling-for-the-design-of-multi-component-systems" data-sidebar-item="{&quot;title&quot;: &quot;Hierarchical generative modeling for the design of multi-component systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.12607v1-hierarchical-generative-modeling-for-the-design-of-multi-component-systems&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;通过分层生成模型设计催化剂和酶&quot;}">Hierarchical generative modeling for the design of multi-component systems</a>
   * 2026-04-19 <!--dpr-date:20260419-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/19/2604.13471v1-computational-framework-for-multistep-metabolic-pathway-design" data-sidebar-item="{&quot;title&quot;: &quot;Computational framework for multistep metabolic pathway design&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.13471v1-computational-framework-for-multistep-metabolic-pathway-design&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;代谢途径设计与酶模板&quot;}">Computational framework for multistep metabolic pathway design</a>

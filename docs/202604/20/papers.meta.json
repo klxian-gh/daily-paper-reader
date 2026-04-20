@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-20",
+  "date": "2026-04-20",
+  "generated_at": "2026-04-20T20:16:43",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/20/2604.12607v1-hierarchical-generative-modeling-for-the-design-of-multi-component-systems",
+      "section": "quick",
+      "title_en": "Hierarchical generative modeling for the design of multi-component systems",
+      "authors": "Rhyan Barrett, Robin Curth, Julia Westermayr",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12607v1",
+      "score": "6.0",
+      "evidence": "通过分层生成模型设计催化剂和酶",
+      "tldr": "本研究针对催化剂、酶等复杂多组分系统设计中的组合爆炸难题，提出了一种分层生成优化框架。该框架通过将遗传算法的构型搜索与分子设计的生成模型相结合，实现了分子组成与空间排列的同步闭环优化。在克莱森重排反应的案例中，该方法成功设计出能降低30%活化能垒的催化环境，证明了其在复杂功能系统自动化设计中的巨大潜力。",
+      "tags": "query:qmmm",
+      "abstract_en": "The functionality of catalysts, enzymes, and supramolecular assemblies emerges not from individual molecules alone, but from the subtle interplay between multiple components arranged in complex systems. Designing such systems is a grand challenge, the combinatorial explosion of possible chemical compositions and spatial arrangements makes brute-force exploration infeasible, while many current generative approaches remain limited to isolated molecules. In this work, we introduce a hierarchical generative optimization framework that overcomes this barrier by coupling a genetic algorithm for configurational search with a generative model for molecular design. This closed-loop approach enables simultaneous refinement of geometry and composition, efficiently steering discovery toward systems with targeted functionality. As a proof of concept, we design catalytic environments for the Claisen rearrangement of p-tolyl ether by optimizing surrounding components around a fixed reference transition-state geometry. Despite this constraint during the search phase, post-hoc validation via Climbing-Image Nudged Elastic Band calculations confirm a 30% reduction in activation barrier. Beyond this example, our framework provides a general strategy for data-driven discovery of functional multi-component systems, opening the door to automated design of catalysts, enzyme active sites, and advanced materials. Scientific contribution. The study presents a closed loop generative framework that enables joint optimization of molecular components and their spatial organization in multi-component systems. The method moves generative molecular design beyond single molecules toward larger and more complex systems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
