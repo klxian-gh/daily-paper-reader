@@ -1,0 +1,798 @@
+Title: An Adaptive Log-Laguerre Spectral Method for the Radial Dirac Equation: Resolving Asymptotic Decay and Core Singularities in Atomic Calculations
+
+URL Source: https://arxiv.org/pdf/2604.11063v1
+
+Published Time: Tue, 14 Apr 2026 01:49:08 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+# An Adaptive Log-Laguerre Spectral Method for the Radial Dirac Equation: Resolving Asymptotic Decay and Core Singularities in Atomic Calculations 
+
+# Sheng Chen 1, Sihong Shao 2, and Shuai Wu* 31Research Center for Mathematics, Beijing Normal University, Zhuhai, China. 
+
+2CAPT, LMAM and School of Mathematical Sciences, Peking University, Beijing, China. 
+
+3School of Mathematical Sciences, Beijing Normal University, Beijing, China. *Email: ws@mail.bnu.edu.cn 
+
+Abstract 
+
+The high-precision solution of the radial Dirac equation is fundamental to relativistic quantum chem-istry, essential for reliable pseudopotential generation and all-electron electronic structure methods. How-ever, standard basis-set approaches struggle to simultaneously capture two distinct physical regimes: the non-polynomial singularities at the origin and the state-dependent, multi-scale asymptotic decay of wave-functions on semi-infinite domains. In this work, we propose a high-precision adaptive spectral-element framework designed to rigorously resolve these spatial challenges. To capture the diverse exponential de-cay behavior on [0 , ∞) without arbitrary domain truncation, an adaptive scaled Laguerre spectral method is introduced, dynamically optimizing the basis scaling factors. Concurrently, near-origin non-polynomial 
+
+rs singularities are resolved utilizing Log-Orthogonal Functions, a basis that intrinsically approximates complex singular behaviors without requiring prior knowledge of the exact analytical exponent s. Fur-thermore, the framework incorporates an inverse operator formulation to guarantee spectral purity and eliminate spurious states. Validated across diverse physical regimes, including Coulomb, finite-nucleus, and screened potentials, the proposed method restores exponential convergence and consistently achieves relative accuracies of 10 −10 in Hartree atomic units or electron volts. This work provides a robust, non-pollution computational kernel for atomic structure calculations, establishing a numerical standard for generating high-precision atomic data in complex molecular simulations. 
+
+# Keywords 
+
+Adaptive Laguerre methods, Radial Dirac equation, High-precision computation, Galerkin method, Log-Orthogonal functions, Spectral pollution, Singular problems. 
+
+# Abbreviations 
+
+RDEQ Radial Dirac Equation 
+
+ALLSM Adaptive Log-Laguerre Spectral Method 
+
+LOFs Log-Orthogonal Functions 
+
+GLOFs Generalized Log-Orthogonal Functions 
+
+LFs Laguerre Functions 
+
+GLFs Generalized Laguerre Functions 
+
+IDOM Inverse Dirac Operator Method 1
+
+> arXiv:2604.11063v1 [math.NA] 13 Apr 2026
+
+# 1 Introduction 
+
+The Radial Dirac Equation (RDEQ) is the heart of high-fidelity atomic structure calculations, which are the indispensable computational kernel for modern relativistic electronic structure methods [1], including Density Functional Theory [2] and ab initio pseudopotential generation [3, 4]. Traditionally, the RDEQ is tackled using either shooting methods [4–6] or matrix diagonalization via basis set expansions, utilizing B-splines or finite elements [7–10]. However, achieving the high precision demanded by quantum chemistry is severely limited by the mathematical behavior of the radial wavefunctions, since traditional numerical schemes are primarily hindered by two major spatial bottlenecks: the state-dependent asymptotic decay on the far-field domain and non-polynomial singularities near the origin. Moreover, basis set approaches must handle the intrinsic and potential risk of variational collapse [11–14]. Failing to rigorously resolve these challenges, while maintaining spectral stability, compromises the reliability of large-scale molecular simulations. Fundamentally, resolving the two bottlenecks is a challenge of function approximation, which is the pri-mary focus of this paper. At the far-field boundary, a significant bottleneck arises because bound-state wavefunctions exhibit exponential decay over the semi-infinite physical domain [0 , ∞). Because their precise decay rates and effective supports are state-dependent and unknown a priori, they are difficult to approxi-mate. Despite its critical impact on overall precision, this specific challenge has frequently been overlooked or marginalized in existing literature. Rather than addressing the decay behavior, conventional methods often circumvent the issue by enforcing an empirical domain truncation at a finite distance L, relying on a trial-and-error approach that struggles to balance high fidelity with computational efficiency [15, 16]. Conversely, near the origin, an equally tough challenge originates from potentials that diverge at the origin. Specifically, for models exhibiting a infinity singularity, such as the classic Coulomb potential or screened Yukawa poten-tials where lim r→0 V (r) ∼ − Z/r asymptotic analysis dictates that the wavefunctions behave as rs. Because 
+
+s is non-integer, this induces a severe non-polynomial singularity. Consequently, classical polynomial-based methods, such as high-order finite element methods, fail to capture this fractional-power behavior, leading to drastically deteriorated convergence rates. Attempts to analytically extract the rs singularity complicate the variational formulation [10], while finite-element geometric mesh refinements [17] significantly increase implementation complexity. Although existing specialized basis sets are explicitly designed for isolated singularities, their potential remains largely unexplored in relativistic atomic physics. Furthermore, any numerical scheme designed to resolve these dual spatial challenges must simultaneously guarantee spectral stability against the ever-present threat of variational collapse, necessitating robust strategies to prevent spectral pollution. To systematically overcome these interconnected bottlenecks, we propose a comprehensive, high-order adaptive spectral framework tailored for relativistic atomic calculations. Because a structurally stable com-putational kernel is a basic requirement for achieving extreme precision, our framework natively incorporates the Inverse Dirac Operator Method (IDOM) [18]. This algebraic formulation rigorously circumvents varia-tional collapse, guaranteeing the absolute spectral purity of the computed bound states. Built upon this vari-ation stable foundation, we introduce two combined innovations to directly resolve both the non-polynomial singularities and the multi-scale asymptotic decay. 
+
+• Adaptive Laguerre method : To capture the state-dependent asymptotic decay on the semi-infinite domain without resorting to empirical truncations, we introduce an adaptive Laguerre method [19]. By treating the frequency indicator of the basis functions as an optimization parameter, this approach automatically aligns the basis scaling with the physical wavefunction’s far-field tail. To the best of our knowledge, this represents one of the first systematic applications of adaptive spectral methods specifically optimized for Dirac eigenvalue problems. This innovation overcomes the inefficiency of fixed-scale bases, proving that standard orthogonal families, such as Laguerre functions (LFs), can be rigorously and efficiently applied to quantum mechanical calculations when properly scaled. 
+
+• Log-Orthogonal Functions : To resolve non-polynomial singularities at the origin, we use LOFs [20], which ensures an efficient treatment of the singularity. Crucially, the LOF basis provides a “black-box” capability to intrinsically approximate complex singular behaviors, such as the fractional rs dependence, without requiring any prior analytical specification of the exponent s. This avoids the need for complex analytical extractions or dense geometric mesh refinements, opening the door for applications to more complex relativistic formulations where the exact nature of the singularity may be intractable [21]. 2Validated across a spectrum of challenging physical regimes, including Coulomb, finite-nucleus, and screened interactions, this unified framework consistently achieves relative accuracies of 10 −10 or better, successfully restoring exponential convergence where standard bases typically deteriorate. A detailed in-vestigation is conducted into the numerical properties, specifically examining how truncation limits affect the resolution of spectral and how degree of freedom imbalances give rise to spurious states. Meanwhile, we demonstrate that reformulating the Dirac operator formulation is essential for eliminating spectral pollution. Ultimately, this work establishes a highly stable, pollution-free computational engine for relativistic atomic calculations, providing the rigorous numerical standard necessary to fortify modern large-scale electronic structure methodologies. The remainder of this paper is organized as follows. Section 2 establishes the theoretical foundation of our approach, introducing the continuous RDEQ alongside a rigorous analysis of the exact asymptotic behavior of the wavefunctions. It also presents methodologies to address these approximation challenges, notably through the implementation of Generalized Log-Orthogonal Functions (GLOFs) and adaptive Laguerre methods. Section 3 outlines the practical computational implementation, detailing the construction of the globally continuous spectral basis and deriving the variationally robust Galerkin formulation via IDOM. In Section 4, we comprehensively evaluate the proposed framework. This section establishes high-precision numerical benchmarks across a diverse array of chemically and physically relevant potentials. Meanwhile, we provide a profound theoretical dissection of spectral stability, elucidating the topological origins of variational collapse and the critical role of degree of freedom mismatch in Section 5. Finally, Section 6 summarizes our core methodological contributions and outlines the trajectory for future applications in large-scale relativistic electronic structure calculations. 
+
+# 2 Theoretical Framework and Methodology 
+
+The theoretical foundation of our computational framework is the time-independent Dirac equation for a single particle in a central potential V (r). Taking advantage of spherical symmetry, the four-component spinor eigenstates decouple, reducing the problem to the Radial Dirac Equation 
+
+Dr Ψ = V (r) + c2 −c   ddr − κr
+
+
+
+c   ddr + κr
+
+ V (r) − c2
+
+! Fnκ (r)
+
+Gnκ (r)
+
+!
+
+= Enκ 
+
+Fnκ (r)
+
+Gnκ (r)
+
+!
+
+, (1) where Fnκ (r) and Gnκ (r) are the large and small radial components, respectively. The energy level, Enκ , is solely dependent on the principal quantum number n and the total angular momentum quantum number κ.The normalization condition is given by 
+
+Z ∞
+
+> 0
+
+(|Fnκ (r)|2 + |Gnκ (r)|2) d r = 1 .
+
+# 2.1 The Asymptotic Properties and Approximation Challenge 
+
+To understand the fundamental problems in numerically solving the RDEQ, it is necessary to analyze the spatial behavior of the wavefunctions. We provide a brief result here; comprehensive details can be found in the previous literature[22]. For simplicity, when deriving, we will omit the energy levels and keep the following concise notation Fnκ → F, G nκ → G, E nκ → E. 
+
+Asymptotic Properties for Near Origin 
+
+Near the origin, assuming a Coulomb-like singular potential, which is 
+
+lim  
+
+> r→0
+
+V (r) ∼ − Z/r, 
+
+asymptotic expansion dictates that both radial components behave as rs at the origin 
+
+lim  
+
+> r→0
+
+F (r) ∼ rs, lim  
+
+> r→0
+
+G(r) ∼ rs, where s = pκ2 − (Z/c )2.
+
+3Because the relativistic angular momentum quantum number κ is a non-zero integer, the exponent s is strictly non-integer. This induces a severe non-polynomial singularity that catastrophically degrades the convergence rates of classical polynomial-based spectral methods, rendering standard Taylor-type approxi-mations structurally inadequate. 
+
+Asymptotic Properties for Far Field 
+
+Conversely, in the far-field limit, the potential vanishes, satisfying 
+
+lim  
+
+> r→∞
+
+V (r) = 0 ,
+
+the RDEQ asymptotically decouples into a second-order form 
+
+d2F
+
+dr2 ≈ 1
+
+c (c2 − E) dG
+
+dr = 1
+
+c (c2 − E)
+
+h 1
+
+c (E + c2)F
+
+i
+
+= c4 − E2
+
+c2 F. 
+
+Governing the exponential decay of the bound states, we have 
+
+lim  
+
+> r→∞
+
+F (r) ∼ e−λr , where λ = pc2 − (E/c )2.
+
+Crucially, this decay rate λ is strictly state-dependent. The effective spatial support of the wavefunction varies drastically across different principal quantum numbers. 
+
+The Challenge of Approximating Wavefunctions 
+
+As revealed by the asymptotic analysis, the accurate approximation of radial wavefunctions is fundamentally bottlenecked by two multi-scale spatial challenges: 
+
+• The first challenge emerges near the origin. Although the wavefunction appear smooth at a macroscopic scale as shown in Figure 1, it possesses an non-polynomial singular behavior at the origin, which intrinsically defies standard, polynomial-based approximation methods. This singularity is clearly evidenced in the inset of the top-left panel in Figure 1, where the derivative rapidly approaches infinity within a small distance from r = 0 . Note that, above mathematical frameworks are predominantly tailored to Coulomb-like potentials; their extension to other bounded potentials [23, 24] remains a subject for future systematic investigation. Thus, designing a specialized basis to explicitly capture such behavior is a significant hurdle. Moreover, a challenging objective is to rigorously resolve these fractional-power behaviors, ranging from simple rs terms to complex summations like P 
+
+> i
+
+rsi , without requiring a priori analytical knowledge of the precise indices. 
+
+• The second, frequently overlooked challenge lies in the simultaneous capture of drastic near-core fluc-tuations and the far-field exponential tail. Because the asymptotic decay rate is strictly governed by the state energy E, which itself depends on the quantum numbers n and κ, different eigenstates exhibit drastically different characteristic length scales and near-field nodal structures, see Figure 1 and 2. Consequently, rigid basis sets tailored solely to a generic far-field asymptotic are structurally inadequate. This inadequacy is severely exacerbated, rendering the exact far-field decay analytically intractable. Therefore, it is absolutely essential to develop a computational framework capable of adaptively optimizing the basis functions to capture these diverse, state-dependent behaviors. 4Figure 1: Comparison of relativistic large-component radial wavefunctions F (r) and their derivatives for hydrogenic potentials, n = 1 , . . . , 4, κ = −1. (a) The top-left panel highlights the singular nature near the origin; its inset plots the derivative dF (r) on an ultra-fine 10 −30 radial scale, revealing its rapid divergence to infinity. (b) The other panels illustrate the diverse decay rates in the far-field and oscillations in the near-field across different principal quantum numbers n.
+
+Figure 2: Comparison of relativistic large-component radial wavefunctions F (r) for hydrogenic potentials with varying quantum numbers, n = 2 , 3 and κ = −2, 1. The individual panels illustrate the structural evolution of the wavefunctions across different relativistic states. Specifically, they showcase the distinct nodal structures and near-field oscillations determined by the principal quantum number n and the relativistic angular momentum quantum number κ.52.2 Log-Orthogonal Functions for Non-Polynomial Singularities 
+
+By the asymptotic analysis, the RDEQ solutions exhibit a non-polynomial fractional power behavior, rs, in the vicinity of the origin. To intrinsically capture this singularity without resorting to cumbersome geometric mesh refinements or explicit analytical extractions, we deploy LOFs [20, 25] in the near-origin region. The standard LOFs are defined via a logarithmic mapping to classical Laguerre polynomials, 
+
+Sγn (x) = Ln(−(γ + 1) log x), x ∈ (0 , 1) ,
+
+where Ln denotes the Laguerre polynomial of degree n, and the parameter γ > −1 regulates the resolution of distinct singular behaviors. While standard LOFs are theoretically profound, their direct application in Galerkin formulations often suffers from numerical ill-conditioning. To guarantee structural stability and ensure the basis functions strictly reside within the L2 space, we introduce a practically optimized variant known as the GLOFs[20], 
+
+S(γ,μ ) 
+
+> n
+
+(x) = x(γ−μ)/2Sγn (x), n ≥ 0.
+
+For relativistic atomic structure calculations, setting μ = 2 and γ = 4 proves to be an proper choice[26]. This yields the explicitly well-conditioned GLOF basis, 
+
+S(4 ,2)  
+
+> n
+
+(x) = xLn(−5 log x).
+
+Furthermore, constructing a homogeneous basis satisfying strict zero boundary conditions at both x = 0 
+
+and x = 1 is elegantly constructed via the linear combination, 
+
+S(4 ,2)  
+
+> n+1
+
+(x) − S (4 ,2)  
+
+> n
+
+(x) = x Ln+1 (−5 log x) − Ln(−5 log x).
+
+The computational advantage of the GLOFs is their “black-box” capability to approximate singular terms without any prior specification of the exact physical exponents. As established by the approximation theory of LOFs [20], if a generic multi-scale wavefunction is modeled as u(x) = PKi=1 xsi with completely unknown exponents si > 0, the convergence rate under the L2 projection Π4,2 
+
+> N
+
+is strictly governed by the ratio, 
+
+R4,2 = max 
+
+> 1≤i≤K
+
+2si + 2 − 42si + 2 + 2 + 4 = max 
+
+> 1≤i≤K
+
+si − 1
+
+si + 4 < 1.
+
+The corresponding approximation error decays exponentially as, 
+
+|u − Π4,2 
+
+> N
+
+u|x2 ≤ K
+
+r 25 4 + s N 12 (R4,2)N , for N ≥ 1.
+
+Consequently, this tailored GLOF basis effectively resolves the severe rs non-polynomial asymptotics natively. More importantly, this establishes a robust mathematical framework that can be seamlessly extended to more complex differential equations in computational chemistry, where the precise analytical nature of the near-core singularity may be totally intractable. 
+
+# 2.3 Adaptive Laguerre Method for Asymptotic Decay 
+
+For quantum mechanical problems defined on a semi-unbounded domain [0 , ∞), the Laguerre basis functions emerge as the most natural and mathematically rigorous choice. Unlike finite-element or bounded polynomial methods that necessitate an artificial domain truncation, a heuristic process that inevitably introduces unphysical boundary artifacts and truncates essential far-field information, Laguerre functions intrinsically possess an exponential tail. This guarantees that the physical asymptotic behavior is structurally preserved without requiring empirical spatial cutoffs. However, Laguerre basis fixed characteristic length scale is fundamentally ill-suited for the multi-scale, state-dependent decay of relativistic wavefunctions. As illustrated in Figures 1 and 2, capturing highly oscillatory near-field nodes alongside diffuse far-field tails with a fixed-scale basis requires a prohibitive number of degrees of freedom. To restore exponential convergence without artificially inflating the basis size, we introduce a dynamically optimized scaling parameter β. This yields the GLFs cL βn (r), which effectively 6“stretches” or “compresses” the coordinate system to perfectly envelop the physical support of the target eigenstate. The central computational challenge thus shifts from simply increasing N to efficiently identifying the optimal β without trial-and-error. Inspired by adaptive spectral methods [19], we treat β as a dynamic optimization parameter governed by a frequency indicator , F. This indicator quantifies the relative energy content residing in the high-frequency tail of the computed eigenfunction U βN (r) = PNl=0 cβl cL βl (r). A mini-mized F implies rapid decay of the spectral coefficients, guaranteeing high-fidelity asymptotic representation and minimal oscillatory error. The indicator is rigorously defined as, 
+
+F(U βN ) = 
+
+PNl=N −M +1 γβl (cβl )2
+
+PNl=0 γβl (cβl )2
+
+! 12
+
+,
+
+where cβl are the spectral coefficients, γβl = ⟨ cL βn (r)| cL βn (r)⟩ are the corresponding weighting factors and 
+
+M =  N
+
+> 3
+
+ isolates the upper third of the spectrum in accordance with the standard 23 dealiasing rule [27]. To establish a automated stopping criterion for the optimization, we define a reference threshold f0 =
+
+F(UM ) derived from the well-behaved analytical model function UM (r) = sin( r) exp( −r) [28]. Because 
+
+UM typically achieves machine precision 10 −16 at N = 80 using standard Laguerre functions, its frequency indicator f0 serves as a rigorous benchmark for ideal spectral decay. The adaptive scheme systematically parameter β to minimize F(U βN ). Once the condition F(U βN ) ≤ f0
+
+is satisfied, the basis is optimally scaled. This fully automated optimization workflow, detailed in Algorithm 1, allows the computational kernel to seamlessly adapt to diverse quantum states, effectively functioning as a “black-box” solver without requiring manual parameter tuning or prior physical intuition regarding the decay rate. 
+
+# 3 Computational Details 
+
+In this section, we detail the practical implementation of the proposed adaptive spectral framework. To translate our theoretical strategies into a robust computational kernel, we proceed in three sequential steps: (1) constructing a unified global basis that seamlessly connects GLOFs with adaptively scaled Laguerre func-tions; (2) implementing IDOM to structurally eliminate variational collapse; and (3) deriving the discretized Galerkin weak formulation, which transforms the continuous RDEQ into a stable, computationally tractable generalized eigenvalue problem. 
+
+# 3.1 Basis Functions 
+
+To translate the spatial strategies formulated in Section 2 into a computable discrete space, we employ a domain decomposition method. The semi-unbounded physical space is partitioned into a singular near-core region I1 = (0 , L ) and an asymptotic decay region I2 = ( L, ∞), see Figure 3. This bipartite decomposition allows us to deploy the GLOFs and the GLFs exactly where their respective approximation properties are physically required. To guarantee that the resulting wavefunctions are physically admissible, specifically, globally C0-continuous across the entire domain, which implies the discrete basis must be carefully stitched at the element interface 
+
+r = L. We construct two sets of local homogeneous basis functions that strictly vanish at the interface 
+
+r = L,
+
+ϕ1
+
+> n
+
+(r) = 
+
+
+
+r/L  S(4 ,2) 1 (r/L ) − S (4 ,2)  
+
+> n−1
+
+(r/L ),
+
+0,r ∈ I1;
+
+r ∈ I2. (2) 
+
+ϕ2
+
+> n
+
+(r) = 
+
+
+
+0,
+
+cL βn (r − L) − cL βn−1(r − L),r ∈ I1;
+
+r ∈ I2. (3) Here, the scaling parameter β in Equation (3) is adaptively determined via the frequency indicator scheme to automatically match the state-dependent exponential tail. 7Algorithm 1: Adaptive Frequency-Based Scaling for Eigenvalue Problems 
+
+Input : Truncation degree N , expansion factor ν > 1, lower bound β, upper bound β, desired eigenmode index i.
+
+Output: Optimal parameter β, target characteristic value Ei, and the ith eigenfunction U βN (x). 
+
+> 1
+
+Define COMPUTE_EIGENFUNCTION (i, β k) as solving the GEP for the i-th eigenpair using scaling βk. 
+
+> 2
+
+Define FREQUENCY_INDICATOR (U ) as computing F(U ). 
+
+> 3
+
+Initialize ν > 1, β = β0, β = 10 −4, β = 10 5, U M ← sin( x) exp( −x). 
+
+> 4
+
+U βN ← COMPUTE_EIGENFUNCTION (i, β ) // Compute the initial eigenfunction approximation;  
+
+> 5
+
+f ← FREQUENCY_INDICATOR  U βN
+
+; 
+
+> 6
+
+f0 ← FREQUENCY_INDICATOR  UM
+
+; 
+
+> 7
+
+if f > νf 0 then  
+
+> 8
+
+βdown ← 1 
+
+> ν
+
+β; 
+
+> 9
+
+Udown ← COMPUTE_EIGENFUNCTION (i, β down ); 
+
+> 10
+
+fdown ← FREQUENCY_INDICATOR  Udown 
+
+; 
+
+> 11
+
+βup ← νβ ; 
+
+> 12
+
+Uup ← COMPUTE_EIGENFUNCTION (i, β up ); 
+
+> 13
+
+fup ← FREQUENCY_INDICATOR  Uup 
+
+; 
+
+> 14
+
+q ← ν · I(fup > f down ) + 1 
+
+> ν
+
+· I(fup ≤ fdown ) // Determine the scaling direction q (I is the indicator function);  
+
+> 15
+
+˜β ← qβ ; 
+
+> 16
+
+U ˜βN ← COMPUTE_EIGENFUNCTION (i, ˜β); 
+
+> 17
+
+˜f ← FREQUENCY_INDICATOR  U ˜βN
+
+; 
+
+> 18
+
+while ˜f ≤ f and ( ˜β ≥ β or ˜β ≤ β) do  
+
+> 19
+
+β ← ˜β; 
+
+> 20
+
+U βN ← U ˜βN ; 
+
+> 21
+
+f ← ˜f ; 
+
+> 22
+
+˜β ← qβ ; 
+
+> 23
+
+U ˜βN ← COMPUTE_EIGENFUNCTION (i, ˜β); 
+
+> 24
+
+˜f ← FREQUENCY_INDICATOR (U ˜βN );Because both local basis sets Equations (2) and (3) are enforced with homogeneous Dirichlet conditions at 
+
+r = L, they intrinsically cannot represent a wavefunction possessing a non-zero amplitude at this boundary. To resolve this structural limitation, we introduce a non-homogeneous “bridging” function ϕ3(r). This function smoothly connects a linear interior profile to the fundamental Laguerre decay, ensuring strict C0
+
+continuity, 
+
+ϕ3(r) = 
+
+(r/L, r ∈ I1,eβ(r−L), r ∈ I2. (4) Finally, the complete, variationally permissible global basis set VN = span {φn}Nn=1 is constructed by con-catenating Equations (2), (3) and (4), 
+
+φn(r) = 
+
+
+
+ϕ1
+
+> n
+
+(r), 1 ≤ n ≤ N1,ϕ2 
+
+> n−N1
+
+(r), N1 + 1 ≤ n ≤ N1 + N2,ϕ3(r), n = N, 
+
+(5) yielding a total dimension of N = N1 + N2 + 1 . This unified basis intrinsically resolves the multi-scale features of the RDEQ without introducing unphysical truncations or discontinuities. 8r
+
+0 L ∞
+
+# I1 = (0 , L ) I2 = ( L, ∞)
+
+Singular near-core region 
+
+Non-polynomial singularity 
+
+Log-Orthogonal Functions 
+
+Exponential decay region 
+
+Far-field tail 
+
+Laguerre Functions 
+
+Figure 3: Schematic of the bipartite domain decomposition on the semi-unbounded interval. The physical space is partitioned into a singular near-core region I1 and an asymptotic decay region I2, where GLOFs and GLFs are respectively deployed to capture the specific mathematical behaviors of the radial wavefunction. 
+
+# 3.2 Variational Formulation and Spurious-Free Implementation 
+
+To numerically solve the RDEQ while strictly circumventing the long-standing issue of variational collapse and spurious states [18], we adopt IDOM. Rather than addressing the original Dirac operator Dr directly, which is plagued by a spectrum that is not bounded from below and upper, we seek the stationary points of the Rayleigh quotient associated with the inverse operator G = D−1 
+
+> r
+
+.As established in earlier studies, the ground state E+0 corresponds to the largest positive eigenvalue of 
+
+G. To avoid the explicit construction of D−1 
+
+> r
+
+, we employ the trial function transformation ϕ = Dr ψ. This reformulates the variational problem as finding the eigenpairs (E, ψ ) that satisfy, 
+
+(ψ, Dr ψ)(ψ, D2 
+
+> r
+
+ψ) = 1
+
+E . (6) This formulation is numerically robust as it maps the targeted discrete bound states to the extremum of the spectrum, naturally isolating them from the negative energy continuum. To implement this scheme, we define the discrete approximation space for the two-component radial spinor as V N = WN × WN , where WN = span {φn(r)}Nn=1 is the global basis constructed in Equation (5). The Galerkin weak form of Equation (6) leads to the following generalized eigenvalue problem: find (EN , ΨN ) ∈
+
+R × V N such that for all test functions Φ ∈ V N ,
+
+B(Ψ N , Φ) = 1
+
+EN
+
+A(Ψ N , Φ) , (7) where the bilinear forms are defined as 
+
+B(Ψ , Φ) = 
+
+Z ∞
+
+> 0
+
+Φ†Dr Ψ d r, A(Ψ , Φ) = 
+
+Z ∞
+
+> 0
+
+Φ†D2 
+
+> r
+
+Ψ d r. 
+
+Substituting the basis expansion into Equation (7) yields the matrix equation 
+
+Bc = 1
+
+E Ac .
+
+Notably, this small-scale system can be efficiently resolved using robust solvers like the QZ algorithm, achiev-ing high precision without prior preconditioning. 
+
+# 4 Results and discussion 
+
+In this section, we comprehensively evaluate the accuracy, robustness, and physical applicability of the pro-posed adaptive spectral-element framework across a diverse hierarchy of relativistic quantum models. Unless otherwise specified, all numerical evaluations and error analyses are conducted in Hartree atomic units. We begin at the extreme limits of relativistic core interactions, resolving the severe spatial singularities inherent to heavy hydrogen-like ions, Subsection 4.1. Transitioning to more chemically realistic environments, we 9benchmark the framework against finite nuclear charge distributions, Subsection 4.2, addressing a critical requirement for high-fidelity, electron simulations of heavy elements. The applicability of our method is then extended to model plasma and condensed matter effects via the screened Yukawa potential, Subsection 4.3. Furthermore, the framework is applied to pure vector Morse potentials to capture the structural parameters of real diatomic molecules in Subsection 4.4, where results are reported in electron volts (eV), the corre-sponding conversion factors between these unit systems are detailed in Table 2. To further demonstrate the versatility of our approach in handling complex effective core interactions, we evaluate the Hellmann potential, Subsection 4.5. 
+
+# 4.1 Accuracy and Convergence for Coulomb Potential 
+
+To rigorously benchmark the numerical accuracy of the proposed framework, we first consider the RDEQ under the Coulomb potential, V (r) = −Z/r . This system serves as an indispensable cornerstone in relativistic quantum mechanics because its bound-state eigenvalues are analytically exact, governed by the fine-structure formula, 
+
+Enκ = c2
+
+q
+
+1 + (Z/c )2
+
+> (n−| κ|+s)2
+
+− c2, where s = pκ2 − (Z/c )2.
+
+Here, n ≥ 1 is the principal quantum number and κ is the relativistic angular momentum quantum number. As established in Section 2, the primary numerical hurdle for this potential is the severe non-polynomial singularity rs at the origin. To demonstrate the necessity and efficacy of our dual-adaptive spatial strat-egy, we systematically compare three distinct discretization schemes: (1) a standard Laguerre-only method (SLM) lacking singularity treatment; (2) a non-adaptive Log-Laguerre spectral method (LLSM) utilizing the composite GLOF-Laguerre basis but with a fixed scaling parameter β; and (3) our fully proposed adaptive Log-Laguerre spectral method (ALLSM). We deliberately select the Uranium ion, Z = 92 , κ = −1 for our primary benchmark. In such a highly relativistic heavy-element regime, the singularity exponent s deviates significantly from an integer, creating a pathological near-core environment that catastrophically degrades standard polynomial approximations. In left panel of Figure 4, we fix the singular GLOFs basis size at N1 = 80 and plot the maximum relative error among the first five eigenvalues as a function of the Laguerre basis size, N2. The results are unequiv-ocal, the SLM fails to achieve meaningful precision, and the LLSM stagnates prematurely due to far-field basis mismatch. Instead, the proposed ALLSM dynamically perfectly matches the diverse state-dependent exponential tails, delivering superior accuracy that surpasses the alternative schemes by several orders of magnitude. The Right Panel of Figure 4 further corroborates this by plotting the error against N2 for various fixed N1 values, clearly confirming that ALLSM successfully restores strict exponential convergence. To ensure these exceptional results are not an artifact of a specific parameter set, we extend the error analysis across various physical states characterized by different Z and κ combinations. As depicted in Figure 5, ALLSM consistently maintains high-fidelity precision—typically 10 −10 or better—across diverse relativistic regimes. This stringent benchmarking definitively confirms the robustness of the adaptive spectral-element approach in resolving the extreme multi-scale challenges inherent to heavy-element core singularities. 
+
+# 4.2 Gaussian Nuclear Model 
+
+For highly relativistic heavy-element calculations, the idealized point-charge nuclear model becomes physi-cally inadequate. It unphysically exaggerates the relativistic contraction of inner-shell electrons and intro-duces severe artifacts in core-property predictions. To provide a rigorous computational kernel for realistic all-electron simulations, we evaluate our framework using the finite nuclear charge model characterized by a Gaussian density distribution, 
+
+ρ(r) = ρ0e−(r/R )2
+
+.
+
+A critical physical consequence of this smeared distribution is the mathematical regularization of the strict Coulomb singularity. The resulting electrostatic potential is given by the error function, 
+
+V (r) = − Zr erf 
+
+ rR
+
+
+
+.
+
+10 Figure 4: Example: Coulomb Potential for Uranium ion ( Z = 92 , κ = −1). Left : Comparison of maximum relative error versus N2 for SLM, LLSM, and ALLSM, highlighting the failure of standard schemes in the highly relativistic regime. Right : Error of ALLSM as a function of N2 for various fixed N1, demonstrat-ing that our method restores strict exponential convergence by dynamically matching the state-dependent exponential tails. While this finite-nucleus potential eliminates the 1/r singularity at the origin, it introduces a steep, multi-scale transition near the nuclear boundary R that tightly couples with the diffuse far-field decay, presenting a severe challenge for standard fixed-scale basis sets. To benchmark the efficacy of the proposed ALLSM, we first compare our computed ground-state energies with the established high-precision values provided by Andrae et al. [23]. As depicted in the Left Panel of Figure 6, the absolute error initially plummets exponentially as the basis size increases. However, a slight artificial increase in error is observed at very high degrees of freedom. Rather than indicating an algorithmic instability, this deviation occurs precisely because our method surpasses the precision limits of the established literature benchmarks. To rigorously corroborate this intrinsic stability, we compute an ultra-high-fidelity internal reference utilizing an expanded basis with N1 = 120 , N 2 = 60 . Against this stringent internal standard, in Right Panel of Figure 6, the error strictly and monotonically decreases down to machine precision, confirming the absolute numerical robustness and high-order convergence of our scheme. Finally, to furnish the computational chemistry community with ultra-precise reference data, we compute the finite-nucleus energy shifts, defined as ∆Egs = |EGaussian  
+
+> gs
+
+− ECoulomb  
+
+> gs
+
+|. These shifts quantify the massive energetic impact of nuclear smearing. As summarized in Table 1, we successfully track these shifts across a range of heavy to superheavy elements up to the extreme relativistic limit with Z = 137 . These results not only show excellent agreement with existing models but seamlessly extend the precision boundary, serving as new high-fidelity benchmarks for future relativistic algorithm developments. Table 1: Example: Gaussian Nuclear Model. Ground-state energy shifts ∆Egs for the Gaussian nuclear model. Z 60 80 100 120 137 
+
+∆Egs 0.2299228 1.9978925 16.4051094 167.3127501 3842.7299905 A notable phenomenon is observed regarding the Gaussian nuclear model. The error-function-based potential is non-singular at the origin, 
+
+V (r) = − Zr erf 
+
+ rR
+
+
+
+= − 2Z
+
+√πR + 2Z
+
+3√πR 3 r2 − Z
+
+5√πR 5 r4 + O(r6),
+
+yielding a finite limiting value of V (0) = −2Z/ (√πR ). However, when employing ALSM, the numerical error exhibits a persistent behavior that is difficult to eliminate, see left panel of Figure 7. As illustrated in the right panel of Figure 7, the error evolution in the Gaussian nuclear model case bears a familiar tendency to 11 Figure 5: Example: Coulomb Potential. Maximum relative error of ALLSM for different Z and κ values. 
+
+Figure 6: Example: Gaussian Nuclear Model. Left : Comparison with established benchmarks from Andrae 
+
+et al. [23]; the slight error increase at high basis sizes occurs as the ALLSM precision exceeds the literature’s limits. Right : Internal consistency test against an ultra-high-fidelity reference ( N1 = 120 , N 2 = 60 ), confirming strict convergence. that of the Coulomb potential solved via ALSM. This strong similarity implies that even in the absence of a divergent potential, the wavefunction may still possess underlying non-polynomial behavior that restrain the convergence of ALSM, especially for high-Z ions. This suggests that non-polynomial character in the wavefunction may not be exclusively triggered by Coulomb-like singularities; rather, it appears to persist even when the potential remains finite at the origin. In such cases where the wavefunctions non-analytic behavior is implicit or unknown, ALLSM maintains remarkable robustness, significantly outperforming the standard ALSM in both stability and precision. 
+
+# 4.3 Yukawa Potential 
+
+To demonstrate the applicability of our method to chemically relevant environments, such as atoms in plasmas or electrons in condensed matter, we consider the Yukawa potential, 
+
+V (r) = −V0
+
+e−λr 
+
+r ,
+
+12 Figure 7: Convergence behavior of the numerical error for different nuclear potentials using ALSM. Left :Error evolution for the Gaussian nuclear model. Right : Error evolution for the singular Coulomb poten-tial. A similar point in the error patterns is observed between the two cases, particularly the slow convergence and eventual failure for high-Z ions. This similarity indicates that even in cases where the potential is non-singular, the wavefunction may still exhibit intrinsic non-polynomial behaviors. where λ is the screening parameter and V0 is the coupling strength. As λ increases, the effective interaction range decreases, eventually leading to the disappearance of bound states. This transition region is numerically sensitive and prone to variational instabilities. Using ALLSM, we compute the ground state energy for two benchmark cases adopted from previous literature[29, 30]: Case 1 with V0 = 0 .1c, λ = 0 .01 c, and Case 2 with V0 = 0 .4c, λ = 0 .07 c. The convergence results are displayed in the Left Panel of Figure 8. Our method maintains high precision for these screened potentials. This stability is crucial for modeling phenomena such as pressure-induced ionization or effective interactions in solids. The Right Panel of Figure 8 illustrates the behavior of the adaptive scaling parameter. We observe a strong correlation between the accuracy and the optimization of the scaling parameter. At low degrees of freedom, the optimization landscape is flat, making it difficult to locate the global minimum for the scaling parameter. However, as N increases, the algorithm successfully identifies the optimal scaling, confirming the robustness of ALLSM. Finally, we investigate the critical screening parameter, λcrit , at which the ground state energy vanishes. Setting V0 = 1 , we identify the critical value at approximately λcrit ≈ 1.190613 , where the energy is close to 
+
+0. In the Left Panel of Figure 9, we plot the ground state energy Egs and the optimal scaling parameter β,specifically β2, as functions of λ. It is evident that Egs and β2 exhibit a similar decaying trend. This suggests that the optimal β can serve as a reliable proxy for monitoring the energy evolution near the continuum threshold, potentially avoiding condition number issues associated with resolving eigenvalues near zero. The Right Panel of Figure 9 displays the wavefunctions for various λ, as λ increases towards the critical value from both left and right, the wavefunction decay slows significantly, becoming more diffuse and uniform as the binding energy decreases. 
+
+# 4.4 Morse Potential 
+
+To directly bridge our numerical framework with realistic molecular systems, we investigate the RDEQ under the Morse potential, a foundational model for diatomic vibrational dynamics. The potential is defined as, 
+
+V (r) = De
+
+
+
+e−2α(r−re) − 2e−α(r−re)
+
+, (8) where De denotes the dissociation energy, re represents the equilibrium bond length, and α is the parameter governing the width of the potential well. 1          
+
+> 1For consistency with the molecular parameters provided, we express the exponent as −α(r−re), which is equivalent to the form −a(r−re)/r ewhere a=αr e.
+
+13 Figure 8: Example: Yukawa Potential. Left : Maximum relative error of the ground-state energy for Case 1 ( V0 = 0 .1c, λ = 0 .01 c) and Case 2 ( V0 = 0 .4c, λ = 0 .07 c). The results demonstrate that ALLSM maintains high precision across different screening regimes. Right : Evolution of the adaptive scaling parameter as a function of the degrees of freedom N2. The scaling factor effectively converges from a sub-optimal starting point to its appropriate value as the basis size increases, ensuring a minimized error. While the relativistic Morse potential has been extensively studied, a crucial distinction must be made regarding the physical model. The vast majority of existing literature relies on imposing an artificial equal mixture of scalar and vector potentials, to exploit pseudo-spin symmetry [24]. In this study, we solve the Morse potential model within a full vector framework. This is achieved by directly substituting Equation (8) into the radial Dirac Equation (1) without any simplifications. This physically rigorous formulation is analytically intractable and heavily reliant on robust numerical solvers. To evaluate the algorithm’s versatility across diverse relativistic and mass regimes, we adopt the estab-lished spectroscopic parameters for five representative diatomic molecules: H 2, LiH, HCl, CO, and I 2. The numerical solution is obtained for the ground state. Because high-precision numerical benchmarks for this unsimplified pure vector model are currently absent from the literature, we deploy ALLSM to establish these reference values. The computed ground-state binding energies, alongside the utilized spectroscopic parameters, are sum-marized in Table 2. ALLSM seamlessly manages the localized potential wells of these diverse molecular systems, yielding highly stable and precise energy eigenvalues. These results not only validate our frame-work against realistic chemical parameters but also provide a set of pure vector benchmarks to guide future relativistic quantum chemistry developments. Table 2: Example: Morse Potential. Spectroscopic parameters of the selected diatomic molecules and the computed ground-state energies under the pure vector Morse potential. a
+
+Molecule De (eV) re (nm) μ (amu) α (nm −1) Ground State Energy (eV) H2 4.7446 0.07416 0.50391 14.40558 -4.6149624 LiH 2.515287 0.15956 0.8801221 17.998368 -2.4694636 HCl 4.61907 0.12746 0.9801045 23.8057 -4.5210067 CO 11.2256 0.11283 6.8606719 68.606719 -11.1545528 I2 1.5556 0.2662 63.45223502 18.643 -1.5529087             
+
+> aConversion factors employed: 1 Bohr = 5.291772 ×10 −2nm, 1 Hartree = 27 .211385 eV, me= 5 .48578 ×10 −4u.
+
+# 4.5 Hellmann Potential 
+
+To further demonstrate the versatility of our adaptive framework in handling complex, multi-term effective interactions, we investigate the Hellmann potential. Widely utilized in atomic physics and quantum chemistry to model electron-ion interactions and construct empirical pseudopotentials [31, 32], the Hellmann potential 14 Figure 9: Example: Yukawa Potential. Left : Comparative evolution of the ground-state energy Egs and the optimal scaling parameters, β and β2, as a function of the screening parameter λ. The synchronized decaying trend suggests that the adaptive scaling factor effectively tracks the energy shift as the system approaches the continuum. Right : Radial wavefunctions for various λ values approaching λcrit . As the binding energy diminishes, the wavefunctions exhibit a transition from localized states to increasingly diffuse and uniform distributions, reflecting the loss of confinement near the ionization threshold. is formulated as the superposition of a long-range Coulomb attraction and a short-range screened Yukawa interaction: 
+
+V (r) = − Zr + V0
+
+e−λr 
+
+r ,
+
+where Z dictates the bare Coulomb strength, V0 represents the coupling amplitude of the Yukawa core, and 
+
+λ acts as the environmental screening parameter. The physical landscape of this potential is intricately governed by the delicate balance between these two terms, exhibiting profound sensitivity to λ. When V0 > 0, the Yukawa component introduces a short-range repulsion. In this regime, an increase in λ rapidly suppresses the repulsive tail, leading to a deeper effective potential well and consequently more strongly bound states. Conversely, when V0 < 0, the Yukawa term provides a supplementary short-range attraction. Here, increasing the screening λ curtails this additional attractive range, thereby shallowing the well. Despite its critical utility in chemical physics, rigorous, high-precision numerical benchmarks for the Hellmann potential within the unsimplified RDEQ framework remain notably absent from the current liter-ature. To bridge this critical data gap, we deploy ALLSM to compute extensive reference eigenvalues across a diverse matrix of parameter configurations, as cataloged in Table 3. ALLSM perfectly resolves the subtle energetic shifts induced by these competing interactions. For in-stance, considering the supplementary attraction regime with Z = 2 , V 0 = −1, our data in Table 3 clearly illustrate that as the screening parameter λ incrementally increases from 0.001 to 0.01 , the absolute binding energy strictly decreases. This ultra-precise numerical tracking perfectly corroborates the physical intuition, namely, a heightened screening parameter dynamically truncates the effective range of the Yukawa attraction, systematically “lifting” the tightly bound energy levels toward the continuum threshold. 
+
+# 5 The Mathematical Rationality of Spectral Framework 
+
+Having established the extreme precision and broad applicability of ALLSM across diverse physical regimes, we now pivot to the fundamental numerical mechanics governing these outcomes. In this section, we tran-scend empirical benchmarking to dissect the underlying mathematical drivers of spectral resolution and pol-lution. Specifically, we investigate how basis function selection, semi-unbounded versus truncated domains, intrinsically dictates spectral resolution. Meanwhile, as solving the discrete Dirac equation is notoriously fraught with spectral instabilities, most notably the phenomenon of variational collapse, we discuss the re-lationship between degree of freedom mismatches and the emergence of spurious states. Ultimately, this 15 Table 3: Example: Hellmann potential. The different state energy for Hellmann potential. State λ Z = 3 , V 0 = 0 Z = 0 , V 0 = −3 Z = 2 , V 0 = −1
+
+n = 1 , κ = −1 0.001 -4.5005393 -4.4975400 -4.4995395 0.005 -4.5005393 -4.4855580 -4.4955455 0.01 -4.5005393 -4.4706141 -4.4905642 
+
+n = 2 , κ = −1 0.001 -1.1251685 -1.1221715 -1.1241695 0.005 -1.1251685 -1.1102432 -1.1201934 0.01 -1.1251685 -1.0954662 -1.1152677 
+
+n = 3 , κ = −1 0.001 -0.5000599 -0.4970667 -0.4990622 0.005 -0.5000599 -0.4852272 -0.4951157 0.01 -0.5000599 -0.4707237 -0.4902811 
+
+n = 2 , κ = −2 0.001 -1.1250337 -1.1220362 -1.1240345 0.005 -1.1250337 -1.1100960 -1.1200545 0.01 -1.1250337 -1.0952820 -1.1151165 
+
+n = 3 , κ = −2 0.001 -0.5000200 -0.4970262 -0.4990221 0.005 -0.5000200 -0.4851750 -0.4950716 0.01 -0.5000200 -0.4706352 -0.4902250 
+
+n = 2 , κ = 1 0.001 -1.1251685 -1.1221710 -1.1241694 0.005 -1.1251685 -1.1102308 -1.1201893 0.01 -1.1251685 -1.0954168 -1.1152513 
+
+n = 3 , κ = 1 0.001 -0.5000599 -0.4970662 -0.4990620 0.005 -0.5000599 -0.4852149 -0.4951116 0.01 -0.5000599 -0.4706751 -0.4902650 
+
+n = 3 , κ = −3 0.001 -0.5000067 -0.4970119 -0.4990084 0.005 -0.5000067 -0.4851370 -0.4950501 0.01 -0.5000067 -0.4705249 -0.4901794 
+
+n = 3 , κ = 2 0.001 -0.5000200 -0.4970252 -0.4990217 0.005 -0.5000200 -0.4851504 -0.4950634 0.01 -0.5000200 -0.4705382 -0.4901927 analysis provides a rigorous theoretical justification for the stabilizing supremacy of the inverse operator formulation over conventional squared-operator techniques. 
+
+# 5.1 Basis Function Characteristics and Spectral Resolution 
+
+To unravel the intrinsic relationship between basis selection and spectral resolution, we analyze the numerical spectrum of the hydrogen atom using two fundamentally different spatial domains: standard Laguerre func-tions on the semi-unbounded domain [0 , ∞) and Legendre polynomials on an artificially truncated interval 
+
+(0 , L ). A critical finding of this comparative analysis is the profound difference in how these bases govern the resolvable capacity of the physical spectrum. When employing the truncated Legendre basis, the approximation essentially confines the quantum sys-tem within an artificial finite box of radius L. As explicitly demonstrated in the right panel of Figure 10, the number of converged physical eigenvalues is strictly bottlenecked by this truncation interval L, rather than the polynomial degree N . Once the basis size N is sufficient to resolve the states within the box, further increasing the degrees of freedom yields no additional physical eigenvalues. States with an effective physical support extending beyond L are catastrophically distorted by the unphysical boundary conditions, rendering them completely unresolvable regardless of computational effort. To evaluate computational efficiency, we tested the spectral resolution against the L/ DOF ratio. See Figure 11, our analysis reveals a threshold value of approximately 3, above which the truncated domain calculations converge to the reference results provided by the Laguerre basis. By contrast, the semi-unbounded Laguerre basis inherently bypasses these artificial confinement arti-facts. As illustrated in the left panel of Figure 10, the number of accurately resolved physical eigenvalues 16 scales nearly linearly with the degrees of freedom. Because the Laguerre basis intrinsically possesses an exponential tail on [0 , ∞), it naturally accommodates the expansive spatial domains of higher-energy states. Consequently, increasing the basis size N directly translates into a deeper, higher-fidelity resolution of the physical spectrum. This comparative analysis yields a critical numerical insight: for relativistic atomic wavefunctions char-acterized by multi-scale, state-dependent asymptotic tails, finite-interval domain truncation strategies are fundamentally structurally limited. Semi-unbounded bases, such as the Laguerre family, are not merely a convenient choice, but a strict mathematical requisite for capturing the complete discrete spectrum without inducing artificial physical distortion. 
+
+Figure 10: The number of converged physical eigenvalues Left : Legendre basis. Right : Laguerre basis. 
+
+Figure 11: The number of eigenvalues with degree of freedom for fixed ratio. 
+
+# 5.2 Topological Origins of Variational Collapse and DOF Mismatch 
+
+Variational collapse remains one of the most notorious pathologies in relativistic quantum chemistry since its early diagnosis by Schwarz and Wallmeier [11, 33]. For decades, the physical chemistry community has predominantly attributed the emergence of these spurious “prolapse” states to a rather intuitive physical cause: the fact that the Dirac Hamiltonian ˆD is not bounded from below, which ostensibly causes standard variational procedures to “fall” into the negative-energy Dirac sea[11–13]. Consequently, conventional reme-dies, such as the widely adopted kinetic balance condition, were developed primarily to enforce the correct non-relativistic Schrödinger limit and artificially stave off this collapse. However, this pragmatic physical intuition fundamentally obscures the rigorous mathematical root of the instability. The true mechanism of variational collapse is not merely a consequence of lacking a lower bound; rather, its origins are strictly topological [14]. Because the essential spectrum of ˆD is fundamentally non-connected, 17 (−∞ , −c2] ∪ [c2, ∞), the physical bound-state mass gap (−c2, c 2) is left completely topologically exposed. In standard finite basis representations, it is precisely this structural vulnerability that allows spurious eigenvalues to freely invade the gap and severely contaminate the physical spectrum. This topological perspective elegantly explains why purely confining potentials naturally suppress spectral pollution: they push the essential spectrum to infinity, yielding a purely discrete spectrum devoid of a central gap. In contrast, realistic molecular potentials that vanish at infinity inevitably resurrect the non-connected Dirac sea, dictating that numerical stability must rely on a mathematically rigorous discretization scheme rather than empirical physical constraints. A critical source of this spectral contamination is the imbalance in the degrees of freedom between the upper spinor components F with N basis and the lower spinor components G with K basis. Our numerical investigations reveal a highly directional pollution mechanism governed by this mismatch. When the upper DOF exceeds the lower, N > K , spurious solutions predominantly descend from the positive continuum, clustering densely within the upper region of the mass gap and directly obscuring the physically relevant bound states, as evidenced by the highlighted values in Table 4. Conversely, an excess of lower-component DOF, K > N , forcefully drives spurious states upward toward the positive continuum. Consequently, when strictly targeting low-lying bound states, a K > N configuration is structurally permissible, as the pollution is repelled away from the physical ground state. Furthermore, in the perfectly balanced N = K
+
+configuration, no spurious states are observed across our tested potentials. This is a direct testament to the extreme efficiency of ALLSM, in which the required basis size is simply too compact to provide the topological flexibility necessary for variational collapse to manifest. Table 4: Spectral pollution under degree of freedom mismatch, where N = 200 and varying K. Bold values indicate spurious states. Note that as K approaches N , the spurious states are progressively repelled from the physically relevant bound states, until they completely vanish in the perfectly balanced N = K
+
+configuration.                                                                                             
+
+> K= 100 K= 120 K= 140 K= 160 K= 180 K= 200
+> (N= 200 )(N= 200 )(N= 200 )(N= 200 )(N= 200 )(N= 200 )
+> n= 1 -2.65078 -1.55781 -0.82504 −0.500 01 −0.500 01 -0.50001
+> n= 2 -1.52727 -0.93142 -0.50719 -0.36255 −0.125 00 −0.125 00
+> n= 3 -0.55156 −0.500 01 −0.500 01 -0.22105 -0.10292 −0.055 56
+> n= 4 −0.500 01 -0.33104 -0.17879 −0.125 00 −0.055 56 −0.031 25
+> n= 5 -0.41387 -0.24924 -0.13329 -0.07899 -0.05452 −0.020 00
+> n= 6 -0.23199 -0.13968 −0.125 00 -0.05678 −0.031 25 −0.013 89
+> n= 7 -0.18866 −0.125 00 -0.07534 −0.055 56 -0.02094 −0.010 20
+> n= 8 -0.12690 -0.11301 -0.06010 -0.03290 −0.020 00 −0.007 81
+> n= 9 −0.125 00 -0.07637 −0.055 56 −0.031 25 −0.013 89 −0.006 17
+> n= 10 -0.10741 -0.06421 -0.04108 -0.02555 -0.01389 −0.005 00
+
+Ultimately, we must demystify the absolute stability guaranteed by operator transformation techniques, such as IDOM utilized in our computational kernel. A pervasive misconception in the chemical physics liter-ature asserts that such methods prevent collapse merely by bounding the energy from below or by recovering the correct non-relativistic Schrödinger limit. This is fundamentally incomplete. The true mechanism of spectral stabilization is distinctly topological, governed by the Levitin-Shargorodsky theorem. This theorem establishes that spectral pollution in Galerkin methods can manifest anywhere within the convex hull of the essential spectrum σess ( ˆD). Because the original Dirac operator features essential spectra on both sides of the real axis, its convex hull spans the entire real line, rendering the entire mass gap a fertile breeding ground for spurious roots. The profound effectiveness of the squared Dirac operator method (SDOM) and IDOM lies entirely in their ability to radically reconfigure this essential topology. SDOM maps the dual spectra onto a single semi-infinite interval [c4, ∞), whereas IDOM compresses the unbounded spectra into a compact, connected interval [−1/c 2, 1/c 2], see Figure 12. Both transformations systematically collapse the interior of the essential spectrum’s convex hull. By mathematically destroying the topological gap required for pollution to form, these operator reformulations eradicate variational collapse at its most fundamental mathematical root, guaranteeing a pristine physical spectrum regardless of the specific upper-lower DOF balance. 18 Original Dirac Operator ˆD
+
+E  
+
+> σess σess
+> −c2c2
+> Physical Spurious
+
+Convex Hull spans R
+
+Mass Gap is Topologically Polluted  
+
+> IDOM: ˆD−1
+
+λ  
+
+> σess
+> −1/c 21/c 2
+> Compact Convex Hull
+> Bound States Isolated
+> SDOM: ˆD2
+
+λ
+
+> σess
+> c4
+> Semi-infinite Hull
+> Bound States Isolated
+
+E 7 → 1/E E 7 → E2
+
+Figure 12: Topological stabilization mechanism of the Dirac spectrum via operator reformulations. Top :The original Dirac operator ˆD features a convex hull spanning the entire real line, creating a "breeding ground" for spurious states within the mass gap. Bottom : IDOM and SDOM reconfigure the essential spectrum σess into compact or semi-infinite intervals. By systematically collapsing the convex hull of the essential spectrum, these transformations destroy the topological conditions required for spectral pollution. 
+
+# 5.3 Comparison of the universality of IDOM and SDOM 
+
+To empirically demonstrate the absolute necessity of IDOM over alternative stabilization strategies, we eval-uate the relativistic harmonic oscillator, V (r) = 12 r2. While both IDOM and SDOM successfully bound the spectrum from below and suppress traditional variational collapse, bounding the energy is a necessary but profoundly insufficient condition for a robust solver. SDOM algebraically eliminates the negative contin-uum by mapping all eigenvalues to the positive real axis. However, this non-injective mapping triggers a catastrophic new challenge, which is spectral folding .Because SDOM maps both the physical positive-energy states +E1 and the unphysical negative-energy states −E2 to positive squared values E21 and E22 , the true physical bound states become densely interleaved with folded spurious states from the negative Dirac sea. As demonstrated in Table 5, while SDOM does formally yield the correct roots, they are inextricably buried within a dense forest of folded spectral pollu-tion. Discriminating the true physical states from this contaminated spectrum requires manual, a posteriori 
+
+sorting, rendering automated algorithmic detection virtually impossible. In stark contrast, IDOM elegantly bypasses this folding catastrophe. By mapping the original eigenvalues 
+
+E to 1/E , IDOM not only bounds the spectrum within a compact interval but topologically isolates the target ground state as the absolute maximum positive eigenvalue. The negative energy sea is cleanly segregated to the negative axis. Consequently, IDOM directly yields a pristine, reliably ordered spectrum without any spurious interleaving. Having established IDOM as the superior and mathematically unambiguous computational kernel, we deploy the full ALLSM framework to compute a comprehensive set of converged eigenvalues for the relativistic harmonic oscillator across various κ values. It is worth highlighting the generalization performance of ALLSM in handling diverse physical systems. In this potential, harmonic oscillator potential, its wavefunctions do not have non-polynomial behavior, ALLSM yields exceptionally high-precision approximations. Because simple analytical solutions for this relativistic confining model do not exist, our ultra-high-precision results, summarized in Table 6. These pristine data sets stand as a rigorous, pollution-free numerical standard for validating future relativistic electronic structure methodologies. 
+
+# 6 Conclusion 
+
+In this work, we have developed and rigorously validated a comprehensive, high-order adaptive spectral-element framework tailored for relativistic radial quantum eigenvalue problems. By seamlessly integrating 19 Table 5: Comparison of eigenvalues for the κ = −1 state in a Harmonic Oscillator potential. Bold values denote spurious states, while IDOM provides a clean, reliable benchmark for the physical states.                                                         
+
+> IDOM SDOM( N= 30 )SDOM( N= 50 )SDOM( N= 70 )
+> n= 0 2.49997504 0.06352360 1.01395279 1.34052631
+> n= 1 4.49983527 2.499 988 38 2.499 975 03 2.499 975 03
+> n= 2 6.49961565 3.26825736 2.82962861 3.01607031
+> n= 3 8.49931620 4.500 452 82 4.499 835 27 4.499 835 27
+> n= 4 10.49893692 6.51805642 4.85334683 4.85279944
+> n= 5 12.49847782 8.572 155 40 6.499 615 65 6.499 615 65
+> n= 6 14.49793893 8.58823544 7.12972519 6.87374186
+> n= 7 16.49732025 10.97222189 8.499 316 19 8.499 316 19
+> n= 8 18.49662179 14.19012901 9.68195672 9.08827958
+> n= 9 20.49584357 17.41947110 10 .498 936 91 10 .498 936 91
+
+Table 6: Example: Harmonic Oscillator Potential. The eigenvalue computing with different κ. a
+
+diagbox nκ κ = −1 κ = −2 κ = 1 κ = −3 κ = 2 κ = −4 κ = 3 
+
+n = 1 1.4999950 
+
+n = 2 3.4998952 2.4999750 2.4999351 
+
+n = 3 5.4997155 4.4998353 4.4997953 3.4999418 3.4998752 
+
+n = 4 7.4994559 6.4996157 6.4995757 5.4997621 5.4996955 4.4998952 4.4998020 
+
+n = 5 9.4991166 8.4993162 8.4992763 7.4995025 7.4994360 6.4996755 6.4995824 
+
+n = 6 11.498697 10.498937 10.498897 9.4991631 9.4990966 8.4993761 8.4992829 
+
+n = 7 13.498198 12.498478 12.498438 11.498744 11.498677 10.498997 10.498904  
+
+> aThe results are cross-validated against high-DOF internal references and established high-precision benchmarks [5]
+
+IDOM to structurally guarantee spectral stability, our approach systematically overcomes the two most formidable approximation bottlenecks in relativistic electronic structure calculations: the non-polynomial core singularities and the multi-scale, state-dependent asymptotic decay of wavefunctions. To intrinsically resolve the pathological near-nuclear rs singularities characteristic of heavy-element Coulomb-like potentials, we deployed GLOFs. Crucially, this specialized basis operates as a robust “black-box” solver, exponentially resolving complex fractional power-law expansions without requiring any a priori 
+
+analytical extraction or specification of the singularity exponents. Concurrently, to capture the diffuse and highly oscillatory far-field tails, we introduced an Adaptive Laguerre Method framework. Driven by a dy-namic, frequency-based indicator, this mechanism autonomously optimizes the characteristic length scale of the basis to perfectly envelop the physical support of the target state. This dual-adaptive spatial strat-egy completely eradicates the need for heuristic domain truncation and minimizes the required degrees of freedom, dramatically reducing computational overhead while preserving strict exponential convergence. It should be emphasized that our framework exhibits high robust performance across both polynomial and non-polynomial wavefunction behaviors. Beyond high-fidelity algorithmic development, this study provides profound theoretical insights into the fundamental mechanics of spectral pollution in Dirac discretizations. We demonstrated that artificial finite-interval truncation and upper-lower spinor degree of freedom imbalances are primary vectors for variational collapse. Furthermore, we mathematically justified the absolute stabilizing supremacy of IDOM over conven-tional regularization schemes, IDOM topologically segregates the spectrum, ensuring a pristine, automated, and pollution-free eigenvalue resolution. Extensive numerical benchmarking across a broad spectrum of physically relevant models, including bare Coulomb, finite-nucleus Gaussian, screened Yukawa, and pure-vector Morse potentials, confirms the absolute robustness of the proposed framework. Consistently achieving relative accuracies on the order of near 10 −10 
+
+across diverse relativistic regimes, this methodology establishes a stringent new numerical standard for atomic structure calculations. Ultimately, this work delivers a highly reliable, mathematically rigorous computational engine capable of generating ultra-precise reference data, laying a formidable mathematical 20 foundation for the next generation of large-scale relativistic quantum chemistry simulations. Looking forward, the mathematical strategies established in this work open several highly promising avenues for advanced quantum chemical methodology. First, the remarkable capability of GLOFs to act as a universal, “black-box” solver for unknown or fractional singularities extends far beyond the Radial Dirac Equation. This leads to a compelling dual perspective on the nature of singularities: while a rigorous analyt-ical determination of the singularity index s remains an intellectually stimulating mathematical challenge for future exploration, the present ALLSM effectively renders such prior knowledge optional. By demonstrating robust convergence even in the absence of an explicit s, our approach proves that the “unknown” is no longer a barrier to precision. Consequently, this positions GLOFs as a potent tool for other complex domains plagued by analytical singularities, such as addressing the electron-nucleus cusp conditions in explicitly cor-related methods. Furthermore, the frequency-based adaptive scaling mechanism introduces a transformative paradigm for conventional molecular basis set construction. This intrinsic reduction in degrees of freedom will significantly alleviate the computational bottleneck of multi-center integral evaluations, offering a highly efficient idea for tackling high-dimensional, many-body relativistic electronic structure problems. 
+
+# 7 Acknowledgments 
+
+The authors thank the National Natural Science Foundation of China (Grant Nos. 12471341, 12325112, and 12288101) for financial support. The authors thank the Laboratory of Mathematics and Applied Mathematics (LMAM) and the High-performance Computing Platform of Peking University for providing a stimulating research environment and office space to Sheng Chen and Shuai Wu during their visit. 
+
+# References 
+
+(1) Wilson, B.; Sonnad, V.; Sterne, P.; Isaacs, W. Purgatorio—a new implementation of the Inferno algorithm. Journal of Quantitative Spectroscopy and Radiative Transfer 2006 , 99 , 658–679. (2) Hohenberg, P.; Kohn, W. Inhomogeneous electron gas. Physical review 1964 , 136 , B864. (3) Jönsson, P.; He, X.; Fischer, C. F.; Grant, I. The grasp2K relativistic atomic structure package. 
+
+Computer Physics Communications 2007 , 177 , 597–622. (4) Salvat, F.; Mayol, R. Accurate numerical solution of the Schrödinger and Dirac wave equations for central fields. Computer physics communications 1991 , 62 , 65–79. (5) Čertík, O.; Pask, J. E.; Vackář, J. dftatom: A robust and general Schrödinger and Dirac solver for atomic structure calculations. Computer Physics Communications 2013 , 184 , 1777–1791. (6) Press, W. H.; Teukolsky, S. A.; Vetterling, W. T.; Flannery, B. P. Numerical recipes 3rd edition. 
+
+Cambridge: New York 2007 .(7) Pask, J.; Sterne, P. Finite element methods in ab initio electronic structure calculations. Modelling and Simulation in Materials Science and Engineering 2005 , 13 , R71. (8) Grant, I. B-spline methods for radial Dirac equations. Journal of Physics B: Atomic, Molecular and Optical Physics 2009 , 42 , 055002. (9) Fischer, C. F.; Zatsarinny, O. A B-spline Galerkin method for the Dirac equation. Computer Physics Communications 2009 , 180 , 879–886. (10) Čertík, O.; Pask, J. E.; Fernando, I.; Goswami, R.; Sukumar, N.; Collins, L. A.; Manzini, G.; Vackář, J. High-order finite element method for atomic structure calculations. Computer Physics Communi-cations 2024 , 297 , 109051. (11) Schwarz, W.; Wallmeier, H. Mol. Phys. 1982 , 46 , 1045–1061. (12) Mark, F.; Schwarz, W. New Representation of the α→· p→ Operator in the Solution of Dirac-Type Equations by the Linear-Expansion Method. Physical Review Letters 1982 , 48 , 673. (13) Kutzelnigg, W. Basis set expansion of the Dirac operator without variational collapse. International Journal of Quantum Chemistry 1984 , 25 , 107–129. 21 (14) Lewin, M.; Séré, É. Spectral pollution and how to avoid it. Proceedings of the London mathematical society 2010 , 100 , 864–900. (15) Johnson, W. R.; Blundell, S. A.; Sapirstein, J. Finite basis sets for the Dirac equation constructed from B splines. Physical Review A 1988 , 37 , 307. (16) Almanasreh, H.; Salomonson, S.; Svanstedt, N. Stabilized finite element method for the radial Dirac equation. Journal of Computational Physics 2013 , 236 , 426–442. (17) Ainsworth, M.; Senior, B. Aspects of an adaptive hp-finite element method: Adaptive strategy, con-forming approximation and efficient solvers. Computer Methods in Applied Mechanics and Engineering 
+
+1997 , 150 , 65–87. (18) Hill, R. N.; Krauthauser, C. A solution to the problem of variational collapse for the one-particle Dirac equation. Physical review letters 1994 , 72 , 2151. (19) Xia, M.; Shao, S.; Chou, T. Efficient scaling and moving techniques for spectral methods in unbounded domains. SIAM Journal on Scientific Computing 2021 , 43 , A3244–A3268. (20) Chen, S.; Shen, J. Log orthogonal functions: approximation properties and applications. IMA Journal of Numerical Analysis 2022 , 42 , 712–743. (21) Li, Z.; Shao, S.; Liu, W. Relativistic explicit correlation: Coalescence conditions and practical sugges-tions. The Journal of Chemical Physics 2012 , 136 .(22) Zabloudil, J.; Hammerling, R.; Weinberger, P.; Szunyogh, L., Electron Scattering in Solid Matter: a theoretical and computational treatise ; Springer: 2005. (23) Andrae, D. Finite nuclear charge density distributions in electronic structure calculations for atoms and molecules. Physics Reports 2000 , 336 , 413–525. (24) Roy, A. K. Accurate ro-vibrational spectroscopy of diatomic molecules in a Morse oscillator potential. 
+
+Results in physics 2013 , 3, 103–108. (25) Chen, S.; Shen, J.; Zhang, Z.; Zhou, Z. A spectrally accurate approximation to subdiffusion equations using the log orthogonal functions. SIAM Journal on Scientific Computing 2020 , 42 , A849–A877. (26) Chen, S.; Sun, W.; Wu, S. Efficient Spectral-Element Methods in Polar Coordinates for Complex Geometries with Piecewise-Smooth Boundaries. SIAM Journal on Scientific Computing 2025 , 47 ,A1907–A1936. (27) Hou, T. Y.; Li, R. Computing nearly singular solutions using pseudo-spectral methods. Journal of Computational Physics 2007 , 226 , 379–397. (28) Shen, J.; Wang, L.-L. Some recent advances on spectral methods for unbounded domains. Communi-cations in computational physics 2009 , 5, 195–241. (29) Baye, D.; Filippin, L.; Godefroid, M. Accurate solution of the Dirac equation on Lagrange meshes. 
+
+Physical Review E 2014 , 89 , 043305. (30) Krauthauser, C.; Hill, R. N. Basis-set methods for the Dirac equation. Canadian Journal of Physics 
+
+2002 , 80 , 181–265. (31) Korsch, H.; Laurent, H.; Mohlenkamp, R. Milne’s differential equation and numerical solutions of the Schrodinger equation. II. Complex energy resonance states. Journal of Physics B: Atomic and Molecular Physics 1982 , 15 , 1. (32) Hamzavi, M.; Movahedi, M.; Thylwe, K.-E.; Rajabi, A. Approximate analytical solution of the Yukawa potential with arbitrary angular momenta. Chinese Physics Letters 2012 , 29 , 080302. (33) Schwarz, W.; Wechsel-Trakowski, E. The two problems connected with Dirac-Breit-Roothaan calcu-lations. Chemical Physics Letters 1982 , 85 , 94–97. 22
