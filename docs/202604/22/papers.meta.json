@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-22",
+  "date": "2026-04-22",
+  "generated_at": "2026-04-22T19:58:04",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/22/2604.18622v1-mdagent-a-multi-agent-framework-for-end-to-end-molecular-dynamics-research",
+      "section": "quick",
+      "title_en": "MDAgent: A Multi-Agent Framework for End-to-End Molecular Dynamics Research",
+      "authors": "Zhenyu Ma, Chunyi Yang, Yuyang Song, Jingyi Zhu, Letian Yang, Limei Xu, Min Xiao, Xukai Jiang",
+      "date": "2026-04-18",
+      "pdf": "https://arxiv.org/pdf/2604.18622v1",
+      "score": "7.0",
+      "evidence": "用于端到端分子动力学研究和机理解析的多智能体框架",
+      "tldr": "MDAgent是一个面向端到端分子动力学（MD）研究的多智能体框架，旨在解决将实验问题转化为复杂计算工作流的瓶颈。该系统集成了问题理解、策略设计、模拟执行、轨迹分析及机制解释等功能，并引入基于技能和记忆的案例学习机制以实现跨任务知识迁移。在膜蛋白模拟等复杂任务中，MDAgent展现了卓越的自动化研究能力、策略适应性和结果解释力。",
+      "tags": "query:qmmm",
+      "abstract_en": "Molecular dynamics (MD) simulation is a powerful tool for studying biomolecular structural changes, molecular recognition, transmembrane transport, and functional mechanisms. However, its practical bottleneck lies not only in software operation or parameter setup, but in translating experimental questions into executable, interpretable, and reviewable computational workflows. Here, we present MDAgent, a multi-agent system for end-to-end molecular dynamics research. The system integrates problem understanding, literature-guided strategy design, simulation execution, trajectory analysis, mechanistic interpretation, and quality supervision into a unified workflow, enabling agents not only to run simulations but also to generate research-oriented computational plans and analytical reports. We further introduce a case-based learning mechanism based on Skill and Memory, which stores reusable knowledge from prior tasks, including parameter choices, operational rules, analytical logic, and problem-solving pathways, thereby supporting cross-task transfer without retraining the underlying model. Across multiple representative molecular simulation tasks, MDAgent achieved stable end-to-end performance with improved strategic adaptability, interpretability, and generalization. In an independent complex task involving conformational transitions of TMEM16F and XKR8, the system successfully completed system design, simulation, and mechanistic analysis for large membrane proteins. These results show that combining multi-agent collaboration with case-based learning can transform MD agents from workflow automation tools into scientific question-oriented computational research systems, providing a scalable framework for AI-driven automated research.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.19319v1-an-oracle-free-quantum-algorithm-for-nonadiabatic-quantum-molecular-dynamics",
+      "section": "quick",
+      "title_en": "An Oracle-Free Quantum Algorithm for Nonadiabatic Quantum Molecular Dynamics",
+      "authors": "Joshua Courtney",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19319v1",
+      "score": "7.0",
+      "evidence": "非绝热分子动力学的量子算法",
+      "tldr": "该研究针对非绝热量子分子动力学中哈密顿量难以通过传统Oracle模型处理的问题，提出了一种无需Oracle的量子算法。通过将透热哈密顿算符直接应用于计算基底，并采用一阶量子化分裂算符传播子，实现了对多模式、多通道动力学的有效模拟。该方法在容错量子计算尺度上展现了电路深度和T门数量的优势，并成功应用于吸收光谱、散射截面及量子疤痕等多种动态观测量的验证，扩展了量子动力学模拟的应用范围。",
+      "tags": "query:qmmm",
+      "abstract_en": "Quantum computation is an attractive front for many problems that are intractable for computers today. One such problem is nonadiabatic quantum molecular dynamics, where quantized internal states coupling to parameterized modes result in a Hamiltonian resistant to oracle-based models and spectral decomposition. This dissertation applies diabatic Hamiltonian operators directly to the computational basis as first-quantized split-operator propagators, validated with dynamic observables including absorption and recurrence spectra, scattering cross-sections, population dynamics, and quantum scars. Circuits are derived and specified, with focused circuit optimization in multi-mode and multi-channel extensions, including multivariate potential energy terms and graph theoretic optimization from molecular symmetry. Resource estimation shows circuit depth advantage against QROM-loading architectures on a fault-tolerant scale, and a quantitative comparison against quantum signal processing variants confirms that a Trotter-based architecture retains a scalable T-gate advantage. Expanding beyond electronic states demonstrates that duality between finite basis and discrete variable representations permits congruent structural decompositions into quantum circuits, expanding the use of multi-channel dynamics far beyond chemistry.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.12749v2-perspective-on-a-challenge-predicting-the-photochemistry-of-cyclobutanone",
+      "section": "quick",
+      "title_en": "Perspective on a challenge: predicting the photochemistry of cyclobutanone",
+      "authors": "Jiří Janoš, Nanna Holmgaard List, Andrew J. Orr-Ewing, Jiří Suchan, Mario Barbatti, Olivia Bennett, Marcus Brady, Javier Carmona-García, Rachel Crespo-Otero, Julien Eng, O. Jonathan Fajen, Marco Garavelli, Sandra Gómez, Alice E. Green, Federico J. Hernández, Daniel Hollas, Lewis Hutton, Lea M. Ibele, Adam Kirrander, Zhenggang Lan, Yorick Lassmann, Joseph E. Lawrence, Benjamin G. Levine, Dmitry V. Makhov, Jonathan R. Mannouch, Xincheng Miao, Roland Mitrić, Shane M. Parker, Thomas J. Penfold, Jiawei Peng, Jeremy O. Richardson, Dmitrii Shalashilin, Petr Slavíček, K. Eryn Spinlove, Patricia Vindel-Zandbergen, Federica Agostini, Sara Bonella, Todd J. Martínez, Graham A. Worth, Basile F. E. Curchod",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12749v2",
+      "score": "6.0",
+      "evidence": "预测光化学和非绝热分子动力学",
+      "tldr": "本研究总结了2023年发起的一项计算化学挑战赛，旨在预测环丁酮在200nm光激发下的光化学过程及超快电子衍射（MeV-UED）信号。来自全球的70多位研究者提交了15种预测方案，涵盖了多种电子结构和非绝热分子动力学方法。通过与SLAC和上海交大的实验数据对比，该挑战评估了当前理论模拟的预测能力，为非绝热动力学领域提供了重要的基准参考和实践策略分享。",
+      "tags": "query:qmmm",
+      "abstract_en": "This Perspective is part of a Special Topic that explored the maturity of nonadiabatic molecular dynamics for predicting photochemical processes. In 2023, a prediction challenge was issued to the community of computational photochemists to simulate the photochemistry of cyclobutanone, photoexcited at 200 nm, and the resulting time-resolved MeV-UED signal. The challenge attracted 15 theoretical predictions from more than 70 researchers, employing a wide range of strategies for electronic structure and nonadiabatic molecular dynamics to predict the time-resolved MeV-UED signal before the experiment had been conducted at SLAC (Stanford, USA). The MeV-UED instrument at Shanghai Jiao Tong University was also used to provide a second independent time-resolved MeV-UED signal for the photochemistry of cyclobutanone.   This Perspective discusses the various approaches and strategies used by the participants to predict the photochemistry of cyclobutanone. This work also summarizes the strengths and weaknesses of various methods used for photoexcitation, electronic structure, nonadiabatic dynamics, and calculation of observables, as agreed by the participants during a CECAM workshop dedicated to the results of the challenge and organized in Lausanne in April 2025. This Perspective also collects all the predicted time-resolved MeV-UED signals into a single figure, together with the experimental signal. This challenge (i) demonstrated the qualitative predictive power of nonadiabatic molecular dynamics and (ii) underscore the impact of electronic-structure theory on the outcome of the excited-state dynamics and the need for its careful benchmarking. This effort allowed the community to share practical strategies to perform nonadiabatic dynamics (discussed in the present Perspective) and constitutes a 'calibration' exercise for computational photochemistry.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.17925v1-state-averaged-quantum-algorithms-for-multiconfigurational-surface-chemistry-a-benchmark-on-rhtio2110",
+      "section": "quick",
+      "title_en": "State-Averaged Quantum Algorithms for Multiconfigurational Surface Chemistry: A Benchmark on Rh@TiO2(110)",
+      "authors": "Ernst Dennis Lægteskov Binau Larsson, Erik Kjellgren, Peter Reinholdt, Jacob Kongsted",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.17925v1",
+      "score": "6.0",
+      "evidence": "用于表面催化过程和电子态的量子算法",
+      "tldr": "本研究针对表面催化中强关联和多电子态建模的挑战，在Rh掺杂TiO2(110)吸附NO的复杂体系上，评估了态平均量子算法（SA-fUCCSD和SA-ADAPT）的性能。研究发现，相比于参数量大且敏感的SA-fUCCSD，SA-ADAPT能以更少的算子达到接近CASSCF的精度，且改进的算子选择方案显著提升了收敛速度，证明了自适应量子算法在处理复杂多态化学问题中的潜力。",
+      "tags": "query:qmmm",
+      "abstract_en": "Accurate modeling of surface catalytic processes often requires methods capable of describing strong correlation, charge transfer, and multiple closely lying electronic states. While density functional theory remains widely used, its limitations for localized electronic states motivate the use of wavefunction-based approaches and, more recently, quantum computing algorithms. However, the performance of quantum ansätze in chemically motivated, multistate settings remains largely unexplored.   Here, we benchmark state-averaged factorized unitary coupled cluster with singles and doubles (SA-fUCCSD) and the adaptive, problem-tailored ansatz (SA-ADAPT) using an embedded cluster model of NO adsorption on Rh-doped TiO2(110). The system exhibits pronounced multiconfigurational character and multiple state crossings, providing a stringent test. State-averaged CASSCF serves as a reference, and the quantum ansätze are evaluated as solvers for the corresponding CASCI problem within a fixed orbital basis.   We find that SA-fUCCSD improves with increasing circuit depth but requires many parameters and shows sensitivity to initialization. In contrast, SA-ADAPT achieves near-CASSCF accuracy with significantly fewer operators. A modified operator selection scheme, incorporating multiple operators per iteration, substantially accelerates convergence.   Our results demonstrate the efficiency of adaptive ansätze for multistate problems and establish a controlled benchmark for quantum algorithms in chemically motivated systems beyond minimal models.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.19470v1-advancing-practical-quantum-embedding-simulations-via-operator-commutativity-based-state-preparation-for-complex-chemical-systems",
+      "section": "quick",
+      "title_en": "Advancing Practical Quantum Embedding Simulations via Operator Commutativity Based State Preparation for Complex Chemical Systems",
+      "authors": "Dibyendu Mondal, Ashish Kumar Patra, Rahul Maitra",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19470v1",
+      "score": "6.0",
+      "evidence": "复杂化学系统的量子嵌入模拟",
+      "tldr": "本研究针对NISQ硬件模拟大型复杂化学系统的局限性，提出了一种基于密度矩阵嵌入理论（DMET）的动态拟设构建策略。该方法利用算符对易性和能量驱动筛选，在子系统中动态构建波函数并进行自一致优化。在高达144个量子比特的系统模拟中，该方法仅需同时使用20个量子比特，显著降低了量子门需求，并提升了强关联系统的模拟精度。",
+      "tags": "query:qmmm",
+      "abstract_en": "Determining the exponentially scaled ground state wavefunction and the associated molecular properties remains one of the central challenges in quantum chemistry. Hybrid quantum-classical algorithms implemented on quantum computers offer a promising route toward addressing this problem. However, despite several successful demonstrations on small molecular systems, accurate simulations of large and chemically realistic molecules remain difficult due to the limited capability of noisy intermediate scale quantum (NISQ) hardware. To bypass the limitations of NISQ devices, while simultaneously retaining the accuracy of the ground state energy estimations, we propose a dynamic ansatz construction strategy based on operator commutativity and energy driven screening within density matrix embedding theory (DMET) framework. The partitioning of the full system allows us to dynamically construct the ansatz over individual embedded subsystems, allowing each embedding problem be solved individually to a desired accuracy. The embedding Hamiltonian is updated in a self-consistent manner with dynamically formulated wavefunction, and their coupled optimization leads to accurate and efficient description of the overall system. To assess the performance of this approach, we apply it to several molecular systems and chemical processes with up to 144 qubits. These simulations require at most 20 qubits at a time and demonstrate improved accuracy and significantly reduced quantum gate requirements compared with conventional ansatze. We further investigate the impact of various fragmentation strategies and demonstrate the adaptability of our approach at each step of the DMET self-consistency cycle that leads to significantly improved accuracy for strongly correlated system.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

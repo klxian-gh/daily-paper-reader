@@ -6,47 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-21
-- 运行时间：2026-04-21 20:38:46 UTC
+- 最新运行日期：2026-04-22
+- 运行时间：2026-04-22 19:57:56 UTC
 - 运行状态：成功
-- 本次总论文数：8
+- 本次总论文数：5
 - 精读区：0
-- 速读区：8
+- 速读区：5
 
 ### 今日简报（AI）
-今日聚焦原子模拟的效率飞跃，涵盖轻量化机器学习势函数与 GPU 加速技术。
-知识蒸馏助力打造轻量化通用势函数，而 Abinit 的 GPU 加速显著提升了平面波密度泛函理论的计算性能。
-建议关注这些高性能计算工具如何降低大规模原子模拟的门槛，提升科研产出效率。
-- 详情：[/202604/21/README](/202604/21/README)
+今日聚焦分子动力学前沿，探索从多智能体自动化框架到量子算法的跨界融合。
+重点关注 MDAgent 实现的端到端分子模拟自动化，以及无需 Oracle 的量子算法在非绝热动力学中的新突破。
+建议关注 AI Agent 如何简化复杂科研流程，并留意量子计算在化学预测中的落地潜力。
+- 详情：[/202604/22/README](/202604/22/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [A Lightweight Universal Machine-Learning Interatomic Potential via Knowledge Distillation for Scalable Atomistic Simulations](/202604/21/2604.10887v1-a-lightweight-universal-machine-learning-interatomic-potential-via-knowledge-distillation-for-scalable-atomistic-simulations)  
+1. [MDAgent: A Multi-Agent Framework for End-to-End Molecular Dynamics Research](/202604/22/2604.18622v1-mdagent-a-multi-agent-framework-for-end-to-end-molecular-dynamics-research)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：用于端到端分子动力学研究和机理解析的多智能体框架
+2. [An Oracle-Free Quantum Algorithm for Nonadiabatic Quantum Molecular Dynamics](/202604/22/2604.19319v1-an-oracle-free-quantum-algorithm-for-nonadiabatic-quantum-molecular-dynamics)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：非绝热分子动力学的量子算法
+3. [Perspective on a challenge: predicting the photochemistry of cyclobutanone](/202604/22/2604.12749v2-perspective-on-a-challenge-predicting-the-photochemistry-of-cyclobutanone)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于原子模拟的机器学习种间势
-2. [An Adaptive Log-Laguerre Spectral Method for the Radial Dirac Equation: Resolving Asymptotic Decay and Core Singularities in Atomic Calculations](/202604/21/2604.11063v1-an-adaptive-log-laguerre-spectral-method-for-the-radial-dirac-equation-resolving-asymptotic-decay-and-core-singularities-in-atomic-calculations)  
+   evidence：预测光化学和非绝热分子动力学
+4. [State-Averaged Quantum Algorithms for Multiconfigurational Surface Chemistry: A Benchmark on Rh@TiO2(110)](/202604/22/2604.17925v1-state-averaged-quantum-algorithms-for-multiconfigurational-surface-chemistry-a-benchmark-on-rhtio2110)  
    标签：评分：6.0/10、query:qmmm
-   evidence：量子化学与电子结构方法
-3. [GPU acceleration of plane-wave density functional theory calculations in Abinit](/202604/21/2604.11139v1-gpu-acceleration-of-plane-wave-density-functional-theory-calculations-in-abinit)  
+   evidence：用于表面催化过程和电子态的量子算法
+5. [Advancing Practical Quantum Embedding Simulations via Operator Commutativity Based State Preparation for Complex Chemical Systems](/202604/22/2604.19470v1-advancing-practical-quantum-embedding-simulations-via-operator-commutativity-based-state-preparation-for-complex-chemical-systems)  
    标签：评分：6.0/10、query:qmmm
-   evidence：平面波密度泛函理论的GPU加速
-4. [Exact tunneling splittings of rotationally excited states from symmetrized path-integral molecular dynamics](/202604/21/2604.12638v1-exact-tunneling-splittings-of-rotationally-excited-states-from-symmetrized-path-integral-molecular-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：用于隧道分裂计算的路径积分分子动力学
-5. [Critical point search and linear response theory for computing electronic excitation energies of molecular systems. Part II. CASSCF](/202604/21/2604.13753v1-critical-point-search-and-linear-response-theory-for-computing-electronic-excitation-energies-of-molecular-systems-part-ii-casscf)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：分子系统的量子化学研究
-6. [Breaking the Training Barrier of Billion-Parameter Universal Machine Learning Interatomic Potentials](/202604/21/2604.15821v1-breaking-the-training-barrier-of-billion-parameter-universal-machine-learning-interatomic-potentials)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：使用机器学习势能面进行量子精度的物理模拟
-7. [Correlation-Converged Virtual Orbitals for Accurate and Efficient Quantum Molecular Simulations](/202604/21/2604.16928v1-correlation-converged-virtual-orbitals-for-accurate-and-efficient-quantum-molecular-simulations)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：精确高效的量子分子模拟
-8. [Predicting Solvation Free Energies of Molecules and Ions via First-Principles and Machine-Learning Molecular Dynamics](/202604/21/2604.17076v1-predicting-solvation-free-energies-of-molecules-and-ions-via-first-principles-and-machine-learning-molecular-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：第一性原理与机器学习分子动力学
+   evidence：复杂化学系统的量子嵌入模拟
 
 
 <div class="dpr-home-promo-card">

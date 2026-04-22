@@ -1,0 +1,242 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-22T19:57:21.782846+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.18622v1",
+      "title": "MDAgent: A Multi-Agent Framework for End-to-End Molecular Dynamics Research",
+      "abstract": "Molecular dynamics (MD) simulation is a powerful tool for studying biomolecular structural changes, molecular recognition, transmembrane transport, and functional mechanisms. However, its practical bottleneck lies not only in software operation or parameter setup, but in translating experimental questions into executable, interpretable, and reviewable computational workflows. Here, we present MDAgent, a multi-agent system for end-to-end molecular dynamics research. The system integrates problem understanding, literature-guided strategy design, simulation execution, trajectory analysis, mechanistic interpretation, and quality supervision into a unified workflow, enabling agents not only to run simulations but also to generate research-oriented computational plans and analytical reports. We further introduce a case-based learning mechanism based on Skill and Memory, which stores reusable knowledge from prior tasks, including parameter choices, operational rules, analytical logic, and problem-solving pathways, thereby supporting cross-task transfer without retraining the underlying model. Across multiple representative molecular simulation tasks, MDAgent achieved stable end-to-end performance with improved strategic adaptability, interpretability, and generalization. In an independent complex task involving conformational transitions of TMEM16F and XKR8, the system successfully completed system design, simulation, and mechanistic analysis for large membrane proteins. These results show that combining multi-agent collaboration with case-based learning can transform MD agents from workflow automation tools into scientific question-oriented computational research systems, providing a scalable framework for AI-driven automated research.",
+      "authors": [
+        "Zhenyu Ma",
+        "Chunyi Yang",
+        "Yuyang Song",
+        "Jingyi Zhu",
+        "Letian Yang",
+        "Limei Xu",
+        "Min Xiao",
+        "Xukai Jiang"
+      ],
+      "primary_category": "q-bio.QM",
+      "categories": [
+        "q-bio.QM"
+      ],
+      "published": "2026-04-18T00:28:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.18622v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multi-agent framework for end-to-end molecular dynamics research and mechanism interpretation",
+      "llm_evidence_cn": "用于端到端分子动力学研究和机理解析的多智能体框架",
+      "llm_evidence": "用于端到端分子动力学研究和机理解析的多智能体框架",
+      "canonical_evidence": "用于端到端分子动力学研究和机理解析的多智能体框架",
+      "llm_tldr_en": "Introduces MDAgent, an automated system for executing and interpreting molecular dynamics simulations.",
+      "llm_tldr_cn": "介绍了MDAgent，一个用于执行和解释分子动力学模拟的自动化系统。",
+      "llm_tldr": "介绍了MDAgent，一个用于执行和解释分子动力学模拟的自动化系统。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.12749v2",
+      "title": "Perspective on a challenge: predicting the photochemistry of cyclobutanone",
+      "abstract": "This Perspective is part of a Special Topic that explored the maturity of nonadiabatic molecular dynamics for predicting photochemical processes. In 2023, a prediction challenge was issued to the community of computational photochemists to simulate the photochemistry of cyclobutanone, photoexcited at 200 nm, and the resulting time-resolved MeV-UED signal. The challenge attracted 15 theoretical predictions from more than 70 researchers, employing a wide range of strategies for electronic structure and nonadiabatic molecular dynamics to predict the time-resolved MeV-UED signal before the experiment had been conducted at SLAC (Stanford, USA). The MeV-UED instrument at Shanghai Jiao Tong University was also used to provide a second independent time-resolved MeV-UED signal for the photochemistry of cyclobutanone.   This Perspective discusses the various approaches and strategies used by the participants to predict the photochemistry of cyclobutanone. This work also summarizes the strengths and weaknesses of various methods used for photoexcitation, electronic structure, nonadiabatic dynamics, and calculation of observables, as agreed by the participants during a CECAM workshop dedicated to the results of the challenge and organized in Lausanne in April 2025. This Perspective also collects all the predicted time-resolved MeV-UED signals into a single figure, together with the experimental signal. This challenge (i) demonstrated the qualitative predictive power of nonadiabatic molecular dynamics and (ii) underscore the impact of electronic-structure theory on the outcome of the excited-state dynamics and the need for its careful benchmarking. This effort allowed the community to share practical strategies to perform nonadiabatic dynamics (discussed in the present Perspective) and constitutes a 'calibration' exercise for computational photochemistry.",
+      "authors": [
+        "Jiří Janoš",
+        "Nanna Holmgaard List",
+        "Andrew J. Orr-Ewing",
+        "Jiří Suchan",
+        "Mario Barbatti",
+        "Olivia Bennett",
+        "Marcus Brady",
+        "Javier Carmona-García",
+        "Rachel Crespo-Otero",
+        "Julien Eng",
+        "O. Jonathan Fajen",
+        "Marco Garavelli",
+        "Sandra Gómez",
+        "Alice E. Green",
+        "Federico J. Hernández",
+        "Daniel Hollas",
+        "Lewis Hutton",
+        "Lea M. Ibele",
+        "Adam Kirrander",
+        "Zhenggang Lan",
+        "Yorick Lassmann",
+        "Joseph E. Lawrence",
+        "Benjamin G. Levine",
+        "Dmitry V. Makhov",
+        "Jonathan R. Mannouch",
+        "Xincheng Miao",
+        "Roland Mitrić",
+        "Shane M. Parker",
+        "Thomas J. Penfold",
+        "Jiawei Peng",
+        "Jeremy O. Richardson",
+        "Dmitrii Shalashilin",
+        "Petr Slavíček",
+        "K. Eryn Spinlove",
+        "Patricia Vindel-Zandbergen",
+        "Federica Agostini",
+        "Sara Bonella",
+        "Todd J. Martínez",
+        "Graham A. Worth",
+        "Basile F. E. Curchod"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-14T13:59:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.12749v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Predicting photochemistry and nonadiabatic molecular dynamics",
+      "llm_evidence_cn": "预测光化学和非绝热分子动力学",
+      "llm_evidence": "预测光化学和非绝热分子动力学",
+      "canonical_evidence": "预测光化学和非绝热分子动力学",
+      "llm_tldr_en": "Evaluates the maturity of nonadiabatic molecular dynamics for predicting photochemical reaction pathways.",
+      "llm_tldr_cn": "评估了非绝热分子动力学在预测光化学反应路径方面的成熟度。",
+      "llm_tldr": "评估了非绝热分子动力学在预测光化学反应路径方面的成熟度。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19319v1",
+      "title": "An Oracle-Free Quantum Algorithm for Nonadiabatic Quantum Molecular Dynamics",
+      "abstract": "Quantum computation is an attractive front for many problems that are intractable for computers today. One such problem is nonadiabatic quantum molecular dynamics, where quantized internal states coupling to parameterized modes result in a Hamiltonian resistant to oracle-based models and spectral decomposition. This dissertation applies diabatic Hamiltonian operators directly to the computational basis as first-quantized split-operator propagators, validated with dynamic observables including absorption and recurrence spectra, scattering cross-sections, population dynamics, and quantum scars. Circuits are derived and specified, with focused circuit optimization in multi-mode and multi-channel extensions, including multivariate potential energy terms and graph theoretic optimization from molecular symmetry. Resource estimation shows circuit depth advantage against QROM-loading architectures on a fault-tolerant scale, and a quantitative comparison against quantum signal processing variants confirms that a Trotter-based architecture retains a scalable T-gate advantage. Expanding beyond electronic states demonstrates that duality between finite basis and discrete variable representations permits congruent structural decompositions into quantum circuits, expanding the use of multi-channel dynamics far beyond chemistry.",
+      "authors": [
+        "Joshua Courtney"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-21T10:28:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.19319v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Quantum algorithm for nonadiabatic molecular dynamics",
+      "llm_evidence_cn": "非绝热分子动力学的量子算法",
+      "llm_evidence": "非绝热分子动力学的量子算法",
+      "canonical_evidence": "非绝热分子动力学的量子算法",
+      "llm_tldr_en": "Develops an oracle-free quantum algorithm for simulating nonadiabatic quantum molecular dynamics.",
+      "llm_tldr_cn": "开发了一种用于模拟非绝热量子分子动力学的无预言机量子算法。",
+      "llm_tldr": "开发了一种用于模拟非绝热量子分子动力学的无预言机量子算法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.17925v1",
+      "title": "State-Averaged Quantum Algorithms for Multiconfigurational Surface Chemistry: A Benchmark on Rh@TiO2(110)",
+      "abstract": "Accurate modeling of surface catalytic processes often requires methods capable of describing strong correlation, charge transfer, and multiple closely lying electronic states. While density functional theory remains widely used, its limitations for localized electronic states motivate the use of wavefunction-based approaches and, more recently, quantum computing algorithms. However, the performance of quantum ansätze in chemically motivated, multistate settings remains largely unexplored.   Here, we benchmark state-averaged factorized unitary coupled cluster with singles and doubles (SA-fUCCSD) and the adaptive, problem-tailored ansatz (SA-ADAPT) using an embedded cluster model of NO adsorption on Rh-doped TiO2(110). The system exhibits pronounced multiconfigurational character and multiple state crossings, providing a stringent test. State-averaged CASSCF serves as a reference, and the quantum ansätze are evaluated as solvers for the corresponding CASCI problem within a fixed orbital basis.   We find that SA-fUCCSD improves with increasing circuit depth but requires many parameters and shows sensitivity to initialization. In contrast, SA-ADAPT achieves near-CASSCF accuracy with significantly fewer operators. A modified operator selection scheme, incorporating multiple operators per iteration, substantially accelerates convergence.   Our results demonstrate the efficiency of adaptive ansätze for multistate problems and establish a controlled benchmark for quantum algorithms in chemically motivated systems beyond minimal models.",
+      "authors": [
+        "Ernst Dennis Lægteskov Binau Larsson",
+        "Erik Kjellgren",
+        "Peter Reinholdt",
+        "Jacob Kongsted"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-20T08:05:45+00:00",
+      "link": "https://arxiv.org/pdf/2604.17925v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum algorithms for surface catalytic processes and electronic states",
+      "llm_evidence_cn": "用于表面催化过程和电子态的量子算法",
+      "llm_evidence": "用于表面催化过程和电子态的量子算法",
+      "canonical_evidence": "用于表面催化过程和电子态的量子算法",
+      "llm_tldr_en": "Benchmarks quantum computing algorithms for modeling surface catalytic processes and electronic correlations.",
+      "llm_tldr_cn": "评估了用于模拟表面催化过程和电子相关性的量子计算算法。",
+      "llm_tldr": "评估了用于模拟表面催化过程和电子相关性的量子计算算法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19470v1",
+      "title": "Advancing Practical Quantum Embedding Simulations via Operator Commutativity Based State Preparation for Complex Chemical Systems",
+      "abstract": "Determining the exponentially scaled ground state wavefunction and the associated molecular properties remains one of the central challenges in quantum chemistry. Hybrid quantum-classical algorithms implemented on quantum computers offer a promising route toward addressing this problem. However, despite several successful demonstrations on small molecular systems, accurate simulations of large and chemically realistic molecules remain difficult due to the limited capability of noisy intermediate scale quantum (NISQ) hardware. To bypass the limitations of NISQ devices, while simultaneously retaining the accuracy of the ground state energy estimations, we propose a dynamic ansatz construction strategy based on operator commutativity and energy driven screening within density matrix embedding theory (DMET) framework. The partitioning of the full system allows us to dynamically construct the ansatz over individual embedded subsystems, allowing each embedding problem be solved individually to a desired accuracy. The embedding Hamiltonian is updated in a self-consistent manner with dynamically formulated wavefunction, and their coupled optimization leads to accurate and efficient description of the overall system. To assess the performance of this approach, we apply it to several molecular systems and chemical processes with up to 144 qubits. These simulations require at most 20 qubits at a time and demonstrate improved accuracy and significantly reduced quantum gate requirements compared with conventional ansatze. We further investigate the impact of various fragmentation strategies and demonstrate the adaptability of our approach at each step of the DMET self-consistency cycle that leads to significantly improved accuracy for strongly correlated system.",
+      "authors": [
+        "Dibyendu Mondal",
+        "Ashish Kumar Patra",
+        "Rahul Maitra"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-21T13:51:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.19470v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum embedding simulations for complex chemical systems",
+      "llm_evidence_cn": "复杂化学系统的量子嵌入模拟",
+      "llm_evidence": "复杂化学系统的量子嵌入模拟",
+      "canonical_evidence": "复杂化学系统的量子嵌入模拟",
+      "llm_tldr_en": "Proposes a quantum embedding strategy to enable accurate simulations of large molecules on quantum hardware.",
+      "llm_tldr_cn": "提出一种量子嵌入策略，以实现在量子硬件上对大分子的精确模拟。",
+      "llm_tldr": "提出一种量子嵌入策略，以实现在量子硬件上对大分子的精确模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
