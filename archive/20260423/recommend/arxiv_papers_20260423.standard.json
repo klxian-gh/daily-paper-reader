@@ -1,0 +1,201 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-23T20:26:33.625348+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.19964v1",
+      "title": "Nudged Elastic Membranes for Constructing Reduced Two-Dimensional Potential Energy Surfaces",
+      "abstract": "Path optimization methods have been widely used and highly successful for the analysis of chemical reactions. Yet, they can fail to capture intrinsically multidimensional features of potential energy surfaces (PES). We introduce the nudged elastic membrane method, a framework for constructing two-dimensional reduced potential-energy surfaces in chemically relevant regions of a PES using only energies and forces without requiring more costly Hessian information. The method is demonstrated for a three-dimensional prototype model and for the triplet formaldehyde molecular system. In both cases, the resulting membrane captures one-dimensional reaction-path features as well as genuinely two-dimensional structures such as a yet unreported reported second-order saddle point in the PES of triplet formaldehyde. The method further provides direct access to structures that can serve as starting points for subsequent refinement. Our results show that the method offers a practical route to exploring multidimensional PES topography beyond the single-path picture.",
+      "authors": [
+        "Uday Sankar Manoj",
+        "Nicole Drew",
+        "Ismaila Dabo",
+        "Lukas Muechler"
+      ],
+      "primary_category": "cond-mat.stat-mech",
+      "categories": [
+        "cond-mat.stat-mech",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-21T20:18:04+00:00",
+      "link": "https://arxiv.org/pdf/2604.19964v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Path optimization for analysis of chemical reaction mechanisms",
+      "llm_evidence_cn": "化学反应机理分析的路径优化",
+      "llm_evidence": "化学反应机理分析的路径优化",
+      "canonical_evidence": "化学反应机理分析的路径优化",
+      "llm_tldr_en": "Introduces a method for constructing 2D potential energy surfaces to capture complex reaction path features.",
+      "llm_tldr_cn": "引入了一种构建二维势能面的方法，用于捕捉复杂的化学反应路径特征。",
+      "llm_tldr": "引入了一种构建二维势能面的方法，用于捕捉复杂的化学反应路径特征。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.13659v2",
+      "title": "Ion-Specific Anomalous Water Diffusion in Aqueous Electrolytes: A Machine-Learned Many-Body Force Field Study with MACE",
+      "abstract": "The dynamics of water in electrolyte solutions exhibits a striking, ion-specific anomaly: the diffusion coefficient of water is enhanced relative to the neat liquid in chaotropic CsI solutions, yet suppressed in kosmotropic NaCl solutions. This phenomenon, long challenging for classical force-field-based molecular dynamics, is studied here using classical molecular dynamics simulations with a many-body machine-learned force field (MLFF) trained within the MACE equivariant graph neural network framework. The force field is trained on energies, forces, and stresses computed at the density functional theory level with the revPBE-D3 exchange--correlation functional, which provides a reliable balance between accuracy and computational efficiency for aqueous systems. Simulations of NaCl and CsI aqueous solutions at ambient conditions over a concentration range of 0.89--3.56 mol/kg reproduce the experimentally observed anomalous diffusion and show a quantitative improvement over previous results obtained with the DeePMD framework, trained on the same theory, particularly for NaCl solutions. This improvement is traced to a stronger Na$^{+}$--water interaction in the first hydration shell and the non-negligible retarding contribution of the second hydration shell of Na$^{+}$. For CsI solutions, the water acceleration is shown to be primarily driven by the anion I$^{-}$, whose diffuse and weakly structured hydration shell facilitates rapid water exchange with the bulk. These results are rationalised through a shell-decomposition analysis of time-dependent water diffusivities and ion--oxygen potentials of mean force providing a coherent microscopic picture of the acceleration--retardation mechanism in the studied aqueous electrolytes.",
+      "authors": [
+        "Massimo Ciacchi",
+        "Ilnur Saitov",
+        "Nico Di Fonte",
+        "Isabella Daidone",
+        "Carlo Pierleoni"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.soft"
+      ],
+      "published": "2026-04-15T09:26:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.13659v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Machine-learned force field trained on DFT data for molecular dynamics",
+      "llm_evidence_cn": "基于DFT数据训练的机器学习力场用于分子动力学模拟",
+      "llm_evidence": "基于DFT数据训练的机器学习力场用于分子动力学模拟",
+      "canonical_evidence": "基于DFT数据训练的机器学习力场用于分子动力学模拟",
+      "llm_tldr_en": "Uses MLFFs trained on quantum data to simulate water diffusion, bridging QM accuracy and MM efficiency.",
+      "llm_tldr_cn": "利用基于量子力学数据训练的机器学习力场模拟水分散，结合了QM精度与MM效率。",
+      "llm_tldr": "利用基于量子力学数据训练的机器学习力场模拟水分散，结合了QM精度与MM效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17357v1",
+      "title": "A Chemical Space Perspective on Diastereomeric Barriers in Alkylperoxy-to-Hydroperoxyalkyl Isomerization",
+      "abstract": "Low-temperature hydrocarbon autooxidation involves radical intermediates whose reactivity depends not only on the stereochemistry of the intermediates themselves, but also on that of the transient species encountered along the reaction path. This study offers large-scale evidence for the importance of stereochemistry in low-temperature autooxidation by propagating stereochemical information from 498 C1-C7 hydrocarbons through radical formation, $\\mathrm{O_2}$ addition, and the isomerization of alkylperoxy ROO radicals to hydroperoxyalkyl QOOH radicals. The resulting dataset comprises density-functional-theory-level data for 5,356 species, including 2,324 cyclic diastereomeric transition states associated with 1,162 unique ROO -> QOOH isomerization reactions, with transition-state connectivity confirmed by intrinsic reaction coordinate analysis. Explicit stereochemical treatment reveals that diastereomeric pathways may be either degenerate or separated by more than 60 kcal/mol, with the magnitude of these differences governed by steric strain at the carbon bearing the peroxyl group. These results show that constitutionally collapsed molecular representations can systematically miss kinetically relevant reactive channels and provide a foundation for stereochemistry-aware mechanism generation, rate estimation, and predictive combustion modeling.",
+      "authors": [
+        "Raghunathan Ramakrishnan"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-19T10:03:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.17357v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "density-functional-theory-level data for reaction transition states and pathways",
+      "llm_evidence_cn": "反应过渡态和路径的密度泛函理论水平数据",
+      "llm_evidence": "反应过渡态和路径的密度泛函理论水平数据",
+      "canonical_evidence": "反应过渡态和路径的密度泛函理论水平数据",
+      "llm_tldr_en": "Investigates isomerization reaction mechanisms and transition states using quantum chemical DFT methods.",
+      "llm_tldr_cn": "利用量子化学DFT方法研究异构化反应机理和过渡态，涉及催化反应路径。",
+      "llm_tldr": "利用量子化学DFT方法研究异构化反应机理和过渡态，涉及催化反应路径。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20476v1",
+      "title": "Restoring the Conical Intersection Topology using Convex Density Functional Theory",
+      "abstract": "Conical intersections are central to the description of photophysics and photochemistry. Nevertheless, in non-adiabatic molecular dynamics simulations, they are fundamentally challenging for single-reference electronic structure methods. Density functional theory (DFT) and its time-dependent extension (TDDFT) represent the most widely used theoretical approaches in physics, chemistry, and biology. However, the treatment of ground and excited states as separate problems leads to breakdowns in the topological structure of potential energy surfaces near conical intersections. In this work, we solve this long-standing issue by presenting Convex DFT (CVX-DFT), a framework that, by explicitly enforcing convexity of the variational problem within an appropriately defined subspace, guarantees a unique and continuous electronic solution across regions of degeneracies. We demonstrate that CVX-DFT yields smooth and physically meaningful intersection seams by comparison with reference methods, such as multireference wave function methods. In this way, we establish the method as a robust and computationally efficient DFT approach for treating electronically degenerate regions. These developments represent a critical step toward reliable non-adiabatic simulations beyond the limitations of conventional TDDFT.",
+      "authors": [
+        "Federico Rossi",
+        "Tommaso Giovannini",
+        "Henrik Koch"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-22T12:03:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.20476v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Electronic structure methods for non-adiabatic molecular dynamics",
+      "llm_evidence_cn": "用于非绝热分子动力学的电子结构方法",
+      "llm_evidence": "用于非绝热分子动力学的电子结构方法",
+      "canonical_evidence": "用于非绝热分子动力学的电子结构方法",
+      "llm_tldr_en": "Presents Convex DFT to fix potential energy surface topology near conical intersections in molecular dynamics.",
+      "llm_tldr_cn": "提出凸密度泛函理论，解决了分子动力学中锥形交叉点附近的势能面拓扑结构问题。",
+      "llm_tldr": "提出凸密度泛函理论，解决了分子动力学中锥形交叉点附近的势能面拓扑结构问题。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20538v1",
+      "title": "Different perspectives on the exact factorization for photon-electron-nuclear systems",
+      "abstract": "We employ the exact factorization of a multi-component wavefunction to analyze the dynamics of interacting photons, electrons and nuclei. We consider physical situations emerging in the regime of strong coupling between light excitations and molecular - electronic excitations, giving rise to the so-called molecular polaritons. Nonadiabatic molecular dynamics techniques, routinely used in the field of chemical physics, have been often employed to simulate photophysical and photochemical phenomena in the presence of molecular polaritons. In this work, we analyze the foundations of these techniques in the eye of the exact factorization and we assess their performance on illustrative model studies.",
+      "authors": [
+        "Claudia Magi",
+        "Peter Schuerger",
+        "David Lauvergnat",
+        "Federica Agostini"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-22T13:18:15+00:00",
+      "link": "https://arxiv.org/pdf/2604.20538v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "nonadiabatic molecular dynamics and electron-nuclear systems",
+      "llm_evidence_cn": "非绝热分子动力学与电子-原子核系统",
+      "llm_evidence": "非绝热分子动力学与电子-原子核系统",
+      "canonical_evidence": "非绝热分子动力学与电子-原子核系统",
+      "llm_tldr_en": "Analyzes exact factorization for simulating dynamics in coupled photon-electron-nuclear systems.",
+      "llm_tldr_cn": "分析了光子-电子-原子核耦合系统动力学模拟中的精确因子化方法。",
+      "llm_tldr": "分析了光子-电子-原子核耦合系统动力学模拟中的精确因子化方法。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

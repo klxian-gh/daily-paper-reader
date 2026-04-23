@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-23",
+  "date": "2026-04-23",
+  "generated_at": "2026-04-23T20:27:14",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/23/2604.19964v1-nudged-elastic-membranes-for-constructing-reduced-two-dimensional-potential-energy-surfaces",
+      "section": "quick",
+      "title_en": "Nudged Elastic Membranes for Constructing Reduced Two-Dimensional Potential Energy Surfaces",
+      "authors": "Uday Sankar Manoj, Nicole Drew, Ismaila Dabo, Lukas Muechler",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19964v1",
+      "score": "7.0",
+      "evidence": "化学反应机理分析的路径优化",
+      "tldr": "针对传统路径优化方法难以捕捉势能面（PES）多维特征的问题，本文提出了一种“微移弹性薄膜”（NEM）方法。该方法仅利用能量和力信息，无需高成本的黑塞矩阵，即可构建化学相关区域的二维约化势能面。通过在三维模型和三重态甲醛系统中的应用，证明了该方法不仅能捕捉一维反应路径，还能识别如二阶鞍点等复杂的多维拓扑结构，为超越单路径视角的势能面探索提供了实用工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Path optimization methods have been widely used and highly successful for the analysis of chemical reactions. Yet, they can fail to capture intrinsically multidimensional features of potential energy surfaces (PES). We introduce the nudged elastic membrane method, a framework for constructing two-dimensional reduced potential-energy surfaces in chemically relevant regions of a PES using only energies and forces without requiring more costly Hessian information. The method is demonstrated for a three-dimensional prototype model and for the triplet formaldehyde molecular system. In both cases, the resulting membrane captures one-dimensional reaction-path features as well as genuinely two-dimensional structures such as a yet unreported reported second-order saddle point in the PES of triplet formaldehyde. The method further provides direct access to structures that can serve as starting points for subsequent refinement. Our results show that the method offers a practical route to exploring multidimensional PES topography beyond the single-path picture.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.13659v2-ion-specific-anomalous-water-diffusion-in-aqueous-electrolytes-a-machine-learned-many-body-force-field-study-with-mace",
+      "section": "quick",
+      "title_en": "Ion-Specific Anomalous Water Diffusion in Aqueous Electrolytes: A Machine-Learned Many-Body Force Field Study with MACE",
+      "authors": "Massimo Ciacchi, Ilnur Saitov, Nico Di Fonte, Isabella Daidone, Carlo Pierleoni",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13659v2",
+      "score": "6.0",
+      "evidence": "基于DFT数据训练的机器学习力场用于分子动力学模拟",
+      "tldr": "本研究利用MACE等变图神经网络构建了多体机器学习力场，旨在解决经典力场难以模拟的电解质溶液中水分子扩散异常问题。通过对revPBE-D3能级数据进行训练，模拟了NaCl和CsI溶液在不同浓度下的动力学行为。研究不仅准确重现了CsI加速和NaCl抑制水扩散的实验现象，且精度优于DeePMD模型。通过壳层分解分析，揭示了Na+的强水合作用与I-的弱结构化水合壳层在扩散调控中的关键作用，为理解离子特异性效应提供了微观物理图像。",
+      "tags": "query:qmmm",
+      "abstract_en": "The dynamics of water in electrolyte solutions exhibits a striking, ion-specific anomaly: the diffusion coefficient of water is enhanced relative to the neat liquid in chaotropic CsI solutions, yet suppressed in kosmotropic NaCl solutions. This phenomenon, long challenging for classical force-field-based molecular dynamics, is studied here using classical molecular dynamics simulations with a many-body machine-learned force field (MLFF) trained within the MACE equivariant graph neural network framework. The force field is trained on energies, forces, and stresses computed at the density functional theory level with the revPBE-D3 exchange--correlation functional, which provides a reliable balance between accuracy and computational efficiency for aqueous systems. Simulations of NaCl and CsI aqueous solutions at ambient conditions over a concentration range of 0.89--3.56 mol/kg reproduce the experimentally observed anomalous diffusion and show a quantitative improvement over previous results obtained with the DeePMD framework, trained on the same theory, particularly for NaCl solutions. This improvement is traced to a stronger Na$^{+}$--water interaction in the first hydration shell and the non-negligible retarding contribution of the second hydration shell of Na$^{+}$. For CsI solutions, the water acceleration is shown to be primarily driven by the anion I$^{-}$, whose diffuse and weakly structured hydration shell facilitates rapid water exchange with the bulk. These results are rationalised through a shell-decomposition analysis of time-dependent water diffusivities and ion--oxygen potentials of mean force providing a coherent microscopic picture of the acceleration--retardation mechanism in the studied aqueous electrolytes.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.17357v1-a-chemical-space-perspective-on-diastereomeric-barriers-in-alkylperoxy-to-hydroperoxyalkyl-isomerization",
+      "section": "quick",
+      "title_en": "A Chemical Space Perspective on Diastereomeric Barriers in Alkylperoxy-to-Hydroperoxyalkyl Isomerization",
+      "authors": "Raghunathan Ramakrishnan",
+      "date": "2026-04-19",
+      "pdf": "https://arxiv.org/pdf/2604.17357v1",
+      "score": "6.0",
+      "evidence": "反应过渡态和路径的密度泛函理论水平数据",
+      "tldr": "本研究探讨了立体化学在低温烃类自氧化过程中的关键作用。通过对498种C1-C7碳氢化合物进行大规模DFT计算，构建了包含5356个物种和2324个非对映异构过渡态的数据集。研究发现，ROO到QOOH异构化反应的非对映异构路径能垒差异可达60 kcal/mol以上，主要受过氧基碳原子的位阻影响。这表明传统的结构简化模型会遗漏关键动力学通道，为开发立体化学感知的燃烧模型奠定了基础。",
+      "tags": "query:qmmm",
+      "abstract_en": "Low-temperature hydrocarbon autooxidation involves radical intermediates whose reactivity depends not only on the stereochemistry of the intermediates themselves, but also on that of the transient species encountered along the reaction path. This study offers large-scale evidence for the importance of stereochemistry in low-temperature autooxidation by propagating stereochemical information from 498 C1-C7 hydrocarbons through radical formation, $\\mathrm{O_2}$ addition, and the isomerization of alkylperoxy ROO radicals to hydroperoxyalkyl QOOH radicals. The resulting dataset comprises density-functional-theory-level data for 5,356 species, including 2,324 cyclic diastereomeric transition states associated with 1,162 unique ROO -> QOOH isomerization reactions, with transition-state connectivity confirmed by intrinsic reaction coordinate analysis. Explicit stereochemical treatment reveals that diastereomeric pathways may be either degenerate or separated by more than 60 kcal/mol, with the magnitude of these differences governed by steric strain at the carbon bearing the peroxyl group. These results show that constitutionally collapsed molecular representations can systematically miss kinetically relevant reactive channels and provide a foundation for stereochemistry-aware mechanism generation, rate estimation, and predictive combustion modeling.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.20476v1-restoring-the-conical-intersection-topology-using-convex-density-functional-theory",
+      "section": "quick",
+      "title_en": "Restoring the Conical Intersection Topology using Convex Density Functional Theory",
+      "authors": "Federico Rossi, Tommaso Giovannini, Henrik Koch",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20476v1",
+      "score": "6.0",
+      "evidence": "用于非绝热分子动力学的电子结构方法",
+      "tldr": "锥形交叉（CI）在光物理和光化学中至关重要，但传统密度泛函理论（DFT）在处理此类简并区域时常因拓扑结构失效而面临挑战。本研究提出了凸密度泛函理论（CVX-DFT），通过在特定子空间内强制执行变分问题的凸性，确保了电子态解的唯一性和连续性。该方法成功修复了势能面在简并点附近的拓扑结构，为非绝热动力学模拟提供了一种高效且可靠的新途径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Conical intersections are central to the description of photophysics and photochemistry. Nevertheless, in non-adiabatic molecular dynamics simulations, they are fundamentally challenging for single-reference electronic structure methods. Density functional theory (DFT) and its time-dependent extension (TDDFT) represent the most widely used theoretical approaches in physics, chemistry, and biology. However, the treatment of ground and excited states as separate problems leads to breakdowns in the topological structure of potential energy surfaces near conical intersections. In this work, we solve this long-standing issue by presenting Convex DFT (CVX-DFT), a framework that, by explicitly enforcing convexity of the variational problem within an appropriately defined subspace, guarantees a unique and continuous electronic solution across regions of degeneracies. We demonstrate that CVX-DFT yields smooth and physically meaningful intersection seams by comparison with reference methods, such as multireference wave function methods. In this way, we establish the method as a robust and computationally efficient DFT approach for treating electronically degenerate regions. These developments represent a critical step toward reliable non-adiabatic simulations beyond the limitations of conventional TDDFT.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.20538v1-different-perspectives-on-the-exact-factorization-for-photon-electron-nuclear-systems",
+      "section": "quick",
+      "title_en": "Different perspectives on the exact factorization for photon-electron-nuclear systems",
+      "authors": "Claudia Magi, Peter Schuerger, David Lauvergnat, Federica Agostini",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20538v1",
+      "score": "6.0",
+      "evidence": "非绝热分子动力学与电子-原子核系统",
+      "tldr": "本研究利用多分量波函数的精确分解方法，分析了光子、电子与原子核相互作用的动力学，重点关注强光-物质耦合产生的分子极化激元。通过精确分解的视角，研究者分析了化学物理领域常用的非绝热分子动力学技术的理论基础，并通过模型研究评估了这些技术在模拟光物理和光化学现象中的表现，为理解复杂耦合系统提供了新见解。",
+      "tags": "query:qmmm",
+      "abstract_en": "We employ the exact factorization of a multi-component wavefunction to analyze the dynamics of interacting photons, electrons and nuclei. We consider physical situations emerging in the regime of strong coupling between light excitations and molecular - electronic excitations, giving rise to the so-called molecular polaritons. Nonadiabatic molecular dynamics techniques, routinely used in the field of chemical physics, have been often employed to simulate photophysical and photochemical phenomena in the presence of molecular polaritons. In this work, we analyze the foundations of these techniques in the eye of the exact factorization and we assess their performance on illustrative model studies.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
