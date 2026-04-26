@@ -1,0 +1,95 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T19:33:07.729606+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2604.21441v1",
+      "title": "Enabling Biomolecular Simulations with Neural Network Potentials in GROMACS",
+      "abstract": "Neural network potentials (NNPs) are rapidly changing the landscape of state-of-the-art molecular dynamics (MD) simulations. To make full use of this development, the community needs flexible, easy-to-use interfaces firmly integrated with existing methodologies. To address this, we here present an interface for hybrid machine learning/molecular mechanics (ML/MM) simulations implemented in the widely used MD code GROMACS. The interface enables NNPs trained in the PyTorch framework to contribute energies and forces during MD simulations, either for selected subsets or entire molecular systems. By defining a flexible set of model inputs and outputs, the interface is agnostic to specific NNP architectures and can accommodate a wide range of descriptor-based and message-passing models. In particular, the design integrates NNP inference seamlessly into the extensive GROMACS molecular simulation ecosystem, providing users with the capability to straightforwardly combine NNPs with existing advanced sampling and free energy workflows. We demonstrate the capabilities of the interface using several representative applications, including enhanced sampling of peptide torsional free energy landscapes, absolute solvation free energy calculations, and protein--ligand simulations. We also run performance benchmarks on water boxes for several different NNP architectures. Our interface is available in recent GROMACS releases, and we believe it will provide a practical foundation for incorporating machine learning potentials into production MD simulations of biomolecular systems.",
+      "authors": [
+        "Lukas Müllender",
+        "Berk Hess",
+        "Erik Lindahl"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "physics.bio-ph"
+      ],
+      "published": "2026-04-23T08:58:07+00:00",
+      "link": "https://arxiv.org/pdf/2604.21441v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "hybrid machine learning/molecular mechanics (ML/MM) simulations interface",
+      "llm_evidence_cn": "混合机器学习/分子力学 (ML/MM) 模拟接口",
+      "llm_evidence": "混合机器学习/分子力学 (ML/MM) 模拟接口",
+      "canonical_evidence": "混合机器学习/分子力学 (ML/MM) 模拟接口",
+      "llm_tldr_en": "Presents a GROMACS interface for ML/MM simulations, enabling neural network potentials in biomolecular MD.",
+      "llm_tldr_cn": "在GROMACS中实现了ML/MM模拟接口，支持在生物分子动力学中使用神经网络势能。",
+      "llm_tldr": "在GROMACS中实现了ML/MM模拟接口，支持在生物分子动力学中使用神经网络势能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2604.21005v1",
+      "title": "Chaos Gated Tunneling Drives Molecular Reactivity in Astrophysical Environments",
+      "abstract": "Accurate modeling of ion-molecule reaction networks is essential for understanding the chemical evolution of planetary ionospheres, particularly for giant planets where proton-transfer chains drive atmospheric composition. However, predicting reaction rates in these ultracold environments remains a challenge due to the non-trivial interplay between vibrational dynamics and quantum tunneling. In this work we present a chaos-diagnostic framework that integrates multireference electronic structure theory, Adiabatic Gauge Potentials (AGP), and Random Matrix Theory (RMT) to characterize the microscopic dynamics of proton transport. Using the formation of H+3 and the proton-bound cluster H+5 as representative model systems relevant to Jovian atmospheres, we demonstrate that the transition state acts as a dynamical bottleneck where quantum chaos is notably suppressed, effectively enhancing tunneling probabilities. We introduce a fragility index based on the AGP slope to quantify how specific vibrational modes reintroduce chaos and suppress reactivity. This diagnostic approach offers a generalizable, data-driven metric for identifying vibrationally gated pathways in complex astrochemical networks, providing a theoretical basis for refining kinetic models of planetary and interstellar plasmas",
+      "authors": [
+        "Saptarshi G. Dastider",
+        "K. Prashant",
+        "P. Shruti",
+        "C. Sudheesh",
+        "Jobin Cyriac"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "astro-ph.GA",
+        "physics.comp-ph",
+        "quant-ph"
+      ],
+      "published": "2026-04-22T18:53:26+00:00",
+      "link": "https://arxiv.org/pdf/2604.21005v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multireference electronic structure for proton transport mechanism",
+      "llm_evidence_cn": "用于质子转移机理的多参考电子结构理论",
+      "llm_evidence": "用于质子转移机理的多参考电子结构理论",
+      "canonical_evidence": "用于质子转移机理的多参考电子结构理论",
+      "llm_tldr_en": "Integrates electronic structure theory and chaos diagnostics to model proton-transfer reaction mechanisms.",
+      "llm_tldr_cn": "结合电子结构理论和混沌诊断，模拟了天体物理环境中的质子转移反应机理。",
+      "llm_tldr": "结合电子结构理论和混沌诊断，模拟了天体物理环境中的质子转移反应机理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

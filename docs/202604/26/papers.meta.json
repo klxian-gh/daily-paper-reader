@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-26",
+  "date": "2026-04-26",
+  "generated_at": "2026-04-26T19:34:06",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/26/2604.21441v1-enabling-biomolecular-simulations-with-neural-network-potentials-in-gromacs",
+      "section": "deep",
+      "title_en": "Enabling Biomolecular Simulations with Neural Network Potentials in GROMACS",
+      "authors": "Lukas Müllender, Berk Hess, Erik Lindahl",
+      "date": "2026-04-23",
+      "pdf": "https://arxiv.org/pdf/2604.21441v1",
+      "score": "8.0",
+      "evidence": "混合机器学习/分子力学 (ML/MM) 模拟接口",
+      "tldr": "本研究在广泛使用的分子动力学软件GROMACS中实现了一个灵活的机器学习/分子力学（ML/MM）混合模拟接口。该接口支持PyTorch框架下的多种神经网络势能（NNP）架构，并能与GROMACS现有的增强采样和自由能计算工作流无缝集成。通过对肽链、溶剂化及蛋白质-配体系统的模拟验证，该工具为在生物分子模拟中应用机器学习势能提供了实用基础。",
+      "tags": "query:qmmm",
+      "abstract_en": "Neural network potentials (NNPs) are rapidly changing the landscape of state-of-the-art molecular dynamics (MD) simulations. To make full use of this development, the community needs flexible, easy-to-use interfaces firmly integrated with existing methodologies. To address this, we here present an interface for hybrid machine learning/molecular mechanics (ML/MM) simulations implemented in the widely used MD code GROMACS. The interface enables NNPs trained in the PyTorch framework to contribute energies and forces during MD simulations, either for selected subsets or entire molecular systems. By defining a flexible set of model inputs and outputs, the interface is agnostic to specific NNP architectures and can accommodate a wide range of descriptor-based and message-passing models. In particular, the design integrates NNP inference seamlessly into the extensive GROMACS molecular simulation ecosystem, providing users with the capability to straightforwardly combine NNPs with existing advanced sampling and free energy workflows. We demonstrate the capabilities of the interface using several representative applications, including enhanced sampling of peptide torsional free energy landscapes, absolute solvation free energy calculations, and protein--ligand simulations. We also run performance benchmarks on water boxes for several different NNP architectures. Our interface is available in recent GROMACS releases, and we believe it will provide a practical foundation for incorporating machine learning potentials into production MD simulations of biomolecular systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.21005v1-chaos-gated-tunneling-drives-molecular-reactivity-in-astrophysical-environments",
+      "section": "quick",
+      "title_en": "Chaos Gated Tunneling Drives Molecular Reactivity in Astrophysical Environments",
+      "authors": "Saptarshi G. Dastider, K. Prashant, P. Shruti, C. Sudheesh, Jobin Cyriac",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.21005v1",
+      "score": "6.0",
+      "evidence": "用于质子转移机理的多参考电子结构理论",
+      "tldr": "本研究针对巨行星电离层等超低温天体环境中的离子-分子反应建模难题，提出了一种结合多参考电子结构理论、绝热规范势（AGP）和随机矩阵理论（RMT）的混沌诊断框架。通过研究H3+和H5+的形成过程，揭示了过渡态通过抑制量子混沌来增强隧道效应的机制，并引入“脆弱性指数”量化振动模式对反应性的影响，为完善星际化学动力学模型提供了重要理论支撑。",
+      "tags": "query:qmmm",
+      "abstract_en": "Accurate modeling of ion-molecule reaction networks is essential for understanding the chemical evolution of planetary ionospheres, particularly for giant planets where proton-transfer chains drive atmospheric composition. However, predicting reaction rates in these ultracold environments remains a challenge due to the non-trivial interplay between vibrational dynamics and quantum tunneling. In this work we present a chaos-diagnostic framework that integrates multireference electronic structure theory, Adiabatic Gauge Potentials (AGP), and Random Matrix Theory (RMT) to characterize the microscopic dynamics of proton transport. Using the formation of H+3 and the proton-bound cluster H+5 as representative model systems relevant to Jovian atmospheres, we demonstrate that the transition state acts as a dynamical bottleneck where quantum chaos is notably suppressed, effectively enhancing tunneling probabilities. We introduce a fragility index based on the AGP slope to quantify how specific vibrational modes reintroduce chaos and suppress reactivity. This diagnostic approach offers a generalizable, data-driven metric for identifying vibrationally gated pathways in complex astrochemical networks, providing a theoretical basis for refining kinetic models of planetary and interstellar plasmas",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
