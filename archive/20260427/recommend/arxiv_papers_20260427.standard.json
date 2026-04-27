@@ -1,0 +1,131 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-27T20:18:21.571006+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.20040v1",
+      "title": "VPT2 Calculations of Vibrational Energies of CH3COOC6H4COOH Done in Seconds on a Laptop Using a Machine Learned Potential",
+      "abstract": "The determination of quartic force fields for use in vibrational second-order perturbation (VPT2) calculations, currently available in numerous electronic structure packages, becomes very expensive as the size of the molecule increases, especially if high-level coupled cluster theory is used. Machine-learned potentials (MLPs) for large molecules and clusters offer a viable alternative to obtain the quartic force field (QFF). Here, we report Fortran and Python software to determine the QFF and perform VPT2 calculations of energies from MLPs. We describe this software briefly and then apply it to \\ce{H2O} and protonated oxalate as test cases. The Fortran software is applied to 21-atom aspirin, using a fast MLP reported by us. Despite the fact that there are 32,509 unique cubic force constants for aspirin, the computer time to calculate them using this MLP is trivial, i.e., around one minute. These results are the first quantum anharmonic ones for such a large molecule. The present protocol offers an efficient way to study quantum anharmonic effects for vibrational energies in large molecules. Currently, these are obtained overwhelmingly from classical molecular dynamics simulations, which cannot describe strong anharmonicity.",
+      "authors": [
+        "Saikiran Kotaru",
+        "Chen Qu",
+        "Apurba Nandi",
+        "Paul L. Houston",
+        "Joel M. Bowman"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-21T22:50:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.20040v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemical investigation using machine learned potentials",
+      "llm_evidence_cn": "利用机器学习势能进行量子化学研究",
+      "llm_evidence": "利用机器学习势能进行量子化学研究",
+      "canonical_evidence": "利用机器学习势能进行量子化学研究",
+      "llm_tldr_en": "Software for fast vibrational energy calculations using machine-learned potentials for large molecules.",
+      "llm_tldr_cn": "开发了利用机器学习势能快速计算大分子振动能量的软件。",
+      "llm_tldr": "开发了利用机器学习势能快速计算大分子振动能量的软件。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.22669v1",
+      "title": "DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory",
+      "abstract": "Ab initio calculations are fundamentally bottlenecked for large systems by the steep computational scaling of solving self-consistent field (SCF) equations. While machine learning offers potential accelerations, existing methods often compromise physical rigor or rely on basis-dependent, non-transferable representations. Here, we introduce DeepHartree, a Poisson-coupled neural field that accelerates linear combination of atomic orbitals (LCAO) density functional theory (DFT). By coupling an E(3)-equivariant neural network with the Poisson equation through automatic differentiation and mitigating nuclear singularities via delta-learning, DeepHartree simultaneously predicts mutually consistent real-space electron densities and Hartree potentials. This resolves the Coulomb bottleneck by substituting $\\mathcal{O}(N^4)$ analytical integrals with GPU-accelerated, near-linear $\\mathcal{O}(N)$ numerical inference. Trained solely on small molecules, DeepHartree enables scalable density functional theory through a two-level transferability: for SCF convergence acceleration, it achieves robust zero-shot transferability across diverse basis sets, functionals, and systems up to 168 atoms; for predicting other density-related physical quantities, it retains zero-shot capability on small molecules while enabling precise predictions for larger systems via efficient few-shot fine-tuning.Our model accelerates standard SCF protocols by reducing iterations by up to 40.6% via high-fidelity initial density matrices, and its rigorous long-range asymptotics provide a zero-cost physical uncertainty metric prior to grid evaluation. By grounding deep learning in Poisson-coupled neural fields, DeepHartree accelerates demanding tasks -- such as near-coupled-cluster dynamic infrared simulations -- by orders of magnitude, establishing a scalable paradigm for density functional theory.",
+      "authors": [
+        "Jiankun Wu",
+        "Jinming Fan",
+        "Chao Qian",
+        "Shaodong Zhou"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-24T15:48:38+00:00",
+      "link": "https://arxiv.org/pdf/2604.22669v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerates density functional theory for large systems",
+      "llm_evidence_cn": "加速大型系统的密度泛函理论计算",
+      "llm_evidence": "加速大型系统的密度泛函理论计算",
+      "canonical_evidence": "加速大型系统的密度泛函理论计算",
+      "llm_tldr_en": "Introduces DeepHartree to accelerate DFT calculations for large systems using neural fields.",
+      "llm_tldr_cn": "引入 DeepHartree，利用神经场加速大型系统的密度泛函理论计算。",
+      "llm_tldr": "引入 DeepHartree，利用神经场加速大型系统的密度泛函理论计算。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.22674v1",
+      "title": "Unveiling the Molecular Driving Forces of Pollutant Extraction by Hydrophobic Eutectic Solvents",
+      "abstract": "Hydrophobic eutectic solvents (HES) are emerging as sustainable alternatives to conventional organic solvents for the extraction of molecular pollutants from water. Yet, their selectivity remains poorly understood, hindering the predictive design of eutectic solvents beyond empirical success. Here, we present a multiscale strategy to rationalize and predict solute partitioning in HES. Focusing on bisphenol A (BPA) in trioctylphosphine oxide (TOPO):menthol as a prototypical system, we combine monophasic and biphasic molecular dynamics with quantum energy decomposition of dominant solvation motifs. Our methodology captures the experimentally measured BPA spontaneous migration and thermodynamic stabilization in the HES phase but also identifies the microscopic origin of selectivity: cooperative hydrogen bonding couples to strong dispersion and polarization in the hydrophobic eutectic microenvironment. The robustness of our workflow paves the way for the predictive in-silico screening and design of HES formulations for green and sustainable applications.",
+      "authors": [
+        "S. Gomez",
+        "U. Ali",
+        "A. Muroni",
+        "A. Mele",
+        "M. E. Di Pietro",
+        "T. Giovannini"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-24T15:58:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.22674v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multiscale strategy combining molecular dynamics with quantum energy decomposition",
+      "llm_evidence_cn": "结合分子动力学与量子能量分解的多尺度策略",
+      "llm_evidence": "结合分子动力学与量子能量分解的多尺度策略",
+      "canonical_evidence": "结合分子动力学与量子能量分解的多尺度策略",
+      "llm_tldr_en": "Combines MD and quantum energy decomposition to study molecular driving forces in eutectic solvents.",
+      "llm_tldr_cn": "结合分子动力学和量子能量分解研究共晶溶剂中的分子驱动力。",
+      "llm_tldr": "结合分子动力学和量子能量分解研究共晶溶剂中的分子驱动力。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

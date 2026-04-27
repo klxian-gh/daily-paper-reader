@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-27",
+  "date": "2026-04-27",
+  "generated_at": "2026-04-27T20:18:57",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/27/2604.20040v1-vpt2-calculations-of-vibrational-energies-of-ch3cooc6h4cooh-done-in-seconds-on-a-laptop-using-a-machine-learned-potential",
+      "section": "quick",
+      "title_en": "VPT2 Calculations of Vibrational Energies of CH3COOC6H4COOH Done in Seconds on a Laptop Using a Machine Learned Potential",
+      "authors": "Saikiran Kotaru, Chen Qu, Apurba Nandi, Paul L. Houston, Joel M. Bowman",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.20040v1",
+      "score": "6.0",
+      "evidence": "利用机器学习势能进行量子化学研究",
+      "tldr": "针对大型分子振动二阶微扰（VPT2）计算中四次力场（QFF）获取成本极高的问题，本研究开发了基于机器学习势（MLP）的Fortran和Python软件。该方法能快速计算QFF并进行VPT2能量分析。以21个原子的阿司匹林为例，在笔记本电脑上仅需约一分钟即可完成数万个力常数的计算，实现了大型分子量子非谐效应的高效研究，弥补了传统经典分子动力学的不足。",
+      "tags": "query:qmmm",
+      "abstract_en": "The determination of quartic force fields for use in vibrational second-order perturbation (VPT2) calculations, currently available in numerous electronic structure packages, becomes very expensive as the size of the molecule increases, especially if high-level coupled cluster theory is used. Machine-learned potentials (MLPs) for large molecules and clusters offer a viable alternative to obtain the quartic force field (QFF). Here, we report Fortran and Python software to determine the QFF and perform VPT2 calculations of energies from MLPs. We describe this software briefly and then apply it to \\ce{H2O} and protonated oxalate as test cases. The Fortran software is applied to 21-atom aspirin, using a fast MLP reported by us. Despite the fact that there are 32,509 unique cubic force constants for aspirin, the computer time to calculate them using this MLP is trivial, i.e., around one minute. These results are the first quantum anharmonic ones for such a large molecule. The present protocol offers an efficient way to study quantum anharmonic effects for vibrational energies in large molecules. Currently, these are obtained overwhelmingly from classical molecular dynamics simulations, which cannot describe strong anharmonicity.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.22669v1-deephartree-a-poisson-coupled-neural-field-for-scalable-density-functional-theory",
+      "section": "quick",
+      "title_en": "DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory",
+      "authors": "Jiankun Wu, Jinming Fan, Chao Qian, Shaodong Zhou",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22669v1",
+      "score": "6.0",
+      "evidence": "加速大型系统的密度泛函理论计算",
+      "tldr": "DeepHartree 是一种耦合泊松方程的神经场模型，旨在解决密度泛函理论（DFT）在大体系计算中的效率瓶颈。它通过 E(3) 等变神经网络与自动微分技术，同时预测电子密度和哈特里势，将传统 O(N^4) 的积分计算转化为近线性的 O(N) 推理。该模型在小分子上训练，展现出跨基组和泛函的零样本迁移能力，显著加速了 SCF 收敛及红外光谱模拟，为可扩展的量子化学计算提供了新范式。",
+      "tags": "query:qmmm",
+      "abstract_en": "Ab initio calculations are fundamentally bottlenecked for large systems by the steep computational scaling of solving self-consistent field (SCF) equations. While machine learning offers potential accelerations, existing methods often compromise physical rigor or rely on basis-dependent, non-transferable representations. Here, we introduce DeepHartree, a Poisson-coupled neural field that accelerates linear combination of atomic orbitals (LCAO) density functional theory (DFT). By coupling an E(3)-equivariant neural network with the Poisson equation through automatic differentiation and mitigating nuclear singularities via delta-learning, DeepHartree simultaneously predicts mutually consistent real-space electron densities and Hartree potentials. This resolves the Coulomb bottleneck by substituting $\\mathcal{O}(N^4)$ analytical integrals with GPU-accelerated, near-linear $\\mathcal{O}(N)$ numerical inference. Trained solely on small molecules, DeepHartree enables scalable density functional theory through a two-level transferability: for SCF convergence acceleration, it achieves robust zero-shot transferability across diverse basis sets, functionals, and systems up to 168 atoms; for predicting other density-related physical quantities, it retains zero-shot capability on small molecules while enabling precise predictions for larger systems via efficient few-shot fine-tuning.Our model accelerates standard SCF protocols by reducing iterations by up to 40.6% via high-fidelity initial density matrices, and its rigorous long-range asymptotics provide a zero-cost physical uncertainty metric prior to grid evaluation. By grounding deep learning in Poisson-coupled neural fields, DeepHartree accelerates demanding tasks -- such as near-coupled-cluster dynamic infrared simulations -- by orders of magnitude, establishing a scalable paradigm for density functional theory.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/27/2604.22674v1-unveiling-the-molecular-driving-forces-of-pollutant-extraction-by-hydrophobic-eutectic-solvents",
+      "section": "quick",
+      "title_en": "Unveiling the Molecular Driving Forces of Pollutant Extraction by Hydrophobic Eutectic Solvents",
+      "authors": "S. Gomez, U. Ali, A. Muroni, A. Mele, M. E. Di Pietro, T. Giovannini",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22674v1",
+      "score": "6.0",
+      "evidence": "结合分子动力学与量子能量分解的多尺度策略",
+      "tldr": "薄荷醇体系提取双酚A（BPA）为原型，采用多尺度策略，结合单相与双相分子动力学及量子能量分解，揭示了HES提取污染物的分子驱动力。研究发现，协同氢键、强色散力和极化作用是实现高选择性的关键，为绿色溶剂的预测性设计提供了理论框架。",
+      "tags": "query:qmmm",
+      "abstract_en": "Hydrophobic eutectic solvents (HES) are emerging as sustainable alternatives to conventional organic solvents for the extraction of molecular pollutants from water. Yet, their selectivity remains poorly understood, hindering the predictive design of eutectic solvents beyond empirical success. Here, we present a multiscale strategy to rationalize and predict solute partitioning in HES. Focusing on bisphenol A (BPA) in trioctylphosphine oxide (TOPO):menthol as a prototypical system, we combine monophasic and biphasic molecular dynamics with quantum energy decomposition of dominant solvation motifs. Our methodology captures the experimentally measured BPA spontaneous migration and thermodynamic stabilization in the HES phase but also identifies the microscopic origin of selectivity: cooperative hydrogen bonding couples to strong dispersion and polarization in the hydrophobic eutectic microenvironment. The robustness of our workflow paves the way for the predictive in-silico screening and design of HES formulations for green and sustainable applications.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
