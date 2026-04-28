@@ -6,32 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-27
-- 运行时间：2026-04-27 20:18:47 UTC
+- 最新运行日期：2026-04-28
+- 运行时间：2026-04-28 20:23:00 UTC
 - 运行状态：成功
 - 本次总论文数：3
 - 精读区：0
 - 速读区：3
 
 ### 今日简报（AI）
-今日聚焦 AI 驱动的量子化学计算加速，实现从秒级分子振动模拟到可扩展密度泛函理论的效率跨越。
-机器学习势函数让复杂分子的 VPT2 计算在笔记本上即可秒级完成，而 DeepHartree 架构则为大规模 DFT 模拟提供了新方案。
-建议关注 AI 如何将昂贵的量子化学模拟转化为高效的桌面级工具，进一步降低高精度计算的门槛。
-- 详情：[/202604/27/README](/202604/27/README)
+- 今日共生成 3 篇推荐（精读 0 篇，速读 3 篇）
+- 速读：《A Machine-Learned Symbolic Committor for a Chemical Reaction: Retinal Isomerization》（6.0/10）, 《Enhancing molecular dynamics with equivariant machine-learned densities》（6.0/10）, 《Computational Design and Experimental Validation of Photoactive PARP1 Inhibitors》（6.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202604/28/README](/202604/28/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [VPT2 Calculations of Vibrational Energies of CH3COOC6H4COOH Done in Seconds on a Laptop Using a Machine Learned Potential](/202604/27/2604.20040v1-vpt2-calculations-of-vibrational-energies-of-ch3cooc6h4cooh-done-in-seconds-on-a-laptop-using-a-machine-learned-potential)  
+1. [A Machine-Learned Symbolic Committor for a Chemical Reaction: Retinal Isomerization](/202604/28/2604.24245v1-a-machine-learned-symbolic-committor-for-a-chemical-reaction-retinal-isomerization)  
    标签：评分：6.0/10、query:qmmm
-   evidence：利用机器学习势能进行量子化学研究
-2. [DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory](/202604/27/2604.22669v1-deephartree-a-poisson-coupled-neural-field-for-scalable-density-functional-theory)  
+   evidence：化学反应机理和反应坐标的发现
+2. [Enhancing molecular dynamics with equivariant machine-learned densities](/202604/28/2604.24563v1-enhancing-molecular-dynamics-with-equivariant-machine-learned-densities)  
    标签：评分：6.0/10、query:qmmm
-   evidence：加速大型系统的密度泛函理论计算
-3. [Unveiling the Molecular Driving Forces of Pollutant Extraction by Hydrophobic Eutectic Solvents](/202604/27/2604.22674v1-unveiling-the-molecular-driving-forces-of-pollutant-extraction-by-hydrophobic-eutectic-solvents)  
+   evidence：用于分子动力学的机器学习电子结构
+3. [Computational Design and Experimental Validation of Photoactive PARP1 Inhibitors](/202604/28/2604.24634v1-computational-design-and-experimental-validation-of-photoactive-parp1-inhibitors)  
    标签：评分：6.0/10、query:qmmm
-   evidence：结合分子动力学与量子能量分解的多尺度策略
+   evidence：用于蛋白质-配体结合的原子模拟和量子化学
 
 
 <div class="dpr-home-promo-card">
