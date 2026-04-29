@@ -6,32 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-28
-- 运行时间：2026-04-28 20:23:00 UTC
+- 最新运行日期：2026-04-29
+- 运行时间：2026-04-29 20:33:53 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：4
 - 精读区：0
-- 速读区：3
+- 速读区：4
 
 ### 今日简报（AI）
-- 今日共生成 3 篇推荐（精读 0 篇，速读 3 篇）
-- 速读：《A Machine-Learned Symbolic Committor for a Chemical Reaction: Retinal Isomerization》（6.0/10）, 《Enhancing molecular dynamics with equivariant machine-learned densities》（6.0/10）, 《Computational Design and Experimental Validation of Photoactive PARP1 Inhibitors》（6.0/10）
+- 今日共生成 4 篇推荐（精读 0 篇，速读 4 篇）
+- 速读：《Extending Hamiltonian-Adaptive Resolution Simulation to Interfaces: An Updated LAMMPS Implementation and Application to Porous Solids》（6.0/10）, 《DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory》（6.0/10）, 《Learning Structure, Energy, and Dynamics: A Survey of Artificial Intelligence for Protein Dynamics》（6.0/10）
 - 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202604/28/README](/202604/28/README)
+- 详情：[/202604/29/README](/202604/29/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [A Machine-Learned Symbolic Committor for a Chemical Reaction: Retinal Isomerization](/202604/28/2604.24245v1-a-machine-learned-symbolic-committor-for-a-chemical-reaction-retinal-isomerization)  
+1. [Extending Hamiltonian-Adaptive Resolution Simulation to Interfaces: An Updated LAMMPS Implementation and Application to Porous Solids](/202604/29/2604.21867v1-extending-hamiltonian-adaptive-resolution-simulation-to-interfaces-an-updated-lammps-implementation-and-application-to-porous-solids)  
    标签：评分：6.0/10、query:qmmm
-   evidence：化学反应机理和反应坐标的发现
-2. [Enhancing molecular dynamics with equivariant machine-learned densities](/202604/28/2604.24563v1-enhancing-molecular-dynamics-with-equivariant-machine-learned-densities)  
+   evidence：结合原子级和粒子级粗粒化模型
+2. [DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory](/202604/29/2604.22669v2-deephartree-a-poisson-coupled-neural-field-for-scalable-density-functional-theory)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于分子动力学的机器学习电子结构
-3. [Computational Design and Experimental Validation of Photoactive PARP1 Inhibitors](/202604/28/2604.24634v1-computational-design-and-experimental-validation-of-photoactive-parp1-inhibitors)  
+   evidence：加速大体系的DFT计算，这是QM/MM模拟的核心组成部分
+3. [Learning Structure, Energy, and Dynamics: A Survey of Artificial Intelligence for Protein Dynamics](/202604/29/2604.25244v1-learning-structure-energy-and-dynamics-a-survey-of-artificial-intelligence-for-protein-dynamics)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于蛋白质-配体结合的原子模拟和量子化学
+   evidence：用于加速分子模拟和蛋白质动力学的人工智能
+4. [Excitation of Low-Frequency Modes and the Effects of Protein Dynamics on Spectral Densities of Bacteriochlorophyll Molecules](/202604/29/2604.25460v1-excitation-of-low-frequency-modes-and-the-effects-of-protein-dynamics-on-spectral-densities-of-bacteriochlorophyll-molecules)  
+   标签：评分：6.0/10、query:qmmm
+   evidence：蛋白质动力学和经典分子动力学力场
 
 
 <div class="dpr-home-promo-card">

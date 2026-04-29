@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-29",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T20:34:03",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/29/2604.21867v1-extending-hamiltonian-adaptive-resolution-simulation-to-interfaces-an-updated-lammps-implementation-and-application-to-porous-solids",
+      "section": "quick",
+      "title_en": "Extending Hamiltonian-Adaptive Resolution Simulation to Interfaces: An Updated LAMMPS Implementation and Application to Porous Solids",
+      "authors": "Hari Haran Sudhakar, Alessandra Serva, Rocio Semino",
+      "date": "2026-04-23",
+      "pdf": "https://arxiv.org/pdf/2604.21867v1",
+      "score": "6.0",
+      "evidence": "结合原子级和粒子级粗粒化模型",
+      "tldr": "本研究针对多尺度模拟中不同时空尺度耦合的挑战，改进了哈密顿自适应分辨率模拟（H-AdResS）方法，并在LAMMPS 2023中实现了新版本。该实现支持更多样化的相互作用势，并引入了补偿程序以处理密度波动的系统。通过对水和多孔金属有机框架（MOF）中气体吸附与传输的模拟验证，证明了该方法在保持原子级精度的同时显著提升了计算效率，为复杂界面模拟提供了有力工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Many natural phenomena involve processes that happen simultaneously at different characteristic length- and timescales. Typically, the region where the process of interest happens is affected by fluctuations in its surroundings. Modeling these systems requires an effective combination of simulation resolutions. The Hamiltonian-Adaptive Resolution Simulation (H-AdResS) method allows to model dual-resolution systems in length- and time-scales compatible with molecular diffusion, by combining atomistic and particle-based coarse graining models in the same simulation box. In this work, a new implementation of H-AdResS is provided in LAMMPS 2023. New features extend the usage to more diverse interaction potentials and simplify the preparation of input files via dedicated lammps input commands, while keeping the efficiency gain of the basis method. The implementation is benchmarked by reproducing water properties from a reference atomistic simulation. Importantly, the new implementation includes changes in compensation routines allowing to simulate systems with fluctuating density. As an example, the method in its new implementation is applied to modeling a porous metal-organic framework and its gas adsorption structure and transport properties. We demonstrate that structural and dynamic properties in the atomistic region of the dual-resolution scheme are unaffected and remain those of the fully atomistic system, while increasing simulation efficiency. This paves the way for using H-AdResS to simulate complex interfaces across applications in energy storage, electrocatalysis, and membrane technologies.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.22669v2-deephartree-a-poisson-coupled-neural-field-for-scalable-density-functional-theory",
+      "section": "quick",
+      "title_en": "DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory",
+      "authors": "Jiankun Wu, Jinming Fan, Chao Qian, Shaodong Zhou",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22669v2",
+      "score": "6.0",
+      "evidence": "加速大体系的DFT计算，这是QM/MM模拟的核心组成部分",
+      "tldr": "DeepHartree利用神经场加速大体系的DFT计算，在保持物理严谨性的同时提升了效率。",
+      "tags": "query:qmmm",
+      "abstract_en": "Ab initio calculations are fundamentally bottlenecked for large systems by the steep computational scaling of solving self-consistent field (SCF) equations. While machine learning offers potential accelerations, existing methods often compromise physical rigor or rely on basis-dependent, non-transferable representations. Here, we introduce DeepHartree, a Poisson-coupled neural field that accelerates linear combination of atomic orbitals (LCAO) density functional theory (DFT). By coupling an E(3)-equivariant neural network with the Poisson equation through automatic differentiation and mitigating nuclear singularities via delta-learning, DeepHartree simultaneously predicts mutually consistent real-space electron densities and Hartree potentials. This resolves the Coulomb bottleneck by substituting $\\mathcal{O}(N^4)$ analytical integrals with GPU-accelerated, near-linear $\\mathcal{O}(N)$ numerical inference. Trained solely on small molecules, DeepHartree enables scalable density functional theory through a two-level transferability: for SCF convergence acceleration, it achieves robust zero-shot transferability across diverse basis sets, functionals, and systems up to 168 atoms; for predicting other density-related physical quantities, it retains zero-shot capability on small molecules while enabling precise predictions for larger systems via efficient few-shot fine-tuning. Our model accelerates standard SCF protocols by reducing iterations by up to 40.6% via high-fidelity initial density matrices, and its rigorous long-range asymptotics provide a zero-cost physical uncertainty metric prior to grid evaluation. By grounding deep learning in Poisson-coupled neural fields, DeepHartree accelerates demanding tasks -- such as near-coupled-cluster dynamic infrared simulations -- by orders of magnitude, establishing a scalable paradigm for density functional theory.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.25244v1-learning-structure-energy-and-dynamics-a-survey-of-artificial-intelligence-for-protein-dynamics",
+      "section": "quick",
+      "title_en": "Learning Structure, Energy, and Dynamics: A Survey of Artificial Intelligence for Protein Dynamics",
+      "authors": "Haocheng Tang, Liang Shi, Ya-Shi Zhang, Xixian Liu, Jian Tang, Jiarui Lu",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25244v1",
+      "score": "6.0",
+      "evidence": "用于加速分子模拟和蛋白质动力学的人工智能",
+      "tldr": "综述了用于蛋白质动力学和加速分子模拟的人工智能方法。",
+      "tags": "query:qmmm",
+      "abstract_en": "Protein dynamics underlie many biological functions, yet remain difficult to characterize due to the high computational cost of molecular dynamics simulations and the scarcity of dynamic structural data. This survey reviews recent advances in artificial intelligence for protein dynamics from three perspectives: learning from structural ensembles and trajectories, learning from physical energy signals, and learning to accelerate molecular simulations. We summarize representative methods for conformation ensemble generation, trajectory generation, Boltzmann generators, physics-aware adaptation, machine learning potentials, coarse-grained modeling, and collective variable discovery. We further discuss available datasets and key open challenges, such as scalability, thermodynamic consistency, kinetic fidelity, and integration with experimental constraints.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.25460v1-excitation-of-low-frequency-modes-and-the-effects-of-protein-dynamics-on-spectral-densities-of-bacteriochlorophyll-molecules",
+      "section": "quick",
+      "title_en": "Excitation of Low-Frequency Modes and the Effects of Protein Dynamics on Spectral Densities of Bacteriochlorophyll Molecules",
+      "authors": "Sayan Maity, Tristan A. Mauck, Ulrich Kleinekathöfer",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25460v1",
+      "score": "6.0",
+      "evidence": "蛋白质动力学和经典分子动力学力场",
+      "tldr": "分析了蛋白质动力学对电子激发的影响，指出了经典力场的局限性。",
+      "tags": "query:qmmm",
+      "abstract_en": "In the theory of open quantum systems, spectral densities are key quantities for modeling the dynamics and spectroscopic properties of the system under investigation. In the case of light-harvesting complexes, they encode the frequency-dependent coupling of electronic excitations in pigment molecules to their environment, reflecting contributions from both intrinsic vibrational modes and the protein surrounding. In particular, the low-frequency components of the spectral densities are crucial for exciton transfer between pigment molecules. Apparently, slow internal modes of bacteriocholophyll molecules in the gas phase are less well represented by common force fields based on classical molecular dynamics (MD) simulations. Here, we demonstrate that Born-Oppenheimer molecular dynamics (BOMD) based on the numerically efficient density functional-based tight-binding approach can accurately recover these low-frequency features, whereas normal mode analysis captures them only partially. In contrasting approaches for determining spectral densities, the low-frequency region of the spectral densities obtained is only associated with protein fluctuations; the usage of BOMD, however, also captures the low-frequency contributions arising from slow intramolecular vibrations of the pigment molecules themselves. Notably, this behavior is consistently observed for both the flexible B800 and the more rigid B850 rings in light-harvesting 2 (LH2) complexes of purple bacteria, as well as in the Fenna-Matthews-Olson (FMO) complex of green sulfur bacteria. Interestingly, we also find that the spectral densities of the pigments in the B850 ring of LH2 are not influenced by the environment, i.e., the gaps between ground and first excited state are not changed significantly by the fluctuations of the protein environment.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
