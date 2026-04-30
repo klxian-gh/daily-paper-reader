@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-30",
+  "date": "2026-04-30",
+  "generated_at": "2026-04-30T20:27:30",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/30/2604.26143v1-mixture-of-experts-framework-in-machine-learning-interatomic-potentials-for-atomistic-simulations",
+      "section": "quick",
+      "title_en": "Mixture of Experts Framework in Machine Learning Interatomic Potentials for Atomistic Simulations",
+      "authors": "Gabriel de Miranda Nascimento, Marc L. Descoteaux, Laura Zichi, Chuin Wei Tan, William C. Witt, Nicola Molinari, Sriteja Mantha, Daniil Kitchaev, Mordechai Kornbluth, Karim Gadelrab, Charles Tuffile, Boris Kozinsky",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26143v1",
+      "score": "7.0",
+      "evidence": "将模拟区域划分为反应区和非反应区，类似于QM/MM",
+      "tldr": "本研究针对机器学习原子间势能（MLIPs）在大规模模拟中推理成本高的问题，提出了一种基于E(3)等变Allegro架构的多保真度“专家混合”（MoE）框架。该方法将模拟区域划分为化学复杂区和简单区，分别分配不同容量的模型，并引入协同训练策略及一致性约束，解决了模型间界面处的机械失配问题。在Pt+CO催化系统的验证中，该框架在保证能量守恒和预测精度的前提下，实现了两倍以上的计算加速。",
+      "tags": "query:qmmm",
+      "abstract_en": "First-principles atomistic simulations are essential for understanding complex material phenomena but are fundamentally limited by their computational cost. While Machine Learning Interatomic Potentials (MLIPs) have drastically improved cost for a given accuracy, their inference cost remains a bottleneck for massive systems or long timescales. To address this, we introduce a multifidelity \"Mixture-of-Experts\" framework based on the E(3)-equivariant Allegro architecture. Our method spatially partitions the simulation domain into a chemically complex region (e.g., reactive interfaces) and a simple region (e.g., bulk lattice), assigning models of varying capacity to each. Among the challenges in such static domain decomposition, the mechanical mismatch between models at the interface is particularly critical, as it can generate artificial stress fields and instability. We address this challenge with a co-training strategy in which the loss function includes agreement constraints -- penalties on per-atom energy and force discrepancies between models evaluated on shared bulk environments -- forcing the independent models to learn a consistent physical description of the bulk material. We validate this approach on a realistic Pt+CO catalytic system, demonstrating that the co-trained models maintain exact energy conservation, align their bulk mechanical response (e.g., equation of state and bulk modulus), and achieve predictive accuracy comparable to a full high-fidelity simulation at more than twice the computational speed.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.24816v1-trillion-atom-molecular-dynamics-simulations-with-ab-initio-accuracy",
+      "section": "quick",
+      "title_en": "Trillion-atom molecular dynamics simulations with ab initio accuracy",
+      "authors": "Pengfei Suo, Wudi Cao, Xingxing Wu, Wenjie Zhang, Zheyong Fan, Shuanghan Xian, Rui Wang, Cheng Qian, Chao Liang, Qinghong Yuan, Xiaoshuang Chen, Pengfei Guan, Jingde Bu, Hongzhen Tian, Yanjing Su, Feng Ding, Lin-Wang Wang",
+      "date": "2026-04-27",
+      "pdf": "https://arxiv.org/pdf/2604.24816v1",
+      "score": "6.0",
+      "evidence": "具有从头算精度的超大规模分子动力学",
+      "tldr": "本研究利用神经演化势（NEP）框架，在中国新一代智能超算上实现了规模达1.62万亿原子的分子动力学模拟，达到了从头算精度。该工作将模拟规模推向微米级介观尺度，计算效率比现有机器学习力场提高100倍，比六年前的戈登·贝尔奖成果快1000倍，并在4.5万个GPGPU上展现了极佳的并行扩展性，为具有量子精度的介观建模开辟了新路径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Material properties are fundamentally dictated by multiscale phenomena, which often reach mesoscale in size. The μm mesoscale is also the size which can be observed directly under an optical microscope, bridging the atomistic microscopic description with the continuous model macroscopic world. In this work, we report an unprecedented molecular dynamics (MD) simulation comprising 1.62 trillion atoms. Utilizing the neuroevolution potential (NEP) framework, we attained ab initio accuracy on China's New-generation Intelligent Supercomputer. Our implementation achieves a time-to-solution (s/step/atom) 100 times faster than previous state-of-the-art machine learning force field simulations, and 1,000 times faster than the Gordon Bell Prize-winning application from six years ago. Furthermore, we demonstrate an 86.9% weak scaling efficiency from a single GPGPU to 45,000 GPGPUs. These results redefine atomistic simulation boundaries, enabling direct mesoscopic modeling with quantum-level precision.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.26140v1-solv-eze-automated-placement-of-explicit-water-molecules-using-3d-rism",
+      "section": "quick",
+      "title_en": "Solv-eze: Automated Placement of Explicit Water Molecules Using 3D-RISM",
+      "authors": "Felipe Silva Carvalho, Steven Ramsey, Tom Kurtzman, Tyler Luchko",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26140v1",
+      "score": "6.0",
+      "evidence": "生物分子动力学模拟中水分子的准备",
+      "tldr": "本研究针对分子动力学模拟中传统溶剂化方法易遗漏关键界面水分子的缺陷，开发了名为 Solv-eze 的自动化工具。该方法利用 3D-RISM 理论生成的溶剂密度分布，在高概率区域精确放置显式水分子，无需长时间采样即可获得物理意义明确的初始水合结构。Solv-eze 将集成至 AmberTools 26，实验验证显示其能有效重现蛋白质-配体复合物中的晶体水，以较低计算成本显著提升了模拟系统的初始化质量。",
+      "tags": "query:qmmm",
+      "abstract_en": "Molecular dynamics (MD) simulations are widely used to study biological systems, where water molecules often play a critical role in protein-ligand interactions. In conventional MD preparation protocols, water molecules are typically added from a pre-equilibrated solvent box and removed using conservative steric cutoffs, an approach that can eliminate important interfacial waters that are often not recovered during equilibration due to kinetic barriers limiting exchange with bulk solvent. In this work, we present an automated and computationally efficient method for placing water molecules around biomolecular solutes using three-dimensional reference interaction site model (3D-RISM) solvent density distributions. By identifying regions of high solvent probability, the method generates physically meaningful initial hydration structures without requiring extended sampling or specialized techniques such as grand canonical Monte Carlo (MC) or hybrid MC/MD approaches, and will be released as an update to AmberTools 26, enabling seamless integration into standard MD preparation pipelines. We validate the approach on a diverse set of protein-ligand complexes with crystallographically resolved bridging waters, showing that 3D-RISM-based placement reproduces a large fraction of these experimentally observed waters, while subsequent minimization further improves agreement as crystallographic waters relax toward positions consistent with those predicted by our approach. Overall, this method enables more accurate and practical initialization of interfacial hydration, improving the reliability of MD simulations with modest computational cost relative to routine system preparation.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

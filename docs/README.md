@@ -6,35 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-29
-- 运行时间：2026-04-29 20:33:53 UTC
+- 最新运行日期：2026-04-30
+- 运行时间：2026-04-30 20:27:20 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：3
 - 精读区：0
-- 速读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-- 今日共生成 4 篇推荐（精读 0 篇，速读 4 篇）
-- 速读：《Extending Hamiltonian-Adaptive Resolution Simulation to Interfaces: An Updated LAMMPS Implementation and Application to Porous Solids》（6.0/10）, 《DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory》（6.0/10）, 《Learning Structure, Energy, and Dynamics: A Survey of Artificial Intelligence for Protein Dynamics》（6.0/10）
-- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202604/29/README](/202604/29/README)
+今日聚焦原子模拟前沿，涵盖万亿级原子动力学模拟与混合专家模型（MoE）框架。
+重点关注利用 MoE 提升机器学习势能精度，以及实现具备从头算精度的超大规模分子动力学模拟。
+建议关注 AI 势能模型在大尺度复杂体系中的应用，并尝试 Solv-eze 等自动化溶剂建模工具。
+- 详情：[/202604/30/README](/202604/30/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Extending Hamiltonian-Adaptive Resolution Simulation to Interfaces: An Updated LAMMPS Implementation and Application to Porous Solids](/202604/29/2604.21867v1-extending-hamiltonian-adaptive-resolution-simulation-to-interfaces-an-updated-lammps-implementation-and-application-to-porous-solids)  
+1. [Mixture of Experts Framework in Machine Learning Interatomic Potentials for Atomistic Simulations](/202604/30/2604.26143v1-mixture-of-experts-framework-in-machine-learning-interatomic-potentials-for-atomistic-simulations)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：将模拟区域划分为反应区和非反应区，类似于QM/MM
+2. [Trillion-atom molecular dynamics simulations with ab initio accuracy](/202604/30/2604.24816v1-trillion-atom-molecular-dynamics-simulations-with-ab-initio-accuracy)  
    标签：评分：6.0/10、query:qmmm
-   evidence：结合原子级和粒子级粗粒化模型
-2. [DeepHartree: A Poisson-Coupled Neural Field for Scalable Density Functional Theory](/202604/29/2604.22669v2-deephartree-a-poisson-coupled-neural-field-for-scalable-density-functional-theory)  
+   evidence：具有从头算精度的超大规模分子动力学
+3. [Solv-eze: Automated Placement of Explicit Water Molecules Using 3D-RISM](/202604/30/2604.26140v1-solv-eze-automated-placement-of-explicit-water-molecules-using-3d-rism)  
    标签：评分：6.0/10、query:qmmm
-   evidence：加速大体系的DFT计算，这是QM/MM模拟的核心组成部分
-3. [Learning Structure, Energy, and Dynamics: A Survey of Artificial Intelligence for Protein Dynamics](/202604/29/2604.25244v1-learning-structure-energy-and-dynamics-a-survey-of-artificial-intelligence-for-protein-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：用于加速分子模拟和蛋白质动力学的人工智能
-4. [Excitation of Low-Frequency Modes and the Effects of Protein Dynamics on Spectral Densities of Bacteriochlorophyll Molecules](/202604/29/2604.25460v1-excitation-of-low-frequency-modes-and-the-effects-of-protein-dynamics-on-spectral-densities-of-bacteriochlorophyll-molecules)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：蛋白质动力学和经典分子动力学力场
+   evidence：生物分子动力学模拟中水分子的准备
 
 
 <div class="dpr-home-promo-card">
