@@ -1,0 +1,243 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-01T19:56:29.981285+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.22571v1",
+      "title": "LARA: Validation-Driven Agentic Supercomputer Workflows for Atomistic Modeling",
+      "abstract": "Large language models (LLMs) and agentic systems have recently demonstrated potential for automating scientific workflows, including atomistic simulations. However, their deployment in high-performance computing (HPC) environments remains limited by the lack of mechanisms ensuring correctness, reproducibility, and safe interaction with computational resources. Generated workflows suffer from inconsistencies, incorrect API usage, or invalid physical configurations - leading to failed or unreliable simulations. In this work, we introduce LARA-HPC, a validation-driven agentic framework to enable reliable workflow generation for atomistic modeling on HPC systems. Our approach is based on three key components: (i) a controlled execution layer that mediates all interactions with HPC resources; (ii) simulation-native validation through dry-run capabilities, enabling execution-level verification without incurring resource cost; and (iii) a multi-phase agentic pipeline combining retrieval-augmented generation and iterative refinement. We demonstrate the effectiveness of this approach performing an end-to-end atomistic simulation workflow on HPC by applying LARA-HPC to Density Functional Theory simulations. The results show that validation-driven generation significantly improves robustness and enables iterative correction of both syntactic and physical inconsistencies. More broadly, this work advocates for a shift from generation-first to validation-first paradigms in Artificial Intelligence (AI) assisted scientific computing. We argue that the future task of the computational physics community is to develop domain specific agentic systems based on structured tooling to realize an HPC enabled co-piloted research ecosystem.",
+      "authors": [
+        "William Dawson",
+        "Louis Beal",
+        "Yoann Curé",
+        "Giuseppe Fisicaro",
+        "Dorian Rolland",
+        "Luigi Genovese"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-24T14:03:42+00:00",
+      "link": "https://arxiv.org/pdf/2604.22571v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "automation of atomistic modeling and simulation workflows",
+      "llm_evidence_cn": "原子级建模与模拟工作流的自动化",
+      "llm_evidence": "原子级建模与模拟工作流的自动化",
+      "canonical_evidence": "原子级建模与模拟工作流的自动化",
+      "llm_tldr_en": "LARA-HPC automates atomistic simulation workflows on supercomputers with validation mechanisms.",
+      "llm_tldr_cn": "LARA-HPC通过验证机制在超级计算机上实现了原子模拟工作流的自动化。",
+      "llm_tldr": "LARA-HPC通过验证机制在超级计算机上实现了原子模拟工作流的自动化。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.25262v1",
+      "title": "Benchmarking Universal Machine-Learned Interatomic Potentials for High-Temperature Metal-Organic Framework Chemistry",
+      "abstract": "Universal machine-learned interatomic potentials (uMLIPs) offer a promising approach to performing atomistic simulations at near-DFT accuracy with greatly reduced computational cost. Here, we present a new high-temperature benchmarking dataset of 40~ps ab~initio molecular dynamics (AIMD) trajectories simulated at 300, 1000, and 2000 K for nine zinc- and zirconium-based metal-organic frameworks (MOFs): ZIF-8, CALF-20, MOF-10, MOF-5, MIP-206, UiO-66, UiO-67, UiO-66-NH2, and NU-1000. These trajectories capture equilibrium dynamics, thermally induced distortions, and early-stage decomposition events, including linker degradation and metal node aggregation. Subsequently, we use this dataset to benchmark five leading uMLIPs: ORB-v3, MACE-MP-0a, MACE-MPA-0, fairchem ODAC23, and fairchem OMAT. Our results reveal that ORB-v3 and fairchem OMAT achieve the lowest energy, force, and stress errors across all temperatures. However, all models exhibit significant error under high-temperature conditions. Long-timescale molecular dynamics simulations produced with ORB-v3 demonstrate that the generative error of uMLIPs far exceeds model losses captured during static validation, highlighting the limitations of current universal models for simulating high-temperature MOF dynamics. This work provides a benchmark for assessing the robustness of uMLIPs in extreme regimes and guides future development of potentials capable of accurately modeling the chemistry of high-temperature MOF dynamics.",
+      "authors": [
+        "Connor W. Edwards",
+        "Jack D. Evans"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-28T06:11:25+00:00",
+      "link": "https://arxiv.org/pdf/2604.25262v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "benchmarking machine-learned interatomic potentials for molecular dynamics",
+      "llm_evidence_cn": "基准测试用于分子动力学的机器学习原子间势能",
+      "llm_evidence": "基准测试用于分子动力学的机器学习原子间势能",
+      "canonical_evidence": "基准测试用于分子动力学的机器学习原子间势能",
+      "llm_tldr_en": "Evaluates machine-learned potentials against ab initio molecular dynamics for complex frameworks.",
+      "llm_tldr_cn": "针对复杂框架，对比从头算分子动力学评估机器学习势能的性能。",
+      "llm_tldr": "针对复杂框架，对比从头算分子动力学评估机器学习势能的性能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.26428v1",
+      "title": "A Theoretical Investigation of the Thermal and Photochemical Mechanisms of Ethylbenzene Dehydrogenation on Rutile TiO$_{2}$(110)",
+      "abstract": "This master's thesis investigates the thermal and photochemical dehydrogenation of ethylbenzene (EB) to styrene on the rutile TiO$_{2}$(110) surface. A dual-methodological quantum chemical approach is used for this investigation. While industrial styrene production is energy-intensive, photocatalysis on semiconductor materials offers a promising alternative under significantly milder conditions. To elucidate the underlying mechanisms, this study employs density functional theory (DFT-PBE-D3) for geometry optimization and high-level multi-reference methods (SA-CASSCF) to accurately describe the electronic complexity of excited states and radical intermediates.   The investigation reveals that, on the stoichiometric surface, both thermal and photochemical pathways are dominated by proton-coupled electron transfer (PCET). The wavelength dependence observed in the literature is explained by how the system navigates electronic manifolds. 343 nm irradiation leads to rapid relaxation into the ground state, where high kinetic barriers persist. In contrast, 257 nm excitation enables the system to persist in higher excited states (S1/T2). This allows the reaction to bypass the rate-determining ground-state barrier.   Furthermore, the study demonstrates that surface oxidation causes a fundamental mechanistic shift. On oxidized surfaces, pre-adsorbed oxygen radicals (O$_{Ti}$) enable direct hydrogen atom transfer (HAT), which is more efficient than PCET on reduced surfaces. This \"hydrogen scavenger\" effect explains the significant increase in styrene yield. This work underscores the necessity of multi-reference treatments for complex surface reactions and provides a fundamental understanding of how surface stoichiometry and photon energy govern photocatalytic efficiency.",
+      "authors": [
+        "Nico Yannik Merkt"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.chem-ph"
+      ],
+      "published": "2026-04-29T08:38:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.26428v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemical investigation of catalytic reaction mechanism",
+      "llm_evidence_cn": "催化反应机理的量子化学研究",
+      "llm_evidence": "催化反应机理的量子化学研究",
+      "canonical_evidence": "催化反应机理的量子化学研究",
+      "llm_tldr_en": "Quantum chemical study of thermal and photochemical dehydrogenation mechanisms on TiO2 surfaces.",
+      "llm_tldr_cn": "利用量子化学方法研究二氧化钛表面上的热和光化学脱氢机理。",
+      "llm_tldr": "利用量子化学方法研究二氧化钛表面上的热和光化学脱氢机理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.27136v1",
+      "title": "Stepping up enhanced rate calculations with EATR-flooding",
+      "abstract": "Several recent methods have shown that it is possible to compute rate constants of very slow biomolecular processes using simulations where a time-dependent bias is added along one or several collective variables (CVs). We previously reported the exponential average time-dependent rate (EATR) method, which can improve upon these approaches by accounting for how efficiently the external biasing potential modifies the observed rate using a learned CV-quality factor $γ$. This results in more accurate rate estimates using the same data when biasing a suboptimal coordinate. However, as formulated EATR depended on the biasing potential varying over time to properly determine the biasing efficiency, which limits the method's applicability to quasi-static biasing schemes such as ``flooding'' or on-the-fly probability enhanced sampling (OPES). Here, we present the EATR-flooding approach, which generalizes our method by replacing the need for a time dependent bias by instead varying (stepping up) the strength of the biasing potential across multiple sets of simulations. We implement this approach as an open-source Python library, and demonstrate that this approach is accurate without substantial loss of efficiency compared to standard EATR for a coarse-grained protein system, and also show good performance on a fully atomistic cavity-ligand model. Two additional appealing features of EATR-flooding are an internal check for over-biasing and the fact that only a single $γ$ parameter is predicted for a given choice of CVs, as compared to our earlier results where $γ$ empirically depended on biasing rate. Finally, we believe EATR-flooding applies not only to OPES simulations but more generally to CV biasing enhanced sampling approaches, making it broadly useful.",
+      "authors": [
+        "Nicodemo Mazzaferro",
+        "Willmor J Pena Ccoa",
+        "Pilar Cossio",
+        "Glen M. Hocky"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-04-29T19:41:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.27136v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "biomolecular rate constant calculation and biasing potentials",
+      "llm_evidence_cn": "生物分子速率常数计算与偏置势",
+      "llm_evidence": "生物分子速率常数计算与偏置势",
+      "canonical_evidence": "生物分子速率常数计算与偏置势",
+      "llm_tldr_en": "Introduces EATR-flooding to improve rate constant calculations for slow biomolecular processes.",
+      "llm_tldr_cn": "引入EATR-flooding方法，改进了慢速生物分子过程的速率常数计算。",
+      "llm_tldr": "引入EATR-flooding方法，改进了慢速生物分子过程的速率常数计算。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "enzymatic catalytic cycle and kinetics",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.27256v1",
+      "title": "Towards Accelerated SCF Workflows with Equivariant Density-Matrix Learning and Analytic Refinement",
+      "abstract": "We present \\textsc{dm-PhiSNet}, a physically constrained \\textsc{PhiSNet}-based equivariant model that predicts one-electron reduced density matrices (1-RDMs) directly from molecular geometries in an atomic-orbital (AO) basis for accelerated self-consistent field (SCF) workflows. Training follows a two-stage schedule with progressively introduced physically motivated objectives, and the resulting predictions are refined by a lightweight analytic block. This block enforces electron-number conservation, drives the 1-RDM toward generalized idempotency in the AO metric, and regularizes the occupation spectrum of the Löwdin-orthogonalized density. Across six closed-shell systems -- H$_2$O, CH$_4$, NH$_3$, HF, ethanol, and NO$_3^-$ -- the refined 1-RDMs provide SCF initial guesses that substantially reduce iteration steps by 49--81\\% relative to standard initializations. Beyond SCF acceleration, the learned 1-RDMs yield accurate one-shot total energies and Hellmann--Feynman atomic forces without force supervision, indicating that the model captures chemically meaningful electronic structure. These results demonstrate that combining equivariant learning with analytic constraint enforcement provides a simple, general route to solver-ready density-matrix initializations and accelerated SCF workflows.",
+      "authors": [
+        "Zuriel Y. Yescas-Ramos",
+        "Andrés Álvarez-García",
+        "Huziel E. Sauceda"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.AI",
+        "cs.LG",
+        "physics.comp-ph",
+        "quant-ph"
+      ],
+      "published": "2026-04-29T23:02:21+00:00",
+      "link": "https://arxiv.org/pdf/2604.27256v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerated SCF workflows for molecular geometries",
+      "llm_evidence_cn": "加速分子几何结构的自洽场工作流",
+      "llm_evidence": "加速分子几何结构的自洽场工作流",
+      "canonical_evidence": "加速分子几何结构的自洽场工作流",
+      "llm_tldr_en": "Predicts density matrices from molecular geometries to accelerate quantum chemical workflows.",
+      "llm_tldr_cn": "通过分子几何结构预测密度矩阵，以加速量子化学自洽场工作流。",
+      "llm_tldr": "通过分子几何结构预测密度矩阵，以加速量子化学自洽场工作流。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.27910v1",
+      "title": "Fragment-Constrained Charge Equilibration for Charge-Aware Machine Learning Potentials at Electrochemical Interfaces",
+      "abstract": "Predictive simulation of electrochemical interfaces requires atomistic models that capture reactive bond rearrangements, long-range electrostatics, and charge distributions reflecting the electronic distinctness of electrode and electrolyte. Existing charge-aware machine-learned interatomic potentials (MLIPs) built on global charge equilibration (QEq) settle electrode and electrolyte at a common electrochemical potential, leaving no room for the interfacial gradient that the double layer requires and admitting spurious charge transfer between electronically disconnected regions. Per-fragment charge equilibration is the established remedy in classical molecular dynamics, but reliance on predefined molecular topology has confined it to non-reactive systems. We lift this restriction by making fragment identification itself a differentiable function of atomic geometry, yielding soft fragment-constrained charge equilibration (Soft-FQEq) -- a solver layer that restores fragment-resolved charge conservation in reactive MLIPs. The layer consumes four scalar MLP readouts from a shared atomic-feature network -- per-atom electronegativity, source charge, short-range energy, and a soft bond connectivity -- and returns equilibrated charges together with per-fragment chemical potentials. We implement Soft-FQEq as an extension of the hippynn framework on a HIP-NN feature network and train it on DFT energies, forces, and DDEC6 charges for IrO2/H2O/Na+/ClO4- interfaces. The trained model recovers a clear electrode-to-electrolyte gradient in the per-atom electrochemical potential. With the same trained weights but the fragment-constrained solver replaced by global QEq at inference, this gradient collapses to an essentially uniform profile, directly showing that the gradient cannot be sustained within global QEq while the fragment formulation recovers it.",
+      "authors": [
+        "Akhil Reddy Peeketi",
+        "Blas P Uberuaga",
+        "Travis E Jones"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-04-30T14:18:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.27910v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "charge-aware machine learning potentials for reactive bond rearrangements",
+      "llm_evidence_cn": "用于反应性化学键重排的电荷感知机器学习势能",
+      "llm_evidence": "用于反应性化学键重排的电荷感知机器学习势能",
+      "canonical_evidence": "用于反应性化学键重排的电荷感知机器学习势能",
+      "llm_tldr_en": "Introduces fragment-constrained charge equilibration for ML potentials to simulate reactive interfaces.",
+      "llm_tldr_cn": "引入片段约束电荷平衡方法，用于模拟反应界面的机器学习势能。",
+      "llm_tldr": "引入片段约束电荷平衡方法，用于模拟反应界面的机器学习势能。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
