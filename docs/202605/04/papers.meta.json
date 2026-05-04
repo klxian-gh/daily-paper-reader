@@ -1,0 +1,37 @@
+{
+  "label": "2026-05-04",
+  "date": "2026-05-04",
+  "generated_at": "2026-05-04T20:32:22",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/04/2605.00337v1-free-energy-surface-sampling-via-reduced-flow-matching",
+      "section": "quick",
+      "title_en": "Free Energy Surface Sampling via Reduced Flow Matching",
+      "authors": "Zichen Liu, Tiejun Li",
+      "date": "2026-05-01",
+      "pdf": "https://arxiv.org/pdf/2605.00337v1",
+      "score": "7.0",
+      "evidence": "化学反应的自由能面采样",
+      "tldr": "自由能面（FES）采样对理解化学反应至关重要，但传统高维模拟投影方法计算成本高。本文提出FES-FM，一种基于简化流匹配（Flow Matching）的方法，通过在集体变量（CV）空间训练动态传输映射实现直接采样。该方法利用局部极小值处的Hessian矩阵构建先验分布，确保了物理不变性。实验证明，FES-FM在多种系统上显著降低了计算成本，并提升了单位时间内的采样精度。",
+      "tags": "query:qmmm",
+      "abstract_en": "Sampling the free energy surface, namely, the distribution of collective variables (CVs), is a crucial problem in statistical physics, as it underpins a better understanding of chemical reactions and conformational transitions. Traditional methods for free energy surface sampling involve simulation in high-dimensional configuration space and projecting the resulting configurations onto the CV space. To reduce the computational costs of such sampling, we propose FES-FM, a reduced flow matching (FM) method for free energy sampling (FES). We train a dynamical transport map in the CV space, thereby enabling direct sampling of the free energy surface. For many-particle systems, we construct a prior distribution based on the Hessian at a local minimum of the potential, which ensures both rotation-translation invariance and physically meaningful configurations. We evaluate the proposed method across a variety of potential functions and collective variables. Comparative experiments demonstrate that our approach drastically reduces computational costs while delivering superior accuracy per unit sampling time.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/04/2605.00609v1-coordination-engineering-of-dual-atom-catalysts-for-overall-water-splitting-mechanistic-insights-from-constant-potential-first-principles-and-machine-learning",
+      "section": "quick",
+      "title_en": "Coordination Engineering of Dual-Atom Catalysts for Overall Water Splitting: Mechanistic Insights from Constant-Potential First-Principles and Machine Learning",
+      "authors": "Jiahang Li, Suhang Li, Chong Yan, Jiajun Yu, Qinzhuang Liu, Ruo-Ya Wang, Dongwei Ma",
+      "date": "2026-05-01",
+      "pdf": "https://arxiv.org/pdf/2605.00609v1",
+      "score": "6.0",
+      "evidence": "第一性原理和机器学习提供的机理见解",
+      "tldr": "本研究通过配位工程设计用于全解水的双原子催化剂（DACs）。利用恒电势第一性原理计算和机器学习，系统研究了石墨烯负载的228种TM1TM2-C6-xNx结构。筛选出24种高活性OER候选材料（如CoNi, CoCu, Co2），其中22种兼具优异的HER活性，揭示了配位环境对双功能催化性能的调控机制。",
+      "tags": "query:qmmm",
+      "abstract_en": "The rational design of bifunctional electrocatalysts for the hydrogen evolution reaction (HER) and oxygen evolution reaction (OER) is essential for achieving efficient and cost-effective overall water splitting. Atomically dispersed transition-metal catalysts, including single-atom catalysts and dual-atom catalysts (DACs), have emerged as a prominent class of heterogeneous catalysts, in which coordination engineering plays a decisive role in tuning catalytic performance. Herein, we explore coordination-engineered bifunctional overall water splitting electrocatalysts using graphene-supported DACs (TM1TM2-C6-xNx) as model systems. By tuning C/N coordination and dual-metal combinations (Fe, Co, Ni, and Cu), a library of 228 structures was constructed. A three-step screening strategy, combining constant-charge and constant-potential density functional theory with kinetic analysis of proton-coupled electron transfer (PCET), identifies 24 highly active candidates (TM1TM2 = CoNi, CoCu and Co2) with mixed C/N coordination for OER. These catalysts exhibit overpotentials comparable to that of IrO2 and low PCET barriers (lower than 0.40 eV), among which 22 also show high HER activity. Machine learning reveals clear coordination-dependent structure-performance relationships. Such bifunctionality arises from coordination engineering that enables the simultaneous optimization of OER intermediate adsorption and the hydrogen binding strength for HER. This work establishes coordination engineering as an effective strategy for designing high-performance bifunctional dual-atom electrocatalysts for overall water splitting.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

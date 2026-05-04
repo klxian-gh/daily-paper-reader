@@ -1,0 +1,874 @@
+Title: Free Energy Surface Sampling via Reduced Flow Matching
+
+URL Source: https://arxiv.org/pdf/2605.00337v1
+
+Published Time: Mon, 04 May 2026 00:23:16 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+# Free Energy Surface Sampling via Reduced Flow Matching 
+
+Zichen Liu a, Tiejun Li a,b,c, ∗
+
+> aCenter for Data Science, Peking University,
+> bLMAM and School of Mathematical Sciences, Peking University,
+> cCenter for Machine Learning Research, Peking University,
+
+Abstract 
+
+Sampling the free energy surface—namely, the distribution of collective variables (CVs)—is a crucial problem in statistical physics, as it underpins a better understanding of chemical reactions and conformational transitions. Traditional methods for free energy surface sampling involve simulation in high-dimensional configuration space and projecting the resulting configurations onto the CV space. To reduce the computational costs of such sampling, we propose FES-FM, a reduced flow matching (FM) method for free energy sampling (FES). We train a dynamical transport map in the CV space, thereby enabling direct sampling of the free energy surface. For many-particle systems, we construct a prior distribution based on the Hessian at a local minimum of the potential, which ensures both rotation-translation invariance and physically meaningful configurations. We evaluate the proposed method across a variety of potential functions and collective variables. Comparative experiments demonstrate that our approach drastically reduces computational costs while delivering superior accuracy per unit sampling time. 
+
+Keywords: free energy surface, flow matching, Boltzmann sampling, annealed importance sampling 
+
+1. Introduction 
+
+Boltzmann sampling is a central task in statistical mechanics, where the goal is to sample from a target probability density defined as p(x) = Z−1e−Utarget (x). Here, Utarget (x) represents an unnormalized potential energy, and Z = R 
+
+> Rn
+
+e−Utarget (x)dx is a normalization constant (partition function) that is typically intractable to compute. For simplicity, we absorb the inverse temperature into Utarget .In many molecular systems, the quantities of interest are low-dimensional descriptors known as collective variables (CVs). CVs are physically meaningful functions of the high-dimensional configuration variables and are designed to capture the progress of rare events such as chemical reactions and conformational transitions. As a result, an important goal beyond sampling configurations is to characterize the distribution of CVs and the associated free energy surface. 
+
+> ∗Corresponding author. E-mail address: tieli@pku.edu.cn
+> arXiv:2605.00337v1 [cs.LG] 1 May 2026
+
+The CV map is denoted by ξ : Rn → Rd with d ≪ n, which projects a high-dimensional configuration into the low-dimensional CV space Rd. Our objective is, given the mapping 
+
+ξ(x), to construct a sampler for the induced CV random variable Y = ξ(X) where X ∼ p(x).Assuming ξ is sufficiently regular (e.g., ξ ∈ C1), ∇ξ ∈ Rn×d and rank (∇ξ(x)) = d in the region of interest, the density ρ(y) of Y can be expressed as 
+
+ρ(y) = 
+
+Z
+
+p(x)δ(ξ(x) − y)d x =
+
+Z
+
+> Σy
+
+p(x)|Jξ(x)|−1dσΣy (x). (1) Here, |Jξ(x)| = det (∇ξ(x)T ∇ξ(x)) 12 denotes the normal Jacobian in the coarea formula. 
+
+Σy = {x ∈ Rn : ξ(x) = y} is the y-level set of ξ, and σΣy is the surface measure on Σy
+
+induced by the Euclidean metric on Rn. The free energy is defined as F (y) = − log ρ(y) and 
+
+F (y) (or even its unnormalized counterpart) is generally intractable to evaluate. Our goal is to directly generate samples Y ∼ ρ(y) in the CV space. 
+
+Traditional numerical simulation methods estimate ρ(y) by simulating long trajectories in the original configuration space, or CV space through analytically derived reduced dynamics Stoltz et al. (2010); Frenkel and Smit (2023), which can be expensive in rare-event regimes and for high-dimensional systems. To reduce the sampling cost, we propose FES-FM , a reduced flow matching method for free energy sampling. We learn a dynamical transport in the CV space that pushes a simple prior distribution toward the target CV distribution 
+
+ρ(y). Accordingly, we derive the training objective based on the transport equation satisfied by the transport velocity and combine it with Jarzynski-type non-equilibrium reweighting. Once trained, FES-FM generates CV samples by evolving the reduced dynamics, avoiding full-space simulation during generation and substantially reducing the cost per sample. Our contributions are summarized as follows. 
+
+• We introduce a reduced-space flow matching framework that learns a transport map in CV space to sample the free energy surface directly, avoiding full-space simulation during generation. 
+
+• For many-particle systems, we propose a Hessian-informed harmonic prior distribution, whose samples vibrate near a local minimum of the potential energy. This distribution not only possesses E(3) -invariance but also ensures that its samples correspond to physically meaningful configurations. 
+
+• We evaluate FES-FM on a suite of benchmark potentials. We compare against full-space generative baselines that generate the Boltzmann distribution and obtain samples via the CV map. Our method significantly reduces the computational cost during generation and demonstrates advantages in accuracy per unit sampling time. 
+
+2. Related work 
+
+2.1. Machine-learning methods for Boltzmann sampling 
+
+While our goal is to sample the free energy surface in the CV space, we summarize prior work focusing on Boltzmann sampling in the configuration space. 2Several recent works develop Boltzmann samplers by constructing a transport map for the target distribution, combined with the Physics-Informed Neural Network (PINN, Raissi et al. (2019)) framework. Chemseddine et al. (2024) propose an interpolation strategy that only parametrizes the potential function while fixing an appropriate velocity field. Sun et al. (2024) consider both the deterministic and stochastic dynamical transport map, and study the optimal transport map via a learnable potential interpolation. Non-Equilibrium Transport Sampler (Albergo and Vanden-Eijnden, 2025) leverages non-equilibrium sampling to construct training objectives and generates samples for optimization. Normalizing flow (Noé et al., 2019) and continuous normalizing flow (Zhang et al., 2018) are trained via maximum likelihood to match the target Boltzmann distribution instead of the intermediate processes. Zhang and Chen (2022); Vargas et al. (2023); Richter and Berner (2024); Havens et al. (2025); Chen et al. (2024); Berner et al. (2022) formulate learning diffusion processes as stochastic optimal control. Furthermore, Adjoint Matching (Domingo-Enrich et al., 2025; Liu et al., 2025a) casts stochastic optimal control problems as regression problems. Phillips et al. (2024) and Bortoli et al. (2024) also show that regression-based objectives can be effective, whereas Akhound-Sadegh et al. (2024) and Woo and Ahn (2024) introduce an offline approach that learns the score using samples stored in a replay buffer. Energy-based model (Plainer et al., 2025; Wang et al., 2025) is a widely-used tool for sampling, while the Jarzynski equality is also used in energy-based models (Carbone et al., 2023) and the Helmholtz free energy calculation (He et al., 2025). 
+
+2.2. Classical methods for free energy surface sampling 
+
+Umbrella sampling (Torrie and Valleau, 1977) applies biases in separate windows to obtain the globally unbiased distribution of the CVs. Metadynamics (Laio and Parrinello, 2002) directly compensates free energy barriers with accumulated Gaussian biases, and uses the accumulated bias to produce the free energy surface. Maragliano and Vanden-Eijnden (2006) construct an extended system where CVs are treated as dynamical variables to sample the free energy surface. Adaptive Biasing Force (Comer et al., 2015) adaptively estimates the mean force to build a flattening bias along CVs, whereas Variational Enhanced Sampling (Valsson and Parrinello, 2014) optimizes a bias potential variationally to enforce a target CV distribution and recover the free energy surface. These classical strategies typically rely on simulations in the configuration space. In light of this, we aim to train a model that requires only the simulation of the reduced dynamics in the CV space. For additional background on free energy computation and Boltzmann sampling, see Stoltz et al. (2010) and Frenkel and Smit (2023). 
+
+3. Background and preliminaries 
+
+In this section, we first review flow-matching Boltzmann samplers (Sun et al., 2024; Chemseddine et al., 2024), and then present the Non-Equilibrium Transport Sampler (NETS, Albergo and Vanden-Eijnden (2025)), which provides a key building block for our algorithm. 33.1. Boltzmann sampling via flow matching 
+
+Sun et al. (2024); Chemseddine et al. (2024) propose to sample the target distribution by learning an ordinary differential equation (ODE) based transport map from a simple prior, where the time-dependent velocity field is parameterized by a neural network and trained using PINN objectives. We denote the density of the prior distribution as p(x, 0) = Z−10 e−U0(x).A common choice for the prior is the Gaussian distribution, i.e., U0(x) = 12 ∥x∥2. For t ∈ [0 , 1] ,we define the linear interpolation 
+
+U (x, t ) = (1 − t)U0(x) + tU target (x), (2) and the corresponding distribution is dνt(x) = p(x, t )d x, where 
+
+p(x, t ) = 1
+
+Z(t)e−U (x,t ), Z(t) = 
+
+Z
+
+> Rn
+
+e−U (x,t )dx. (3) Other types of interpolation are considered in Sun et al. (2024); Chemseddine et al. (2024). The goal of the flow-matching based Boltzmann sampler is to find a velocity field b(x, t ) such that the marginal distribution of the ODE solution: 
+
+ddtXt = b(Xt, t ) (4) satisfies Xt ∼ p(x, t ) for all t ∈ [0 , 1] . In particular, we have X1 ∼ p(x). Thus, once such a 
+
+b(x, t ) is obtained, we can sample from the target density p(x) by solving the ODE (4). The velocity field b(x, t ) and the distribution p(x, t ) are related through the Liouville equation, i.e. ∂tp(x, t ) + ∇ · (p(x, t )b(x, t )) = 0 , and this equation can be reformulated in terms of the potential U (x, t ) as: 
+
+∂tU (x, t ) + b(x, t ) · ∇ U (x, t ) − ∇ · b(x, t ) + ∂t log Z(t) = 0 . (5) In this paper, for a function like b(x, t ) depending on both space and time, ∇ denotes the gradient operator with respect to the spatial variables, i.e., ∇ = ( ∂x1 , ∂ x2 , . . . , ∂ xn )T . To approximate b(x, t ) and ∂t log Z(t), we parameterize them using neural networks bθ0 (x, t ) and 
+
+cθ0 (t), respectively, whose parameters are optimized by minimizing a loss function derived from the PINN framework. The loss function is given by: 
+
+Z 10
+
+Z
+
+> Rn
+
+∂tU (x, t ) + bθ0 (x, t ) · ∇ U (x, t ) − ∇ · bθ0 (x, t ) + cθ0 (t) 2 ˆp(x, t )d xdt. (6) Since the training objective is to ensure that (5) holds pointwise, the choice of ˆp(x, t ) can be arbitrary as long as it covers the desired approximation region. We remark that the flow matching mentioned above is different from the flow matching in generative tasks (Lipman et al., 2023; Liu et al., 2022; Albergo and Vanden-Eijnden, 2022). The method discussed here performs interpolation on the potential functions, whereas flow matching in generative tasks performs interpolation on samples. However, since both methods aim to find a flow map to match the predefined marginal distribution, we also refer to the method here as flow matching. 43.2. Expectation estimation via the non-equilibrium state 
+
+To accurately assign the statistical weight ˆp(x, t ) to target regions where the probability mass is transported by b(x, t ), NETS proposes setting ˆp(x, t ) = p(x, t ), which places the statistical weight exactly in these critical regions. Under this setting and noting that 
+
+dνt(x) = p(x, t )d x, the training loss can be formulated as: 
+
+L0[bθ0 , c θ0 ] = 
+
+Z 10
+
+Eνt bθ0 (x, t ) · ∇ U (x, t ) + ∂tU (x, t ) − ∇ · bθ0 (x, t ) + cθ0 (t) 2dt. (7) Direct sampling from νt is generally intractable, since it is precisely the target of the Boltzmann sampler. NETS (Albergo and Vanden-Eijnden, 2025) uses the following time-continuous variant of annealed importance sampling based on the Jarzynski equality, to estimate expectations under νt. For a given velocity ˆb(x, t ) ∈ Rn, let (Xˆbt , A ˆbt ) solve the coupled system: 
+
+dXˆbt = −ϵt∇U (Xˆbt , t )d t + ˆb(Xˆbt , t )d t + √2ϵtdWt, (8) 
+
+dAˆbt = ∇ · ˆb(Xˆbt , t )d t − ∇ U (Xˆbt , t ) · ˆb(Xˆbt , t )d t − ∂tU (Xˆbt , t )d t, (9) with initial conditions Xˆb 
+
+> 0
+
+∼ ν0, Aˆb 
+
+> 0
+
+= 0 . Here ϵt is a time-dependent diffusion coefficient, and 
+
+Wt is the standard Wiener process. Then, for any t ∈ [0 , 1] and test function h : Rn → R, we have 
+
+Eνt h(x) = 
+
+Z
+
+h(x)p(x, t )d x = E[eAˆbt h(Xˆbt )] 
+
+E[eAˆbt ] , (10) where the expectations in the last term are taken with respect to the law of (Xˆbt , A ˆbt ). It also follows that 
+
+log Z(t) − log Z(0) = log E[eAˆbt ], (11) which is referred to as the Jarzynski equality. See Albergo and Vanden-Eijnden (2025, Proposition 2.4) for details, and refer to Vaikuntanathan and Jarzynski (2008); Tian et al. (2024); Vargas et al. (2024) for related work. Equation (10) gives an exact reweighting identity for expectations under νt, regardless of the choice of ˆb. In practice, the expectations on the right-hand side are approximated using Monte Carlo trajectories, yielding a self-normalized importance sampling estimator. The variance of this estimator depends on the mismatch between the target density p(·, t ) and the marginal law induced by Xˆbt ; consequently, a poorly chosen (e.g., random) ˆb can produce highly variable, potentially degenerate weights. If ˆb satisfies the inhomogeneous transport equation (5) , the path weights exp (Aˆbt ) become constant across trajectories, resulting in a zero-variance reweighting. NETS proposes parameterizing ˆb = bθ and optimizing θ so that the variance of the resulting Monte Carlo estimators is progressively reduced during training. This requires simulating trajectories of the coupled non-equilibrium dynamics in (8) –(9) ; see lines 3–8 of Algorithm 1 in Albergo and Vanden-Eijnden (2025) for the simulation procedure. 54. Methods 
+
+To construct a generator for the target density ρ(y), we develop a reduced dynamical system defined on the CV space. Specifically, we map the mathematical objects from Section 3 to their counterparts in the reduced model, and derive the partial differential equation (PDE) satisfied by the velocity of this reduced dynamics. 
+
+4.1. Reduced dynamics from the transport map in the configuration space 
+
+For Xt ∼ p(x, t ), the probability density of the random variable Yt = ξ(Xt) can be written as 
+
+ρ(y, t ) = 
+
+Z
+
+> Σy
+
+p(x, t )|Jξ(x)|−1dσΣy (x). (12) We denote the corresponding distribution by dμt(y) = ρ(y, t )d y. Following the idea in flow matching, we aim to find a velocity field u(y, t ) such that the marginal distribution of the ODE solution: ddtYt = u(Yt, t ) (13) satisfies Yt ∼ ρ(y, t ) for all t ∈ [0 , 1] . In particular, we have Y1 ∼ ρ(y). Thus, once u(y, t ) is obtained, sampling from the target distribution can be achieved by solving the ODE (13) starting with Y0 = ξ(X0), where X0 ∼ p(x, 0) is drawn from the prior distribution. The velocity field u(y, t ) and the density ρ(y, t ) are related through the Liouville equation, i.e. ∂tρ(y, t ) + ∇ · (ρ(y, t )u(y, t )) = 0 . Let F (y, t ) = − log ρ(y, t ) represent the free energy at time t. Similar to (5), the Liouville equation can be rewritten as 
+
+∂tF (y, t ) + u(y, t ) · ∇ F (y, t ) − ∇ · u(y, t ) = 0 . (14) 
+
+4.2. Inhomogeneous transport equation for the reduced dynamics 
+
+The derivatives ∂tF (y, t ) and ∇F (y, t ) in (14) can be expressed as expectations with respect to the time-dependent measure μΣy ,t on Σy:
+
+dμΣy ,t (x) = 1
+
+ρ(y, t ) · p(x, t )|Jξ(x)|−1dσΣy (x). (15) In particular, ∇F (y, t ) can be computed as 
+
+∇F (y, t ) = EμΣy ,t D(x, t ), (16) where D(x, t ), known as the local mean force (Stoltz et al., 2010), is the difference of the force exerted on the system along the CVs and a term related to the curvature of the manifold 
+
+ξ(x) = y (Ciccotti et al., 2008; Stoltz et al., 2010). For 1 ≤ i ≤ d, its i-th component is given by 
+
+Di(x, t ) = 
+
+> n
+
+X
+
+> j=1
+
+∇ξ(x)† 
+
+> i,j
+
+∂xj U (x, t ) −
+
+> n
+
+X
+
+> j=1
+
+∂xj ∇ξ(x)† 
+
+> i,j
+
+, (17) 62.5 2.0 1.5 1.0 0.5 0.0 0.5 1.0               
+
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5 (a) Landscape and learned CV 0.2 0.3 0.4 0.5 0.6 0.7 0.8
+> 0
+> 2
+> 4
+> 6
+> 8
+> ground truth
+> generated (b) NETS-P 0.2 0.3 0.4 0.5 0.6 0.7 0.8
+> 0
+> 2
+> 4
+> 6
+> 8
+> ground truth
+> generated (c) FES-FM
+
+Figure 1: Results for Müller-Brown potential: (a) Illustration of the Müller-Brown potential, where the red curve denotes the transition path calculated via the string method. The blue dots represent samples from the Langevin dynamics, and we regard them as the ground truth distribution. The black contour lines correspond to the contours of the Müller-Brown potential, while the contour lines colored by the viridis 
+
+colormap indicate the contours of the collective variable. (b) Empirical densities of CV samples obtained by projecting NETS samples (blue) and the ground truth (red). (c) Empirical densities of the CV from our FES-FM (blue) and the ground truth (red). 
+
+where ∇ξ(x)† = ( ∇ξ(x)T ∇ξ(x)) −1∇ξ(x)T ∈ Rd×n represents the Moore-Penrose inverse (Penrose, 1955) of ∇ξ(x). Moreover, we can verify the following expression for ∂tF (y, t ):
+
+∂tF (y, t ) = EμΣy ,t [∂tU (x, t )] + ∂t log Z(t). (18) Therefore, the inhomogeneous transport equation (14) becomes 
+
+EμΣy ,t ∂tU (x, t ) + u(y, t ) · EμΣy ,t D(x, t ) − ∇ · u(y, t ) + ∂t log Z(t) = 0 . (19) We parametrize the time-dependent velocity field u by a neural network uθ1 . Since 
+
+∂t log Z(t) is an intractable function, we also use a neural network cθ1 to approximate it. For any y and t, we aim to find the vector field uθ1 and cθ1 such that 
+
+EμΣy ,t ∂tU (x, t ) + uθ1 (y, t ) · EμΣy ,t D(x, t ) − ∇ · uθ1 (y, t ) + cθ1 (t) = 0 . (20) However, the computation of expectations with respect to μΣy ,t in (20) is challenging, due to the difficulty in obtaining samples from the distribution supported on the manifold Σy.Therefore, we cannot directly define the PINN loss in the same way as (7) . Appendix Ap-pendix A provides a complete comparison list for the full NETS and reduced FES-FM model. 
+
+4.3. Training loss 
+
+To find uθ1 and cθ1 satisfying (20) , we leverage the properties of expectations to manipulate the integral term with respect to μΣy ,t . We first introduce an auxiliary neural network vθ1 (y, t )
+
+to approximate EμΣy ,t D(x, t ). For any y, t , we define ℓ1 as follows: 
+
+ℓ1[vθ1 ]( y, t ) = EμΣy ,t D(x, t ) − vθ1 (y, t ) 2. (21) 7Note that the expectation EμΣy ,t is taken with respect to x for fixed y and t. By the property of squared-loss minimization, the pointwise minimizer of ℓ1[vθ1 ]( y, t ) is the mean of D(x, t )
+
+under μΣy ,t , i.e., 
+
+vθ1 (y, t ) = EμΣy ,t D(x, t ). (22) Subsequently, we define 
+
+ℓ2[uθ1 , c θ1 , v θ1 ]( y, t ) = EμΣy ,t ∂tU (x, t ) + uθ1 (y, t ) · vθ1 (y, t ) − ∇ · uθ1 (y, t ) + cθ1 (t) 2, (23) and its pointwise minimizer with respect to uθ1 (y, t ), cθ1 (t), and vθ1 (y, t ) satisfies 
+
+EμΣy ,t ∂tU (x, t ) = −uθ1 (y, t ) · vθ1 (y, t ) + ∇ · uθ1 (y, t ) − cθ1 (t). (24) Note that the intersection of the solution sets of (22) and (24) is non-empty, and this intersection is exactly the solution set of the transport equation (20) . Therefore, the optimal uθ1 (y, t ), c θ1 (t), v θ1 (y, t ) that minimize ℓ1 + λℓ 2 (λ > 0) satisfies both (22) and (24) simultaneously, and hence satisfies (20) . Based on this fact, we define the following loss function 
+
+L1[uθ1 , c θ1 , v θ1 ] = 
+
+Z 10
+
+Eμt
+
+ℓ1[vθ1 ]( y, t )dt + λ
+
+Z 10
+
+Eμt
+
+ℓ2[uθ1 , c θ1 , v θ1 ]( y, t )dt. (25) Note that μΣy ,t can be regarded as the conditional distribution of νt given ξ(x) = y, such that Eμt EμΣy ,t = Eνt holds. We can thus rewrite the loss function L1 as 
+
+L1[uθ1 , c θ1 , v θ1 ] = 
+
+Z 10
+
+Eνt
+
+R[uθ1 , c θ1 , v θ1 ]( x, t )dt, (26) where 
+
+R[uθ1 , c θ1 , v θ1 ]( x, t ) = λ ∂tU (x, t ) + uθ1 (ξ(x), t ) · vθ1 (ξ(x), t ) − ∇ · uθ1 (ξ(x), t ) + cθ1 (t) 2 (27) 
+
++ D(x, t ) − vθ1 (ξ(x), t ) 2,
+
+and the expectation Eνt [·] can be estimated via (10). 
+
+4.4. Training pipeline 
+
+Although Equation (10) provides an unbiased estimator of the expectation Eνt [·], its estimation variance depends on the choice of b. An arbitrarily chosen b may incur a large variance. To reduce such variance, we first train a model bθ0 with (7) as the loss function in a warm-up stage. We do not need to learn a high-precision bθ0 that fully minimizes (7) ;instead, we only need to obtain an approximately optimal bθ0 to mitigate the variance. In the subsequent main training stage, we fix the network bθ0 and optimize the loss (26) by leveraging (10) to compute the reweighting factor, which incorporates the pre-learned bθ0 .Similar to NETS, simulating the trajectories of Xt, A t using (8) and (9) is required in both stages, and Xt, A t are detached from the computational graph when taking a gradient step in L0 and L1. Algorithm 1 summarizes the two-stage training procedure, and Algorithm 2 summarizes the sampling procedure. 8Algorithm 1 FES-FM: Training process  
+
+> 1:
+
+Initialize: neural networks bθ0 , cθ0 , uθ1 , cθ1 , vθ1 ; warm-up epochs Npre ; training epochs 
+
+Nepoch , time steps K 
+
+> 2:
+
+// Warm-up stage  
+
+> 3:
+
+for epoch= 1, . . . , N pre do  
+
+> 4:
+
+Generate trajectories {(Xtk , A tk )}1≤k≤K by solving (8)–(9) with bθ0 
+
+> 5:
+
+Calculate the loss L0[bθ0 , c θ0 ] in (7) , where the expectation Eνt [·] is estimated using (10) with {(Xtk , A tk )} 
+
+> 6:
+
+Update the parameters of bθ0 , c θ0 by gradient descent on L0 
+
+> 7:
+
+end for  
+
+> 8:
+
+// Main training stage  
+
+> 9:
+
+for epoch= 1, . . . , N epoch do  
+
+> 10:
+
+Generate trajectories {(Xtk , A tk )} by solving (8)–(9) with the pretrained bθ0 
+
+> 11:
+
+Calculate L1[uθ1 , c θ1 , v θ1 ] in (26) , where the expectation Eνt [·] is estimated using (10) with {(Xtk , A tk )} 
+
+> 12:
+
+Update the parameters of uθ1 , c θ1 , v θ1 by gradient descent on L1 
+
+> 13:
+
+end for  
+
+> 14:
+
+Return: the velocity field uθ1 of the reduced model 
+
+Algorithm 2 FES-FM: Sampling process 
+
+Require: trained velocity field uθ1 , the number of steps K0 
+
+> 1:
+
+∆t = 1 /K 0 
+
+> 2:
+
+Sample X0 ∼ p(x, 0) , and set Y0 = ξ(X0) 
+
+> 3:
+
+for i = 0 , . . . , K 0 − 1 do  
+
+> 4:
+
+Y(i+1)∆ t = Yi∆t + uθ1 (Yi∆t, i ∆t)∆ t 
+
+> 5:
+
+end for  
+
+> 6:
+
+Return: CV samples Y1
+
+5. Hessian-informed harmonic prior distribution 
+
+In this section, we introduce a prior distribution for many-particle systems, termed the Hessian-informed harmonic prior distribution . Our goal is to design a prior that is invariant under global rotations and translations (i.e., E(3) -invariant) while produc-ing configurations that are physically meaningful and numerically stable for downstream dynamics. Consider a system of M atoms in R3, so that a configuration is given by x = ( xT 
+
+> 1
+
+, . . . , x TM )T ∈
+
+Rn with n = 3 M . To ensure that our model is E(3) -invariant, we choose a prior that is in-variant under global rotations and translations. A widely used option in generative modeling is the mean-free Gaussian prior (Köhler et al., 2020), which enforces the desired symmetry. However, symmetry alone is insufficient for the sampling task considered in this paper, as it may yield configurations that are not physically meaningful. This issue is particularly important here because our method involves an interpolant between U0 and Utarget , and thus 90.6 0.4 0.2 0.0 0.2 0.4 
+
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> 1.75
+> 2.00
+> generated
+> ground truth
+
+(a) R2-3P, NETS-P 0.6 0.4 0.2 0.0 0.2 0.4   
+
+> 0.00
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> 1.75
+> 2.00 generated
+> ground truth
+
+(b) R2-3P, FES-FM 0.2 0.0 0.2 0.4 0.6   
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5 generated
+> ground truth
+
+(c) R3-4P, NETS-P 0.2 0.0 0.2 0.4 0.6  
+
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> generated
+> ground truth
+
+(d) R3-4P, FES-FM 
+
+Figure 2: Results of the many-particle systems. The red histograms in all subfigures denote the ground-truth samples from the target distribution, generated via Langevin dynamics. (a) Blue histogram: represents the distribution of CV samples obtained by projecting NETS samples in R2-3P experiment. (b) Blue histogram: represents the distribution generated by our FES-FM in R2-3P experiment. (c) Blue histogram: represents the distribution of CV samples obtained by projecting NETS samples in R3-4P experiment. (d) Blue histogram: represents the distribution generated by our FES-FM in R3-4P experiment. 
+
+explores intermediate distributions. To better reflect physically plausible configurations and improve numerical stability, we propose a prior that encodes curvature information through the Hessian. Since the translation-invariant probability distribution on Rn does not exist (Yim et al., 2023; Xu et al., 2026), we eliminate the global translation degree of freedom by restricting the prior to the center-of-mass subspace P, defined as P = {(xT
+
+1 , . . . , x TM )T ∈ Rn | PMi=1 xi = 0 }.We then construct an O(3) -invariant distribution on P, which yields an E(3) -invariant prior on the original configuration space. We next present the formal definition of the Hessian-informed harmonic prior distribution and discuss its properties. Let x0 ∈ Rn denote a local minimum of Utarget (x), which satisfies ∇Utarget (x0) = 0 and 
+
+x0 ∈ P , and the Hessian matrix of Utarget (x) at x0 is denoted as H(x0) ∈ Rn×n. Due to the rotational and translational invariance of Utarget (x), the matrix H(x0) is singular. In Theorem 1, we prove that rank (H(x0)) = n − 6 and discuss its null space in detail. We decompose H(x0) as H(x0) = P SP T , where P ∈ Rn×(n−6) satisfies P T P = In−6 and 
+
+S = diag( s1, s 2, . . . , s n−6).The sampling procedure of the prior distribution is described as follows. First, we sample 
+
+R from the (Haar) uniform measure on O(3) . Subsequently, we sample a random variable 
+
+ϵ ∼ N (0 , I n−6) and compute x according to x = ( IM ⊗ R)
+
+
+
+x0 + P S − 12 ϵ
+
+
+
+. Here, ⊗ denotes the Kronecker product. Equivalently, conditional on R, the prior is Gaussian with mean 
+
+(IM ⊗ R)x0 and covariance (IM ⊗ R)P S −1P T (IM ⊗ R)T ; marginalizing over random rotations yields an O(3) -invariant distribution. Conditioned on a rotation, the distribution is approximately Gaussian on the (n − 6) -dimensional subspace spanned by the nontrivial Hessian modes; in practice, we approximately evaluate the corresponding quadratic potential after aligning x to x0. Specifically, the potential of the Hessian-informed harmonic prior distribution is estimated as: 
+
+U0(x) = 12(˜ x − x0)T H(x0)(˜ x − x0), (28) 10 where ˜x = ( IM ⊗ R∗
+
+> 0
+
+(x)) x, and R∗
+
+> 0
+
+(x) = arg min R∈O(3) ∥(IM ⊗ R)x − x0∥2. The optimal R∗
+
+> 0
+
+(x)
+
+can be solved by the Kabsch Algorithm (Kabsch, 1976). In Theorem 2, we prove that U0(x)
+
+is O(3) -invariant. In some applications, generating samples from both chiral states can be undesirable. Nevertheless, samples with the unwanted chirality can be readily detected and easily corrected (Klein et al., 2023). Alternatively, one can also employ an SE (3) -invariant prior distribution. 
+
+6. Experiments 
+
+In this section, we evaluate our method on the Müller-Brown potential and in high-dimensional scenarios. We also carry out experiments on many-particle systems to explore potential applications in molecular contexts, and employ the Hessian-informed harmonic distribution introduced above as the prior. Additionally, since NETS can generate samples following the Boltzmann distribution, we adopt the points produced by NETS and projected onto the CV space as the baseline (denoted as NETS-P) for our experiments. Figure 3 illustrates the sampling procedures of FES-FM and NETS-P. In Section Appendix D, we conduct ablation studies on Npre and ϵ. 
+
+> Figure 3: Comparison of sampling workflows between FES-FM and NETS-P. Starting from the prior distribution in the conformational space, NETS-P first evolves the high-dimensional dynamics before projecting them onto the CV space. In contrast, FES-FM first projects the prior distribution onto the CV space and then evolves the low-dimensional dynamics.
+
+6.1. Müller-Brown potential 
+
+The Müller-Brown surface is a well-established benchmark potential energy landscape, given by 
+
+Utarget (x1, x 2) = 
+
+> 4
+
+X
+
+> i=1
+
+Ai exp  ai(x1 − x01,i )2 + bi(x1 − x01,i )( x2 − x02,i ) + ci(x2 − x02,i )2. (29) The target distribution and the corresponding potential contours are shown in Figure 1a. For this system, we learn a CV map using samples on the transition path. The CV map is represented by a neural network y = ξθ(x). Figure 1a also displays the transition path and 11 the contours of the learned CV. Figure 1c shows that the generated CV distribution matches the free energy surface well, even for a highly nonlinear CV. Numerical results are shown in Table C.5 in the Appendix. 
+
+6.2. High-dimensional example         
+
+> Table 1: Results for high-dimensional example. Time denotes the time (in seconds) required for sample generation (i.e., solving the ODE); Error represents the 1-Wasserstein distance between the generated samples and the ground truth; and ACC/Time stands for accuracy per unit time, which is calculated as
+> (Time ·Error )−1. The results are reported as the mean and standard deviation over five independent runs. The shaded cells indicate that our method achieves the best performance.
+
+Method Time ↓ Error ↓ ACC/Time ↑
+
+n = 50 NETS-P 1.89e+0 ±9.05e-3 2.00e-2 ±7.99e-3 3.01e+1 ±9.77e+0 
+
+FES-FM 2.93e-1 ±1.21e-2 1.62e-2 ±4.32e-3 2.28e+2 ±6.57e+1 
+
+n = 100 NETS-P 2.00e+0 ±1.43e-2 2.37e-2 ±9.90e-3 2.46e+1 ±9.02e+0 
+
+FES-FM 2.90e-1 ±2.39e-2 1.91e-2 ±3.86e-3 1.90e+2 ±4.55e+1 
+
+n = 200 NETS-P 2.28e+0 ±6.74e-3 2.48e-2 ±1.44e-2 2.69e+1 ±1.81e+1 
+
+FES-FM 2.80e-1 ±1.78e-2 1.60e-2 ±6.46e-3 2.73e+2 ±1.35e+2 
+
+To validate the scalability of our method, we consider a potential function defined in a high-dimensional space with dimensions n = 50 , 100 , 200 . This distribution exhibits a double-well structure along one specific direction, while following a Gaussian distribution along all other directions. Specifically, we define the potential function as 
+
+Utarget (x) = U∗(AT 
+
+> 1
+
+x) + 12
+
+> n
+
+X
+
+> i=2
+
+∥ATi x∥2, (30) where A = ( A1, A 2, . . . , A n)T ∈ Rn×n is an orthogonal matrix, and U∗(x) = 15 x4 − 65 x2 − 110 x
+
+is a double-well potential. The CV map is chosen as ξ(x) = AT 
+
+> 1
+
+x, which reflects the characteristics of the non-Gaussian eigen-direction of the system. As presented in Table 1, our method significantly reduces the computational cost, as it only requires solving a low-dimensional ODE (13) , whereas NETS must solve an ODE in the full n-dimensional space. Our method also yields higher accuracy and thus exhibits a notable advantage in accuracy per unit time. 
+
+6.3. Many-particle systems 
+
+The potential for the many-particle systems is constructed in analogy to empirical potential energy functions in molecular dynamics. We evaluate our method on two synthetic systems: a three-particle system in R2 (denoted R2-3P) and a four-particle system in R3
+
+(denoted R3-4P). We find that using a mean-free Gaussian prior leads to numerical instability and unsatisfactory performance in our experiments. This is mainly because its samples often 12 correspond to non-physical configurations, which in turn destabilize training and generation. Therefore, we adopt the Hessian-informed harmonic prior introduced in Section 5. Although Section 5 focuses on the R3 case, the same approach easily extends to constructing the corresponding prior for R2.   
+
+> (a) R2-3P (b) R3-4P
+
+Figure 4: Illustration of multi-particle systems. (a) A three-particle system in a 2D plane, where the CV is the cosine of the angle centered at particle 1. (b) A four-particle system in 3D space, where the CV is the cosine of the dihedral angle (rotation angle) defined by the axis of particles 2 and 3. Table 2: Results for many-particle systems. The explanations of Time , Error and ACC/Time are given in Table 1. R2-3P and R3-4P denote the three-particle system in R2 and the four-particle system in R3,respectively. 
+
+Method Time ↓ Error ↓ ACC/Time ↑
+
+R2-3P NETS-P 2.09e+0 ±1.93e-2 2.47e-2 ±2.96e-2 4.41e+1 ±2.50e+1 
+
+FES-FM 3.85e-1 ±1.16e-2 2.08e-2 ±4.20e-3 1.31e+2 ±2.84e+1 
+
+R3-4P NETS-P 2.34e+0 ±1.43e-2 1.06e-2 ±4.88e-3 4.93e+1 ±2.10e+1 
+
+FES-FM 3.91e-1 ±1.26e-2 8.98e-3 ±4.54e-3 3.57e+2 ±1.55e+2 
+
+6.3.1. Three-particle system in R2
+
+We consider a system of three particles with positions xi ∈ R2 for i = 1 , 2, 3, and denote the configuration by x = Vec( x1, x 2, x 3) = ( xT 
+
+> 1
+
+, x T 
+
+> 2
+
+, x T 
+
+> 3
+
+)T . The potential energy is given by 
+
+Utarget (x) = α1(∥x1 − x2∥ − r1)2 + α2(∥x1 − x3∥ − r2)2
+
++ α3(∥x2 − x3∥ − r3)2(∥x2 − x3∥ − r4)2. (31) We select the CV as the cosine of the angle at particle 1 formed by particles 2–1–3, i.e. 
+
+ξ(x) = ⟨x2−x1,x 3−x1⟩∥x2−x1∥·∥ x3−x1∥ . As shown in Figure 4a, the system exhibits two metastable states, corresponding to different folding conformations. Table 2 shows that our method exhibits high accuracy and low computational costs. Its performance advantage probably arises from the fact that its training essentially solves a low-dimensional PDE (20) (although high-dimensional samples are employed), while NETS addresses a high-dimensional PDE (5) . Figure 2b shows that the generated samples match well with the target distribution. 13 6.3.2. Four-particle system in R3
+
+We consider a system of four particles in R3 with positions xi ∈ R3 for i = 1 , 2, 3, 4, and denote the configuration by x = Vec (x1, x 2, x 3, x 4) = ( xT 
+
+> 1
+
+, x T 
+
+> 2
+
+, x T 
+
+> 3
+
+, x T 
+
+> 4
+
+)T . The potential energy is defined as 
+
+Utarget (x) = α1(∥x1 − x2∥ − r1)2 + α2(∥x2 − x3∥ − r2)2 + α3(∥x3 − x4∥ − r3)2
+
++ α4(∥x1 − x3∥ − r4)2 + α5(∥x2 − x4∥ − r5)2
+
++ α6(∥x1 − x4∥ − r6)2(∥x1 − x4∥ − r7)2. (32) We choose the CV as the cosine of the dihedral angle between the planes spanned by 
+
+(x1, x 2, x 3) and (x2, x 3, x 4). Define the plane normals n1 = ( x2 − x1) × (x3 − x2) and 
+
+n2 = ( x3 − x2) × (x4 − x3). Then ξ(x) = ⟨n1,n 2⟩∥n1∥·∥ n2∥ . As shown in Figure 4b, the system exhibits two metastable states, corresponding to different folding conformations. Table 2 shows that FES-FM achieves lower cost and higher accuracy than the baseline, demonstrating better performance in terms of accuracy per unit time. The overlap between the blue and red histograms in Figure 2d demonstrates good agreement between the generated CV distribution and the target distribution. 
+
+7. Conclusion 
+
+We propose FES-FM, a reduced flow-matching approach that learns transport directly in CV space, avoiding full-space simulation at generation time. We also introduce an E(3) -invariant Hessian-informed harmonic prior for many-particle systems that produces physically meaningful configurations. Across several benchmark potentials, FES-FM reduces generation cost and improves accuracy per unit time compared with full-space baselines. 
+
+Acknowledgements 
+
+Tiejun Li acknowledges the support from National Key R&D Program of China under grant 2021YFA1003301, and National Science Foundation of China under grant 12288101. This work is supported by High-performance Computing Platform of Peking University. 
+
+References 
+
+Akhound-Sadegh, T., Rector-Brooks, J., Bose, A.J., Mittal, S., Lemos, P., Liu, C.H., Sendera, M., Ravanbakhsh, S., Gidel, G., Bengio, Y., Malkin, N., Tong, A., 2024. Iterated denoising energy matching for sampling from boltzmann densities. ArXiv abs/2402.06121. Albergo, M.S., Vanden-Eijnden, E., 2022. Building normalizing flows with stochastic inter-polants. arXiv preprint arXiv:2209.15571 . Albergo, M.S., Vanden-Eijnden, E., 2025. NETS: A non-equilibrium transport sampler. International Conference on Machine Learning 267, 1026–1055. 14 Berner, J., Richter, L., Ullrich, K., 2022. An optimal control perspective on diffusion-based generative modeling. arXiv preprint arXiv:2211.01364 . Bortoli, V.D., Hutchinson, M.J., Wirnsberger, P., Doucet, A., 2024. Target score matching. ArXiv abs/2402.08667. Carbone, D., Hua, M., Coste, S., Vanden-Eijnden, E., 2023. Efficient training of energy-based models using jarzynski equality. Journal of Statistical Mechanics: Theory and Experiment 2024. Chemseddine, J., Wald, C., Duong, R., Steidl, G., 2024. Neural sampling from boltzmann densities: Fisher-rao curves in the wasserstein geometry. arXiv preprint arXiv:2410.03282 . Chen, J., Richter, L., Berner, J., Blessing, D., Neumann, G., Anandkumar, A., 2024. Sequential controlled langevin diffusions. arXiv preprint arXiv:2412.07081 . Ciccotti, G., Lelievre, T., Vanden-Eijnden, E., 2008. Projection of diffusions on subman-ifolds: Application to mean force computation. Communications on Pure and Applied Mathematics: A Journal Issued by the Courant Institute of Mathematical Sciences 61, 371–408. Comer, J., Gumbart, J.C., Hénin, J., Lelièvre, T., Pohorille, A., Chipot, C., 2015. The adaptive biasing force method: Everything you always wanted to know but were afraid to ask. The Journal of Physical Chemistry B 119, 1129–1151. Domingo-Enrich, C., Drozdzal, M., Karrer, B., Chen, R.T.Q., 2025. Adjoint matching: Fine-tuning flow and diffusion generative models with memoryless stochastic optimal control, in: The Thirteenth International Conference on Learning Representations. Frenkel, D., Smit, B., 2023. Understanding molecular simulation: from algorithms to applications. Elsevier. Havens, A.J., Miller, B.K., Yan, B., Domingo-Enrich, C., Sriram, A., Levine, D.S., Wood, B.M., Hu, B., Amos, B., Karrer, B., Fu, X., Liu, G.H., Chen, R.T.Q., 2025. Adjoint sampling: Highly scalable diffusion samplers via adjoint matching, in: Proceedings of the 42nd International Conference on Machine Learning, PMLR. pp. 22204–22237. He, J., Du, Y., Vargas, F., Wang, Y., Gomes, C.P., Hernández-Lobato, J.M., Vanden-Eijnden, E., 2025. Feat: Free energy estimators with adaptive transport, in: Advances in Neural Information Processing Systems. Kabsch, W., 1976. A solution for the best rotation to relate two sets of vectors. Acta Crystallographica Section A 32, 922–923. Klein, L., Krämer, A., Noé, F., 2023. Equivariant flow matching. Advances in Neural Information Processing Systems 36, 59886–59910. 15 Köhler, J., Klein, L., Noé, F., 2020. Equivariant flows: exact likelihood generative learning for symmetric densities, in: International conference on machine learning, PMLR. pp. 5361–5370. Laio, A., Parrinello, M., 2002. Escaping free-energy minima. Proceedings of the national academy of sciences 99, 12562–12566. Lipman, Y., Chen, R.T.Q., Ben-Hamu, H., Nickel, M., Le, M., 2023. Flow matching for generative modeling. International Conference on Learning Representations . Liu, G.H., Choi, J., Chen, Y., Miller, B.K., Chen, R.T.Q., 2025a. Adjoint schrödinger bridge sampler, in: The Thirty-ninth Annual Conference on Neural Information Processing Systems. Liu, X., Gong, C., Liu, Q., 2022. Flow straight and fast: Learning to generate and transfer data with rectified flow. arXiv preprint arXiv:2209.03003 . Liu, Z., Zhang, W., Li, T., 2025b. Improving the euclidean diffusion generation of manifold data by mitigating score function singularity, in: The Thirty-ninth Annual Conference on Neural Information Processing Systems. Liu, Z., Zhang, W., Schütte, C., Li, T., 2025c. Riemannian denoising diffusion probabilistic models. arXiv preprint arXiv:2505.04338 . Maragliano, L., Vanden-Eijnden, E., 2006. A temperature accelerated method for sampling free energy and determining reaction pathways in rare events simulations. Chemical physics letters 426, 168–175. Noé, F., Olsson, S., Köhler, J., Wu, H., 2019. Boltzmann generators: Sampling equilibrium states of many-body systems with deep learning. Science 365, eaaw1147. Penrose, R., 1955. A generalized inverse for matrices. Mathematical Proceedings of the Cambridge Philosophical Society 51, 406–413. doi: 10.1017/S0305004100030401 .Phillips, A., Dau, H.D., Hutchinson, M.J., Bortoli, V.D., Deligiannidis, G., Doucet, A., 2024. Particle denoising diffusion sampler. ArXiv abs/2402.06320. Plainer, M., Wu, H., Klein, L., Günnemann, S., Noé, F., 2025. Consistent sampling and simulation: Molecular dynamics with energy-based diffusion models. ArXiv abs/2506.17139. Raissi, M., Perdikaris, P., Karniadakis, G.E., 2019. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. Journal of Computational physics 378, 686–707. Richter, L., Berner, J., 2024. Improved sampling via learned diffusions, in: The Twelfth International Conference on Learning Representations. 16 Satorras, V.G., Hoogeboom, E., Welling, M., 2021. E(n) equivariant graph neural networks. International Conference on Machine Learning 139, 9323–9332. Shi, C., Luo, S., Xu, M., Tang, J., 2021. Learning gradient fields for molecular conformation generation, in: International Conference on Machine Learning. Stoltz, G., Rousset, M., et al., 2010. Free energy computations: A mathematical perspective. World Scientific. Sun, J., Berner, J., Richter, L., Zeinhofer, M., Müller, J., Azizzadenesheli, K., Anandkumar, A., 2024. Dynamical measure transport and neural pde solvers for sampling. arXiv preprint arXiv:2407.07873 . Tian, Y., Panda, N., Lin, Y.T., 2024. Liouville flow importance sampler, in: Proceedings of the 41st International Conference on Machine Learning, PMLR. pp. 48186–48210. Torrie, G.M., Valleau, J.P., 1977. Nonphysical sampling distributions in monte carlo free-energy estimation: Umbrella sampling. Journal of computational physics 23, 187–199. Vaikuntanathan, S., Jarzynski, C., 2008. Escorted free energy simulations: Improving convergence by reducing dissipation. Physical Review Letters 100, 190601. Valsson, O., Parrinello, M., 2014. Variational approach to enhanced sampling and free energy calculations. Physical review letters 113, 090601. Vargas, F., Grathwohl, W.S., Doucet, A., 2023. Denoising diffusion samplers, in: International Conference on Learning Representations. Vargas, F., Padhy, S., Blessing, D., Nüsken, N., 2024. Transport meets variational inference: Controlled monte carlo diffusions, in: The Twelfth International Conference on Learning Representations. Wang, Y., Guo, L., Wu, H., Zhou, T., 2025. Energy-based diffusion generator for efficient sampling of boltzmann distributions. Neural Networks , 108126. Weinan, E., Ren, W., Vanden-Eijnden, E., 2002. String method for the study of rare events. Physical Review B 66, 052301. Woo, D., Ahn, S., 2024. Iterated energy-based flow matching for sampling from boltzmann densities. arXiv:2408.16249 .Xu, Y., Wang, Y., Luo, S., Gao, K., He, T., Liu, C., He, D., 2026. Quotient-space diffusion model, in: The Fourteenth International Conference on Learning Representations. Yim, J., Trippe, B.L., De Bortoli, V., Mathieu, E., Doucet, A., Barzilay, R., Jaakkola, T., 2023. SE(3) diffusion model with application to protein backbone generation, in: Proceedings of the 40th International Conference on Machine Learning, PMLR. pp. 40001–40039. 17 Zhang, L., Wang, L., et al., 2018. Monge-amp \ere flow for generative modeling. arXiv preprint arXiv:1809.10188 . Zhang, Q., Chen, Y., 2022. Path integral sampler: A stochastic control approach for sampling, in: International Conference on Learning Representations. 
+
+Appendix A. A Comparison List between NETS and FES-FM 
+
+To better illustrate the connection and difference between NETS (full model) and FES-FM (reduced model), we make a full list for the comparison of the related concepts and formulas in Table A.3. 
+
+> Table A.3: Model summary and comparison of model and reduced models
+
+NETS (full model) in Rn
+
+Target density p(x) = 1 
+
+> Z
+
+e−Utarget (x)
+
+Target potential Utarget (x)
+
+Marginal density p(x, t ) = e−U (x,t ) 
+
+> Z(t)
+
+, Z(t) = R 
+
+> Rn
+
+e−U (x,t )dx
+
+Marginal potential U (x, t ) = (1 − t)U0(x) + tU target (x)
+
+Marginal measure dνt(x) = p(x, t )d x
+
+Transport map ddt Xt = b(Xt, t )
+
+Transport equation ∂tU (x, t ) + b(x, t ) · ∇ U (x, t ) − ∇ · b(x, t ) + ∂t log Z(t) = 0 
+
+Model Reduction ξ : Rn → Rd
+
+FES-FM (reduced model) in Rd
+
+Target density ρ(y) = R 
+
+> Σy
+
+p(x)|∇ ξ(x)T ∇ξ(x)|− 12 dσΣy (x).
+
+Target potential F (y) = − log ρ(y)
+
+Marginal density ρ(y, t ) = R 
+
+> Σy
+
+p(x, t )|∇ ξ(x)T ∇ξ(x)|− 12 dσΣy (x)
+
+Marginal potential F (y, t ) = − log ρ(y, t )
+
+Marginal measure dμt(y) = ρ(y, t )d y
+
+Transport map ddt Yt = u(Yt, t )
+
+Transport equation EμΣy ,t ∂tU (x, t ) + u(y, t ) · EμΣy ,t D(x, t ) − ∇ · u(y, t ) + ∂t log Z(t) = 0 
+
+Appendix B. Details of the Hessian-informed harmonic prior distribution 
+
+Define ei ∈ R3 as the i-th standard basis vector. Let Ei,j ∈ R3×3 have a 1 at entry 
+
+(i, j ) and zeros elsewhere, and set Ji,j = Ei,j − Ej,i . Let 1M = (1 , . . . , 1) T ∈ RM and define 
+
+bi = 1M ⊗ ei ∈ R3M . We say a function U is O(3) -invariant if U (x) = U (( IM ⊗ R)x) for 18 any R ∈ O(3) . We say U is translation-invariant if U (x) = U (x + bi) for all 1 ≤ i ≤ 3. The degrees of freedom corresponding to translation are 3, and those corresponding to rotation are also 3. The following theorem characterizes the null space of H(x0).
+
+Theorem 1. Assume U is twice continuously differentiable, O(3) -invariant, and translation-invariant. Let H(x0) = ∇2U (x0) denote the Hessian at x0 ∈ R3M . Then, the null space of 
+
+H(x0) is spanned by the vectors (IM ⊗ Ji,j )x0 (1 ≤ i < j ≤ 3) together with bi (1 ≤ i ≤ 3)and consequently rank( H(x0)) = n − 6.Proof of Theorem 1. By translation invariance, U (x + tb i) = U (x) for all t ∈ R and 1 ≤ i ≤ 3.Differentiating twice with respect to t and evaluating at t = 0 (via chain rule): 
+
+0 = d2
+
+dt2 U (x + tb i) t=0 
+
+= bTi H(x)bi. (B.1) At the local minimum x0 (∇U (x0) = 0 ), this simplifies to H(x0)bi = 0 for 1 ≤ i ≤ 3, so 
+
+bi ∈ ker( H(x0)) .By rotation invariance, we have ∇U (( IM ⊗ R)x0) = ( IM ⊗ R)∇U (x0) = 0 , for R ∈ O(3) .For the skew-symmetric Ji,j , etJ i,j ∈ O(3) , so differentiating ∇U (( IM ⊗ etJ i,j )x0) = 0 with respect to t at t = 0 gives: 
+
+H(x0)( IM ⊗ Ji,j )x0 = 0 , ∀1 ≤ i < j ≤ 3, (B.2) meaning (IM ⊗ Ji,j )x0 ∈ ker( H(x0)) .Under non-degenerate conditions, the 3 translation vectors {bi} and 3 rotation vectors 
+
+{(IM ⊗ Ji,j )x0} are linearly independent; thus, H(x0) has 6 trivial degrees of freedom. 
+
+Theorem 2. The potential U0 defined in (28) is O(3) -invariant. Proof of Theorem 2. For any Q ∈ O(3) , R∗
+
+> 0
+
+(( IM ⊗ Q)x) = R∗
+
+> 0
+
+(x)QT . Therefore, 
+
+(IM ⊗R∗
+
+> 0
+
+(( IM ⊗Q)x))( IM ⊗Q)x = ( IM ⊗R∗
+
+> 0
+
+(x))( IM ⊗QT )( IM ⊗Q)x = ( IM ⊗R∗
+
+> 0
+
+(x)) x. (B.3) Then, we have 
+
+U0(( IM ⊗ Q)x)=12
+
+
+
+(IM ⊗ R∗
+
+> 0
+
+(( IM ⊗ Q)x))( IM ⊗ Q)x − x0
+
+T
+
+H(x0)
+
+·
+
+
+
+(IM ⊗ R∗
+
+> 0
+
+(( IM ⊗ Q)x)( IM ⊗ Q)x − x0
+
+
+
+=12
+
+ (IM ⊗ R∗
+
+> 0
+
+(x)) x − x0
+
+T H(x0) (IM ⊗ R∗
+
+> 0
+
+(x)) x − x0
+
+
+
+=U0(x). (B.4) The proof is done. 19 Appendix C. Experimental details 
+
+All experiments are conducted on a single NVIDIA A100-PCIe-40GB GPU. We use 
+
+K = 100 time steps to sample the non-equilibrium state. The time-dependent diffusion coefficient ϵt in (8) is set to a constant, i.e. ϵt ≡ ϵ. For the loss function in (25) , we fix the parameters as λ = 1 .0 for all experiments. We use multilayer perceptrons (MLPs) with SiLU activations. Both cθ0 and cθ1 have three hidden layers with 64 units per layer. Models are trained using PyTorch with the Adam optimizer. During training, the learning rate is linearly decayed from 0.001 to 0.0005, and gradients are clipped when their ℓ2-norm exceeds a predefined threshold of 10. The batch size is chosen as 2048. ODE (4) and ODE (13) are solved via the Euler method with a step size of 0.001. The 1-Wasserstein distance is computed using 10,000 points sampled from the generated distribution and 10,000 points sampled from the ground-truth distribution. Remaining hyperparameters are summarized in Table C.4. Detailed experimental setups are provided in the subsections below.                      
+
+> Table C.4: Parameters in our experiments. ϵdenotes the time-dependent diffusion coefficient in (8) .
+> Npre , N epoch are the parameters in Algorithm 1. Nb
+> n, N b
+> lare the numbers of the hidden nodes per layer and the hidden layers of the neural networks bθ0, respectively. Nr
+> nand Nr
+> lare the numbers of the hidden nodes per layer and the hidden layers of the neural networks uθ1and vθ1, respectively. DW-50D, DW-100D and DW-200D denote experiments on the double-well potential considered in Section 6.2.
+
+Datasets ϵ Npre Nepoch N b 
+
+> n
+
+N b 
+
+> l
+
+N r 
+
+> n
+
+N r
+
+> l
+
+Müller-Brown 0.2 2000 20000 128 3 64 3DW-50D 0.1 2000 5000 512 3 64 2DW-100D 0.1 2000 5000 512 3 64 2DW-200D 0.1 2000 5000 512 3 64 2
+
+R2-3P 0.02 2000 5000 256 3 64 3
+
+R3-4P 0.02 2000 5000 256 3 64 3
+
+Appendix C.1. Müller-Brown potential 
+
+The Müller-Brown surface is defined as 
+
+Utarget (x1, x 2) = − 200 exp   − (x1 − 1) 2 − 10 x22
+
+ − 100 exp   − x21 − 10( x2 − 0.5) 2
+
+− 170 exp   − 6.5( x1 + 0 .5) 2 + 11( x1 + 0 .5)( x2 − 1.5) − 6.5( x2 − 1.5) 2
+
++ 15 exp  0.7( x1 + 1) 2 + 0 .6( x1 + 1)( x2 − 1) + 0 .7( x2 − 1) 2. (C.1) We choose the prior to be a normal distribution with mean vector (−0.7, 0.7) T and the isotropic standard deviation 0.3.The CV map is constrained to satisfy ξθ(ϕ(s)) = s, where ϕ(s) ∈ R2 denotes the transition path obtained by the string method (Weinan et al., 2002). Furthermore, we additionally 20 enforce that the gradient of the CV map is parallel to ˙ϕ(ξθ(x)) . We optimize ξθ via the following loss function: 
+
+Z 10
+
+|ξθ(ϕ(s)) − s|2 ds + E ∇ξθ(x) × ˙ϕ(ξθ(x)) 2, (C.2) where × denotes the vector cross product, and the expectation is taken over the target distribution. The neural network representing the CV map is also an MLP with two hidden layers and 128 hidden units per layer. 
+
+> Table C.5: Results for the Müller-Brown potential. Although our method does not show an advantage in terms of raw accuracy, once generation time is taken into account, it still achieves an advantage in accuracy per unit time.
+
+Method Time ↓ Error ↓ ACC/Time ↑
+
+NETS-P 4.60e-1 ±2.35e-2 4.00e-3 ±1.23e-3 6.09e+2 ±2.20e+2 
+
+FES-FM 3.73e-1 ±1.24e-2 4.11e-3 ±1.65e-3 7.73e+2 ±3.08e+2 
+
+Appendix C.2. High-dimensional example 
+
+We choose the prior to be the standard normal distribution in Rn. The divergence term 
+
+∇ · bθ0 (x) in (7) and (9) is estimated using the Hutchinson trace estimator, as done in NETS. 
+
+Appendix C.3. Many-particle systems 
+
+The divergence term ∇ · bθ0 (x) is also estimated using the Hutchinson trace estimator. To endow the neural network bθ0 with E(3) -equivariance, we adopt the construction of Shi et al. (2021). Specifically, we parameterize bθ0 as the gradient of a scalar-valued neural network, i.e. bθ0 = ∇˜bθ0 . Here, ˜bθ0 takes the interatomic distances and the time as input. Alternative E(3) -equivariant architectures are also available, such as those utilizing graph neural networks (Satorras et al., 2021) and those based on alignment with respect to a given reference configuration (Liu et al., 2025b,c). For the three-particle system in R2, the parameters in (31) are chosen as α1 = 5000 /49 , α 2 =5000 /49 , α 3 = 50 , r1 = 2 , r 2 = 2 , r 3 = 2 .4, r 4 = 3 .1. For the four-particle system in R3,the parameters in (32) are chosen as α1 = α2 = α3 = α4 = α5 = 5000 /49 , α 6 = 200 ,
+
+r1 = 2 , r 2 = 1 , r 3 = 2 , r 4 = 2 .236 , r 5 = 2 .236 , r 6 = 2 .5, r 7 = 3 .0.
+
+Appendix D. Ablation study 
+
+We perform an ablation study on the number of warm-up epochs, Npre . In the NETS warm-up stage, Npre controls the accuracy of the pre-trained drift bθ0 , which in turn affects the variance of the Jarzynski reweighting estimator in (10) . For the R3-4P experiment (Figure D.5a), the distribution of Xˆbt can deviate substantially from the interpolated distri-bution p(x, t ). In this case, warm-up pre-training is beneficial and can noticeably improve 21 0 500 1000 2000 5000                 
+
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> ×10 2
+> FES-FM
+> NETS-P (a) R3-4P, Error vs Npre 0500 1000 2000 5000
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> ×10 2
+> FES-FM
+> NETS-P (b) DW-50D, Error vs Npre 0.0 0.1 0.2 0.5
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> 1.50
+> 1.75
+> ×10 2(c) Müller-Brown, Error vs ϵ
+
+Figure D.5: Ablation study. Solid lines show the mean; shaded regions indicate one standard deviation. (a) Error versus Npre in the R3-4P experiment: NETS-P (green) uses Npre warm-up epochs, and FES-FM (red) uses Npre training epochs. (b) Error versus Npre in the DW-50D experiment: NETS-P (green) uses 
+
+Npre warm-up epochs, and FES-FM (red) uses Npre training epochs. (c) Error versus ϵ in the Müller-Brown experiment. 
+
+performance. In particular, we observe suboptimal performance when Npre = 0 or 500 (see Figure D.5a). For the DW-50D experiment (Figure D.5b), the discrepancy between Xˆbt and 
+
+p(x, t ) is small; at a minimum, both distributions cover the relevant region of configuration space. Consequently, increasing Npre provides little additional benefit. Across all settings, our method yields consistently satisfactory results (see Figure D.5b). Moreover, Figure D.5c shows the effect of the diffusion coefficient ϵ on the error, high-lighting that an appropriate choice of ϵ is crucial for achieving good performance. 
+
+Appendix E. Limitations and future work 
+
+Future work could extended the method to realistic molecular mechanics force fields, such as AMBER or CHARMM, where the dimension of the configuration space is much higher and the energy landscape is more complex. Currently, our method still relies on the NETS high-dimensional sampling procedure during training; a promising direction is to bypass this step and develop methods that learn and sample directly from the free energy surface. The coupling between the FES sampling and the automatic identification of CVs is also important in future studies. 22

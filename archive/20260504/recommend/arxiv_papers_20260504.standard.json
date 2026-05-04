@@ -1,0 +1,92 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-04T20:31:58.802245+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.00337v1",
+      "title": "Free Energy Surface Sampling via Reduced Flow Matching",
+      "abstract": "Sampling the free energy surface, namely, the distribution of collective variables (CVs), is a crucial problem in statistical physics, as it underpins a better understanding of chemical reactions and conformational transitions. Traditional methods for free energy surface sampling involve simulation in high-dimensional configuration space and projecting the resulting configurations onto the CV space. To reduce the computational costs of such sampling, we propose FES-FM, a reduced flow matching (FM) method for free energy sampling (FES). We train a dynamical transport map in the CV space, thereby enabling direct sampling of the free energy surface. For many-particle systems, we construct a prior distribution based on the Hessian at a local minimum of the potential, which ensures both rotation-translation invariance and physically meaningful configurations. We evaluate the proposed method across a variety of potential functions and collective variables. Comparative experiments demonstrate that our approach drastically reduces computational costs while delivering superior accuracy per unit sampling time.",
+      "authors": [
+        "Zichen Liu",
+        "Tiejun Li"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-01T01:35:48+00:00",
+      "link": "https://arxiv.org/pdf/2605.00337v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "sampling free energy surfaces for chemical reactions",
+      "llm_evidence_cn": "化学反应的自由能面采样",
+      "llm_evidence": "化学反应的自由能面采样",
+      "canonical_evidence": "化学反应的自由能面采样",
+      "llm_tldr_en": "Proposes a reduced flow matching method for efficient free energy surface sampling of chemical reactions.",
+      "llm_tldr_cn": "提出一种简化的流匹配方法，用于化学反应和构象转变的高效自由能面采样。",
+      "llm_tldr": "提出一种简化的流匹配方法，用于化学反应和构象转变的高效自由能面采样。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.00609v1",
+      "title": "Coordination Engineering of Dual-Atom Catalysts for Overall Water Splitting: Mechanistic Insights from Constant-Potential First-Principles and Machine Learning",
+      "abstract": "The rational design of bifunctional electrocatalysts for the hydrogen evolution reaction (HER) and oxygen evolution reaction (OER) is essential for achieving efficient and cost-effective overall water splitting. Atomically dispersed transition-metal catalysts, including single-atom catalysts and dual-atom catalysts (DACs), have emerged as a prominent class of heterogeneous catalysts, in which coordination engineering plays a decisive role in tuning catalytic performance. Herein, we explore coordination-engineered bifunctional overall water splitting electrocatalysts using graphene-supported DACs (TM1TM2-C6-xNx) as model systems. By tuning C/N coordination and dual-metal combinations (Fe, Co, Ni, and Cu), a library of 228 structures was constructed. A three-step screening strategy, combining constant-charge and constant-potential density functional theory with kinetic analysis of proton-coupled electron transfer (PCET), identifies 24 highly active candidates (TM1TM2 = CoNi, CoCu and Co2) with mixed C/N coordination for OER. These catalysts exhibit overpotentials comparable to that of IrO2 and low PCET barriers (lower than 0.40 eV), among which 22 also show high HER activity. Machine learning reveals clear coordination-dependent structure-performance relationships. Such bifunctionality arises from coordination engineering that enables the simultaneous optimization of OER intermediate adsorption and the hydrogen binding strength for HER. This work establishes coordination engineering as an effective strategy for designing high-performance bifunctional dual-atom electrocatalysts for overall water splitting.",
+      "authors": [
+        "Jiahang Li",
+        "Suhang Li",
+        "Chong Yan",
+        "Jiajun Yu",
+        "Qinzhuang Liu",
+        "Ruo-Ya Wang",
+        "Dongwei Ma"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-05-01T12:20:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.00609v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "mechanistic insights from first-principles and machine learning",
+      "llm_evidence_cn": "第一性原理和机器学习提供的机理见解",
+      "llm_evidence": "第一性原理和机器学习提供的机理见解",
+      "canonical_evidence": "第一性原理和机器学习提供的机理见解",
+      "llm_tldr_en": "Explores catalytic mechanisms for water splitting using first-principles and machine learning for catalyst design.",
+      "llm_tldr_cn": "结合第一性原理和机器学习探索析氢/析氧反应的催化机理。",
+      "llm_tldr": "结合第一性原理和机器学习探索析氢/析氧反应的催化机理。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
