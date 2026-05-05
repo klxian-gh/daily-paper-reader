@@ -1,0 +1,37 @@
+{
+  "label": "2026-05-05",
+  "date": "2026-05-05",
+  "generated_at": "2026-05-05T20:25:01",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/05/2605.01138v1-crossing-the-12000-atom-barrier-with-heterogeneous-quantum-classical-supercomputing-quantum-chemistry-of-protein-ligand-complexes",
+      "section": "quick",
+      "title_en": "Crossing the 12,000-atom barrier with heterogeneous quantum-classical supercomputing: quantum chemistry of protein-ligand complexes",
+      "authors": "Kenneth M. Merz, Akhil Shajan, Danil Kaliakin, Fangchun Liang, Yuichi Otsuka, Tomonori Shirakawa, Lukas Broers, Han Xu, Miwako Tsuji, Mitsuhisa Sato, Seiji Yunoki, Ryo Wakizaka, Yukio Kawashima, Jun Doi, Toshinari Itoko, Hiroshi Horii, Thaddeus Pellegrini, Javier Robledo Moreno, Kevin J. Sung, Ella Fejer, Robert Walkup, Seetharami Seelam, Mario Motta",
+      "date": "2026-05-01",
+      "pdf": "https://arxiv.org/pdf/2605.01138v1",
+      "score": "7.0",
+      "evidence": "蛋白质-配体复合物的异构量子-经典模拟",
+      "tldr": "该研究通过结合量子嵌入技术与异构量子-经典（HQC）计算，成功模拟了超过12,000个原子的蛋白质-配体复合物，打破了从头算波函数方法的规模限制。利用156位量子处理器和超级计算机（如富岳），在处理近万个电路和海量测量数据的基础上，实现了比以往研究大40倍的系统规模，且精度可媲美耦合簇理论（CCSD），为大规模生物分子模拟开辟了可扩展的新路径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Ab initio wavefunction methods provide accurate molecular simulations but their computational scaling restricts applications to small systems. We develop a workflow combining quantum embedding to decompose a molecule into fragments with a heterogeneous quantum-classical (HQC) method to simulate fragments. We sample fragment electronic configurations on two 156-qubit quantum processors (ibm$\\_$cleveland, ibm$\\_$kobe), using up to 94 qubits, running 9,200 circuits for over 100 hours, collecting $1.3 \\cdot 10^9$ measurement outcomes - the most resource-intensive HQC computation for quantum chemistry to date. We compute fragment wavefunctions via optimized subspace diagonalization on two supercomputers (Fugaku, Miyabi-G), achieving 72.5$\\%$ parallel efficiency with scalable distributed linear algebra kernels. We simulate two protein-ligand complexes spanning dispersion- and electrostatics-dominated regimes (11,608 and 12,635 atoms), demonstrate $>40\\times$ increase in system size and up to $210\\times$ improvement in accuracy over the previous state-of-the-art, with HQC matching coupled-cluster (CCSD) accuracy in fragment energies, and establish a scalable pathway for systematically improvable biomolecular simulations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/05/2605.00035v1-novel-chemical-pathways-for-the-formation-of-nucleobase-precursors-via-benzene--bond-addition-to-hcn",
+      "section": "quick",
+      "title_en": "Novel Chemical Pathways for the Formation of Nucleobase Precursors via Benzene π-Bond Addition to HCN",
+      "authors": "Jeehyun Yang, Danica J. Adams, Renyu Hu, Yuk L. Yung",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2605.00035v1",
+      "score": "6.0",
+      "evidence": "催化反应机理与量子化学计算",
+      "tldr": "本研究提出了一种在早期地球或火星环境下，通过苯与氰化氢（HCN）反应生成核碱基前体的新路径。利用计算化学方法，研究揭示了HCN通过1,4-环加成进入苯环π体系并伴随乙炔碎裂形成嘧啶的过程，进而可生成嘌呤。该发现为理解生命起源的化学演化提供了新视角，并支持了火星样本返回任务中对古代水环境有机物的探测。",
+      "tags": "query:qmmm",
+      "abstract_en": "We propose a simple and efficient pathway for the formation of precursors to core nucleobases in DNA and RNA using a suite of computational chemistry methods. Benzene, which is thermochemically stable in N2- or CO2-dominated atmospheres, could have formed via upper-atmospheric photochemistry or surface lightning and accumulated on the early Earth or Mars. However, nitrogen insertion into the benzene ring to form pyrimidine and purine is widely considered to be challenging. We propose that nitrogen incorporation occurred through HCN 1,4-cycloaddition to benzene's π-system, followed by a C2H2 fragmentation mechanism, as confirmed by quantum chemistry calculations. This pathway, potentially facilitated by photochemistry at the ocean surface or episodic impact events on local reservoirs, can lead to pyrimidine formation, which can further react with NH3 and HCN to produce purine. Extending this pathway to early Mars, our photochemical model simulates heterocyclic compound formation under cold, dry surface conditions that favor high benzene and HCN concentrations but lack liquid water. We thus propose that organics formed during dry phases may have later dissolved into surface waters during wet phases and become concentrated as ocean sediments. This result supports Mars Sample Return efforts focused on ancient aqueous environments likely to retain prebiotic signatures.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
