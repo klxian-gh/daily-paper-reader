@@ -1,0 +1,1643 @@
+Title: High-Dimensional Enhanced Sampling via Regularized Path-Dependent McKean--Vlasov Dynamics using Tensor Density Approximation
+
+URL Source: https://arxiv.org/pdf/2605.03080v1
+
+Published Time: Wed, 06 May 2026 00:11:43 GMT
+
+Number of Pages: 24
+
+Markdown Content:
+# High-Dimensional Enhanced Sampling via Regularized Path-Dependent McKean–Vlasov Dynamics using Tensor Density Approximation 
+
+## Liyao Lyu a,b,c , Siyu Guo d and Huan Lei d,e ,∗
+
+> a
+
+School of Artificial Intelligence and Data Science, University of Science and Technology of China, Hefei, Anhui, China 
+
+> b
+
+Suzhou Institute for Advanced Research, University of Science and Technology of China, Suzhou, Jiangsu, China 
+
+> c
+
+Suzhou Big Data & AI Research and Engineering Center, Suzhou, Jiangsu, China 
+
+> d
+
+Department of Computational Mathematics, Science & Engineering, Michigan State University, East Lansing, 48824, MI, USA 
+
+> e
+
+Department of Statistics & Probability, Michigan State University, East Lansing, 48824, MI, USA 
+
+A R T I C L E I N F O 
+
+Keywords :enhanced sampling McKean–Vlasov dynamics functional hierarchical tensor collective variables Wasserstein gradient flow molecular dynamics 
+
+A B S T R A C T 
+
+Sampling from high-dimensional Gibbs measures poses a challenge when the energy landscape consists of multiple metastable states. Enhanced-sampling methods mitigate this difficulty by introducing adaptive biasing potentials to facilitate the exploration along prescribed collective variables (CVs), but their scalability is often limited by the dimension of the CV space. Motivated by the Wasserstein-gradient-flow interpretation of adaptive biasing, we propose a regularized path-dependent McKean–Vlasov formulation for high-dimensional enhanced sampling. The formulation replaces the variational regularization of the Wasserstein functional by a direct regularization of the CV marginal density in the McKean–Vlasov drift, avoiding the outer convolution over the CV domain. Furthermore, it replaces the instantaneous law by a weighted path-history measure to improve statistical stability in the small-replica regime. We establish well-posedness of the resulting regularized and path-dependent stochastic dynamics under suitable assumptions. For numerical realization, the history-averaged CV marginal density is approximated using an optimization-free functional hierarchical tensor representation, leading to a scalable density-based adaptive biasing scheme. Numerical experiments on benchmark potentials and molecular systems demonstrate the effectiveness of the proposed method for sampling problems with CV dimensions up to 64 .
+
+## 1. Introduction 
+
+Sampling from high-dimensional Gibbs measures 𝜋 (d 𝐱 ) ∝ exp (− 𝛽 𝑈 (𝐱 )) d 𝐱 associated with complex energy landscapes 𝑈 (𝐱 ) is a central problem in computational statistical mechanics. When 𝑈 (𝐱 ) contains multiple well-separated local minima, the direct Langevin dynamics often exhibits rare barrier-crossing events and fails to explore configuration space within a feasible simulation time. Enhanced-sampling methods address this difficulty by introducing a biasing drift term, often in a prescribed space of collective variables (CVs), to promote exploration of metastable regions while permitting unbiased reconstruction of 𝜋 -averages by reweighting. Such ideas have broad applications in molecular simulation [29], Bayesian inference [44], and the inverse problem [32]. However, the practical success of this strategy depends on the ability to construct and update the bias efficiently, and this task becomes increasingly difficult as the number of CVs grows. Developing computationally tractable adaptive-biasing formulations for moderate- to high-dimensional CV spaces remains an essential challenge. Given a prescribed CV map 𝜉 ∶ ℝ𝑑 → ℝ𝑚 with 𝑚 ≪ 𝑑 , recent work [19] by Lelièvre, Lin, and Monmarché provided a useful Wasserstein-gradient-flow perspective on adaptive biasing potential methods. In this formulation, the evolving probability law is induced by a modified free-energy functional with an additional entropy term for the CV marginal. The adaptive biasing drift takes a general form ∇𝜉 (𝐱 )⊤∇ log 𝜌 𝜉,𝑡 (𝜉 (𝐱 )) where 𝜌 𝜉,𝑡 denotes the instantaneous CV marginal density. Thus, the biased term penalizes the high-probability regions through the score function of the CVs. This perspective provides a unifying mathematical viewpoint for potential-of-mean-force (PMF)-based adaptive biasing methods and is closely related to classical enhanced-sampling strategies, including metadynamics [2, 18], umbrella sampling [37], adaptive biasing force methods [9, 10] and their long-time convergence analysis [8, 20], 
+
+lyuliyao@math.ucla.edu (L. Lyu); guosiyu1@msu.edu (S. Guo); leihuan@msu.edu (H. Lei) 
+
+> ORCID
+
+(s): 0000-0003-2994-1464 (L. Lyu); 0000-0002-9730-6481 (H. Lei) 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 1 of 24 
+
+> arXiv:2605.03080v1 [math.NA] 4 May 2026 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics
+
+temperature-accelerated [21, 26] and variationally enhanced sampling [4, 39]. Meanwhile, it also identifies the estimation and differentiation of an evolving CV marginal density as a central computational task in adaptive enhanced sampling. Despite its conceptual appeal, the direct Wasserstein gradient flow formulation poses numerical challenges for high-dimensional CV spaces. The first challenge is that the biasing drift term depends on the score ∇ log 𝜌 𝜉,𝑡 of the evolving CV marginal density. In practice, the density estimates obtained from finite samples can exhibit large oscillations or loss of positivity in poorly sampled regions. Ref. [19] proposed a regularized variational formulation to address the issue. The resulting gradient flow involves a nested convolution term 𝜓 𝛿 ∗ log( 𝜓 𝛿 ∗ 𝜌 𝜉,𝑡 ), where the inner convolution is taken against the empirical measure but the outer convolution acts over the CV domain. The latter one typically requires a grid representation over the full CV space and becomes computationally intractable in high-dimensional problems. A second difficulty is the finite-ensemble approximation error: the drift term depends on the instantaneous law of the process, which, in practice, is approximated from a finite number 𝑀 of interacting walkers on the fly. The mean-field description is justified only in the idealized limit 𝑀 → ∞, whereas realistic molecular simulations can typically only afford a small number (e.g., (10) ) of walkers, so the instantaneous empirical marginal is subject to substantial fluctuations, and thus may not provide a reliable approximation of 𝜌 𝜉,𝑡 . These two limitations motivate a stochastic reformulation of the sampling process that enables more efficient construction of the drift term while remaining well-posed and numerically robust for finite-replica simulations. In this study, we address the aforementioned difficulties by reformulating the stochastic dynamics of the adaptive biased sampling process. First, instead of regularizing the free-energy functional, we introduce a direct regularization of the CV marginal that defines the McKean–Vlasov drift. This construction yields a smooth and positivity-preserving CV marginal and therefore a well-defined score function in poorly sampled regions while avoiding the second convolution over the CV space. This modification sacrifices the exact Wasserstein gradient-flow structure, but leads to a drift term that enables substantially simpler numerical evaluation in the high-dimensional CV space. Second, to reduce the finite-ensemble approximation error due to the limited number of walkers, we replace the instantaneous law in the McKean–Vlasov drift by a weighted history measure accumulated along the trajectories. The reformulation leads to a path-distribution-dependent stochastic process [40] where the instantaneous biasing drift further depends on the history of the sampling process. Crucially, we show that, under suitable regularity assumptions, both the regularized McKean–Vlasov dynamics and its path-dependent generalization admit unique strong solutions. A related history-dependent adaptive biased force method has been analyzed by Benaïm, Bréhier, and Monmarché [3] on the well-posedness and long-time consistency, where the trajectory history is used to estimate the conditional mean force. In contrast, the present formulation uses history measure to directly construct a regularized CV marginal density and the corresponding score-driven biasing drift. With the new formulation, the remaining computational task reduces to the efficient approximation of the regularized CV marginal density in the high-dimensional CV space. Several approaches have been explored for related high-dimensional bias or density approximation problems. Neural-network parametrizations [13, 28, 42, 45] provide flexible representations of the bias, but typically require nonconvex training and may be difficult to control in sparsely sampled regions. Tensor-based methods offer a complementary approach by exploiting various low-rank structures such as Canonical Polyadic [6], Tucker [38], tensor train [24], and hierarchical Tucker [14], which may admit efficient storage and numerical operations linearly scaled with the dimension when such low-rank structure exists. Tensor-product and tensor-network representations have been used in probability density estimation [16, 23, 35, 36], high-dimensional partial differential equation solvers [1, 12, 17, 33, 41], and rare-event simulation [7]. In this work, we use a functional hierarchical tensor (FHT) approximation [36] for the CV marginal density, where the density function is represented by a set of tensor-product bases and the coefficients are obtained in a low-rank hierarchical format using sketching. While Ref. [36] uses FHT density estimation to reconstruct solutions of high-dimensional Fokker–Planck equations from samples of the associated stochastic differential equations, the present work uses the FHT approximation in a feed-back loop where the accumulated trajectory data are used to estimate the CV marginal, construct the biasing drift, and update the path-dependent McKean–Vlasov dynamics to drive the exploration of the phase space. The remainder of the paper develops this regularized path-dependent McKean–Vlasov framework and the computational method. We first explain why path-dependent dynamics are needed for adaptive biasing in the small-replica regime, providing the physical motivation in Section 2.1. We then introduce the regularized and path-dependent formulations and establish their well-posedness in Sections 2.2 and 2.3. The FHT-based density approximation and adaptive sampling algorithm are described in Section 2.4 with a summary of the adaptive sampling algorithm in Section 2.5. In Section 3, we present applications to molecular systems with CV dimensions up to 64 , including both   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 2 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics
+
+periodic and non-periodic CV settings. To the best of our knowledge, this CV dimensionality is beyond the regime typically addressed by adaptive enhanced sampling methods for molecular dynamics. Section 4 concludes with a brief summary and discussion. 
+
+## 2. Method 
+
+2.1. Preliminaries and Wasserstein-inspired adaptive biasing 
+
+We consider a molecular system with configuration variables 𝐱 ∈ ℝ𝑑 evolving under a potential energy function 
+
+𝑈 ∶ ℝ𝑑 → ℝ. At inverse temperature 𝛽 = ( 𝑘 𝐵 𝑇 )−1 , the target equilibrium distribution is the Gibbs measure 
+
+𝜋 (d 𝐱 ) = Z −1 exp(− 𝛽 U( 𝐱 )) d 𝐱 , (1) where 𝑍 is the partition function. A standard stochastic dynamics preserving 𝜋 as its invariant measure is the overdamped Langevin dynamics 
+
+d𝐗 t = − 1
+
+𝛾 ∇U( 𝐗 t ) dt + 
+
+√ 2
+
+𝛽𝛾 d𝐖 t ,
+
+where 𝛾 > 0 is a friction coefficient and 𝐖 𝑡 is a standard 𝑑 -dimensional Brownian motion. Although molecular dynamics (MD) simulations are often performed with underdamped Langevin dynamics, we formulate the stochastic analysis below in the overdamped setting for clarity. When 𝑈 has multiple well-separated local minima, the dynamics is metastable and may fail to explore the full configuration space over feasible simulation times. To overcome this challenge, a variety of enhanced-sampling methods have been developed. The standard approach is to introduce a smooth CV mapping 
+
+𝜉 ∶ ℝ𝑑 → ℝ𝑚 , 𝑚 ≪ 𝑑, 
+
+designed to distinguish the system’s metastable regions. Throughout this work, we assume that 𝜉 is a submersion, i.e., 
+
+rank ∇ 𝜉 (𝐱 ) = 𝑚 for all 𝐱 ∈ ℝ𝑑 . While typical choices often rely on the physical insights (e.g., backbone dihedral angles and interatomic distances), various data-driven learning of CVs becomes a promising yet open problem. In this study, we take 𝜉 as given and focus on the sampling problem in the prescribed CV space. For a probability measure 𝜇 ∈ 2(ℝ𝑑 ), we denote its pushforward under 𝜉 by 𝜇 𝜉 = 𝜉 #𝜇 . When 𝜇 and 𝜇 𝜉 admit a Lebesgue density, we use 𝜌 𝜇 (𝐱 ) and 𝜌 𝜉 (𝐳 ) to denote the density functions. Under the submersion assumption, the coarea formula gives the CV marginal density in the form 
+
+𝜌 𝜉 (𝐳 ) = ∫𝜉 −1 (𝐳 )
+
+𝜌 𝜇 (𝐱 )
+
+𝐽 𝜉 (𝐱 ) 𝑑𝜎 𝐳 (𝐱 ), 𝐽 𝜉 (𝐱 ) = 
+
+√
+
+det (∇𝜉 (𝐱 )∇ 𝜉 (𝐱 )⊤),
+
+where 𝑑𝜎 𝐳 denotes the induced surface measure on the level set 𝜉 −1 (𝐳 ).Following [19], many enhanced-sampling methods can be cast as Wasserstein gradient flows of a modified free-energy functional 𝛼 (𝜇 ) by introducing an entropy penalty on the CV marginal, i.e., 
+
+𝛼 (𝜇 ) = ∫ℝ𝑑 
+
+𝑈 (𝐱 ) 𝜇 (𝑑 𝐱 ) + 1
+
+𝛽 ∫ℝ𝑑 
+
+𝜌 𝜇 (𝐱 ) log 𝜌 𝜇 (𝐱 ) d 𝐱 + 𝛼 𝛽 ∫ℝ𝑚 
+
+𝜌 𝜉 (𝐳 ) log 𝜌 𝜉 (𝐳 ) d 𝐳 ,
+
+with 𝛼 ≥ 0 controls the bias strength. The first two terms represent the standard free energy whose unique minimizer is the Boltzmann–Gibbs distribution (1). The third CV-entropy term penalizes concentration of the law in CV space and corresponds to a biasing drift that drives the system toward a flatter distribution in the CV space, effectively lowering the free-energy barriers separating metastable basins. By Proposition 1 of [19], the functional 𝛼 admits a unique minimizer 
+
+𝜌 ∗ 
+
+> 𝛼
+
+(𝐱 ) ∝ exp 
+
+[
+
+−𝛽 
+
+(
+
+𝑈 (𝐱 ) − 𝛼 𝛼 + 1 𝐴 (𝜉 (𝐱 )) 
+
+)] 
+
+where 𝐴 (𝐳 ) = − 𝛽 −1 log 𝜌 𝜋,𝜉 (𝐳 ) is the free energy and 𝜌 𝜋,𝜉 is the marginal density of the equilibrium Gibbs distribution.   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 3 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics
+
+Formally, the Wasserstein gradient flow associated with 𝛼 yields a nonlinear McKean–Vlasov dynamics. The corresponding biased overdamped dynamics takes the form 
+
+d𝐗 𝑡 = − 1
+
+𝛾 
+
+[
+
+∇𝑈 (𝐗 𝑡 ) + 𝛼 𝛽 ∇𝜉 (𝐗 𝑡 )⊤∇𝐳 log 𝜌 𝜉,𝑡 
+
+(𝜉 (𝐗 𝑡 ))]
+
+d𝑡 +
+
+√ 2
+
+𝛽𝛾 d𝐖 𝑡 . (2) The dynamics (2) is only formal since the score ∇𝐳 log 𝜌 𝜉,𝑡 might fail to be smooth when the CV marginal is estimated from finite samples. One possible way to address this difficulty is to introduce a regularized free-energy functional. The corresponding regularized free-energy functional is 
+
+ 𝛿 𝛼 (𝜇 ) = ∫ℝ𝑑 
+
+𝑈 (𝐱 ) 𝜇 (𝑑 𝐱 ) + 1
+
+𝛽 ∫ℝ𝑑 
+
+𝜌 𝜇 (𝐱 ) log 𝜌 𝜇 (𝐱 ) 𝑑 𝐱 + 𝛼 𝛽 ∫ℝ𝑚 
+
+(𝜑 𝛿 ∗ 𝜇 𝜉 ) log( 𝜑 𝛿 ∗ 𝜇 𝜉 ) 𝑑 𝐳 , (3) where 𝜑 𝛿 is a smooth mollifier. The corresponding regularized McKean–Vlasov SDE 
+
+d𝐗 𝑡 = − 1
+
+𝛾 ∇
+
+(
+
+𝑈 (𝐗 𝑡 ) + 𝛼 𝛽 
+
+(𝜑 𝛿 ∗ log( 𝜑 𝛿 ∗ 𝜇 𝜉,𝑡 ))( 𝜉 (𝐗 𝑡 )))
+
+d𝑡 +
+
+√ 2
+
+𝛽𝛾 d𝐖 𝑡 . (4) The outer convolution regularizes the variational derivative in CV space and yields a smooth biasing drift under suitable assumptions on the mollifier. Here the inner convolution smooths the CV marginal, while the outer convolution regularizes the variational derivative in CV space and yields a smooth biasing drift under suitable assumptions on the mollifier and the SDE is well-posed. Equation (4) can be approximated by a standard interacting particle system with 𝑀 particles (i.e., replicas of MD simulations). However, two numerical challenges remain in high-dimensional CV spaces. First, the drift in (4) contains two nested convolutions. While the inner convolution can be evaluated directly against the empirical particles, the outer convolution acts on a general function over the CV domain and typically requires a grid- or basis-based representation over the full CV space, which becomes prohibitively expensive as 𝑚 grows. Second, the drift depends on the instantaneous law 𝜇 𝑡 = Law( 𝐗 𝑡 ), or equivalently on the instantaneous CV marginal density 𝜌 𝜉,𝑡 . The interacting-particle approximation approaches the mean-field limit only as 𝑀 → ∞, whereas realistic MD simulations typically use only a small number of replicas, often on the order of (10) . The resulting instantaneous empirical marginal is therefore too noisy to provide a reliable high-dimensional density estimate. These two challenges motivate the reformulations introduced below. In Section 2.2, we introduce a directly regularized drift that avoids the outer convolution while retaining a well-defined score field. In Section 2.3, we replace the instantaneous law by a weighted history measure accumulated along the trajectories. Finally, Section 2.4 describes the FHT-based density approximation used to estimate the regularized CV marginal from accumulated trajectory data and Section. 2.5 summarizes the sampling algorithm. 
+
+2.2. Directly regularized McKean–Vlasov dynamics 
+
+We now introduce a directly regularized McKean–Vlasov dynamics that avoids the outer convolution and meanwhile ensures the well-posedness. The key idea is to regularize the CV marginal density that enters the biasing drift rather than the free-energy functional itself. The regularization proceeds in two steps. First, we introduce a mollified CV marginal density (𝜑 𝛿 ∗ 𝜇 𝜉 )( 𝐳 ) that is everywhere smooth and strictly positive on the support of 𝜑 𝛿 ∗ 𝜇 𝜉 .However, the obtained density could exhibit pronounced oscillation and yield an unstable score function in the poorly sampled region. Therefore, we introduce a second regularization 
+
+𝐾 𝜏,𝜖 (𝑟 ) = 𝜖 + 𝜏 Sof tplus( 𝑟 ∕𝜏 ), 𝜖, 𝜏 > 0,
+
+which ensures a uniform positive lower bound 𝐾 𝜖,𝜏 (𝜙 𝛿 ∗ 𝜇 𝜉 ). The regularized dynamics then reads 
+
+d𝐗 𝑡 = − 1
+
+𝛾 ∇
+
+(
+
+𝑈 (𝐗 𝑡 ) + 𝛼 𝛽 log 𝐾 𝜏,𝜖 
+
+((𝜑 𝛿 ∗ 𝜇 𝜉,𝑡 )( 𝜉 (𝐗 𝑡 )) ))
+
+d𝑡 +
+
+√ 2
+
+𝛽𝛾 d𝐖 𝑡 . (5) Compared with the variationally regularized dynamics (4), the drift in (5) contains no outer convolution over the CV domain. Moreover, the mollification and the softplus regularization ensures that the drift term is globally Lipschitz (in the 𝑊 2 sense) which is discussed below in detail. On the other hand, we note that the dynamics (5) is no longer   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 4 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+the exact Wasserstein gradient flow of the regularized free-energy functional (3). Instead, it should be viewed as a directly regularized stochastic dynamics that trade the variational structure for a simple drift term without the nested convolution. Although the gradient-flow structure is lost, the resulting dynamics remains well posed, as stated in the following theorem. 
+
+Theorem 2.1. Assume that ∇𝑈 (𝐱 ) is globally Lipschitz, that 𝜉 ∶ ℝ𝑑 → ℝ𝑚 belongs to 𝐶 2 with bounded ∇𝜉 and globally Lipschitz ∇2𝜉 , and that 𝜑 𝛿 ∈ 𝐶 2(ℝ𝑚 ) with bounded derivatives. Then, for any deterministic initial condition 
+
+𝐗 0 = 𝐱 , the McKean–Vlasov SDE (5) admits a unique strong solution. 
+
+The proof relies on verifying the Lipschitz and linear-growth conditions required by the classical existence theory for McKean–Vlasov SDEs. 
+
+Lemma 2.2. Under the assumptions of Theorem 2.1, let 
+
+𝐛 (𝐗 , 𝜇 ) = − 1
+
+𝛾 ∇
+
+(
+
+𝑈 (𝐗 ) + 𝛼 𝛽 log 𝐾 𝜏,𝜖 
+
+((𝜑 𝛿 ∗ 𝜇 𝜉 )( 𝜉 (𝐗 )) ))
+
+, 𝜎 =
+
+√ 2
+
+𝛽𝛾 . (6) 
+
+Then there exists 𝐶 > 0 such that 
+
+‖𝐛 (𝐗 1, 𝜇 1) − 𝐛 (𝐗 2, 𝜇 2)‖ ≤ 𝐶 
+
+(‖𝐗 1 − 𝐗 2‖ + 𝑊 2(𝜇 1, 𝜇 2)
+
+)
+
+(7) 
+
+for any 𝐗 1, 𝐗 2 ∈ ℝ𝑑 and 𝜇 1, 𝜇 2 ∈ 2(ℝ𝑑 ). As a consequence, ‖𝐛 (𝐗 , 𝜇 )‖ ≤ 𝐶 (1 + ‖𝐗 ‖).Proof. We decompose the drift into a potential and a bias component. Since ∇𝑈 is globally Lipschitz, 
+
+‖‖‖‖− 1
+
+𝛾 ∇𝑈 (𝐗 1) + 1
+
+𝛾 ∇𝑈 (𝐗 2)‖‖‖‖ ≤ Lip(∇ 𝑈 )
+
+𝛾 ‖𝐗 1 − 𝐗 2‖.
+
+It remains to estimate the bias term. Define 
+
+𝑓 𝜇 (𝐳 ) ∶= ( 𝜑 𝛿 ∗ 𝜇 𝜉 )( 𝐳 ) = ∫ℝ𝑑 
+
+𝜑 𝛿 (𝐳 − 𝜉 (𝐲 )) 𝜇 (d 𝐲 ), 𝐻 𝜇 (𝐳 ) ∶= ∇ 𝐳 log (𝐾 𝜏,𝜖 (𝑓 𝜇 (𝐳 )) ).
+
+For any 𝐳 ∈ ℝ𝑚 and any coupling 𝜋 ∈ Π( 𝜇 1, 𝜇 2),
+
+𝑓 𝜇 1 (𝐳 ) − 𝑓 𝜇 2 (𝐳 ) = ∬
+
+(
+
+𝜑 𝛿 (𝐳 − 𝜉 (𝐲 1)) − 𝜑 𝛿 (𝐳 − 𝜉 (𝐲 2)) 
+
+)
+
+𝜋 (d 𝐲 1, d𝐲 2).
+
+Since ∇𝜑 𝛿 is bounded and 𝜉 is Lipschitz (because ∇𝜉 is bounded), taking the infimum over 𝜋 and supremum over 𝐳 
+
+yields 
+
+‖𝑓 𝜇 1 − 𝑓 𝜇 2 ‖𝐿 ∞(ℝ𝑚 ) ≤ 𝐶 𝑊 1(𝜇 1, 𝜇 2) ≤ 𝐶 𝑊 2(𝜇 1, 𝜇 2).
+
+Similarly, since ∇𝜑 𝛿 is 𝐶 1 with bounded derivative, ‖∇𝑓 𝜇 1 − ∇ 𝑓 𝜇 2 ‖𝐿 ∞(ℝ𝑚 ) ≤ 𝐶 𝑊 2(𝜇 1, 𝜇 2).Now set ℎ(𝑟 ) ∶= log 𝐾 𝜏,𝜖 (𝑟 ). Because 𝐾 𝜏,𝜖 ≥ 𝜖 > 0, both ℎ′ and ℎ′′ are bounded. Therefore 
+
+‖𝐻 𝜇 1 − 𝐻 𝜇 2 ‖𝐿 ∞(ℝ𝑚 ) ≤ 𝐶 
+
+(‖𝑓 𝜇 1 − 𝑓 𝜇 2 ‖𝐿 ∞ + ‖∇𝑓 𝜇 1 − ∇ 𝑓 𝜇 2 ‖𝐿 ∞
+
+)
+
+≤ 𝐶 𝑊 2(𝜇 1, 𝜇 2).
+
+Next we control the dependence on 𝐗 . Since 𝜑 𝛿 ∈ 𝐶 2 with bounded derivatives, 𝐻 𝜇 is globally Lipschitz in 𝐳 ,uniformly in 𝜇 . Using the boundedness of ∇𝜉 and the Lipschitz continuity of ∇𝜉 (which follows from the boundedness of ∇2𝜉 ), we obtain 
+
+‖∇𝜉 (𝐗 1)⊤𝐻 𝜇 1 (𝜉 (𝐗 1)) − ∇ 𝜉 (𝐗 2)⊤𝐻 𝜇 2 (𝜉 (𝐗 2)) ‖
+
+≤ 𝐶 ‖𝐗 1 − 𝐗 2‖ + 𝐶 ‖𝐻 𝜇 1 (𝜉 (𝐗 1)) − 𝐻 𝜇 1 (𝜉 (𝐗 2)) ‖ + 𝐶 ‖𝐻 𝜇 1 (𝜉 (𝐗 2)) − 𝐻 𝜇 2 (𝜉 (𝐗 2)) ‖
+
+≤ 𝐶 ‖𝐗 1 − 𝐗 2‖ + 𝐶 𝑊 2(𝜇 1, 𝜇 2).
+
+Combining with the Lipschitz estimate for ∇𝑈 gives the result. 
+
+Proof of Theorem 2.1. By Lemma 2.2, the assumptions of Theorem 1.7 in [5] are satisfied, and dynamics (5) admits a unique strong solution. 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 5 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+2.3. Path-dependent McKean–Vlasov equation 
+
+The directly regularized McKean–Vlasov dynamics (5) still depends on the instantaneous law 𝜇 𝑡 = Law( 𝐗 𝑡 ).For numerical implementation, this law is approximated by an instantaneous empirical measure ̂𝜇 𝑀 𝑡 = 1
+
+> 𝑀
+
+∑𝑀 𝑖 =1 𝛿 𝐗 𝑖 𝑡 .However, realistic MD simulations can typically afford only a small number of replicas, so the instantaneous empirical measure ̂𝜇 𝑀 𝑡 could be a poor estimator of 𝜇 𝑡 , especially after pushforward to a high-dimensional CV space. To reduce this error, we replace the instantaneous law 𝜇 𝑡 with a history measure that accumulates the past of the process up to time 𝑡 . This substitution trades an ensemble average (statistically noisy when 𝑀 is small) for a time average along the sample path, and the resulting dynamics can be implemented with only a modest number of replicas. Concretely, we define the path-history measure and its CV pushforward 
+
+𝜇 𝑞 𝑡 (𝜔 ) = ∫
+
+> 10
+
+𝛿 𝐗 𝑡𝑠 (𝜔 ) 𝑞 (d 𝑠 ) ∈ 2(ℝ𝑑 ), 𝜇 𝑞 𝜉,𝑡 (𝜔 ) = 𝜉 #𝜇 𝑞 𝑡 (𝜔 ) = ∫
+
+> 10
+
+𝛿 𝜉 (𝐗 𝑡𝑠 (𝜔 )) 𝑞 (d 𝑠 ), (8) where 𝑞 is a probability measure on [0 , 1] that assigns weights to the historical trajectory. For example, the uniform measure 𝑞 = Leb |[0 ,1] recovers the time-averaged empirical measure 1 
+
+> 𝑡
+
+∫ 𝑡  
+
+> 0
+
+𝛿 𝐗 𝑟 d𝑟 , while other choices of 𝑞 can place larger weight on more recent samples. The resulting dynamics is no longer a mean-field SDE. Substituting 𝜇 𝑞 𝜉,𝑡 for 𝜇 𝜉,𝑡 in (5) yields the path-dependent SDE 
+
+d𝐗 𝑡 = − 1
+
+𝛾 ∇
+
+(
+
+𝑈 (𝐗 𝑡 ) + 𝛼 𝛽 log 𝐾 𝜏,𝜖 
+
+(
+
+(𝜑 𝛿 ∗ 𝜇 𝑞 𝜉,𝑡 )( 𝜉 (𝐗 𝑡 )) 
+
+))
+
+d𝑡 +
+
+√ 2
+
+𝛽𝛾 d𝐖 𝑡 
+
+= 𝐛 (𝐗 𝑡 , 𝜇 𝑞 𝑡 ) d 𝑡 + 𝜎 d𝐖 𝑡 ,
+
+(9) where 𝐛 (𝐗 , 𝜇 ) is the drift term defined by Eq. (6). Compared with (5), the drift now depends on the full path {𝐗 𝑠 }0≤𝑠 ≤𝑡 
+
+through the history measure 𝜇 𝑞 𝑡 , and (9) becomes a path-distribution dependent SDE. 
+
+Theorem 2.3. Under the assumptions of Theorem 2.1, for any 𝑞 ∈ ([0 , 1]) , the path-dependent SDE (9) admits a unique strong solution with initial condition 𝐗 0 = 𝐱 .
+
+The proof proceeds by Picard iteration. At each step 𝑘 , the history measure 𝜇 𝑘,𝑞 𝑠 generated by the previous iterate is frozen, reducing the equation to a standard SDE with Lipschitz coefficients whose well-posedness follows from classical theory [25]. The key observation is that, for two continuous paths 𝐗 and 𝐘 ,
+
+𝑊 2
+
+(𝜇 𝑞 𝑡 [𝐗 ], 𝜇 𝑞 𝑡 [𝐘 ])2 ≤ ∫
+
+> 10
+
+‖𝐗 𝑡𝑠 − 𝐘 𝑡𝑠 ‖2 𝑞 (𝑑𝑠 ) ≤ sup 
+
+> 0≤𝑟 ≤𝑡
+
+‖𝐗 𝑟 − 𝐘 𝑟 ‖2.
+
+With the Lipschitz estimate for 𝐛 , this yields convergence of the Picard iterates 𝐗 𝑘 𝑡 in 𝐿 2(Ω; 𝐶 ([0 , 𝑇 ]; ℝ𝑑 )) . We have the estimate 
+
+𝔼 [Δ 𝑘 +1  
+
+> 𝑇
+
+] ≤ 𝐶 𝑘 𝑇 
+
+𝑘 ! 𝔼 [Δ 1 
+
+> 𝑇
+
+], Δ𝑘 𝑡 = sup 
+
+> 𝑠 ≤𝑡
+
+‖𝐗 𝑘 𝑠 − 𝐗 𝑘 −1  
+
+> 𝑠
+
+‖2.
+
+Uniqueness follows from the same Lipschitz estimate and Gronwall’s inequality applied to any two solutions. The complete proof is given in Appendix A. The well-posedness result above does not by itself characterize the long-time behavior of the path-dependent dynamics. We next show that, under strong dissipativity assumptions, history-dependent McKean–Vlasov dynamics can be asymptotically consistent with the invariant measure of the corresponding instantaneous-law dynamics. Recall that the long-time behavior of McKean–Vlasov SDE such as (5) has been studied extensively in recent years; see, for instance, Theorem 3.1 in [40]. Let us consider 
+
+d𝐗 𝑡 = 𝐛 (𝐗 𝑡 , Law( 𝐗 𝑡 )) d𝑡 + 𝜎 d𝐖 𝑡 ,
+
+and let 𝑃 ∗ 
+
+> 𝑡
+
+denote its nonlinear semigroup. Assume that 𝐛 is continuous on ℝ𝑑 × 2 and bounded on bounded sets. Moreover, assume that there exist constants 𝜆 0 > 𝜆 1 ≥ 0, 𝑎 0 > 0, and 𝐾 0 ≥ 0 such that, for all 𝐱 , 𝐲 ∈ ℝ𝑑 and 
+
+𝜇, 𝜈 ∈ 2,
+
+2⟨𝐛 (𝐱 , 𝜇 ) − 𝐛 (𝐲 , 𝜈 ), 𝐱 − 𝐲 ⟩ ≤ −𝜆 0|𝐱 − 𝐲 |2 + 𝜆 1𝑊 2(𝜇, 𝜈 )2,  
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 6 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics
+
+and 
+
+2⟨𝐛 (𝐱 , 𝜇 ), 𝐱 ⟩ ≤ −𝑎 0|𝐱 |2 + 𝐾 0
+
+(1 + 𝜇 (| ⋅ |2)).
+
+Then 𝑃 ∗ 
+
+> 𝑡
+
+admits a unique invariant probability measure 𝜇 ∗MV ∈ 2. Moreover, for every initial law 𝜈 ∈ 2,
+
+𝑊 2(𝑃 ∗ 
+
+> 𝑡
+
+𝜈, 𝜇 ∗MV )2 ≤ 𝐶 (𝜈 )𝑒 −𝑐𝑡 
+
+for some constants 𝐶 (𝜈 ) > 0 and 𝑐 > 0.The dissipativity condition above is restrictive and is not expected to hold for arbitrary molecular potentials. However, under this assumption, replacing the instantaneous law by a weighted-history dynamics are asymptotically consistent with the invariant measure of the corresponding instantaneous-law McKean–Vlasov dynamics in a precise Wasserstein sense. For a time-weight family 𝑞 = ( 𝑞 𝑡 )𝑡 ≥0 with 𝑞 𝑡 ∈ ([0 , 1]) , we define 
+
+𝜇 𝑞 𝑡 [𝐗 ] ∶= ∫
+
+> 10
+
+𝛿 𝐗 𝑡𝑠 𝑞 𝑡 (d 𝑠 ), 𝓁 𝑞 𝑡 [𝐗 ] ∶= ∫
+
+> 10
+
+Law( 𝐗 𝑡𝑠 ) 𝑞 𝑡 (d 𝑠 ).
+
+for a continuous process 𝐗 𝑡 . The first object is the path-history measure of the trajectory, while the second is the corresponding weighted history of past laws. The fixed-weight history used in (9) is recovered by taking 𝑞 𝑡 ≡ 𝑞 . For 
+
+𝜀 ∈ (0 , 1] , let 1(𝜀 ) and 2(𝜀 ) denote the admissible classes of time-weight families called Π1(𝜀 ) and Π2(𝜀 ) in [11]. 
+
+Proposition 2.4. Assume that the drift 𝐛 satisfies the monotonicity and moment assumptions above, together with the 
+
+(2 + 𝜚 )-moment condition required in [11] for some 𝜚 > 0. We set 𝜅 = 𝜚  
+
+> (𝑑 +2)( 𝜚 +2)
+
+. First, let 𝑞 ∈ 1(𝜀 1) and ̄𝑞 ∈  2(𝜀 2),and consider the law-history dynamics 
+
+d𝐗 𝑡 = 𝐛 (𝐗 𝑡 , 𝓁 𝑞 𝑡 [𝐗 ]) d𝑡 + 𝜎 d𝐖 𝑡 .
+
+Then, for every initial law 𝜈 ∈ 2+ 𝜚 , there exists a constant 𝐶 > 0 such that 
+
+𝔼 𝜈 
+
+[
+
+𝑊 2
+
+(
+
+𝜇 ̄𝑞 𝑡 [𝐗 ], 𝜇 ∗MV 
+
+)2]
+
+≤ 𝐶𝑡 −𝜀 , 𝜀 = 𝜀 1 ∧ 𝜅𝜀 2.
+
+Second, let 𝑞 ∈ 1(𝜀 1) ∩ 2(𝜀 2) and ̄𝑞 ∈  2(𝜀 2), and consider the self-interacting history-dependent dynamics 
+
+d𝐗 𝑡 = 𝐛 (𝐗 𝑡 , 𝜇 𝑞 𝑡 [𝐗 ]) d𝑡 + 𝜎 d𝐖 𝑡 .
+
+Then, for every deterministic initial condition 𝐗 0 = 𝐱 , there exists a constant 𝐶 > 0 such that 
+
+𝔼 𝐱 
+
+[
+
+𝑊 2
+
+(
+
+𝜇 ̄𝑞 𝑡 [𝐗 ], 𝜇 ∗MV 
+
+)2]
+
+≤ 𝐶𝑡 −𝜀 .
+
+Consequently, both the law-history dynamics and the self-interacting empirical-history dynamics are asymptotically consistent with the invariant measure 𝜇 ∗MV of the corresponding instantaneous-law McKean–Vlasov dynamics. 
+
+Proof. This is a direct consequence of Theorems 2.1 and 2.2 of [11], rewritten in the notation used here and specialized to the constant-diffusion setting. 
+
+2.4. Density estimation via functional hierarchical tensor 
+
+The path-dependent formulation replaces the instantaneous CV marginal by a history-averaged measure that enables a small number of MD replicas. The numerical implementation still requires an efficient representation of the corresponding CV marginal density 𝜌 𝑡 (𝐳 ) ≈ ( 𝜙 𝛿 ∗̂𝜇 𝑀,𝑞 𝜉,𝑛 )( 𝐳 ), where ̂𝜇 𝑀,𝑞 𝜉,𝑡 is the finite-replica history measure of 
+
+𝜇 𝑞 𝜉,𝑡 defined in Eq. (8). In moderate- to high-dimensional CV spaces ( 𝑚 ∼ 10 –100 ), grid-based representations of 
+
+𝜌 𝑡 are infeasible. We therefore approximate 𝜌 𝑡 using a functional hierarchical tensor (FHT) approach [36] fitted from the accumulated CV samples. The key idea is to represent the CV marginal in a smooth basis and then compress the resulting coefficient tensor in a hierarchical low-rank format. This yields an approximation that is both smooth and computationally tractable.   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 7 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Let 𝐳 = ( 𝑧 1, … , 𝑧 𝑚 ) ∈ Ω ⊂ ℝ𝑚 denote the CVs. For simplicity, we assume that each coordinate has been scaled to the reference interval [−1 , 1] ; otherwise, an affine rescaling can be applied. On each coordinate 𝑧 𝑘 ∈ [−1 , 1] , we introduce 𝑝 Gaussian basis functions 
+
+𝜓 (𝑘 ) 
+
+> 𝑗,𝛿
+
+(𝑧 𝑘 ) = exp 
+
+(
+
+− (𝑧 𝑘 − 𝑐 𝑗 )2
+
+2𝛿 2
+
+)
+
+, 𝑐 𝑗 = −1 + 2( 𝑗 − 1) 
+
+𝑝 − 1 , 𝑗 = 1 , … , 𝑝, (10) with equally spaced centers {𝑐 𝑗 }𝑝 𝑗 =1 and a common width parameter 𝛿 . Since all coordinates share the same reference domain, the same centers and width are used for every 𝑘 . Let {̃𝜓 (𝑘 ) 
+
+> 𝑗, 𝓁
+
+}𝑝 𝑗 =1 denote the orthonormalized basis. The density is approximated by the tensor-product expansion 
+
+𝜌 𝑡 (𝐳 ) ≈ 𝜌 (𝑡 )FHT (𝐳 ) = 
+
+> 𝑝
+
+∑
+
+> 𝑗 1,…,𝑗 𝑚 =1
+
+𝐶 (𝑡 )
+
+> 𝑗 1,…,𝑗 𝑚
+> 𝑚
+
+∏
+
+> 𝑘 =1
+
+̃𝜓 (𝑘 ) 
+
+> 𝑗 𝑘 ,𝓁
+
+(𝑧 𝑘 ). (11) where 𝐶 ∈ ℝ𝑝 ×⋯×𝑝 is the order-𝑚 coefficient tensor. A direct representation of 𝐶 requires 𝑝 𝑚 coefficients and is therefore infeasible when 𝑚 is moderate or large. Instead, FHT approximation replaces this full tensor by a hierarchical low-rank factorization in form of a binary tree. For an internal node 𝗇 of the binary tree, let 𝑎 = 𝑎 (𝗇 ) and 𝑏 = 𝑏 (𝗇 ) be its two child index sets, and let 
+
+𝑟 = 𝑟 (𝗇 ) ∶= [ 𝑚 ] ⧵ (𝑎 ∪ 𝑏 )
+
+denote the remaining coordinates. The hierarchical low-rank structure assumes that, locally, 
+
+𝐶 (𝑡 )(𝑖 1, … , 𝑖 𝑚 ) = ∑
+
+> 𝛼,𝛽,𝜃
+
+𝐶 𝑎 (𝑖 𝑎 , 𝛼 ) 𝐶 𝑏 (𝑖 𝑏 , 𝛽 ) 𝐺 𝗇 (𝛼, 𝛽, 𝜃 ) 𝐶 𝑟 (𝜃, 𝑖 𝑟 ), (12) where 𝑖 𝑎 , 𝑖 𝑏 , 𝑖 𝑟 denote grouped basis indices, and 𝐺 𝗇 is the local core tensor at node 𝗇 . When the hierarchical ranks are bounded by 𝑅 , the number of parameters and the cost of evaluation scale linearly with the CV dimension 𝑚 , up to rank-dependent factors. The local cores are estimated from accumulated CV samples 𝑡 = { 𝐳 𝓁 }𝑁 𝑠 
+
+> 𝓁 =1
+
+, 𝐳 𝓁 = 𝜉 (𝐗 (𝑖 𝓁 ) 
+
+> 𝑡 𝓁
+
+). Following the sketching construction of [36], 𝑆 𝑎 , 𝑆 𝑏 , and 𝑆 𝑓 be sketch tensors for the three coordinate groups, and let 𝑠 𝑎 , 𝑠 𝑏 , and 𝑠 𝑓 be the associated sketch functions built from the orthonormalized Gaussian basis. Contracting (12) with the sketch tensors yields the sketched linear system 
+
+𝐵 𝑞 (𝑟, 𝑠, 𝑡 ) = ∑
+
+> 𝛼,𝛽,𝜃
+
+𝐴 𝑎 (𝑟, 𝛼 ) 𝐴 𝑏 (𝑠, 𝛽 ) 𝐴 𝑓 (𝑡, 𝜃 ) 𝐺 𝗇 (𝛼, 𝛽, 𝜃 ), (13) or, equivalently, 
+
+(𝐴 𝑎 ⊗ 𝐴 𝑏 ⊗ 𝐴 𝑓 ) 𝐺 𝗇 = 𝐵 𝗇 . (14) The matrices 𝐴 𝑎 , 𝐴 𝑏 , and 𝐴 𝑓 are the sketch-compressed representations of the block factors. The right-hand side 𝐵 𝑞 
+
+is estimated directly from the samples by 
+
+𝐵 𝗇 (𝑟, 𝑠, 𝑡 ) ≈ 1
+
+𝑁 𝑠 𝑁 𝑠 ∑
+
+> 𝓁 =1
+
+𝑠 𝑎 (𝐳 (𝓁 ) 
+
+> 𝑎
+
+, 𝑟 ) 𝑠 𝑏 (𝐳 (𝓁 ) 
+
+> 𝑏
+
+, 𝑠 ) 𝑠 𝑓 (𝐳 (𝓁 ) 
+
+> 𝑓
+
+, 𝑡 ). (15) The matrices 𝐴 𝑎 , 𝐴 𝑏 , and 𝐴 𝑓 are obtained from auxiliary sketched moment matrices. For example, 
+
+𝑍 𝑎 ;̄𝑎 (𝑟, 𝑢 ) ≈ 1
+
+𝑁 𝑠 𝑁 𝑠 ∑
+
+> 𝓁 =1
+
+𝑠 𝑎 (𝐳 (𝓁 ) 
+
+> 𝑎
+
+, 𝑟 ) 𝑠 ̄𝑎 (𝐳 (𝓁 )̄𝑎 , 𝑢 ), (16) and a rank-𝑟 𝑎 factorization of 𝑍 𝑎 ;̄𝑎 provides 𝐴 𝑎 . Similarly, 𝐴 𝑏 and 𝐴 𝑓 are obtained from 𝑍 𝑏 ;̄𝑏 and 𝑍 ̄𝑓 ;𝑓 , respectively. Once these reduced matrices are available, the local core tensor 𝐺 𝗇 is obtained by solving (14). 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 8 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Remark 2.5 (Periodic treatment of torsional collective variables) . Equations (10)–(11) are written for non-periodic CV coordinates on an interval. For a torsional CV, however, the physical CV space is the torus 𝕋 = ℝ∕(2 𝜋 ℤ), and the interval [− 𝜋, 𝜋 ) is only a coordinate representation. In all molecular examples involving dihedral angles, the Gaussian features are therefore evaluated with periodic boundary conditions in the CV space. More precisely, for an angular coordinate 𝜃 ∈ [− 𝜋, 𝜋 ), we use periodic centers 
+
+𝑐 𝑗 = − 𝜋 + 2𝜋𝑗 𝑝 , 𝑗 = 0 , … , 𝑝 − 1 ,
+
+where the endpoints −𝜋 and 𝜋 are not treated as distinct centers. The non-periodic Gaussian basis in (10) is replaced by the periodized Gaussian basis 
+
+𝜓 per  
+
+> 𝑗,𝛿
+
+(𝜃 ) = ∑
+
+> 𝓁 ∈ℤ
+
+exp 
+
+(
+
+− (𝜃 − 𝑐 𝑗 + 2 𝜋 𝓁 )2
+
+2𝛿 2
+
+)
+
+.
+
+Equivalently, this basis assigns nonzero weight across the artificial cut at −𝜋 ∕𝜋 : samples near 𝜋 contribute to basis functions centered near −𝜋 , and vice versa. 
+
+2.5. Adaptive sampling algorithm 
+
+With the FHT approximation 𝜌 (𝑡 )FHT , we apply the positive regularization ̃𝜌 𝑡 (𝐳 ) = 𝐾 𝜏,𝜖 (𝜌 (𝑡 )FHT (𝐳 )) and the bias potential used in the next sampling stage is 𝑉 (𝑡 )bias (𝐱 ) = 𝛼 𝛽 log ̃𝜌 𝑡 (𝜉 (𝐱 )) . The practical implementation follows an outer-loop adaptive procedure. At iteration time step 𝑛 , we first generate new trajectory data using the current biased dynamics, then update the accumulated CV dataset, fit a smooth approximation of the CV marginal density by the FHT sketching procedure, regularize the fitted density to ensure positivity and stability, and finally define a new bias potential from the logarithm of the regularized density. After the adaptive stage, the final bias 𝑉 (𝑇 𝑚𝑎𝑥 )bias is frozen and production trajectories are generated under the biased potential 𝑈 (𝐱 ) + 𝑉 (𝑇 𝑚𝑎𝑥 )bias (𝜉 (𝐱 )) . For samples from this fixed biased ensemble, unbiased averages with respect to the original Gibbs measure are recovered using weights 
+
+𝑤 (𝐱 ) ∝ exp 
+
+(
+
+𝛽𝑉 (𝑇 𝑚𝑎𝑥 )bias (𝜉 (𝐱 )) 
+
+)
+
+.
+
+Algorithm 1 summarizes the present path-dependent McKean-Vlasov-based sampling method. 
+
+## 3. Numerical Results 
+
+We assess the proposed method on benchmark systems of increasing complexity, ranging from the analytical Müller potential to solvated peptides and a protein benchmark. In each case we examine two complementary aspects: the efficiency of barrier crossing during the adaptive stage, and the quality of the reweighted free-energy surface (FES) recovered by reweighting after the bias is frozen. Throughout this section, the FES is defined up to an additive constant by 
+
+𝐹 (𝝃 ) = − 𝑘 𝐵 𝑇 log 𝜌 𝜉 (𝝃 ) + 𝐶, (17) where 𝜌 𝜉 denotes the pushforward density in the CV space. When one- or two-dimensional marginals are reported, the remaining CVs are integrated out before applying the logarithmic transformation. 
+
+3.1. Müller potential 
+
+We first consider the Müller potential [22], a two-dimensional model landscape that provides a controlled test for both enhanced exploration and FES reconstruction. The potential is defined by 
+
+𝑈 (𝑥, 𝑦 ) = 
+
+> 4
+
+∑
+
+> 𝑖 =1
+
+𝐴 𝑖 exp 
+
+[
+
+𝑎 𝑖 (𝑥 − 𝑥 0 
+
+> 𝑖
+
+)2 + 𝑏 𝑖 (𝑥 − 𝑥 0 
+
+> 𝑖
+
+)( 𝑦 − 𝑦 0 
+
+> 𝑖
+
+) + 𝑐 𝑖 (𝑦 − 𝑦 0 
+
+> 𝑖
+
+)2]
+
+, (18) where the parameters {𝐴 𝑖 , 𝑎 𝑖 , 𝑏 𝑖 , 𝑐 𝑖 , 𝑥 0 
+
+> 𝑖
+
+, 𝑦 0 
+
+> 𝑖
+
+} are given in [22]. The landscape contains three metastable wells separated by pronounced barriers, making it a stringent benchmark for barrier-crossing dynamics. Since the physical coordinates   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 9 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Algorithm 1 Path-dependent McKean-Vlasov adaptive enhanced sampling using FHT density estimation. 
+
+Require: Initial configurations {𝐗 (𝑖 )0 }𝑀 𝑖 =1 ; bias strength 𝛼 ; FHT parameters (𝑝, 𝛿, 𝑟 ) and binary dimension tree  ;Softplus parameters (𝜖, 𝜏 ); number of bias updates 𝑇 max ; MD steps per update 𝑁 step ; integration step Δ𝑡 ; friction 
+
+𝛾 ; inverse temperature 𝛽 
+
+Ensure: Converged bias potential 𝑉 (𝑇 max )bias ; reweighted free-energy surface 𝐹  
+
+> 1:
+
+Initialization: (0) ← ∅;̃𝜌 (0) ← const; 𝑉 (0) bias ← 0 {no initial bias}  
+
+> 2:
+
+for 𝑡 = 1 , 2, … , 𝑇 max do  
+
+> 3:
+
+# Step A — Trajectory collection under the current bias  
+
+> 4:
+
+Form the biased force field 𝐅 (𝑡 −1) (𝐱 ) = −∇ 𝑈 (𝐱 ) − ∇ 𝜉 (𝐱 )⊤∇𝝃 𝑉 (𝑡 −1) bias 
+
+(𝜉 (𝐱 )) 
+
+> 5:
+
+for each walker 𝑖 = 1 , … , 𝑀 in parallel do  
+
+> 6:
+
+Propagate 𝑁 step MD steps from 𝐗 (𝑖 ) under 𝐅 (𝑡 −1) at temperature 𝑇 using the chosen integrator  
+
+> 7:
+
+Record CV snapshots {𝜉 (𝐗 (𝑖 ) 
+
+> 𝑛
+
+)} every 𝑁 save steps and append to new  
+
+> 8:
+
+end for  
+
+> 9:
+
+(𝑡 ) ← (𝑡 −1) ∪ new  
+
+> 10:
+
+# Step B — Coordinate rescaling to [−1 , 1] 𝑚  
+
+> 11:
+
+For each coordinate 𝑘 = 1 , … , 𝑚 , compute [𝜉 min  
+
+> 𝑘
+
+, 𝜉 max  
+
+> 𝑘
+
+] from (𝑡 ) and apply 
+
+> 12:
+
+̂ 𝜉 𝑘 = 2 𝜉 𝑘 − 𝜉 min 
+
+> 𝑘
+
+𝜉 max  
+
+> 𝑘
+
+− 𝜉 min 
+
+> 𝑘
+
+− 1 , with Jacobian factor 𝐽 𝑘 = 2∕( 𝜉 max  
+
+> 𝑘
+
+− 𝜉 min  
+
+> 𝑘
+
+) 
+
+> 13:
+
+# Step C — FHT density estimation via sketching  
+
+> 14:
+
+Build the Gaussian basis {𝜓 (𝑘 ) 
+
+> 𝑗,𝛿
+
+}𝑝 𝑗 =1 of (10) and orthonormalize it to {̃𝜓 (𝑘 ) 
+
+> 𝑗,𝛿
+
+}𝑝 𝑗 =1  
+
+> 15:
+
+Draw the sketch tensors {𝑆 𝑎 , 𝑆 𝑏 , 𝑆 𝑓 } and assemble the sketch functions {𝑠 𝑎 , 𝑠 𝑏 , 𝑠 𝑓 } 
+
+> 16:
+
+for each internal node 𝗇 ∈  in bottom-up order do  
+
+> 17:
+
+Let 𝑎 = 𝑎 (𝗇 ), 𝑏 = 𝑏 (𝗇 ), 𝑓 = [ 𝑚 ] ⧵ (𝑎 ∪ 𝑏 ) 
+
+> 18:
+
+Estimate the moment matrices 𝑍 𝑎 ;̄𝑎 , 𝑍 𝑏 ;̄𝑏 , 𝑍 ̄𝑓 ;𝑓 from samples via (16)  
+
+> 19:
+
+Compute truncated rank-𝑟 factorizations to obtain the block factors 𝐴 𝑎 , 𝐴 𝑏 , 𝐴 𝑓  
+
+> 20:
+
+Estimate the sketched right-hand side 𝐵 𝗇 from samples via (15)  
+
+> 21:
+
+Solve (𝐴 𝑎 ⊗ 𝐴 𝑏 ⊗ 𝐴 𝑓 ) 𝐺 𝗇 = 𝐵 𝗇 for the local core 𝐺 𝗇  
+
+> 22:
+
+end for  
+
+> 23:
+
+Assemble the coefficient tensor from {𝐺 𝗇 } and {𝐴 𝑎 , 𝐴 𝑏 , 𝐴 𝑓 } along  via (12); obtain ̂𝜌 (𝑡 )FHT (̂𝝃 ) through the expansion (11)  
+
+> 24:
+
+Map back to the original coordinates: 𝜌 (𝑡 )FHT (𝝃 ) = ̂𝜌 (𝑡 )FHT 
+
+(̂ 𝝃 (𝝃 )) ∏ 𝑚 𝑘 =1 𝐽 𝑘  
+
+> 25:
+
+# Step D — Softplus regularization and bias update 
+
+> 26:
+
+̃ 𝜌 (𝑡 )(𝝃 ) ← 𝐾 𝜏,𝜖 
+
+(𝜌 (𝑡 )FHT (𝝃 )), where 𝐾 𝜏,𝜖 (𝑥 ) = 𝜖 + 𝜏 Sof tplus( 𝑥 ∕𝜏 ) 
+
+> 27:
+
+𝑉 (𝑡 )bias (𝝃 ) ← 𝛼 𝑘 𝐵 𝑇 log ̃𝜌 (𝑡 )(𝝃 ) 
+
+> 28:
+
+end for  
+
+> 29:
+
+# Production run and FES reconstruction  
+
+> 30:
+
+Fix the bias at 𝑉 (𝑇 max )bias and run 𝑀 ′ independent production trajectories under the biased force field 𝐅 (𝑇 max ) 
+
+> 31:
+
+Assign to each production sample 𝝃 the reweighting weight 𝑤 (𝝃 ) ∝ exp (𝛽 𝑉 (𝑇 max )bias (𝝃 )) 
+
+> 32:
+
+Reconstruct the unbiased FES 𝐹 (𝝃 ) = − 𝑘 𝐵 𝑇 log 𝜌 𝜉 (𝝃 ) using fixed-bias reweighting, or via MBAR [30] when production samples are pooled across multiple bias stages already form a two-dimensional CV space, we work directly with 𝝃 = ( 𝑥, 𝑦 ) and simulate the biased overdamped Langevin dynamics with time step Δ𝑡 = 0 .005 , friction coefficient 𝛾 = 5 .0, and thermal energy 𝑘 𝐵 𝑇 = 2 .5.The bias is updated every 100 ,000 time steps, and all samples collected so far are used to refit the density estimator. The FHT approximation employs 𝑝 = 31 Gaussian basis functions per coordinate, width 𝜎 = 0 .2, and maximal bond dimension 𝑟 = 15 . The Softplus regularization parameters are set to 𝜖 = 0 .1 and 𝜏 = 0 .1.To quantify the influence of the bias strength, we test 𝛼 = 13 , 16 , and 20 . Figure 1 shows that the unbiased dynamics remains trapped in a single well and exhibits no inter-basin transition over the simulated time horizon. In contrast, the biased dynamics generates frequent transitions among all three basins, with the number of observed 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 10 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics −1 0 1
+
+x
+
+01
+
+> y
+
+(a) Muller potential 
+
+030 60 90 120 
+
+> F (x, y )
+
+−101     
+
+> x
+> (b) Unbiased transitions: 0 (c) α= 13 transitions: 26
+
+0 1 2 3
+
+t [10 3 a.u.] 
+
+−101   
+
+> x
+> (d) α= 16 transitions: 120
+
+0 1 2 3
+
+t [10 3 a.u.]    
+
+> (e) α= 20 transitions: 196
+
+−1 0 1
+
+x
+
+012
+
+> y
+> (f) reweighted FES
+
+−1 0 1
+
+x
+
+> (g) Difference
+
+030 60 90 120 
+
+> F (x, y )
+
+−10 .0
+
+−7.5
+
+−5.0
+
+−2.50.02.55.07.510 .0∆F
+
+Figure 1: Benchmark of the 2D Müller potential. (a) Contours of the reference potential (18) . (b)–(e) Time series of the 𝑥 
+
+coordinate for unbiased dynamics and for biased dynamics with 𝛼 = 13 , 16 , and 20 ; the numbers in the panel titles report the corresponding counts of inter-basin transitions over the same simulation horizon. (f) Reweighted FES obtained after freezing the bias. (g) Pointwise difference between the reweighted FES and the reference surface on the sampled domain. 
+
+crossings increasing from 26 to 120 and then to 196 as 𝛼 is increased. This monotone trend is consistent with the effective-temperature interpretation derived in Section 2.2: a larger 𝛼 produces a flatter CV-space distribution and facilitates barrier crossing. After 150 bias updates, the bias potential is frozen and a production trajectory of 6 × 10 6 steps is generated for reweighting. The reweighted FES in Figure 1(f) accurately reproduces the three dominant metastable basins and the low-free-energy channels connecting them. The difference map in Figure 1(g) shows that the remaining discrepancies are concentrated near the boundary of the sampled region and in sparsely visited high-energy areas, while the low-energy portion of the landscape is recovered with good fidelity. 
+
+3.2. Alanine systems 
+
+Alanine peptides provide standard molecular benchmarks with increasingly rich torsional free-energy landscapes. We first study alanine dipeptide in a two-dimensional CV space, and then consider the four-dimensional ACE-(ALA) 2-NME system. 
+
+3.2.1. ACE-ALA-NME system 
+
+We begin with alanine dipeptide (Ace–Ala–Nme, denoted Ala2), a canonical test case for conformational sampling. The solute is solvated in 383 TIP3P water molecules, and all-atom MD simulations are performed in the canonical (NVT) ensemble at 𝑇 = 300 K using the Amber99-SB force field [15]. The time step is 0.001 ps. Periodic boundary conditions are applied in all spatial directions. Van der Waals interactions are truncated at 0.9 nm, and long-range electrostatics are treated by the smooth particle mesh Ewald (PME) method with real-space cutoff 0.9 nm and reciprocal-space grid spacing 0.12 nm. The two backbone torsion angles 𝜙 (𝐶, 𝑁, 𝐶 𝛼 , 𝐶 ) and 𝜓 (𝑁, 𝐶 𝛼 , 𝐶, 𝑁 ) are used as CVs. The bias is updated every 
+
+200 ,000 MD steps, and configurations are recorded every 50 steps for density estimation and post-processing. Figure 2 shows that the unbiased trajectory remains concentrated in a restricted angular region, whereas the biased trajectories progressively cover the full 𝜙 range as 𝛼 increases from 0.5 to 2.0. The corresponding empirical marginal density becomes markedly flatter, indicating that the adaptive bias suppresses repeated visits to the most frequently sampled torsional states. 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 11 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics           
+
+> Figure 2: Benchmark of the Ala2 molecule with 2 CVs. (a) Molecular structure of alanine dipeptide. (b) Estimated marginal density of 𝜙 obtained from trajectories generated with different bias strengths. (c)–(f) Time series of the dihedral angle
+> 𝜙 for unbiased MD and for biased dynamics with 𝛼 = 0 .5,1.0, and 2.0, respectively. Increasing 𝛼 broadens the sampled angular range and produces more frequent transitions between metastable regions.
+
+After 20 bias updates, the bias is frozen and 32 independent production simulations are performed for FES estimation. Figure 3 reports the reweighted one-dimensional marginals 𝐹 (𝜙 ) and 𝐹 (𝜓 ) at 𝑡 = 500 , 1000 , 2000 , and 
+
+4000 ps. Relative to unbiased MD, the biased dynamics substantially reduces the run-to-run variability and recovers the locations of the principal wells and barriers at much earlier times. The improvement is systematic with respect to 
+
+𝛼 : even 𝛼 = 0 .5 accelerates convergence, while 𝛼 = 1 .0 and 2.0 yield the most stable profiles in the early part of the production stage. 
+
+3.2.2. ACE-(ALA) 2-NME system 
+
+We next consider the ACE-(ALA) 2-NME system, modeled with the Amber99 force field and solvated in 1113 
+
+explicit TIP3P water molecules in a cubic box of size 3.23 nm × 3 .23 nm × 3 .23 nm . Simulations are carried out in the NVT ensemble at 𝑇 = 300 K with time step 0.001 ps . Short-range van der Waals interactions are truncated at 0.9 nm ,and electrostatics are treated by PME with real-space cutoff 0.9 nm . This system probes a four-dimensional torsional CV space and therefore provides a more stringent scalability test than Ala2. The CVs are the backbone torsions (𝜙 1, 𝜓 1, 𝜙 2, 𝜓 2). Representative time series for 𝜙 1, 𝜙 2, and 𝜓 1 are shown in Figure 4. Without bias, the dynamics remains trapped for long periods in a small number of metastable regions. Once the adaptive bias is activated, transitions become substantially more frequent and the angular space is explored more broadly, especially for 𝛼 = 2 .0.Figure 5 summarizes the convergence of the one-dimensional marginals along the four torsional coordinates. The major minima and barrier locations are already well resolved after approximately 4000 ps, while extending the production run to 8000 ps further smooths the profiles and reduces uncertainty. The corresponding two-dimensional marginals in Figure 6 reveal multiple metastable basins and well-defined transition channels in representative CV pairs. Taken together, these results show that the tensor-based density estimator remains effective when the bias is constructed in a four-dimensional CV space. 
+
+3.3. Peptoid systems 
+
+3.3.1. s-(1)-phenylethyl peptoid 
+
+We next consider the peptoid system s-(1)-phenylethyl (s1pe), taken from [43]. The molecule is solvated in 546 
+
+TIP3P water molecules and simulated in the NVT ensemble at 𝑇 = 300 K. All remaining MD parameters are identical   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 12 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics
+
+050 100 
+
+> F (φ) [kJ /mol]
+
+(a) 500 ps (b) 1000 ps (c) 2000 ps (d) 4000 ps 
+
+−2.5 0.0 2.5Dihedral angle 050 100 
+
+> F (ψ) [kJ /mol]
+
+(e) 500 ps 
+
+−2.5 0.0 2.5Dihedral angle 
+
+(f) 1000 ps 
+
+−2.5 0.0 2.5Dihedral angle 
+
+(g) 2000 ps 
+
+−2.5 0.0 2.5Dihedral angle 
+
+(h) 4000 ps unbiased MD α = 0 .5 α = 1 .0 α = 2 .0                  
+
+> Figure 3: Convergence of the marginal free-energy surfaces 𝐹 (𝜙 )(top row) and 𝐹 (𝜓 )(bottom row) for Ala2 after the bias is frozen at iteration 20 . Results are averaged over 32 independent production runs. Columns correspond to production lengths 𝑡 = 500 ,1000 ,2000 , and 4000 ps. Solid curves denote the mean FES, and shaded bands indicate the variance across runs. Larger 𝛼 leads to faster convergence and lower statistical uncertainty than unbiased MD.
+
+to those used for Ala2. We use the three torsion angles 𝜔 (𝐶 𝛼 , 𝐶, 𝑁, 𝐶 𝛼 ), 𝜙 (𝐶, 𝑁, 𝐶 𝛼 , 𝐶 ), and 𝜓 (𝑁, 𝐶 𝛼 , 𝐶, 𝑁 ) as CVs, which yields a three-dimensional biasing space. Figure 7 examines how the bias strength affects exploration of the torsional landscape. In the unbiased run, and also for the weak bias 𝛼 = 2 .0, the dynamics remains trapped near a small subset of metastable states for long periods. Increasing the bias strength to 𝛼 = 4 .0 and 8.0 leads to repeated switches between the major 𝜔 states and substantially broader coverage of the angular domain. The empirical marginal density correspondingly becomes less concentrated, which is consistent with improved exploration. After 50 ,000 ps of adaptive sampling, the bias is frozen and additional production runs are carried out for reweighting. Figure 8 shows the resulting one-dimensional marginals 𝐹 (𝜔 ), 𝐹 (𝜙 ), and 𝐹 (𝜓 ). The reported mean and variance are computed from 32 independent trajectories of length 50 ,000 ps. The resulting profiles are smooth and reproducible, with narrow uncertainty bands except near high-free-energy regions, indicating that the method remains stable when the bias is constructed in a three-dimensional CV space. 
+
+3.3.2. Peptoid trimer (s1pe) 3
+
+As a higher-dimensional test, we consider the peptoid trimer (s1pe) 3 and use the nine torsional variables 
+
+𝜔 1, 𝜙 1, 𝜓 1, 𝜔 2, 𝜙 2, 𝜓 2, 𝜔 3, 𝜙 3, 𝜓 3 as CVs. This example probes the regime in which conventional grid-based biasing strategies become prohibitively expensive. Figure 9 shows representative biased trajectories for all nine torsional coordinates. Frequent switches between multiple angular states are observed across the entire set of CVs, indicating that the adaptive bias continues to promote barrier crossing even in a nine-dimensional CV space. The corresponding reweighted one-dimensional marginals are shown in Figure 10. Each torsion exhibits a structured, multimodal free-energy profile with clearly resolved minima and barriers. The absence of spurious oscillations in these marginals supports the robustness of the FHT density estimator in the moderate-to-high-dimensional regime.   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 13 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Figure 4: ACE-(ALA) 2-NME benchmark with 3 CVs. (a) Molecular structure of the system. The remaining panels show time series of three representative torsions under unbiased MD and biased dynamics. Columns correspond to the unbiased trajectory and to biased simulations with 𝛼 = 1 .0 and 𝛼 = 2 .0, while rows correspond to 𝜙 1 (top), 𝜙 2 (middle), and 𝜓 1
+
+(bottom). The adaptive bias produces substantially more frequent transitions and broader angular coverage. 
+
+Figure 5: One-dimensional marginal free-energy profiles for ACE-(ALA) 2-NME at different production lengths. Panels (a)–(d) show 𝐹 (𝜙 1), 𝐹 (𝜓 1), 𝐹 (𝜙 2), and 𝐹 (𝜓 2), respectively. Curves correspond to production lengths of 1000 , 2000 , 4000 ,and 8000 ps, and the shaded bands indicate the associated variance across independent runs. The principal features of the FES are already recovered after about 4000 ps. 
+
+3.4. Protein benchmarks 
+
+3.4.1. Chignolin (1UAO) 
+
+We next consider Chignolin (PDB: 1UAO), a designed 10-residue peptide that folds into a 𝛽 -hairpin structure and is widely used as a benchmark for peptide folding simulations. This system presents a substantially more challenging application than the model peptides considered above, as it exhibits a complex folding landscape with multiple metastable states ranging from the native fold to partially and fully unfolded conformations. The molecule is solvated in 
+
+1645 TIP3P water molecules with 7 Na + and 5 Cl − counterions to neutralize the system. MD simulations are performed in the NVT ensemble at 𝑇 = 300 K using the Amber99-SB force field [15] with a time step of Δ𝑡 = 0 .0001 ps; all other simulation parameters follow the Ala2 setup. The 16 backbone dihedral angles serve as collective variables, defining a 16-dimensional CV space. The FHT density estimate uses a Gaussian basis with 𝑝 = 21 basis functions per coordinate, 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 14 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics −202(a) (b) 
+
+# −2.5 0.0 2.5
+
+# −202(c) 
+
+# −2.5 0.0 2.5(d) 
+
+# 10 30 50 FES (kJ/mol) 
+
+Figure 6: Two-dimensional marginal free-energy surfaces for representative pairs of torsional coordinates in ACE-(ALA) 2-NME. Panels (a)–(d) correspond to (𝜙 1, 𝜓 1), (𝜙 2, 𝜓 2), (𝜙 1, 𝜙 2), and (𝜓 1, 𝜓 2), respectively. The surfaces resolve the dominant metastable basins and the principal transition channels in the reduced CV space. 
+
+width 𝜎 = 0 .1, and maximal internal bond dimension 𝑟 = 15 . The Softplus regularization parameters are set to 𝜖 = 1 
+
+and 𝜏 = 5 , with bias strength 𝛼 = 2 .Figure 11 illustrates how the biased dynamics progressively drives the system away from the native fold and into under-sampled regions of configuration space. Panel (a) shows the radius of gyration 𝑅 𝑔 along a single-walker trajectory, colored by iteration number. During the early iterations the walker remains near the compact native state (𝑅 𝑔 ≈ 5 Å), but as the bias strengthens the trajectory begins to visit increasingly extended conformations, with 
+
+𝑅 𝑔 exceeding 8 Å in later iterations. Panel (b) summarizes the 𝑅 𝑔 distribution across all walkers as a function of iteration: both the median and the interquartile range shift steadily upward, confirming that the bias systematically promotes exploration of non-native conformations. Panels (c) and (d) contrast within-iteration 𝑅 𝑔 traces at iteration 5 and iteration 50, respectively. At iteration 5 the walkers remain tightly clustered around the folded state, whereas by iteration 50 they span a broad range of 𝑅 𝑔 values and undergo frequent transitions between compact and extended conformations, demonstrating that the evolved bias effectively flattens the free-energy barriers separating metastable basins. To further characterize the resulting free-energy landscape, Figure 12 shows two-dimensional FESs reconstructed from the fixed-bias production trajectories using the multistate Bennett acceptance ratio (MBAR) estimator [30]. Panel (a) displays the native 𝛽 -hairpin structure of Chignolin for reference. In the (RMSD 𝐶 𝛼 , 𝑅 𝑔 ) projection (panel b), the FES resolves a compact folded basin 𝐹 at low RMSD and small 𝑅 𝑔 , an intermediate basin 𝐼 at moderate RMSD, and two unfolded states 𝑈 1 and 𝑈 2 of progressively larger radius of gyration. Representative structures extracted from each basin confirm the structural interpretation: 𝐹 corresponds to the native 𝛽 -hairpin, 𝐼 to a partially disrupted turn, and 𝑈 1/𝑈 2 to increasingly extended backbone conformations. The (𝑑 1, 𝑑 2) projection (panel c), where 𝑑 1 and 𝑑 2 denote the distances between the hydrogen-bonding atom pairs Asp3 N–Gly7 O and Asp3 N–Thr8 O, respectively, provides a 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 15 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Figure 7: s-(1)-phenylethyl peptoid benchmark with 3 CVs. (a) Molecular structure of s1pe. (b) Estimated marginal density of 𝜔 obtained from trajectories generated with different bias strengths after 50 ,000 ps. (c)–(f) Time series of 𝜔 for unbiased MD and for biased dynamics with 𝛼 = 2 .0, 4.0, and 8.0, respectively. Larger 𝛼 yields more frequent transitions and broader exploration of the torsional space. −2.5 0.0 2.520 40 
+
+> F (·)[kJ /mol]
+
+# (a) ω
+
+# −2.5 0.0 2.5Dihedral angle 
+
+# (b) φ
+
+# −2.5 0.0 2.5
+
+# (c) ψ
+
+Figure 8: Reweighted one-dimensional marginal free-energy profiles for s-(1)-phenylethyl peptoid after freezing the bias at 
+
+50 ,000 ps. Panels (a)–(c) show 𝐹 (𝜔 ), 𝐹 (𝜙 ), and 𝐹 (𝜓 ), respectively. Solid curves denote the mean over 32 independent production runs, and shaded bands indicate the corresponding variance. 
+
+complementary view consistent with previous studies of Chignolin folding [27] and reveals an extended diagonal low-free-energy channel connecting the principal metastable basins. These results demonstrate that the proposed method can resolve multiple structurally distinct metastable states in a realistic molecular system while maintaining the statistical quality needed for reliable MBAR-based free-energy reconstruction. 
+
+3.4.2. Villin headpiece (1VII) 
+
+To test the scalability of the method to larger proteins, we consider the villin headpiece subdomain (PDB: 1VII), a 36-residue three-helix bundle that is one of the smallest autonomously folding proteins and a longstanding benchmark 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 16 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics             
+
+> Figure 9: Peptoid trimer benchmark with 9 CVs. (a) Molecular structure of (s1pe) 3. (b)–(j) Representative time series of the nine torsional CVs 𝜔 1,𝜙 1,𝜓 1,𝜔 2,𝜙 2,𝜓 2,𝜔 3,𝜙 3, and 𝜓 3during biased sampling. Frequent transitions are observed along all coordinates, indicating sustained exploration of the high-dimensional torsional landscape.
+
+for folding simulations. Compared with the 10-residue Chignolin, this system poses a considerably greater challenge: the folding landscape involves the cooperative packing of three helices, resulting in a higher-dimensional CV space and a richer set of partially folded intermediates. The molecule is solvated in 4395 TIP3P water molecules with 13 Na +
+
+and 15 Cl − counterions to neutralize the system. MD simulations are performed in the NVT ensemble at 𝑇 = 300 Kusing the Amber99-SB force field [15] with a time step of Δ𝑡 = 0 .0001 ps; all other simulation parameters follow the Ala2 setup. The backbone dihedral angles are used as collective variables, defining a 64-dimensional CV space. The FHT density estimate uses a Gaussian basis with 𝑝 = 21 basis functions per coordinate, width 𝜎 = 0 .1, and maximal internal bond dimension 𝑟 = 15 . The Softplus regularization parameters are set to 𝜖 = 1 and 𝜏 = 10 , with bias strength 
+
+𝛼 = 2 .Figure 13 shows two-dimensional FESs reconstructed from the fixed-bias production trajectories using MBAR [30]. Panel (a) displays the native three-helix bundle structure. In the (𝑅 𝑔 , 𝑑 e2e ) projection (panel b), the FES reveals a compact folded basin 𝐹 at small 𝑅 𝑔 and short end-to-end distance, an intermediate basin 𝐼 , and two unfolded states 𝑈 1
+
+and 𝑈 2 characterized by progressively larger end-to-end distances and radii of gyration. The (RMSD 𝐶 𝛼 , 𝑑 e2e ) projection (panel c) provides a complementary view that clearly separates the folded and intermediate basins, which overlap in 
+
+𝑅 𝑔 but are distinguished by their backbone RMSD. Inset structures extracted from each basin confirm the structural assignments. The clear resolution of four distinct metastable states in a 64-dimensional CV space demonstrates that the proposed method scales effectively to realistic helical proteins with complex folding landscapes.   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 17 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 010 
+
+# (b) ω1 (c) φ1 (d) ψ1
+
+# 010 
+
+> F (·) [kJ /mol]
+
+# (e) ω2 (f) φ2 (g) ψ2
+
+# −2.5 0.0 2.5010 
+
+# (h) ω3
+
+# −2.5 0.0 2.5
+
+# Dihedral angle 
+
+# (i) φ3
+
+# −2.5 0.0 2.5
+
+# (j) ψ3
+
+Figure 10: Reweighted one-dimensional marginal free-energy profiles for the peptoid trimer (s1pe) 3. Panels (b)–(j) correspond to 𝐹 (𝜔 1), 𝐹 (𝜙 1), 𝐹 (𝜓 1), 𝐹 (𝜔 2), 𝐹 (𝜙 2), 𝐹 (𝜓 2), 𝐹 (𝜔 3), 𝐹 (𝜙 3), and 𝐹 (𝜓 3), respectively. The multimodal structure of these marginals confirms that the method can recover informative free-energy profiles even when the bias is built in a nine-dimensional CV space. L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 18 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 0 2 4 6 8 10 12 14 16 
+
+Time (ns) 
+
+5
+
+6
+
+7
+
+8  
+
+> Rg (˚ A)
+> smaller Rg= more compact
+> 50-ps running avg
+
+(a) Single-walker compaction trace w01, colored by iteration 
+
+122 44 65 
+
+> Iteration
+
+1 22 44 65 
+
+Iteration 
+
+6
+
+8  
+
+> Rg (˚ A)
+> 10-90 25-75 Median
+
+(b) Distribution across all walkers 
+
+0.00 0.05 0.10 0.15 0.20 
+
+Time within iteration (ns) 
+
+5
+
+6
+
+7
+
+8
+
+> Rg (˚ A)
+> individual walkers 25-75 walker median
+
+(c) Early compaction (iter 5) 
+
+0.00 0.05 0.10 0.15 0.20 
+
+Time within iteration (ns) 
+
+(d) Late compaction (iter 50) 
+
+Figure 11: Configurational exploration of Chignolin (1UAO) with 16 CVs, measured by the radius of gyration 𝑅 𝑔 . (a) 𝑅 𝑔 
+
+trajectory of a single walker colored by iteration number, with the 50-ps running average shown in black. (b) 𝑅 𝑔 distribution across all walkers as a function of iteration; shaded bands show the 10–90th and 25–75th percentile ranges, and the solid line shows the median. (c, d) Within-iteration 𝑅 𝑔 traces for all walkers at iteration 5 (early stage) and iteration 50 (bias-strengthened stage), illustrating the progressive shift toward more extended conformations as the bias evolves. L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 19 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Figure 12: Free energy landscape of Chignolin (1UAO) estimated by the proposed method. (a) Native 𝛽 -hairpin structure. (b) Two-dimensional FES projected onto RMSD 𝐶 𝛼 vs. 𝑅 𝑔 , revealing four metastable states: the folded state (F, low RMSD and compact), an intermediate (I), and two unfolded states ( 𝑈 1, 𝑈 2) of increasing radius of gyration. (c) FES projected onto the cross-strand contact distances 𝑑 1 (atoms 31–92) vs. 𝑑 2 (atoms 31–106), providing complementary resolution of the unfolded ensemble. Inset snapshots show representative structures from each basin. 
+
+Figure 13: Free energy landscape of the villin headpiece subdomain (1VII) with 64 CVs. (a) Native three-helix bundle structure. (b) Two-dimensional FES projected onto 𝑅 𝑔 vs. end-to-end distance, revealing four metastable states: the folded state (F), an intermediate (I), and two unfolded states ( 𝑈 1, 𝑈 2) with progressively larger end-to-end distances. (c) FES projected onto RMSD 𝐶 𝛼 vs. end-to-end distance, providing complementary resolution of the folded and intermediate basins. Inset snapshots show representative structures from each basin. L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 20 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+## 4. Discussion 
+
+In this work, we propose a scalable adaptive enhanced-sampling framework for systems with moderate- to high-dimensional CV spaces. The central idea is to reformulate adaptive biasing at the level of the stochastic dynamics, so that the biasing drift is defined through a regularized path-dependent CV marginal rather than an instantaneous mean-field law. The formulation is motivated by the Wasserstein gradient flow interpretation [19] of adaptive biasing, but introduces two modifications that are important for efficient numerical implementation. First, instead of regularizing the free-energy functional, we directly regularize the CV marginal entering the biasing drift. This modification sacrifices the exact Wasserstein gradient-flow structure, but yields a smooth and well-defined score field and avoids the computationally expensive outer convolution over the high-dimensional CV space. Second, we replace the instantaneous law with a weighted history measure accumulated along the trajectories. This modification mitigates the sampling noise associated with the small-replica regime and is particularly useful for real applications like molecular simulations with a limited number of independent replicas. The resulting dynamics leads to a path-distribution-dependent SDE. We establish well-posedness of the regularized and path-dependent stochastic dynamics, and relate the long-time behavior to the invariant measure of the corresponding instantaneous-law dynamics under suitable dissipativity and moment assumptions. The corresponding CV marginal is approximated from accumulated trajectory samples using an optimization-free FHT approximation, which provides an efficient biasing scheme particularly suited for high-dimensional CV spaces. The numerical experiments demonstrate that the proposed formulation can construct effective adaptive biases in CV spaces substantially beyond the dimensionality typically addressed by enhanced sampling methods for MD systems. Across benchmark problems ranging from low-dimensional potentials to complex protein systems, the adaptive dynamics facilitates the exploration of metastable regions and improves barrier crossing compared with unbiased simulations. In particular, the method is applied to molecular systems with CV dimensions up to 64 , with reweighted low-dimensional FES projections resolving folded, intermediate, and unfolded basins in the protein examples. These results illustrate the scalability of the proposed density-based biasing strategy. We emphasize, however, that the FHT density approximation used during the adaptive stage is not intended to serve as a final unbiased FES estimator. Rather, it provides a smooth operational surrogate of the history-averaged CV marginal for constructing the biasing drift. Unbiased free-energy information is subsequently recovered from fixed-bias production samples by reweighting, or by MBAR when samples from multiple bias stages are combined. A closely related recent development is tensor-compressed metadynamics, named TT-metadynamics [31]. This method remains within the metadynamics framework; Gaussian hills are deposited along the trajectory, and the accumulated bias potential is periodically compressed into a tensor-train representation. In this sense, the tensor representation primarily serves as a compression method of the accumulated Gaussian hills. In contrast, the present method does not deposit hills. Rather, it directly estimates the CV marginal density from accumulated trajectory data and derives the biasing drift from a regularized score field within a path-dependent McKean–Vlasov formulation. Thus, the low-rank tensor representation serves as the density estimator to close the stochastic dynamics rather than a compression device of an accumulated Gaussian hills. The resulting dynamics is better viewed as a path-dependent regularized score-driven dynamics rather than a tensorized version of metadynamics. For future work, we note that the present regularized formulation sacrifices the exact Wasserstein gradient-flow structure, and therefore, the variational convergence theory available for the idealized adaptive-biasing dynamics does not directly apply. Although existing results for self-interacting McKean–Vlasov processes provide theoretical support for the use of history measures under dissipativity assumptions, a convergence theory that covers realistic molecular potentials and finite-replica simulations remains open. On the numerical side, the accuracy and stability of the tensor-based density estimator further depend on the effective low-rank structure of the CV marginal, the choice of basis functions, and the regularization parameters. This calls for further investigations on the adaptive selection of history weights and the tensor ranks, as well as non-negative representation (e.g., see [34]). Also, it would be valuable to integrate the present enhanced sampling method with data-driven learning of CVs for complex systems. 
+
+## Acknowledgments 
+
+The work is supported in part by the National Science Foundation under Grant DMS-2110981 and the ACCESS program through allocation MTH210005.   
+
+> L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 21 of 24
+
+High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+## Code availability 
+
+A reference implementation of the proposed method, together with scripts to reproduce the numerical experiments reported in this paper, is openly available at https://github.com/Lyuliyao/fht-sampler .
+
+## References 
+
+[1] Bachmayr, M., Schneider, R., Uschmajew, A., 2016. Tensor Networks and Hierarchical Tensors for the Solution of High-Dimensional Partial Differential Equations. Foundations of Computational Mathematics 16, 1423–1472. [2] Barducci, A., Bussi, G., Parrinello, M., 2008. Well-tempered metadynamics: a smoothly converging and tunable free-energy method. Physical Review Letters 100, 020603. [3] Benaïm, M., Bréhier, C.E., Monmarché, P., 2020. Analysis of an adaptive biasing force method based on self-interacting dynamics. Electronic Journal of Probability 25, 1–28. doi: 10.1214/20-EJP490 .[4] Bonati, L., Zhang, Y.Y., Parrinello, M., 2019. Neural networks-based variationally enhanced sampling. Proceedings of the National Academy of Sciences 116, 17641–17647. doi: 10.1073/pnas.1907975116 .[5] Carmona, R., 2016. Lectures on BSDEs, stochastic control, and stochastic differential games with financial applications. SIAM. [6] Carroll, J.D., Chang, J.J., 1970. Analysis of individual differences in multidimensional scaling via an n-way generalization of “eckart-young” decomposition. Psychometrika 35, 283–319. [7] Chen, Y., Hoskins, J., Khoo, Y., Lindsey, M., 2023. Committor functions via tensor networks. Journal of Computational Physics 472, 111646. [8] Chipot, C., Lelièvre, T., 2011. Enhanced sampling of multidimensional free-energy landscapes using adaptive biasing forces. SIAM Journal on Applied Mathematics 71, 1673–1695. [9] Darve, E., Pohorille, A., 2001. Calculating free energies using average force. The Journal of Chemical Physics 115, 9169–9183. [10] Darve, E., Rodríguez-Gómez, D., Pohorille, A., 2008. Adaptive biasing force method for scalar and vector free energy calculations. The Journal of Chemical Physics 128. [11] Du, K., Jiang, Y., Li, J., 2023. Empirical approximation to invariant measures for mckean–vlasov processes: Mean-field interaction vs self-interaction. Bernoulli 29, 2492–2518. [12] Einkemmer, L., Joseph, I., 2021. A mass, momentum, and energy conservative dynamical low-rank scheme for the vlasov equation. Journal of Computational Physics 443, 110495. [13] Galvelis, R., Sugita, Y., 2017. Neural network and nearest neighbor algorithms for enhancing sampling of molecular dynamics. Journal of chemical theory and computation 13, 2489–2500. [14] Hackbusch, W., 2019. Hierarchical tensor representation, in: Tensor Spaces and Numerical Tensor Calculus. Springer, pp. 387–451. [15] Hornak, V., Abel, R., Okur, A., Strockbine, B., Roitberg, A., Simmerling, C., 2006. Comparison of multiple amber force fields and development of improved protein backbone parameters. Proteins: Structure, Function, and Bioinformatics 65, 712–725. [16] Hur, Y., Hoskins, J.G., Lindsey, M., Stoudenmire, E., Khoo, Y., 2023. Generative modeling via tensor train sketching. Applied and Computational Harmonic Analysis 67, 101575. [17] Khoromskij, B.N., Schwab, C., 2011. Tensor-structured galerkin approximation of parametric and stochastic elliptic pdes. SIAM Journal on Scientific Computing 33, 364–385. [18] Laio, A., Parrinello, M., 2002. Escaping free-energy minima. Proceedings of the National Academy of Sciences 99, 12562–12566. doi: 10.1073/pnas.202427399 .[19] Lelièvre, T., Lin, X., Monmarché, P., 2025. Convergence rates for an adaptive biasing potential scheme from a wasserstein optimization perspective. arXiv preprint arXiv:2501.17979 . [20] Lelièvre, T., Rousset, M., Stoltz, G., 2008. Long-time convergence of an adaptive biasing force method. Nonlinearity 21, 1155. [21] Maragliano, L., Vanden-Eijnden, E., 2006. A temperature accelerated method for sampling free energy and determining reaction pathways in rare events simulations. Chemical physics letters 426, 168–175. [22] Müller, K., Brown, L.D., 1979. Location of saddle points and minimum energy paths by a constrained simplex optimization procedure. Theoretica chimica acta 53, 75–93. [23] Novikov, G.S., Panov, M.E., Oseledets, I.V., 2021. Tensor-train density estimation, in: de Campos, C., Maathuis, M.H. (Eds.), Proceedings of the Thirty-Seventh Conference on Uncertainty in Artificial Intelligence, PMLR. pp. 1321–1331. [24] Oseledets, I.V., 2011. Tensor-train decomposition. SIAM Journal on Scientific Computing 33, 2295–2317. [25] Prévôt, C., Röckner, M., 2007. A concise course on stochastic partial differential equations. Springer. [26] Rosso, L., Mináry, P., Zhu, Z., Tuckerman, M.E., 2002. On the use of the adiabatic molecular dynamics technique in the calculation of free energy profiles. The Journal of Chemical Physics 116, 4389–4402. [27] Satoh, D., Shimizu, K., Nakamura, S., Terada, T., 2006. Folding free-energy landscape of a 10-residue mini-protein, chignolin. FEBS letters 580, 3422–3426. [28] Schneider, E., Dai, L., Topper, R.Q., Drechsel-Grau, C., Tuckerman, M.E., 2017. Stochastic neural network approach for learning high-dimensional free energy surfaces. Physical Review Letters 119, 150601. [29] Shaw, D.E., Maragakis, P., Lindorff-Larsen, K., Piana, S., Dror, R.O., Eastwood, M.P., Bank, J.A., Jumper, J.M., Salmon, J.K., Shan, Y., et al., 2010. Atomic-level characterization of the structural dynamics of proteins. Science 330, 341–346. [30] Shirts, M.R., Chodera, J.D., 2008. Statistically optimal analysis of samples from multiple equilibrium states. The Journal of chemical physics 129. [31] Strand, N.E., Yang, S., Khoo, Y., Dinner, A.R., 2026. Adaptive tensor train metadynamics for high-dimensional free energy exploration. arXiv preprint arXiv:2603.13549 . [32] Stuart, A.M., 2010. Inverse problems: a bayesian perspective. Acta numerica 19, 451–559. 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 22 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+[33] Tang, X., Collis, L., Ying, L., 2025a. Solving high-dimensional kolmogorov backward equations with functional hierarchical tensor operators. SIAM Journal on Scientific Computing 47, A613–A632. [34] Tang, X., Dwaraknath, R., Ying, L., 2025b. Variational inference and density estimation with non-negative tensor train. arXiv preprint arXiv:2507.21519 . [35] Tang, X., Hur, Y., Khoo, Y., Ying, L., 2023. Generative modeling via tree tensor network states. Research in the Mathematical Sciences 10, 19. [36] Tang, X., Ying, L., 2024. Solving high-dimensional fokker-planck equation with functional hierarchical tensor. Journal of Computational Physics 511, 113110. [37] Torrie, G.M., Valleau, J.P., 1977. Nonphysical sampling distributions in monte carlo free-energy estimation: Umbrella sampling. Journal of Computational Physics 23, 187–199. [38] Tucker, L.R., 1966. Some mathematical notes on three-mode factor analysis. Psychometrika 31, 279–311. [39] Valsson, O., Parrinello, M., 2014. Variational approach to enhanced sampling and free energy calculations. Phys. Rev. Lett. 113, 090601. [40] Wang, F.Y., 2018. Distribution dependent sdes for landau type equations. Stochastic Processes and their Applications 128, 595–621. [41] Wang, T., Hu, Z., Kawaguchi, K., Zhang, Z., Karniadakis, G.E., 2025. Tensor neural networks for high-dimensional fokker–planck equations. Neural Networks 185, 107165. [42] Wang, Y., Herron, L., Tiwary, P., 2022. From data to noise to data for mixing physics across temperatures with generative artificial intelligence. Proceedings of the National Academy of Sciences 119, e2203656119. [43] Weiser, L.J., Santiso, E.E., 2019. A cgenff-based force field for simulations of peptoids with both cis and trans peptide bonds. Journal of computational chemistry 40, 1946–1956. [44] Welling, M., Teh, Y.W., 2011. Bayesian learning via stochastic gradient langevin dynamics, in: Proceedings of the 28th international conference on machine learning (ICML-11), pp. 681–688. [45] Zhang, L., Wang, H., E, W., 2018. Reinforced dynamics for enhanced sampling in large atomic and molecular systems. The Journal of Chemical Physics 148, 124113. 
+
+## A. Proof of Theorem 2.3 
+
+Proof. Set 𝐗 0 
+
+> 𝑡
+
+= 𝐱 for all 𝑡 ∈ [0 , 𝑇 ]. We define 𝐗 𝑘 +1  
+
+> 𝑡
+
+inductively from 𝐗 𝑘 𝑡 by the following equation: 
+
+𝐗 𝑘 +1  
+
+> 𝑡
+
+= 𝐱 + ∫
+
+> 𝑡
+> 0
+
+𝐛 (𝐗 𝑘 +1  
+
+> 𝑠
+
+, 𝜇 𝑘,𝑞 𝑠 )d 𝑠 + 𝜎 ∫
+
+> 𝑡
+> 0
+
+d𝐖 𝑠 . (19) At step 𝑘 + 1 , we treat 𝜇 𝑘,𝑞 𝑠 as a known 2-valued process. Then, by Lemma 2.2, 
+
+‖𝐛 (𝐗 1, 𝜇 𝑘,𝑞 𝑠 ) − 𝐛 (𝐗 2, 𝜇 𝑘,𝑞 𝑠 )‖ ≤ 𝐶 ‖𝐗 1 − 𝐗 2‖, ‖𝐛 (𝐗 , 𝜇 𝑘,𝑞 𝑠 )‖ ≤ 𝐶 (1 + ‖𝐗 ‖).
+
+By Theorem 3.1.1 in [25], there is a unique strong solution 𝐗 𝑘 +1  
+
+> 𝑡
+
+to (19) with 
+
+𝔼 
+
+[
+
+sup 
+
+> 0<𝑡<𝑇
+
+‖‖‖𝐗 𝑘 +1 
+
+> 𝑡
+
+‖‖‖
+
+> 2
+
+]
+
+< ∞,
+
+which implies 𝜇 𝑘 +1 ,𝑞 𝑠 ∈ 2(ℝ𝑑 ). By induction, every Picard iterate is well defined. 
+
+Step 1: Cauchy estimate. We show that {𝐗 𝑘 𝑡 } is a Cauchy sequence. By Itô’s formula, 
+
+d ‖‖‖𝐗 𝑘 +1  
+
+> 𝑡
+
+− 𝐗 𝑘 𝑡 
+
+‖‖‖
+
+> 2
+
+= 2 ⟨𝐗 𝑘 +1  
+
+> 𝑡
+
+− 𝐗 𝑘 𝑡 , 𝐛 (𝐗 𝑘 +1  
+
+> 𝑡
+
+, 𝜇 𝑘,𝑞 𝑡 ) − 𝐛 (𝐗 𝑘 𝑡 , 𝜇 𝑘 −1 ,𝑞 𝑡 )⟩d𝑡. 
+
+Splitting the right-hand side and applying the Lipschitz bound (7), we obtain 
+
+‖‖‖𝐗 𝑘 +1  
+
+> 𝑡
+
+− 𝐗 𝑘 𝑡 
+
+‖‖‖
+
+> 2
+
+≤ 2 ∫
+
+> 𝑡
+> 0
+
+|||⟨𝐗 𝑘 +1  
+
+> 𝑠
+
+− 𝐗 𝑘 𝑠 , 𝐛 (𝐗 𝑘 +1  
+
+> 𝑠
+
+, 𝜇 𝑘,𝑞 𝑠 ) − 𝐛 (𝐗 𝑘 𝑠 , 𝜇 𝑘,𝑞 𝑠 )⟩||| d𝑠 
+
++ 2 ∫
+
+> 𝑡
+> 0
+
+|||⟨𝐗 𝑘 +1  
+
+> 𝑠
+
+− 𝐗 𝑘 𝑠 , 𝐛 (𝐗 𝑘 𝑠 , 𝜇 𝑘,𝑞 𝑠 ) − 𝐛 (𝐗 𝑘 𝑠 , 𝜇 𝑘 −1 ,𝑞 𝑠 )⟩||| d𝑠 
+
+≤ 𝐶 ∫
+
+> 𝑡
+> 0
+
+(‖‖‖𝐗 𝑘 +1  
+
+> 𝑠
+
+− 𝐗 𝑘 𝑠 
+
+‖‖‖
+
+> 2
+
++ 𝑊 2(𝜇 𝑘,𝑞 𝑠 , 𝜇 𝑘 −1 ,𝑞 𝑠 )2
+
+)
+
+d𝑠. 
+
+For the 𝑊 2 distance of the history measures, we have 
+
+𝑊 2(𝜇 𝑘,𝑞 𝑠 , 𝜇 𝑘 −1 ,𝑞 𝑠 )2 ≤ ∫
+
+> 10
+
+‖‖‖𝐗 𝑘 𝑠𝑟 − 𝐗 𝑘 −1 
+
+> 𝑠𝑟
+
+‖‖‖
+
+> 2
+
+𝑞 (d 𝑟 ) ≤ sup 
+
+> 𝑢 ≤𝑠
+
+‖‖‖𝐗 𝑘 𝑢 − 𝐗 𝑘 −1 
+
+> 𝑢
+
+‖‖‖
+
+> 2
+
+.
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 23 of 24 High-dimensional enhanced sampling via path-dependent McKean–Vlasov dynamics 
+
+Defining Δ𝑘 𝑡 = sup 𝑠 ≤𝑡 
+
+‖‖‖𝐗 𝑘 𝑠 − 𝐗 𝑘 −1 
+
+> 𝑠
+
+‖‖‖
+
+> 2
+
+and combining, we get 
+
+Δ𝑘 +1  
+
+> 𝑡
+
+≤ 𝐶 ∫
+
+> 𝑡
+> 0
+
+(Δ𝑘 +1  
+
+> 𝑠
+
++ Δ 𝑘 𝑠 
+
+) d𝑠. 
+
+Gronwall’s inequality yields 
+
+Δ𝑘 +1  
+
+> 𝑡
+
+≤ 𝐶 exp( 𝐶𝑡 ) ∫
+
+> 𝑡
+> 0
+
+Δ𝑘 𝑠 d𝑠, 
+
+so that for any fixed 𝑇 > 0,
+
+𝔼 [Δ𝑘 +1 
+
+> 𝑇
+
+] ≤ 𝐶 𝑘 𝑇 
+
+𝑘 ! 𝔼 [Δ1
+
+> 𝑇
+
+] → 0 as 𝑘 → ∞. (20) 
+
+Step 2: Convergence. By Markov’s inequality and (20), 
+
+ℙ
+
+(
+
+sup 
+
+> 0≤𝑡 ≤𝑇
+
+‖𝐗 𝑘 1 
+
+> 𝑡
+
+− 𝐗 𝑘 2 
+
+> 𝑡
+
+‖ > 𝜖 
+
+)
+
+≤ 1
+
+𝜖 
+
+> 𝑘 2−1
+
+∑
+
+> 𝑗 =𝑘 1
+
+𝔼 
+
+[
+
+sup 
+
+> 0≤𝑡 ≤𝑇
+
+‖𝐗 𝑗 +1  
+
+> 𝑡
+
+− 𝐗 𝑗 𝑡 ‖]
+
+≤ 1
+
+𝜖 
+
+> 𝑘 2−1
+
+∑
+
+> 𝑗 =𝑘 1
+
+√
+
+𝔼 
+
+[
+
+Δ𝑗 +1 
+
+> 𝑇
+
+]
+
+,
+
+which tends to zero as 𝑘 1, 𝑘 2 → ∞. Hence {𝐗 𝑘 𝑡 } is Cauchy in probability and converges in 𝐿 2(Ω; 𝐶 ([0 , 𝑇 ]; ℝ𝑑 )) to a limit 𝐗 𝑡 . Along a subsequence, sup 0<𝑡<𝑇 ‖𝐗 𝑘 𝑖  
+
+> 𝑡
+
+− 𝐗 𝑡 | → 0 almost surely. Since 
+
+𝑊 2(𝜇 𝑘 𝑖 ,𝑞 𝑠 , 𝜇 𝑞 𝑠 )2 ≤ sup 
+
+> 0≤𝑢 ≤𝑠
+
+‖‖‖𝐗 𝑘 𝑖  
+
+> 𝑢
+
+− 𝐗 𝑢 
+
+‖‖‖
+
+> 2
+
+→ 0,
+
+the continuity of 𝐛 and the linear growth bound ‖𝐛 (𝐗 𝑘 +1  
+
+> 𝑠
+
+, 𝜇 𝑘,𝑞 𝑠 )‖ ≤ 𝐶 (1+sup 𝑢 ≤𝑇 ‖𝐗 𝑘 +1  
+
+> 𝑢
+
+‖), together with the dominated convergence theorem, imply 
+
+lim  
+
+> 𝑘 →∞
+
+∫
+
+> 𝑡
+> 0
+
+𝐛 (𝐗 𝑘 +1  
+
+> 𝑠
+
+, 𝜇 𝑘,𝑞 𝑠 )d 𝑠 = ∫
+
+> 𝑡
+> 0
+
+𝐛 (𝐗 𝑠 , 𝜇 𝑞 𝑠 )d 𝑠 a.s. Therefore, for any 𝑡 ∈ [0 , 𝑇 ],
+
+𝐗 𝑡 = 𝐱 + ∫
+
+> 𝑡
+> 0
+
+𝐛 (𝐗 𝑠 , 𝜇 𝑞 𝑠 )d 𝑠 + 𝜎 ∫
+
+> 𝑡
+> 0
+
+d𝐖 𝑠 ,
+
+which establishes existence. 
+
+Step 3: Uniqueness. If 𝐗 1, 𝐗 2 both satisfy (9), then 𝑊 2(𝜇 𝑞, 1 
+
+> 𝑡
+
+, 𝜇 𝑞, 2 
+
+> 𝑡
+
+)2 ≤ sup 𝑢 ≤𝑡 ‖𝐗 1 
+
+> 𝑢
+
+− 𝐗 2
+
+> 𝑢
+
+‖2, so that 
+
+sup 
+
+> 𝑟 ≤𝑡
+
+‖𝐗 1 
+
+> 𝑟
+
+− 𝐗 2 
+
+> 𝑟
+
+‖2 ≤ 𝐶 ∫
+
+> 𝑡
+> 0
+
+sup 
+
+> 𝑢 ≤𝑠
+
+‖𝐗 1 
+
+> 𝑢
+
+− 𝐗 2
+
+> 𝑢
+
+‖2d𝑠. 
+
+Gronwall’s inequality implies 𝐗 1 
+
+> 𝑡
+
+= 𝐗 2 
+
+> 𝑡
+
+for all 𝑡 ∈ [0 , 𝑇 ] almost surely. 
+
+L. Lyu, S. Guo and H. Lei: Preprint submitted to Elsevier Page 24 of 24

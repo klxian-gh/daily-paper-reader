@@ -1,0 +1,79 @@
+{
+  "label": "2026-05-06",
+  "date": "2026-05-06",
+  "generated_at": "2026-05-06T20:42:26",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202605/06/2605.03737v1-discovering-reaction-mechanisms-with-transition-path-sampling-based-active-learning-of-machine-learned-potentials",
+      "section": "deep",
+      "title_en": "Discovering Reaction Mechanisms with Transition Path Sampling-Based Active Learning of Machine-Learned Potentials",
+      "authors": "Ashique Lal, Rik S. Breebaart, Peter G. Bolhuis, Evert Jan Meijer",
+      "date": "2026-05-05",
+      "pdf": "https://arxiv.org/pdf/2605.03737v1",
+      "score": "8.0",
+      "evidence": "通过过渡路径采样发现反应机理",
+      "tldr": "本研究针对机器学习势函数（MLP）在过渡态区域可靠性不足的问题，提出了一种基于过渡路径采样（TPS）的主动学习框架。该框架利用TPS生成无偏反应轨迹，并通过委员会不确定性估计筛选关键构型进行DFT标注和模型迭代，无需预知反应机制即可精炼势能面。在铜电极二氧化碳还原反应的应用中，该方法显著提升了模型精度，揭示了多种质子化机制，为复杂电化学反应模拟提供了高效工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Machine-learned interatomic potentials (MLPs) provide near density functional theory (DFT) accuracy at reduced computational cost, but their reliability depends on representative training data and often deteriorates in transition-state regions governing rare events. We introduce an active-learning framework in which Transition Path Sampling (TPS) serves as a targeted data-generation engine for constructing MLPs accurate in barrier regions. TPS generates ensembles of unbiased reactive trajectories, and a committee-based uncertainty estimate identifies configurations for selective DFT labeling and retraining. Iterating this cycle systematically refines the potential energy surface in dynamically relevant regions, without the need of prior knowledge of the mechanism. Applied to electrochemical CO$_2$ reduction to CO on copper in explicit water, the approach removes nonphysical artifacts present in early models, achieves near-DFT energy and force accuracy, and enables stable long-time sampling of reactive pathways. Extended TPS simulations reveal multiple dynamically accessible protonation mechanisms. This work establishes TPS as an efficient and principled active-learning strategy for reactive molecular simulations at electrochemical interfaces.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/06/2605.01016v1-quantum-flow-algorithm-quantum-simulations-of-chemical-systems-using-reduced-quantum-resources-and-constant-depth-quantum-circuits",
+      "section": "quick",
+      "title_en": "Quantum Flow algorithm: quantum simulations of chemical systems using reduced quantum resources and constant depth quantum circuits",
+      "authors": "Bhumika Jayee, Nathan M. Myers, Duo Song, Eric J. Bylaska, Karol Kowalski, Nicholas P. Bauman",
+      "date": "2026-05-01",
+      "pdf": "https://arxiv.org/pdf/2605.01016v1",
+      "score": "6.0",
+      "evidence": "化学系统的量子模拟和分子能量基准测试",
+      "tldr": "本研究评估了量子流（QFlow）算法在化学系统模拟中的性能，重点分析了基于单双激发的 QFlow-SD 模型。该算法通过减少量子比特需求和维持恒定电路深度，有效降低了量子资源消耗。实验证明 QFlow-SD 在多种分子系统中的能量精度与标准 UCCSD 相当，且通过结合经典耦合簇下折叠技术，成功实现了对大基组水分子的有效模拟，展示了量子流优化与经典预处理结合的潜力。",
+      "tags": "query:qmmm",
+      "abstract_en": "We assess the performance of the Quantum Flow (QFlow) algorithm employing cost-effective solvers based on the unitary coupled-cluster ansatz with single and double excitations (QFlow-SD). The resulting energies are benchmarked against those obtained with an analogous QFlow formulation defined in the same active spaces but augmented by higher-rank excitations, including triples and quadruples (QFlow-SDTQ). Across all molecular systems considered, QFlow-SD exhibits close agreement with results from the canonical unitary coupled cluster with singles and doubles framework, while requiring substantially fewer qubits than the latter. For the water molecule in the cc-pVTZ basis, we further demonstrate the performance of a composite two-step downfolding strategy. In this approach, an initial coupled-cluster downfolding based on the double unitary coupled-cluster ansatz is followed by a QFlow treatment within the resulting target space, illustrating the effectiveness of combining classical downfolding with quantum flow optimization.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/06/2605.02657v1-card-coarse-to-fine-autoregressive-modeling-with-radix-based-decomposition-for-transferable-free-energy-estimation",
+      "section": "quick",
+      "title_en": "CARD: Coarse-to-fine Autoregressive Modeling with Radix-based Decomposition for Transferable Free Energy Estimation",
+      "authors": "Ziyang Yu, Yi He, Wenbing Huang, Wen Yan, Yang Liu",
+      "date": "2026-05-04",
+      "pdf": "https://arxiv.org/pdf/2605.02657v1",
+      "score": "6.0",
+      "evidence": "分子相互作用的可迁移自由能估计",
+      "tldr": "自由能差估算在药物发现中至关重要，但传统方法计算昂贵且深度学习方法泛化性差。本文提出 CARD 框架，通过基数分解将 3D 坐标转换为离散-连续混合序列，实现粗到细的自回归建模。该方法无需炼金术路径即可计算任意系统的绝对自由能，在保持与传统方法相当精度的同时，推理速度提升约 40 倍，且具备跨系统泛化能力。",
+      "tags": "query:qmmm",
+      "abstract_en": "Estimating free energy differences quantifies thermodynamic preferences in molecular interactions, which is central to chemistry and drug discovery. Despite fruitful progress, existing methods still face key limitations: classical computational approaches remain prohibitively expensive due to their reliance on extensive molecular dynamics simulations, while deep learning-based methods are constrained by either less-expressive generative models or input dimensions tied to a specific system, resulting in negligible generalization. To address these challenges, we propose CARD, a generative framework that employs a novel radix-based decomposition to bijectively convert 3D coordinates into mixed discrete-continuous sequences, enabling coarse-to-fine autoregressive modeling with enhanced expressiveness. Notably, the model corresponds to a distribution with zero free energy, serving as a proposal for absolute free energy computation of arbitrary systems without relying on alchemical pathways. Experiments across diverse tasks demonstrate that CARD matches the accuracy of classical computational methods on unseen systems with diverse topologies, while achieving an approximately 40-fold speedup in inference.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/06/2605.03080v1-high-dimensional-enhanced-sampling-via-regularized-path-dependent-mckean--vlasov-dynamics-using-tensor-density-approximation",
+      "section": "quick",
+      "title_en": "High-Dimensional Enhanced Sampling via Regularized Path-Dependent McKean--Vlasov Dynamics using Tensor Density Approximation",
+      "authors": "Liyao Lyu, Siyu Guo, Huan Lei",
+      "date": "2026-05-04",
+      "pdf": "https://arxiv.org/pdf/2605.03080v1",
+      "score": "6.0",
+      "evidence": "高维能量景观的增强采样",
+      "tldr": "针对高维吉布斯测度采样中多亚稳态导致的效率瓶颈，本文提出了一种基于正则化路径依赖McKean-Vlasov动力学的增强采样方法。该方法通过直接正则化集体变量（CV）边缘密度并引入加权路径历史测度，提升了小样本量下的统计稳定性。结合无优化泛函分层张量表示技术，有效克服了CV空间的高维灾难。实验证明该方法在高达64维CV的复杂分子系统中表现优异，显著提升了高维增强采样的可扩展性与稳健性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Sampling from high-dimensional Gibbs measures poses a challenge when the energy landscape consists of multiple metastable states. Enhanced-sampling methods mitigate this difficulty by introducing adaptive biasing potentials to facilitate the exploration along prescribed collective variables (CVs), but their scalability is often limited by the dimension of the CV space. Motivated by the Wasserstein-gradient-flow interpretation of adaptive biasing, we propose a regularized path-dependent McKean--Vlasov formulation for high-dimensional enhanced sampling. The formulation replaces the variational regularization of the Wasserstein functional by a direct regularization of the CV marginal density in the McKean--Vlasov drift, avoiding the outer convolution over the CV domain. Furthermore, it replaces the instantaneous law by a weighted path-history measure to improve statistical stability in the small-replica regime. We establish well-posedness of the resulting regularized and path-dependent stochastic dynamics under suitable assumptions. For numerical realization, the history-averaged CV marginal density is approximated using an optimization-free functional hierarchical tensor representation, leading to a scalable density-based adaptive biasing scheme. Numerical experiments on benchmark potentials and molecular systems demonstrate the effectiveness of the proposed method for sampling problems with CV dimensions up to 64.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/06/2605.03964v1-pretrained-model-representations-as-acquisition-signals-for-active-learning-of-mlips",
+      "section": "quick",
+      "title_en": "Pretrained Model Representations as Acquisition Signals for Active Learning of MLIPs",
+      "authors": "Eszter Varga-Umbrich, Shikha Surana, Paul Duckworth, Jules Tilly, Olivier Peltre, Zachary Weller-Davies",
+      "date": "2026-05-05",
+      "pdf": "https://arxiv.org/pdf/2605.03964v1",
+      "score": "6.0",
+      "evidence": "用于反应化学的机器学习原子间势能",
+      "tldr": "针对反应化学中机器学习原子间势（MLIP）训练成本高的问题，本文提出利用预训练模型的潜在空间表示作为主动学习的采集信号。通过从预训练MACE模型中提取有限宽度神经切线核（NTK）和激活核，无需额外的不确定性估计模块或集成模型，即可显著提升采样效率。实验表明，该方法在减少数据需求的同时，能更有效地捕捉化学结构信息并估计残差不确定性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Training machine learning interatomic potentials (MLIPs) for reactive chemistry is often bottlenecked by the high cost of quantum chemical labels and the scarcity of transition state configurations in candidate pools. Active learning (AL) can mitigate these costs, but its effectiveness hinges on the acquisition rule. We investigate whether the latent space of a pretrained MLIP already contains the information necessary for effective acquisition, eliminating the need for auxiliary uncertainty heads, Bayesian training and fine-tuning, or committee ensembles. We introduce two acquisition signals derived directly from a pretrained MACE potential: a finite-width neural tangent kernel (NTK) and an activation kernel built from hidden latent space features. On reactive-chemistry benchmarks, both kernels consistently outperform fixed-descriptor baselines, committee disagreement, and random acquisition, reducing the data required to reach performance targets by an average of 38% for energy error and 28% for force error. We further show that the pretrained model induces similarity spaces that preserve chemically meaningful structure and provide more reliable residual uncertainty estimates than randomly initialised or fixed-descriptor-based kernels. Our results suggest that pretraining aligns latent-space geometry with model error, yielding a practical and sufficient acquisition signal for reactive MLIP fine-tuning.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

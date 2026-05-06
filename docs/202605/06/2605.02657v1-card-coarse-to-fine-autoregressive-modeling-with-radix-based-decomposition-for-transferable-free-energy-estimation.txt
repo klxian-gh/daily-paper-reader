@@ -1,0 +1,1856 @@
+Title: CARD: Coarse-to-fine Autoregressive Modeling with Radix-based Decomposition for Transferable Free Energy Estimation
+
+URL Source: https://arxiv.org/pdf/2605.02657v1
+
+Published Time: Tue, 05 May 2026 02:09:29 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# CARD: Coarse-to-fine Autoregressive Modeling with Radix-based Decomposition for Transferable Free Energy Estimation 
+
+## Ziyang Yu 1,2,3,◦,∗, Yi He 1,◦,†, Wenbing Huang 4,†, Wen Yan 1, Yang Liu 2,3,†
+
+> 1
+
+ByteDance Seed , 2Department of Computer Science and Technology, Tsinghua University ,
+
+> 3
+
+Institute for AI Industry Research (AIR), Tsinghua University , 4Gaoling School of Artificial Intelligence, Renmin University of China 
+
+> ◦
+
+Equal Contribution , ∗Work done at ByteDance Seed , †Corresponding authors 
+
+## Abstract 
+
+Estimating free energy differences quantifies thermodynamic preferences in molecular interactions, which is central to chemistry and drug discovery. Despite fruitful progress, existing methods still face key limitations: classical computational approaches remain prohibitively expensive due to their reliance on extensive molecular dynamics simulations, while deep learning-based methods are constrained by either less-expressive generative models or input dimensions tied to a specific system, resulting in negligible generalization. To address these challenges, we propose CARD, a generative framework that employs a novel radix-based decomposition to bijectively convert 3D coordinates into mixed discrete-continuous sequences, enabling coarse-to-fine autoregressive modeling with enhanced expressiveness. Notably, the model corresponds to a distribution with zero free energy, serving as a proposal for absolute free energy computation of arbitrary systems without relying on alchemical pathways. Experiments across diverse tasks demonstrate that CARD matches the accuracy of classical computational methods on unseen systems with diverse topologies, while achieving an approximately 40-fold speedup in inference.  
+
+> Date:
+
+May 5, 2026  
+
+> Correspondence:
+
+Yi He at heyi@bytedance.com , Wenbing Huang at hwenbing@ruc.edu.cn , Yang Liu at 
+
+liuyang2011@tsinghua.edu.cn 
+
+## 1 Introduction 
+
+Estimating free energy differences is crucial for various applications in computational chemistry and bio-physics, such as predicting protein-ligand binding affinities, determining solvation free energies, and mapping conformational landscapes of macromolecules [ 9–11 , 20 ]. Specifically, for systems Sa and Sb with energies Ua
+
+and Ub, the free energy difference is expressed as 
+
+∆F = Fb − Fa = −β−1 log Zb
+
+Za
+
+, (1) where β is the inverse temperature, Za and Zb correspond to the partition functions of the normalized densities of systems Sa and Sb, respectively. 1
+
+> arXiv:2605.02657v1 [cs.LG] 4 May 2026
+
+# 𝑆 𝑎  𝑆 𝑏 
+
+# CARD 
+
+# 𝐹 𝜃 = 0, ∀𝜃 
+
+# BAR  BAR 
+
+# Δ𝐹 = 𝐹 𝑏 − 𝐹 𝑎 = 𝐹 𝑏 − 𝐹 𝜃′ − 𝐹 𝑎 − 𝐹 𝜃 
+
+# Alchemical FEP 
+
+# 𝐹 𝜃′  𝐹 𝑏 𝐹 𝜃 𝐹 𝑎 Figure 1 Comparison between our CARD and alchemical FEP [ 5 ] in estimating free energy differences. Alchemical FEP (blue arrows) requires multiple intermediate states and extensive MD simulations, whereas CARD acts as a zero-free-energy proposal, directly computing the absolute free energies of the two systems via BAR [6]. 
+
+Solving equation (1) using computational methods is a longstanding and classical problem. The well-known Free Energy Perturbation (FEP) method [ 72 ] uses importance sampling to express the relative free energy as an exponential average of potential energy differences over a reference system. However, FEP remains limited by unstable estimates for systems with poor overlap between their distributions [ 28 ]. To address this, advanced methods like alchemical FEP [ 5, 43 ] and Thermodynamic Integration (TI) [ 32 ] introduce intermediate states to ensure sufficient phase-space overlap between neighboring systems. Alternatively, the Bennett Acceptance Ratio (BAR) [ 6] and its multistate generalization, MBAR [ 54 ], provide minimal-variance free energy estimators, while the Jarzynski equality [ 26 , 61 ] enables estimators from non-equilibrium trajectories. Despite their improvements, these classical methods require extensive sampling through Molecular Dynamics (MD) simulations, making them computationally expensive and limiting their practical applicability to large-scale systems. Recent advancements in deep learning provide new opportunities to accelerate free energy calculations. These methods are primarily inspired by classical frameworks, including targeted FEP [ 16 , 66 ], TI [ 41 , 45 ], and Jarzynski-based approaches [ 22 ]. Notably, DeepBAR [ 13 ] introduces a novel paradigm for free energy estimation using deep neural networks, referred to as zero-free-energy proposals . The key idea is to leverage tractable probabilistic models to construct a proposal distribution with zero absolute free energy, thereby enabling direct estimation of free energy differences without alchemical intermediates. However, these deep learning–based approaches suffer from two key limitations: (i) Methods such as DeepBAR, which require tractable likelihoods, typically rely on normalizing flows [ 51 ] and thus exhibit limited expressiveness compared with modern generative frameworks like diffusion models [ 23 ] or autoregressive models [ 2, 8]. (ii) Most approaches have input dimensionality tied to a specific target system, preventing generalization to systems with different numbers of atoms or topologies and necessitating system-specific retraining. To address these limitations, we propose a novel framework built upon the concept of zero-free-energy proposals, as illustrated in figure 1. First, we introduce a powerful generative model based on autoregressive modeling, which allows for the explicit calculation of probability densities while offering superior expressiveness. Second, our model is inherently universal: unlike existing approaches, our method accommodates molecular systems of arbitrary number of atoms and diverse topologies without the need for retraining. Specifically, we propose Coarse-to-Fine Autoregressive Modeling with Radix-based Decomposition (CARD), a transformer-based framework that efficiently processes mixed discrete-continuous sequences obtained from 3D coordinates through radix-based decomposition, enabling exact and scalable free energy estimation. 2Overall, we summarize our key contributions as follows: 1. We introduce CARD, a novel autoregressive model that employs radix-based decomposition for coarse-to-fine conformation generation, serving as a zero-free-energy proposal for computing the absolute free energies of arbitrary molecular systems. 2. To the best of our knowledge, among deep learning methods derived from free energy theories, CARD is the first to demonstrate robust generalization to unseen systems, distinguishing it from existing approaches that require system-specific retraining. 3. Experiments demonstrate that CARD attains accuracy comparable to classical computational methods on diverse tasks, while delivering an approximately 40-fold speedup in inference. 
+
+## 2 Related Work 
+
+Computational Methods for Free Energy Estimation Accurate estimation of free energies poses a central challenge in physics and biochemistry, which cannot be evaluated directly due to the need to adequately sample rare but important regions of phase space. Therefore, classical computational approaches have been developed to provide numerical estimates with controlled accuracy. First, the well-known Free Energy Perturbation (FEP) method expresses the relative free energy between two states as an exponential average of potential energy differences sampled from a reference ensemble according to the Zwanzig equation [ 72 ]. Due to reliance on importance sampling, FEP requires significant overlap between the probability distributions of the two states, while insufficient overlap leads to highly unstable and high-variance estimates [28]. To improve convergence further, advanced formulations of FEP like alchemical FEP [ 5, 43 ] interpolate the Hamiltonian between the states via a series of discrete intermediates, ensuring ensembles of adjacent states overlap sufficiently. Thermodynamic Integration (TI) [ 32 ] takes a related but continuous approach by defining a coupling parameter that interpolates between the reference and target Hamiltonians, where the free energy difference is computed by integrating the ensemble-averaged derivative of the Hamiltonian with respect to this parameter along the path. Subsequently, targeted FEP [ 27 ] introduces a high-dimensional invertible mapping to enlarge the effective overlap between the mapped reference distribution and the target distribution, without additional sampling from intermediate states. From another angle, Bennett Acceptance Ratio (BAR) [ 6]further refines estimation by combining samples from both end states to provide a minimum-variance estimator, and its multistate generalization, MBAR [ 54 ], extends this idea to multiple intermediate states, yielding statistically optimal estimates across all windows simultaneously. Meanwhile, non-equilibrium methods based on the Jarzynski equality allow free energy differences to be estimated from ensembles of non-equilibrium trajectories [ 26 , 61 ]. Despite their improvements in convergence and accuracy, these methods require extensive sampling through molecular dynamics or Monte Carlo simulations to achieve equilibrated ensembles or sufficient overlap across states, which are computationally expensive and limits their practical applicability in large or complex systems. 
+
+Deep Learning for Free Energy Estimation Rapid progress in deep learning, especially in generative models, opens up new avenues for free energy estimation. Deep learning-based methods fall into two main categories: (i) data-driven approaches trained with free energy labels, and (ii) theory-based methods grounded in classical computational frameworks. Methods in the first category primarily take 3D molecular conformations as input and directly yield scalars as free energy predictions, addressing tasks such as protein-protein interactions prediction [ 52 , 67 , 69 , 71 ], protein-ligand binding affinity prediction [ 17 , 19 , 30 , 36 , 38 , 59 , 70 ], aqueous tautomer ratio estimation [ 49 , 50 , 65 ], etc. These data-driven methods, while highly efficient, often struggle to generalize to unseen and complex molecular systems with non-trivial regions of configuration space missing from training data [14, 42]. From another perspective, methods in the second category incorporates generative models into classical frameworks, striking a balance between the expressiveness of deep learning approaches and the reliability of established free energy theories. Building on targeted FEP [ 27 ], some methods learn invertible transports that push reference configurations toward the high-probability regions of the target distribution [ 16 , 66 ]. In parallel, neural thermodynamic integration [ 41 , 45 ] leverages energy-based diffusion models [ 55 ] to parameterize a 3time-dependent Hamiltonian that interpolates between the reference and target systems, where TI [ 32 ] can be performed using the score from the learned process. FEAT [ 22 ] further unifies equilibrium and non-equilibrium estimators through adaptive stochastic transports [ 3]. Notably, DeepBAR [ 13 ] employs normalizing flows [ 51 ]to construct a reference distribution with an inherent zero free energy, which serves as a proposal for directly estimation of absolute free energies and leads to a fundamentally new paradigm. However, these theory-based approaches suffer from a critical limitation: they require system-specific retraining with input dimensions tied to a specific system, thereby failing to generalize to unseen systems and substantially undermining their practical advantage over classical approaches. 
+
+Molecular Ensemble Generation Free energy estimation relies on adequate sampling of the configuration space, a requirement that can be naturally addressed by generative models through efficient ensemble generation. One alternative is to run MD simulations with neural network potentials, which achieve ab initio accuracy for substantially larger systems, but remain limited by inherently sequential sampling [ 64 ]. Mainstream approaches leverage modern generative models, such as diffusion [ 23 , 55 ] and flow matching [ 37 ], to learn the empirical distribution from MD trajectories and enable parallel sampling [ 29 , 35 , 63 ]. Moreover, Boltzmann generators [33 , 47 , 56 ] treat trained generative models as surrogates that are used to resample and reproduce the Boltzmann ensemble. Although parallel sampling substantially improves efficiency, most of these methods either cannot efficiently compute the log-likelihoods of generated samples or fail to generalize across different systems, and therefore are not applicable to the zero-free-energy proposal paradigm for free energy estimation. 
+
+Multiresolution Molecular Modeling Recent advancements in graph representation learning have increasingly adopted multiresolution strategies to capture the inherent hierarchical nature of molecular structures. For instance, MGVAE [ 24 ] introduces a hierarchical generative framework that applies higher-order message passing to progressively partition and coarsen graphs, yielding an equivariant hierarchy of latent distributions. Similarly, MGT [ 46 ] learns macromolecular representations across multiple scales by iteratively grouping atoms into functional substructures, effectively modeling both local interactions and global topology. The Sequoia framework [ 60 ] also proposes an adaptive hierarchical self-attention mechanism that dynamically constructs a data-dependent hierarchy, which significantly reduces computational complexity while preserving the capacity to model long-range dependencies. Furthermore, GET [ 34 ] introduces a unified framework capable of encoding diverse molecular structures by conceptualizing any 3D complex as a geometric graph of building blocks, enabling the representation of various molecular modalities within a single model. Collectively, these methods rely on hierarchical graph architectures to learn molecular substructures, primarily to improve attention efficiency and scalability. In contrast, rather than operating on abstracted graph topologies, CARD performs multi-level modeling directly on fine-grained, all-atom 3D coordinates. This coordinate-level decomposition addresses the critical challenge of prematurely committing to local coordinates before global geometry is established. Importantly, it strictly preserves exact autoregressive factorization and tractable likelihood evaluation, distinguishing CARD from prior hierarchical graph-based approaches. 
+
+## 3 Background 
+
+In this section, we introduce the key concepts relevant to free energy estimation to provide readers with a clear background. section 3.1 covers the theoretical foundations of free energy and mainstream computational methods, while section 3.2 reveals that tractable probabilistic models can serve as a free energy reference, bridging the gap between free energy theory and modern generative approaches. Due to space limitations, we defer a summary of the related works to section 2. 
+
+3.1 Free Energy Estimation in Molecular Systems 
+
+For simplicity, consider a system Sa at constant temperature T and fixed volume, characterized by an energy function Ua : Ω → R, where Ω ⊆ Rd denotes the configuration space. The corresponding Boltzmann distribution is 
+
+pa(x) = exp( −βU a(x)) 
+
+Za
+
+, x ∈ Ω, (2) 4Za =
+
+Z
+
+> Ω
+
+exp( −βU a(x)) d x. (3) The Helmholtz free energy of system Sa is defined as 
+
+Fa = −β−1 log Za. (4) Similarly, the free energy Fb of another system Sb can be defined. The free energy difference between systems 
+
+Sa and Sb is then given by equation (1). The Free Energy Perturbation (FEP) method [ 72 ] employs importance sampling to transform equation (1) into a statistically tractable quantity. Using samples drawn from a reference system, FEP estimates ∆F by computing the exponential average of reduced energy differences between the two systems: 
+
+∆F = −β−1 log Ea[exp( −β(Ub − Ua))] . (5) Furthermore, alchemical FEP approaches [ 5, 43 ] extend this concept by introducing a sequence of interme-diate states that gradually transform system Sa into Sb, thereby improving the overlap between successive distributions and enhancing convergence. These intermediates are typically realized by interpolating the energy functions of the two systems using a coupling parameter. From another perspective, the Bennett Acceptance Ratio (BAR) approach [ 6] provides a statistically optimal estimator for the free energy difference by combining samples from both systems Sa and Sb:
+
+∆F = −β−1 log Ea[f (β(Ub − Ua − C))] 
+
+Eb[f (β(Ua − Ub + C))] + C, (6) where C represents an arbitrary energy offset, and the function f is required to satisfy f (x)  
+
+> f(−x)
+
+= exp (−x), with a common choice being the Fermi-Dirac distribution f (x) = 11+exp( x) . It has been demonstrated that choosing 
+
+C = ∆ F yields the minimum standard error for a given simulation time, and this choice can be updated self-consistently. 
+
+3.2 Probabilistic Models as Free Energy Reference 
+
+To avoid the additional computational cost of introducing intermediate states, DeepBAR [ 13 ] leverages normalizing flows to define the free energy reference point, enabling the direct computation of absolute free energies for a given system. We show that the property holds for all tractable probabilistic models: given a learned density qθ : Ω → R+ parametrized by θ, if we define the system’s energy as Uθ = − log qθ , the corresponding free energy can be expressed as: 
+
+Fθ = − log 
+
+Z
+
+> Ω
+
+exp( −Uθ (x)) d x = − log 
+
+Z
+
+> Ω
+
+qθ (x) d x = 0 . (7) Hence, any model constructed in this manner defines a zero free-energy reference, independent of its parameters. Consequently, for a molecular system S with target density p, once the proposal distribution qθ is aligned with p to ensure sufficient overlap, the absolute free energy of S reduces to the free energy difference between 
+
+qθ and p. This difference can be computed directly using the BAR method, without the need for alchemical intermediates. 
+
+## 4 Method 
+
+In this section, we present the overall framework of our proposed model, as illustrated in figure 2. We begin in section 4.1 by introducing the necessary definitions, notations, and formal problem formulation. Building on this, section 4.2 outlines the complete workflow of our method, CARD, emphasizing the key components and their motivations. section 4.3 then provides a detailed description of the model architecture, with a focus on the design of the novel attention mechanism tailored to our task. Finally, section 4.4 describes the training objectives employed. 5b. Coordinates to Sequence 
+
+ො𝑥 1
+
+ො𝑥 2
+
+ො𝑥 𝑁 
+
+ො𝑥 1 
+
+> 1
+
+ො𝑥 1 
+
+> 2
+
+ො𝑥 1
+
+> 𝐿
+
+⋯
+
+ො𝑥 2 
+
+> 1
+
+ො𝑥 2 
+
+> 2
+
+ො𝑥 2
+
+> 𝐿
+
+⋯
+
+ො𝑥 𝑁  
+
+> 1
+
+ො𝑥 2 
+
+> 2
+
+ො𝑥 𝑁 
+
+> 𝐿
+
+⋯
+
+> ⋯
+> ⋯
+> ⋯
+> ⋯
+
+𝑦 𝑁 
+
+> ⋯
+
+𝑦 2
+
+𝑦 1
+
+radix -based 
+
+decomposition 
+
+𝑟 −1 𝑟 −2 𝑟 −𝐿 
+
+> sequence order
+
+𝑎 −1
+
+× × × ×
+
++ + + +⋯ො𝑥 
+
+bijectio n
+
+a. Preprocessing           
+
+> input structure 𝑥
+> PCA alignmen t
+> Reordering
+> 1
+> 23
+> 45
+> 6
+> 789
+> 10
+> 11
+> 12 Scaling
+> output structure ො𝑥
+> ො𝑥 =𝑥
+> 𝑎 +1
+> 2
+> References  𝑢 Targets  𝑥
+
+c. Encoder -Decoder Modeling 
+
+Encoder Decoder 
+
+sequence 𝑠  
+
+> from references
+
+context 𝑐 
+
+mean pooling 
+
+𝑅 representations 
+
+Log -Density 
+
+Mappin g
+
+sequence 𝑠  
+
+> from targets
+
+log 𝑞 𝜃 (𝑥 ∣ 𝑐 )Figure 2 The workflow of CARD. a. The input structure x undergoes preprocessing via PCA alignment, atom ordering, and coordinate scaling. b. The scaled coordinates are bijectively mapped into a mixed discrete-continuous sequence using radix-based decomposition. c. Reference and target sequences, along with system context c, are processed through a transformer-based encoder-decoder architecture to compute the log-densities log qθ (x | c).
+
+4.1 Notations 
+
+In the follow-up sections, we present the proposed method with the subsequent notations. We consider a collection of molecular systems sharing identical thermodynamic conditions (e.g., temperature, pressure, and solvation), denoted by S = {S1, S 2, · · · } . Each molecular system S = {U, p, z, C, u } ∈ S is characterized by: (i) an energy function U : Ω → R defined over the configuration space Ω; (ii) the Boltzmann distribution 
+
+p ∝ exp (−βU ), which in practice is represented by the empirical distribution of MD trajectories; (iii) the atomic numbers z ∈ NN of N atoms; (iv) a set of covalent bond indices C encoding the molecular topology; (v) a collection of R reference structures u = {u(i)}Ri=1 randomly sampled from p, which encode the system’s 3D geometry. For brevity, we further denote c = {z, C, u } as the context of the system. For model architectures, W and φ (with appropriate subscripts) denote linear projections and Multi-Layer Perceptrons (MLPs), respectively. We use softmax and LN for the softmax activation and layer normalization [ 4]. Additionally, mod denotes the modulo operation, ⌈·⌉ the ceiling function, ⟨· , ·⟩ the inner product, and ∥ · ∥ 2
+
+the ℓ2-norm of a vector. 
+
+Problem Formulation Given a tractable probabilistic model qθ (· | c) : Ω → R+, parametrized by θ and conditioned on the system context c, we aim to maximize the cross entropy between p and qθ over the entire collection of molecular systems: 
+
+θ∗ = arg max  
+
+> θ
+
+ES Ep(x) log qθ (x | c). (8) The model trained in this manner is expected to generalize well to unseen systems with shared thermodynamic conditions as those in S, given their system context c.Thus, the model can be interpreted as a generalized force field for diverse molecular systems, where the energy function is given by Uθ : x ∈ Ω 7 → − log qθ (x | c). By applying the BAR method (equation (6)) to the parametrized force field Uθ and the force field U that governs the system, we can compute the relative free 6energy between qθ and p, which directly corresponds to the absolute free energy of the system, as shown in section 3.2. 
+
+4.2 Coarse-to-fine Autoregressive Modeling 
+
+Given the rapid advancement of large language models, we adopt a transformer-based autoregressive architec-ture as the backbone for our tractable probabilistic model, capitalizing on its strong generalization capabilities. The detailed workflow of our proposed method is outlined below. 
+
+Structure Alignment For any molecular system, physical principles dictates that the energy function should satisfy SE(3) -equivariance, meaning it remains invariant under rotations and translations of the coordinates. To preserve this property when employing autoregressive modeling, we first align the coordinates using a Principal Component Analysis (PCA)-based procedure to eliminate rotational and translational degrees of freedom. Specifically, each conformation is first centered by subtracting its mean across all atoms. A covariance matrix is then computed, and its three eigenvectors, ordered by decreasing eigenvalues, are used to define the principal axes. To ensure a unique orientation, the sign of the projection of the centered coordinates along each axis is checked, and axes with negative projections are flipped. The axes are further adjusted to maintain a right-handed coordinate system. Finally, the centered coordinates are rotated using these uniquely oriented axes, yielding a stable and unambiguous alignment of the 3D structure, denoted by x ∈ RN ×3.Notably, we assume the molecular conformations lack rotational symmetries, since near-degenerate principal axes in symmetric structures can lead to unstable alignments. In practice, the assumption is satisfied in the vast majority of cases. 
+
+Autoregressive Ordering Once the coordinates are uniquely aligned, the next step is to determine an appropriate atom ordering that simplifies the autoregressive generation while providing sufficient contextual information. In our work, we adopt two ordering strategies, depending on whether the molecular topology C
+
+is available. 1. Topology-guided ordering . This strategy is topology-driven and relies on the molecular bond graph C.Starting from a randomly chosen atom, a depth-first search traverses the molecule, visiting neighboring atoms that covalently bonded to the current atom according to an predefined atom-type priority: carbon needs to be visited first, followed by nitrogen, then oxygen, other heavy atoms, and finally hydrogen. Random shuffling is applied among neighbors that share the same priority to introduce variation. The resulting traversal order defines the sequence in which atoms are generated. 2. Distance-based ordering . If C is not provided, the generation order is determined based on pairwise distances from the reference structures u. First, for each reference structure, the pairwise distances between all heavy atoms are computed, and the standard deviation of each pairwise distance across the 
+
+R poses is used as a cost metric. The rationale behind this is that pairs with smaller deviations are more stable in their relative positions and thus easier to generate. A heavy atom is then randomly selected as the starting point, and the remaining heavy atoms are visited according to increasing shortest-path distances from this start atom, computed using the Floyd-Warshall algorithm [ 18 ]. Hydrogen atoms are placed at the end and visited in random order. Note that the atom ordering is randomly sampled at each training iteration for data augmentation, while a fixed ordering is used during inference for each molecular system to avoid distribution shifts caused by varying orders. 
+
+Radix-based Decomposition Directly generating molecular conformations in an autoregressive manner by predicting atomic coordinates sequentially poses a fundamental challenge. Each atom’s position depends on all neighboring atoms, yet autoregressive modeling requires predicting an atom before its successors are known. To overcome this, we introduce a novel radix-based decomposition that bijectively converts 3D coordinates into mixed discrete-continuous sequences. This representation supports coarse-to-fine autoregressive modeling, 7enabling the model to capture global structures at a coarse scale before refining local details, thereby alleviating the difficulties of sequential generation. The details are presented below. Given an aligned and reordered conformation x ∈ RN ×3, we choose a sufficiently large parameter a ∈ R+ such that |xij | < a/ 2 holds for any 1 ≤ i ≤ N, 1 ≤ j ≤ 3. Next, we can equivalently transform x into the [0 , 1) 
+
+interval: 
+
+ˆx := xa + 12 = ˆxij 
+
+j=1 ,2,3 
+
+> i=1 ,...,N
+
+∈ [0 , 1) N ×3, (9) where ˆxij denotes the j-th coordinate of atom i after transformation, with atoms indexed according to the prescribed generation order. By specifying hyperparameters r ∈ N+ and L ∈ N+, each element of ˆx can then be uniquely expressed in the following radix-r decomposition: 
+
+ˆxij = (0 .ˆx1 
+
+> ij
+
+ˆx2 
+
+> ij
+
+· · · ˆxLij · · · )r , 1 ≤ i ≤ N, 1 ≤ j ≤ 3, (10) where ˆxkij ∈ { 0, 1, · · · , r − 1} (k ∈ N+) denotes the k-th digit of ˆxij in its radix-r representation. For notational convenience in the following derivations, we further define: 
+
+ˆxki := ˆxki1 ˆxki2 ˆxki3
+
+⊤ ∈ { 0, 1, · · · , r − 1}3, (11) 
+
+yij := a · (0 . 0 · · · 0| {z } 
+
+> L
+
+ˆxL+1  
+
+> ij
+
+· · · )r ∈ [0 , arL ), (12) 
+
+yi := yi1 yi2 yi3
+
+⊤ ∈ [0 , arL )3. (13) Therefore, it is straightforward to see that each conformation x is in bijective correspondence with the following mixed discrete-continuous sequence s:
+
+s = (ˆ x11, ˆx12, · · · , ˆx1 
+
+> N
+
+, ˆx21, · · · , ˆxLN , y 1, · · · , y N ). (14) Using the sequence s defined above, atoms are refined progressively from coarse to fine scales, allowing the model to leverage the coarse spatial states of all other atoms generated in earlier steps when predicting the coordinates of the current atom. Furthermore, proposition 4.1 shows that the log-density of any conformation 
+
+x under the autoregressive model qθ can be equivalently expressed as the sum of conditional log-densities over the sequence s:
+
+Proposition 4.1. Given the probabilistic model qθ (· | c) : Ω → R+, defined over the configuration space Ω
+
+and conditioned on the system context c. For any conformation x ∈ Ω and its corresponding sequence s as in equation (14) , the following equality holds: 
+
+log qθ (x | c) =  
+
+> N(L+1)
+
+X
+
+> i=1
+
+log qθ (si | c, s :i), (15) 
+
+where si denotes the i-th element of s, and s:i = {s1, · · · , s i−1}, with s:1 = ∅.Beta Mixture Model After constructing the input sequence s, we next discuss how to model the conditional probability densities appearing in equation (15). First, For the first N L elements of s, each admits r3 possible discrete values. These conditional distributions can be parameterized using MLPs, mapping the features associated with each position to an r3-dimensional output as the corresponding logits. In contrast, the last N elements yi (1 ≤ i ≤ N ) of s are continuous values defined on a bounded interval and therefore require specialized modeling. To address this, we introduce a Beta Mixture Model (BMM) tailored for bounded continuous variables, as detailed below. We start from the Beta distribution, whose probability density function is given by Beta (x; α, β ) ∝ xα−1(1 −
+
+x)β−1 for x ∈ [0 , 1] , with parameters α, β ∈ R+. To improve expressiveness, we construct BMM by mixing 
+
+K Beta components with weights {πi}Ki=1 , satisfying PKi=1 πi = 1 . The resulting density is BMM (x; Θ) = 
+
+8PKi=1 πiBeta (x; αi, β i), where Θ = {πi, α i, β i}Ki=1 represents the full set of parameters, with implementation details provided in section D.4. We then model each component of the target variable yi (1 ≤ i ≤ N ) sequentially, starting from yi1 and conditioning subsequent components on the previously modeled ones. Each conditional distribution is represented using the above-defined BMM, which allows us to flexibly characterize the joint distribution composed of the three components of yi. Finally, the expression for the conditional log-density of yi is given by proposition 4.2: 
+
+Proposition 4.2. Suppose each component of the bonded continuous variable yi ∈ [0 , arL )3 (1 ≤ i ≤ N ) is modeled using a BMM. By defining ci = {c, s :i+N L } as the context of yi within the sequence s, the conditional log-density of yi can be expressed as: 
+
+log qθ (yi | ci) = 
+
+> 3
+
+X
+
+> j=1
+
+log 
+
+ rL
+
+a qθ ( rL
+
+a yij | ci, y i, :j )
+
+
+
+, (16) 
+
+where yi, :j = {yi1, · · · , y ij −1}, with yi, :1 = ∅.
+
+4.3 Model Architecture 
+
+In this section, we mainly discuss the novel attention mechanism specifically designed for our task, which fully exploits the coarse-to-fine coordinates obtained via radix-based decomposition and the geometric information provided by the reference structures. Detailed descriptions of the full architecture, encoder-decoder workflow, and other implementation specifics are provided in sections D and E. 
+
+Input Expansion To align with the sequence s defined in equation (14), all inputs are expanded to a unified length. First, the atomic numbers z ∈ NN are repeated L + 1 times to form z′ ∈ NN (L+1) . Next, we define the decomposed coordinates x′ ∈ RN (L+1) ×3 as 
+
+x′ 
+
+> ij
+
+=
+
+(
+
+a · (0 .ˆx1 
+
+> i′j
+
+ˆx2 
+
+> i′j
+
+· · · ˆxli′j )r − a 
+
+> 2
+
+, i ≤ N L xi′j , i > N L (17) s.t. i′ = id (i), l = ⌈i/N ⌉. (18) Here, id (i) = (( i − 1) mod N ) + 1 maps the sequence position i to the corresponding atom index. By construction, x′ 
+
+> i
+
+= x′ 
+
+> i1
+
+x′ 
+
+> i2
+
+x′
+
+> i3
+
+⊤ ∈ R3 precisely encodes the up-to-date 3D coordinates of the atom at position i, with information from all subsequent positions blocked. 
+
+Geometry-Aware Attention Mechanism Next, we introduce the geometry-aware multi-head attention mecha-nism employed in our model. Formally, let h ∈ RN (L+1) ×H denote the input features for each transformer block. The query, key, and value vectors are computed as 
+
+qi = ( LN (hi + φ1(x′ 
+
+> i−N
+
+))) W1, (19) 
+
+kj , v j = ( LN (hj + φ2(x′ 
+
+> j
+
+))) W2. (20) We use x′ 
+
+> j
+
+for the keys and values to capture geometric context in real time, while incorporating x′ 
+
+> i−N
+
+(set to zero if i ≤ N ) for the query prevents the coordinates x′
+
+> i
+
+, which are to be predicted at position i during inference, from leaking into the representation. Next, the attention weights for head h are computed as 
+
+αhij = softmax ⟨qhi , k hj ⟩√Hd
+
++ 1
+
+R
+
+> R
+
+X
+
+> k=1
+
+φhd (d(k) 
+
+> ij
+
+)
+
+!
+
+, (21) s.t. d(k) 
+
+> ij
+
+= ∥u(k) 
+
+> i′
+
+− u(k) 
+
+> j′
+
+∥2, i ′ = id (i), j ′ = id (j). (22) 9Here, the query, key, and value vectors are split into Nd attention heads, denoted by {qhi , k hj , v hj }Nd
+
+> h=1
+
+, each with hidden dimension Hd. By incorporating d(k) 
+
+> ij
+
+into the attention computation, the model explicitly leverages reference geometries to modulate attention weights, which in turn simplifies the autoregressive generation. Subsequently, the model applies standard multi-head attention using the computed attention weights, with full architectural details provided in section D. 
+
+Encoder-Decoder Architecture The encoder and decoder in our model are each stacked with T identical transformer blocks. The encoder transforms atomic numbers and reference structures into geometry-aware representations. These representations, first aggregated across reference structures through mean pooling, are then fed into the decoder, which produces exact probability densities for target structures during training or generates new conformations during inference. Algorithms of training and inference procedures are further provided in section E. 
+
+4.4 Training Objective 
+
+The total training objective combines a negative log-likelihood term LNLL and an energy-alignment term 
+
+Lenergy . First, for a batch of structures {x(b)}Bb=1 of size B, the negative log-likelihood is 
+
+LNLL = − 1
+
+BN 
+
+> B
+
+X
+
+> b=1
+
+log qθ (x(b) | c). (23) Next, let the predicted energies be U (b) 
+
+> θ
+
+= − log qθ (x(b) | c) and the reference energies from the force field be U (b). Since only the relative differences between conformations are meaningful for energies, we perform mean-centering on both sets within each mini-batch, yielding ˜U (b) 
+
+> θ
+
+and ˜U (b). The energy-alignment loss is then computed as 
+
+Lenergy = 1
+
+B
+
+> B
+
+X
+
+> b=1
+
+˜U (b) 
+
+> θ
+
+− ˜U (b) . (24) Finally, the total loss combines the two terms with positive weights λ1, λ 2 ∈ R+: L = λ1LNLL + λ2Lenergy .
+
+4.5 Evaluation 
+
+For any two systems Sa and Sb, the relative free energy ∆F is defined as the difference between their absolute free energies, Fa and Fb. To compute these absolute free energies, we treat CARD as a zero-free-energy proposal according to section 3.2, with energy defined as Uθ (x) = − log qθ (x | c), x ∈ Ω. The free energy difference between the proposal distribution parameterized by θ and the target distribution is then estimated using MBAR [54], following the pymbar implementation 1 . For the MBAR analysis, we utilize samples from both distributions: 2,000 independent conformations are generated by the trained model following algorithm 4, while target samples are obtained by subsampling and decorrelating the MD trajectories using pymbar . Given the proposal’s absolute free energy is zero, the resulting MBAR estimate directly yields the absolute free energy of the target system. 
+
+## 5 Experiment 
+
+In this section, we assess CARD across diverse tasks, covering solvation free energies from vacuum to solvents (section 5.1), endstate corrections from a classical force field to a neural network potential (section 5.2), and aqueous tautomer free energies (section 5.3). Additional experimental details and hyperparameter settings are provided in section E, and ablation studies that demonstrate the effectiveness of the training strategy and the coarse-to-fine modeling scheme are shown in section F.1. 
+
+> 1https://github.com/choderalab/pymbar
+
+10 5.1 Solvation Free Energy 
+
+Setup We first benchmark our method on the classical task of estimating solvation free energies of molecular systems from vacuum to a solvent. We select two solvents, toluene and water, to validate the model’s applicability across different environments. Force fields for the different environments are set up in OpenMM [15 ]using GAFF parameters [62], where solvent effects are approximated via the GB-OBC2 [48] implicit solvent model by tuning the solvent dielectric constant to 2.38 for toluene and 80.1 for water. 
+
+Dataset The training and test sets for this task are extracted from ZINC20 [ 25 ], from which we uniformly sample 40,303 molecular systems across different tranches, yielding a set diverse in molecular weight and logP and restricted to electrically neutral molecules. These molecules are then randomly split into 40,103 for training and 100 each for validation and testing. To ensure chemical distinctness, we filtered the test set against the training set using a maximum Tanimoto similarity of 0.65 with Morgan ECFP4 fingerprints, yielding a final set of 70 molecules [ 53 ]. For all molecular systems, 10 ns MD simulations were performed in OpenMM under vacuum, toluene, and water force fields with a 1 ps sampling interval, collecting 10,000 conformations per thermodynamic condition. Three separate models were then trained on these samples, each fitting the empirical distribution of its respective condition. 
+
+Experimental Results We evaluate the discrepancy between model-predicted solvation free energies on the test set and reference values obtained from Multistate Equilibrium Free Energy Simulations (MFES), following the protocol of Tkaczyk et al. [58] . The evaluation results on the 70 test systems are presented in figure 3. In both vacuum-to-toluene and vacuum-to-water settings, the model’s predictions exhibit mean absolute errors well below the 1 kcal/mol benchmark and achieve R2 values exceeding 0.9, demonstrating strong agreement with MFES and robust generalization across different environments. 17.5 15.0 12.5 10.0 7.5 5.0 2.5 0.0 2.5 
+
+Predicted F (kcal/mol)           
+
+> 17.5
+> 15.0
+> 12.5
+> 10.0
+> 7.5
+> 5.0
+> 2.5
+> 0.0
+> 2.5
+> Reference  F (kcal/mol)  MAE = 0.71
+> RMSE = 1.27
+> R2= 0.92
+> (a) vacuum to toluene 35 30 25 20 15 10 50
+
+Predicted F (kcal/mol)           
+
+> 35
+> 30
+> 25
+> 20
+> 15
+> 10
+> 5
+> 0
+> Reference  F (kcal/mol)  MAE = 0.70
+> RMSE = 1.13
+> R2= 0.98 (b) vacuum to water
+> Figure 3 Comparison between model estimates ( x-axis) and reference values ( y-axis) for solvation free energies ∆F
+> from (a) vacuum to toluene and (b) vacuum to water.
+
+Inference Efficiency We compare the inference efficiency of CARD and MFES on 70 test systems using a single NVIDIA Tesla V100 SXM2 32GB GPU, with the results summarized in table 1. Notably, CARD achieves an approximately 40-fold speedup over MFES when excluding the two endstate MD simulations, and maintains a 5-fold acceleration even when this simulation time is factored in. Given that endstate MD sampling remains a shared prerequisite for modern free-energy estimators, this 40-fold acceleration in the actual inference phase represents a genuine leap in computational efficiency, drastically reducing the bottleneck specific to free energy estimation. In addition, since CARD currently employs a conventional, unoptimized transformer architecture, its runtime scales approximately quadratically with the number of atoms, which accounts for the larger relative deviation observed in its mean inference time across differently sized systems. 11 Table 1 Inference time (s) comparison between CARD and MFES on 70 test systems, reported per system on a single V100 GPU. Here, tend denotes the total MD simulation time accumulated across both endstates. 
+
+Method MFES CARD w/o tend CARD w/ tend 
+
+mean 3.23 × 10 4 7.70 × 10 2 6.65 × 10 3
+
+std 6.79 × 10 2 3.53 × 10 2 4.13 × 10 2
+
+5.2 Endstate Correction 50 0 50 100 150 200 250 300 350 
+
+Predicted F (kcal/mol)     
+
+> 50
+> 0
+> 50
+> 100
+> 150
+> 200
+> 250
+> 300
+> 350
+> Reference  F (kcal/mol)  MAE = 0.90
+> RMSE = 1.22
+> Figure 4 Comparison between model estimates ( x-axis) and reference values ( y-axis) for endstate correction free energies ∆Fon 18 test systems from the HiPen set.
+
+Setup Next, we evaluate CARD on the endstate correction task, which aims to estimate the free energy difference from a classical Molecular Me-chanics (MM) force field to a Neural Network Po-tential (NNP). Following Tkaczyk et al. [58] , we use the same test set of 18 molecular systems filtered from the High Penalty (HiPen) set [ 31 ]. The MM calculations use the Open Force Field 2.0.0 with un-constrained bonds [ 7], while the NNP calculations employ the ANI-2x potential [ 12 ]. Due to the high computational cost of performing MD simulations with NNPs, we subsample 7,881 and 100 molecular systems from the curated dataset in section 5.1 for training and validation, respectively. We ensure that the training and validation sets are disjoint from the test set to avoid data leakage. 
+
+Experimental Results figure 4 presents the evalua-tion results of the predicted correction free energies in comparison with the reference values obtained from MFES. On the HiPen test set, which consists of molecules that are challenging for classical MM force fields, CARD achieves a mean absolute error of 0.90 kcal/mol despite being trained on a relatively small dataset, showcasing strong transferability to these difficult cases. 
+
+5.3 Aqueous Tautomer Free Energy 
+
+Setup Finally, we present a challenging zero-shot task to estimate free energy differences between tautomers in water, where predictions are obtained using the models trained in the previous two tasks without accessing experimental free energy labels. To estimate the aqueous tautomer free energy ∆F w
+
+> 0→1
+
+, we decompose it into three components: 
+
+∆F w 
+
+> 0→1
+
+= ∆ F v 
+
+> 0→1
+
++ ∆ F v→w 
+
+> 1
+
+− ∆F v→w 
+
+> 0
+
+. (25) Here, subscripts 0 and 1 denote the two tautomers, and superscripts v and w indicate vacuum and water environments, respectively. The first term corresponds to the alchemical free energy of transforming tautomer 0 to 1 in vacuum, which we compute using the ANI-2x potential and the associated model described in section 5.2. The remaining two terms are hydration free energies of two tautomers, which are evaluated using the models trained in section 5.1 together with the corresponding MM force fields. For evaluation, we use the 100-tautomer set [ 50 ], excluding systems that cannot be modeled with ANI-2x or have experimental aqueous free-energy differences exceeding 2.72 kcal/mol (corresponding to one tautomer dominating 99%), as such pairs provide limited insight. This filtering leaves 27 test molecules with experimental tautomer free energies as references. 
+
+Experimental Results We compare CARD with Density Functional Theory (DFT) at the B3LYP/6-31G* level using the universal solvation model (SMD), as well as with sPhysNet [ 50 ], a regression-based method 12 Table 2 Statistics of CARD and baseline methods evaluated on 27 test tautomer pairs. MAE and RMSE are reported in kcal/mol. PCC and SPCC denote the Pearson and Spearman rank correlation coefficients, respectively. The best performance for each metric is highlighted in bold .
+
+Method MAE ( ↓) RMSE ( ↓) PCC ( ↑) SPCC ( ↑)DFT 4.62 7.05 0.36 0.42 sPhysNet-pre 4.61 6.95 0.35 0.41 CARD ( ours ) 4.11 5.49 0.64 0.64 
+
+pretrained on approximately 100 million MMFF94-optimized geometries with DFT-calculated energies (denoted sPhysNet-pre). Baseline evaluation results are taken from Pan et al. [50]. 1 (1, 2] > 2 
+
+# Rotatable Bonds      
+
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> Fw
+> 0 1 (kcal/mol)  Method
+> sPhysNet-pre
+> DFT
+> CARD
+> Figure 5 Comparison of CARD with baselines on the 27 test pairs, grouped by the mean rotatable-bond count of the two tautomers. ∆∆ Fw
+> 0→1on the y-axis denotes the absolute error between predicted and experimental values in kcal/mol.
+
+Results in table 2 show that, despite inaccura-cies inherent in classical force fields relative to DFT, CARD consistently outperforms the base-lines across all statistical metrics. This can be attributed to the strong theoretical foundation of CARD, which ensures that free energy estimates are free from intrinsic methodological bias, with remaining errors arising only from model or force-field imperfections. In contrast, DFT approximates free energy differences using the energy difference between minimum-energy conformations of the two tautomers, a simplification of equation (1) that often leads to large deviations in complex systems. To further substantiate this observation, we visual-ize the results in figure 5, grouping tautomer pairs by their mean rotatable-bond count as a proxy for molecular flexibility and complexity. We observe that while DFT outperforms CARD on simpler sys-tems, it shows larger errors and outliers as system complexity increases. In contrast, CARD mani-fests enhanced stability, highlighting its consistent robustness across varying system complexities. 
+
+5.4 Ablation Study 
+
+To assess the impact of key hyperparameters ( i.e. , radix r and depth L) on model performance, as well as the necessity of the dual training objectives introduced in section 4.4, we conducted ablation studies on the vacuum-to-toluene solvation free energy task. The evaluation results are demonstrated in table 4. Specifically, the Training stage column in the table refers to our proposed two-stage training strategy: the first stage solely optimizes the log-likelihood LNLL , while the second stage jointly optimizes both training objectives. Further details are provided in section E.1. 
+
+Radix r As shown in table 3, a radix of r = 4 yields the optimal performance when other parameters are held constant. This reflects a critical trade-off: for a fixed depth L, a smaller radix forces the BMM to model a broader range of residuals, potentially exceeding its representational capacity. Conversely, a larger radix expands the discrete representation space cubically, substantially increasing the modeling complexity. 
+
+Depth L Fixing the radix at r = 4 , we subsequently evaluated the impact of depth L. As shown in table 3, reducing the depth to L = 2 causes a significant performance drop compared with L = 3 , underscoring the necessity of the coarse-to-fine modeling scheme to provide sufficient contextual information. Conversely, increasing the depth to L = 4 leads to a slight performance degradation. This is likely because, at higher 13 depth level k, the decomposed discrete variables ˆxki (1 ≤ i ≤ N ) become increasingly indistinguishable among the r3 classes, making it more difficult for the model to extract informative signals. 
+
+Two-stage Training We further investigate the impact of the introduced two-stage training on the performance. Under the optimal parameter setting ( r = 4 and L = 3 ), incorporating Stage II during training markedly improves performance across all metrics. This improvement is likely attributable to the use of ground-truth force field energy labels, which effectively corrects the biases in the parametrized distribution qθ arising from inadequate conformational sampling, such as imbalanced data distribution and incomplete phase space coverage in finite MD trajectories.    
+
+> Table 3 Ablation study on the effect of the radix r, depth L, and two-stage training on model performance, evaluated on the solvation free energy task from vacuum to toluene. Pct ( <1) denotes the fraction of predictions whose absolute error is smaller than 1 kcal/mol. MAE and RMSE are reported in kcal/mol. The best result for each metric is shown
+> bold .
+
+Training stage Parameters MAE RMSE R2 Pct ( <1) Stage I & II r = 4 , L = 3 0.71 1.27 0.92 82.9 
+
+Stage I 
+
+r = 4 , L = 3 0.81 1.34 0.91 77.1 
+
+r = 3 , L = 3 2.43 3.08 0.61 26.5 
+
+r = 5 , L = 3 1.88 2.41 0.73 22.1 
+
+r = 4 , L = 2 5.85 14.26 -0.08 17.1 
+
+r = 4 , L = 4 1.43 2.39 0.77 61.4 
+
+## 6 Conclusion 
+
+Free energy estimation is fundamental to understanding thermodynamic preferences in molecular interactions. In this work, we propose a powerful generative framework, namely CARD, which processes a mixed discrete-continuous sequence derived from 3D coordinates via a novel radix-based decomposition, enabling coarse-to-fine autoregressive modeling with enhanced expressiveness. Grounded in solid theoretical principles, CARD provides a zero-free-energy proposal for directly computing absolute free energies of arbitrary systems. Notably, experiments across multiple tasks demonstrate its robust generalization to unseen systems with varying topologies, marking a significant breakthrough in deep learning-based free energy estimation. There remains room for improvement. First, CARD currently removes roto-translational degrees of freedom using PCA, which may introduce large variance for symmetric conformations. More robust invariant feature constructions are needed. Second, our evaluation focuses on drug-like molecules, and the extension to larger systems such as protein-ligand complexes remains an open direction. 14 References 
+
+[1] Rdkit: Open-source cheminformatics. https://www.rdkit.org .[2] Josh Achiam, Steven Adler, Sandhini Agarwal, Lama Ahmad, Ilge Akkaya, Florencia Leoni Aleman, Diogo Almeida, Janko Altenschmidt, Sam Altman, Shyamal Anadkat, et al. Gpt-4 technical report. arXiv preprint arXiv:2303.08774, 2023. [3] Michael S Albergo, Nicholas M Boffi, and Eric Vanden-Eijnden. Stochastic interpolants: A unifying framework for flows and diffusions. arXiv preprint arXiv:2303.08797, 2023. [4] Jimmy Lei Ba, Jamie Ryan Kiros, and Geoffrey E Hinton. Layer normalization. arXiv preprint arXiv:1607.06450, 2016. [5] Paul A Bash, UC Singh, R Langridge, and Peter A Kollman. Free energy calculations by computer simulation. Science, 236(4801):564–568, 1987. [6] Charles H Bennett. Efficient estimation of free energy differences from monte carlo data. Journal of Computational Physics, 22(2):245–268, 1976. [7] Simon Boothroyd, Pavan Kumar Behara, Owen C Madin, David F Hahn, Hyesu Jang, Vytautas Gapsys, Jeffrey R Wagner, Joshua T Horton, David L Dotson, Matthew W Thompson, et al. Development and benchmarking of open force field 2.0. 0: the sage small molecule force field. Journal of chemical theory and computation, 19(11): 3251–3275, 2023. [8] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. Language models are few-shot learners. Advances in neural information processing systems, 33:1877–1901, 2020. [9] Christophe Chipot. Free energy methods for the description of molecular processes. Annual Review of Biophysics, 52(1):113–138, 2023. [10] John D Chodera, David L Mobley, Michael R Shirts, Richard W Dixon, Kim Branson, and Vijay S Pande. Alchemical free energy methods for drug discovery: progress and challenges. Current opinion in structural biology, 21(2):150–160, 2011. [11] Zoe Cournia, Bryce Allen, and Woody Sherman. Relative binding free energy calculations in drug discovery: recent advances and practical considerations. Journal of chemical information and modeling, 57(12):2911–2937, 2017. [12] Christian Devereux, Justin S Smith, Kate K Huddleston, Kipton Barros, Roman Zubatyuk, Olexandr Isayev, and Adrian E Roitberg. Extending the applicability of the ani deep learning molecular potential to sulfur and halogens. Journal of chemical theory and computation, 16(7):4192–4202, 2020. [13] Xinqiang Ding and Bin Zhang. Deepbar: a fast and exact method for binding free energy computation. The journal of physical chemistry letters, 12(10):2509–2515, 2021. [14] Blake R Duschatko, Jonathan Vandermause, Nicola Molinari, and Boris Kozinsky. Uncertainty driven active learning of coarse grained free energy models. npj Computational Materials, 10(1):9, 2024. [15] Peter Eastman, Raimondas Galvelis, Raúl P Peláez, Charlles RA Abreu, Stephen E Farr, Emilio Gallicchio, Anton Gorenko, Michael M Henry, Frank Hu, Jing Huang, et al. Openmm 8: molecular dynamics simulation with machine learning potentials. The Journal of Physical Chemistry B, 128(1):109–116, 2023. [16] Ege Erdogan, Radoslav Ralev, Mika Rebensburg, Céline Marquet, Leon Klein, and Hannes Stark. Freeflow: Latent flow matching for free energy difference estimation. In ICLR 2025 Workshop on Machine Learning Multiscale Processes, 2025. [17] Shikun Feng, Minghao Li, Yinjun Jia, Wei-Ying Ma, and Yanyan Lan. Protein-ligand binding representation learning from fine-grained interactions. In The Twelfth International Conference on Learning Representations, 2024. [18] Robert W Floyd. Algorithm 97: shortest path. Communications of the ACM, 5(6):345–345, 1962. [19] Bowen Gao, Yinjun Jia, YuanLe Mo, Yuyan Ni, Wei-Ying Ma, Zhi-Ming Ma, and Yanyan Lan. Self-supervised pocket pretraining via protein fragment-surroundings alignment. In The Twelfth International Conference on Learning Representations, 2024. 
+
+15 [20] Alessia Ghidini, Eleonora Serra, and Andrea Cavalli. On free energy calculations in drug discovery. Accounts of Chemical Research, 58(20):3137–3145, 2025. [21] Thomas A Halgren. Merck molecular force field. i. basis, form, scope, parameterization, and performance of mmff94. Journal of computational chemistry, 17(5-6):490–519, 1996. [22] Jiajun He, Yuanqi Du, Francisco Vargas, Yuanqing Wang, Carla P Gomes, José Miguel Hernández-Lobato, and Eric Vanden-Eijnden. Feat: Free energy estimators with adaptive transport. arXiv preprint arXiv:2504.11516, 2025. [23] Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. Advances in neural information processing systems, 33:6840–6851, 2020. [24] Truong Son Hy and Risi Kondor. Multiresolution equivariant graph variational autoencoder. Machine Learning: Science and Technology, 4(1):015031, 2023. [25] John J Irwin, Khanh G Tang, Jennifer Young, Chinzorig Dandarchuluun, Benjamin R Wong, Munkhzul Khurel-baatar, Yurii S Moroz, John Mayfield, and Roger A Sayle. Zinc20—a free ultralarge-scale chemical database for ligand discovery. Journal of chemical information and modeling, 60(12):6065–6073, 2020. [26] Christopher Jarzynski. Nonequilibrium equality for free energy differences. Physical Review Letters, 78(14):2690, 1997. [27] Christopher Jarzynski. Targeted free energy perturbation. Physical Review E, 65(4):046122, 2002. [28] Christopher Jarzynski. Rare events and the convergence of exponentially averaged work values. Physical Review E—Statistical, Nonlinear, and Soft Matter Physics, 73(4):046105, 2006. [29] Bowen Jing, Bonnie Berger, and Tommi Jaakkola. Alphafold meets flow matching for generating protein ensembles. In Forty-first International Conference on Machine Learning, 2024. [30] Mostafa Karimi, Di Wu, Zhangyang Wang, and Yang Shen. Deepaffinity: interpretable deep learning of compound– protein affinity through unified recurrent and convolutional neural networks. Bioinformatics, 35(18):3329–3338, 2019. [31] Fiona L Kearns, Luke Warrensford, Stefan Boresch, and H Lee Woodcock. The good, the bad, and the ugly:“hipen”, a new dataset for validating (s) qm/mm free energy simulations. Molecules, 24(4):681, 2019. [32] John G Kirkwood. Statistical mechanics of fluid mixtures. The Journal of chemical physics, 3(5):300–313, 1935. [33] Leon Klein and Frank Noé. Transferable boltzmann generators. Advances in Neural Information Processing Systems, 37:45281–45314, 2024. [34] Xiangzhe Kong, Wenbing Huang, and Yang Liu. Generalist equivariant transformer towards 3d molecular interaction learning. In Forty-first International Conference on Machine Learning, 2024. [35] Sarah Lewis, Tim Hempel, José Jiménez-Luna, Michael Gastegger, Yu Xie, Andrew YK Foong, Victor García Satorras, Osama Abdin, Bastiaan S Veeling, Iryna Zaporozhets, et al. Scalable emulation of protein equilibrium ensembles with generative deep learning. Science, page eadv9817, 2025. [36] Jiashan Li and Xinqi Gong. Harnessing pre-trained models for accurate prediction of protein-ligand binding affinity. BMC bioinformatics, 26(1):1–21, 2025. [37] Yaron Lipman, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matthew Le. Flow matching for generative modeling. In The Eleventh International Conference on Learning Representations, 2023. [38] Shengchao Liu, Hongyu Guo, and Jian Tang. Molecular geometry pretraining with se (3)-invariant denoising distance matching. In The Eleventh International Conference on Learning Representations, 2023. [39] Ilya Loshchilov and Frank Hutter. Sgdr: Stochastic gradient descent with warm restarts. arXiv preprint arXiv:1608.03983, 2016. [40] Ilya Loshchilov and Frank Hutter. Decoupled weight decay regularization. arXiv preprint arXiv:1711.05101, 2017. [41] Bálint Máté, François Fleuret, and Tristan Bereau. Solvation free energies from neural thermodynamic integration. The Journal of Chemical Physics, 162(12), 2025. 
+
+16 [42] Orlando A Mendible, Jonathan K Whitmer, and Yamil J Colón. Considerations in the use of ml interaction potentials for free energy calculations. arXiv preprint arXiv:2403.13952, 2024. [43] Antonia SJS Mey, Bryce K Allen, Hannah E Bruce Macdonald, John D Chodera, David F Hahn, Maximilian Kuhn, Julien Michel, David L Mobley, Levi N Naden, Samarjeet Prasad, et al. Best practices for alchemical free energy calculations [article v1. 0]. Living journal of computational molecular science, 2(1):18378, 2020. [44] David L Mobley, Caitlin C Bannan, Andrea Rizzi, Christopher I Bayly, John D Chodera, Victoria T Lim, Nathan M Lim, Kyle A Beauchamp, David R Slochower, Michael R Shirts, et al. Escaping atom types in force fields using direct chemical perception. Journal of chemical theory and computation, 14(11):6076–6092, 2018. [45] Bálint Máté, François Fleuret, and Tristan Bereau. Neural thermodynamic integration: Free energies from energy-based diffusion models. The Journal of Physical Chemistry Letters , 15(45):11395–11404, 2024. doi: 10.1021/acs.jpclett.4c01958. URL https://doi.org/10.1021/acs.jpclett.4c01958 . PMID: 39503734. [46] Nhat Khang Ngo, Truong Son Hy, and Risi Kondor. Multiresolution graph transformers and wavelet positional encoding for learning long-range and hierarchical structures. The Journal of Chemical Physics, 159(3), 2023. [47] Frank Noé, Simon Olsson, Jonas Köhler, and Hao Wu. Boltzmann generators: Sampling equilibrium states of many-body systems with deep learning. Science, 365(6457):eaaw1147, 2019. [48] Alexey Onufriev, Donald Bashford, and David A Case. Modification of the generalized born model suitable for macromolecules. The Journal of Physical Chemistry B, 104(15):3712–3720, 2000. [49] Xiaolin Pan, Fanyu Zhao, Yueqing Zhang, Xingyu Wang, Xudong Xiao, John ZH Zhang, and Changge Ji. Moltaut: A tool for the rapid generation of favorable tautomer in aqueous solution. Journal of Chemical Information and Modeling, 63(7):1833–1840, 2023. [50] Xiaolin Pan, Xudong Zhang, Song Xia, and Yingkai Zhang. Fast and accurate prediction of tautomer ratios in aqueous solution via a siamese neural network. Journal of chemical theory and computation, 21(6):3132–3141, 2025. [51] Danilo Rezende and Shakir Mohamed. Variational inference with normalizing flows. In International conference on machine learning, pages 1530–1538. PMLR, 2015. [52] Sandra Romero-Molina, Yasser B Ruiz-Blanco, Joel Mieres-Perez, Mirja Harms, Jan Munch, Michael Ehrmann, and Elsa Sanchez-Garcia. Ppi-affinity: A web tool for the prediction and optimization of protein–peptide and protein–protein binding affinity. Journal of proteome research, 21(8):1829–1841, 2022. [53] RA Sayle. 2d similarity, diversity and clustering in rdkit. RDKit UGM, 2019. [54] Michael R Shirts and John D Chodera. Statistically optimal analysis of samples from multiple equilibrium states. The Journal of chemical physics, 129(12), 2008. [55] Yang Song, Jascha Sohl-Dickstein, Diederik P Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-based generative modeling through stochastic differential equations. In International Conference on Learning Representations, 2021. [56] Charlie B Tan, Joey Bose, Chen Lin, Leon Klein, Michael M Bronstein, and Alexander Tong. Scalable equilibrium sampling with sequential boltzmann generators. In Forty-second International Conference on Machine Learning, 2025. [57] Charlie B Tan, Majdi Hassan, Leon Klein, Saifuddin Syed, Dominique Beaini, Michael M Bronstein, Alexander Tong, and Kirill Neklyudov. Amortized sampling with transferable normalizing flows. In The Thirty-ninth Annual Conference on Neural Information Processing Systems, 2025. [58] Sara Tkaczyk, Johannes Karwounopoulos, Andreas Schöller, H Lee Woodcock, Thierry Langer, Stefan Boresch, and Marcus Wieder. Reweighting from molecular mechanics force fields to the ani-2x neural network potential. Journal of Chemical Theory and Computation, 20(7):2719–2728, 2024. [59] Raphael John Lamarre Townshend, Martin Vögele, Patricia Adriana Suriana, Alexander Derry, Alexander Powers, Yianni Laloudakis, Sidhika Balachandar, Bowen Jing, Brandon M Anderson, Stephan Eismann, et al. Atom3d: Tasks on molecules in three dimensions. In Thirty-fifth Conference on Neural Information Processing Systems Datasets and Benchmarks Track (Round 1), 2021. 
+
+17 [60] Thuan Nguyen Anh Trang, Khang Nhat Ngo, Hugo Sonnery, Thieu Vo, Siamak Ravanbakhsh, and Truong Son Hy. Scalable hierarchical self-attention with learnable hierarchy for long-range interactions. Transactions on Machine Learning Research, 2024. [61] Suriyanarayanan Vaikuntanathan and Christopher Jarzynski. Escorted free energy simulations: Improving convergence by reducing dissipation. Physical Review Letters, 100(19):190601, 2008. [62] Junmei Wang, Romain M Wolf, James W Caldwell, Peter A Kollman, and David A Case. Development and testing of a general amber force field. Journal of computational chemistry, 25(9):1157–1174, 2004. [63] Lihao Wang, Yuning Shen, Yiqun Wang, Huizhuo Yuan, Yue Wu, Quanquan Gu, et al. Protein conformation generation via force-guided se (3) diffusion models. In Forty-first International Conference on Machine Learning, 2024. [64] Tong Wang, Xinheng He, Mingyu Li, Yatao Li, Ran Bi, Yusong Wang, Chaoran Cheng, Xiangzhen Shen, Jiawei Meng, He Zhang, et al. Ab initio characterization of protein molecular dynamics with ai2bmd. Nature, 635(8040): 1019–1027, 2024. [65] Marcus Wieder, Josh Fass, and John D Chodera. Fitting quantum machine learning potentials to experimental free energy data: predicting tautomer ratios in solution. Chemical science, 12(34):11364–11381, 2021. [66] Peter Wirnsberger, Andrew J Ballard, George Papamakarios, Stuart Abercrombie, Sébastien Racanière, Alexander Pritzel, Danilo Jimenez Rezende, and Charles Blundell. Targeted free energy estimation via learned mappings. The Journal of Chemical Physics, 153(14), 2020. [67] Jun Xie, Youli Zhang, Ziyang Wang, Xiaocheng Jin, Xiaoli Lu, Shengxiang Ge, and Xiaoping Min. Ppi-graphomer: enhanced protein-protein affinity prediction using pretrained and graph transformer models. BMC bioinformatics, 26(1):116, 2025. [68] Shuangfei Zhai, Ruixiang ZHANG, Preetum Nakkiran, David Berthelot, Jiatao Gu, Huangjie Zheng, Tianrong Chen, Miguel Ángel Bautista, Navdeep Jaitly, and Joshua M Susskind. Normalizing flows are capable generative models. In Forty-second International Conference on Machine Learning, 2025. [69] Jing Zhang, Ian R Humphreys, Jimin Pei, Jinuk Kim, Chulwon Choi, Rongqing Yuan, Jesse Durham, Siqi Liu, Hee-Jung Choi, Minkyung Baek, et al. Predicting protein-protein interactions in the human proteome. Science, 390(6771):eadt1630, 2025. [70] Gengmo Zhou, Zhifeng Gao, Qiankun Ding, Hang Zheng, Hongteng Xu, Zhewei Wei, Linfeng Zhang, and Guolin Ke. Uni-mol: A universal 3d molecular representation learning framework. In The eleventh international conference on learning representations, 2023. [71] Hai-Tao Zou, Bo-Ya Ji, and Xiao-Lan Xie. A multi-source molecular network representation model for protein– protein interactions prediction. Scientific Reports, 14(1):6184, 2024. [72] Robert W Zwanzig. High-temperature equation of state by a perturbation method. i. nonpolar gases. The Journal of Chemical Physics, 22(8):1420–1426, 1954. 
+
+18 Appendix 
+
+## A Reproducibility 
+
+The code and data will be made publicly available upon publication. 
+
+## B Proof of Propositions 
+
+B.1 Proof of proposition 4.1 
+
+Assume that every conformation x ∈ Ω admits a unique PCA-based structural alignment as described in section 4.2, which removes the roto-translational degrees of freedom and yields invariant features for prediction. By choosing a sufficient large constant a ∈ R+ such that the aligned coordinates x ∈ [− a 
+
+> 2
+
+, a 
+
+> 2
+
+)N ×3,we define a mapping f : {0, 1, · · · , r − 1}L × [0 , arL ) → [− a 
+
+> 2
+
+, a 
+
+> 2
+
+):
+
+f (u) = a
+
+> L
+
+X
+
+> l=1
+
+ul · r−l + uL+1 − a
+
+2 ∈ [− a
+
+2 , a
+
+2 ), (26) s.t. u :=  u1 u2 · · · uL+1 
+
+ , u 1, u 2, · · · , u L ∈ { 0, 1, · · · , r − 1}, u L+1 ∈ [0 , arL ). (27) We first show that f (u) is bounded within [− a 
+
+> 2
+
+, a 
+
+> 2
+
+):
+
+f (u) ≥ a
+
+> L
+
+X
+
+> l=1
+
+0 · r−l + 0 − a
+
+2 = − a
+
+2 , f (u) < a 
+
+> L
+
+X
+
+> l=1
+
+(r − 1) r−l + arL − a
+
+2 = a(
+
+> L
+
+X
+
+> l=1
+
+(r − 1) r−l + r−L) − a
+
+2 = a
+
+2 . (28) Next, we prove that f is injective. For any u̸ = v, let k be the smallest index such that uk̸ = vk. Without loss of generality, assume that uk < v k. We distinguish two cases: (i) if k = L + 1 , then it is immediate that 
+
+f (u) < f (v); (ii) if k ≤ L, then since uk + 1 ≤ vk, we have 
+
+f (u) = a
+
+> L
+
+X
+
+> l=1
+
+ul · r−l + uL+1 − a
+
+2 = a
+
+> k−1
+
+X
+
+> l=1
+
+vl · r−l + uk · r−k +
+
+> L
+
+X
+
+> l=k+1
+
+ul · r−l
+
+!
+
++ uL+1 − a
+
+2 (29) 
+
+< a 
+
+> k−1
+
+X
+
+> l=1
+
+vl · r−l + uk · r−k +
+
+> L
+
+X
+
+> l=k+1
+
+(r − 1) r−l
+
+!
+
++ arL − a
+
+2 (30) 
+
+= a
+
+> k−1
+
+X
+
+> l=1
+
+vl · r−l + ( uk + 1) · r−k
+
+!
+
+− a
+
+2 (31) 
+
+≤ a
+
+> k−1
+
+X
+
+> l=1
+
+vl · r−l + vk · r−k
+
+!
+
+− a
+
+2 ≤ f (v). (32) In both cases, we have f (u) < f (v), thus f is an injective mapping. Further, we prove that f is surjective. For any continuous variable c ∈ [− a 
+
+> 2
+
+, a 
+
+> 2
+
+), since ˆc := ca + 12 ∈ [0 , 1) , we can convert it into a purely fractional representation in base-r: ˆc = (0 .ˆc1 ˆc2 · · · ˆcL · · · )r , ˆci ∈ { 0, 1, · · · , r − 1}, i ∈
+
+N+. By defining 
+
+ul =
+
+
+
+ˆcl, 1 ≤ l ≤ L, a · (0 . 0 · · · 0| {z } 
+
+> L
+
+ˆcL+1 · · · )r , l = L + 1 . (33) It is straightforward to verify that u =  u1 u2 · · · uL+1 
+
+ satisfies f (u) = c. Therefore, f is surjective, and since we have already shown that f is injective, it follows that f is a bijection. 19 Finally, we apply the bijection f −1 to the aligned coordinates x. For each atom i = 1 , . . . , N and each Cartesian component j = 1 , 2, 3, define the mixed discrete-continuous sequence 
+
+u(i,j ) = f −1(xij ) ∈ { 0, 1, . . . , r − 1}L × [0 , arL ). (34) Concatenate the 3-dimensional sequences for each atom: 
+
+U (i) =  u(i, 1) , u (i, 2) , u (i, 3) , (35) and then concatenate all N sequences: 
+
+U =  U (1) , . . . , U (N ). (36) Finally, apply a permutation π to reorder the sequences so that they match the form given in equation (14). We then define the overall mapping 
+
+g−1 : x 7 → s = π(U ) ∈ ({0, 1, . . . , r − 1}L × [0 , a/r L)) 3N . (37) By construction, g−1 is a bijection between the bounded Euclidean space [− a 
+
+> 2
+
+, a 
+
+> 2
+
+)N ×3 and the mixed discrete-continuous space ({0, 1, . . . , r − 1}L × [0 , a/r L)) 3N .Let s = ( sd, s c) denote the mixed sequence obtained from g−1(x), where sd are the discrete digits and sc the continuous components. Then, by the change-of-variables formula, we have 
+
+qX (x | c) = X
+
+> s∈g−1(x)
+
+qS (s | c) det ∂s c
+
+∂x , (38) where g−1(x) denotes all possible sequences mapping to x. Since g−1 is a bijection, there is a unique sequence 
+
+s = g−1(x) corresponding to each x. Moreover, the Jacobian of the continuous components, ∂s c/∂x , is an identity matrix because ∂u (i,j )
+
+> L+1
+
+/∂f = 1 . Therefore, its determinant satisfies det ∂s c 
+
+> ∂x
+
+= 1 . Thus, in our construction, the density reduces to 
+
+qX (x | c) = qS (s | c) =  
+
+> N(L+1)
+
+Y
+
+> i=1
+
+qθ (si | c, s :i), (39) with s = g−1(x). This concludes the proof. 
+
+B.2 Proof of proposition 4.2 
+
+For each atom i = 1 , . . . , N and each Cartesian component j = 1 , 2, 3, we have yij ∈ [0 , a/r L). To place it within the domain of the BMM, we introduce the scaled variable 
+
+y′ 
+
+> ij
+
+:= rL
+
+a yij ∈ [0 , 1) , (40) which lies in [0 , 1) and can therefore be directly modeled by the proposed BMM. Applying the change-of-variables formula, we obtain 
+
+qY (yij | ci, y i, :j ) = qY ′ (y′ 
+
+> ij
+
+| ci, y i, :j ) det ∂y ′
+
+> ij
+
+∂y ij 
+
+= rL
+
+a qY ′ (y′ 
+
+> ij
+
+| ci, y i, :j ). (41) Finally, by the chain rule, the log-density of the full 3D coordinate yi is 
+
+log qθ (yi | ci) = 
+
+> 3
+
+X
+
+> j=1
+
+log qθ (yij | ci, y i, :j ) = 
+
+> 3
+
+X
+
+> j=1
+
+log 
+
+"
+
+rL
+
+a qθ
+
+ rL
+
+a yij | ci, y i, :j
+
+#
+
+. (42) This completes the proof. 20 C Dataset Construction 
+
+C.1 Molecular Dynamics Simulation Setup 
+
+Molecular dynamics (MD) simulations were conducted to generate trajectories for each molecular system for both training and evaluation purposes. For the solvation free energy task (section 5.1), initial conformations were generated from SMILES using RDKit [ 1] and optimized with MMFF [ 21 ]. The optimized structures were then converted into AMBER topologies and coordinates using GAFF parameters [ 62 ]. System construction was subsequently performed using a unified protocol, with the only difference arising from the treatment of solvation. In the gas-phase (vacuum) setting, systems were constructed without an implicit solvent model, and nonbonded interactions were evaluated without a cutoff. In the implicit-solvent setting, the OBC2 generalized Born model [ 48 ] with the appropriate solvent dielectric constant was applied (2.38 for toluene and 80.1 for water), while all other simulation parameters were kept identical. For the endstate correction task (section 5.2), topologies were generated from SMILES using OpenFF [ 44 ], and initial conformations were obtained via energy relaxation in OpenMM [ 15 ] under the corresponding force field. In particular, Open Force Field 2.0.0 with unconstrained bonds [ 7 ] and the ANI-2x potential [ 12 ] were used for the MM and NNP cases, respectively. In particular, the aqueous tautomer free energy task (section 5.3) involves both vacuum and implicit-solvent simulations using MM force fields and the ANI-2x potential. Therefore, the simulation systems in each environment were constructed following the same protocols as in the corresponding tasks described above. With the initial conformations prepared, MD simulations were performed in OpenMM at 300 K using a Langevin integrator with a friction coefficient of 1 ps −1 and a time step of 1 fs. To balance sampling quality and computational efficiency, systems parameterized with MM force fields were simulated for a total of 10 ns, whereas simulations employing ANI-2x were restricted to 5 ns due to the substantially higher computational cost of neural network potentials. Conformations were recorded every 1 ps. 
+
+C.2 Conformation Flexibility Analysis 
+
+To determine whether the 10 ns MD simulations are sufficient for adequate conformational sampling, we performed a focused analysis of molecular flexibility. Specifically, we randomly selected four molecules from the training set and visualized their conformational landscapes based on heavy-atom dihedral angles. For each molecule, the dihedrals were ranked by their circular variance. We then plotted Ramachandran plots for the two most and two least mobile torsions. As illustrated in figure 6, even the least mobile torsions exhibit distinct basins, indicating that the 10 ns trajectories successfully capture substantial conformational flexibility and adequately explore the relevant phase space. 
+
+C.3 Tanimoto Similarity Analysis 
+
+To assess the chemical distinctness of the test sets used for solvation free energy estimation and endstate correction, we calculated the maximum Tanimoto similarity between each test molecule and the corresponding training set. Specifically, similarities were evaluated using RDKit [ 1] by parsing valid SMILES strings into 2048-bit binary Morgan (ECFP4) fingerprints (radius 2 with chirality enabled), followed by a bulk nearest-neighbor search to extract pairwise Tanimoto similarities across the bit vectors. The resulting similarity distributions are visualized as histograms in figure 7. Both test sets maintain a maximum Tanimoto similarity below the 0.65 threshold [ 53 ], confirming their chemical distinctness from the training data. Furthermore, all test cases in the HiPen set exhibit a maximum Tanimoto similarity of less than 0.5, highlighting the substantial out-of-distribution challenge posed by this specific dataset. 
+
+## D Model Architecture 
+
+D.1 Masking Strategy 
+
+The masking strategy in our model differs between the encoder and the decoder: 21 3 2 1 0 1 2 3
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> 9
+> Count 3210123
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> Count 3210123
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> Count 3210123
+
+Torsion 1 
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> Count
+
+(a) Ramachandran plots of the most mobile two torsions. 3 2 1 0 1 2 3
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 2.5
+> 5.0
+> 7.5
+> 10.0
+> 12.5
+> 15.0
+> 17.5
+> 20.0
+> 22.5
+> Count 3210123
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> Count 3210123
+
+Torsion 1       
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 5
+> 10
+> 15
+> 20
+> 25
+> Count 3210123
+
+Torsion 1 
+
+> 3
+> 2
+> 1
+> 0
+> 1
+> 2
+> 3
+> Torsion 2
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> Count
+
+(b) Ramachandran plots of the least mobile two torsions. 
+
+Figure 6 Ramachandran plots computed from 10 ns MD trajectories of randomly selected training molecules, including ZINC000917052030 (Col. 1), ZINC000008643431 (Col. 2), ZINC000072374994 (Col. 3), and ZINC000125468547 (Col. 4). 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Max Tanimoto similarity to train set 
+
+0
+
+2
+
+4
+
+6
+
+8
+
+10 
+
+12 
+
+14 
+
+> Count
+
+(a) Solvation free energy test set (70 molecules). 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Max Tanimoto similarity to train set 
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7 
+
+> Count
+
+(b) HiPen test set (18 molecules). 
+
+Figure 7 Tanimoto similarity analysis of the two test sets, where each molecule is assigned its maximum similarity to the corresponding training set, estimated with ECFP4 fingerprints. 
+
+22 1. Encoder: operates in a bidirectional manner, with all atoms in the input sequence visible to each position. This allows the model to fully leverage the reference structures to produce geometry-aware atomic representations. 2. Decoder: employs a modified causal masking strategy, where for each position i to be predicted, only the preceding N positions, from i − N to i − 1, are visible. We adopt this limited context because x′
+
+> k
+
+(i − N ≤ k ≤ i − 1) precisely contains the up-to-date coordinates of the N atoms in the system preceding position i, making positions earlier than i − N redundant and safely maskable. 
+
+D.2 Embeddings 
+
+Given the expanded atomic numbers z′ ∈ NN (L+1) ×3, the input features h ∈ RN (L+1) ×H for the encoder is obtained through a mixture of embeddings: 
+
+hi = a_embed (z′
+
+> i
+
+) + d_embed (⌈ iN ⌉) ∈ RH , (43) where H is the hidden dimension, a_embed denotes the embedding of atomic numbers, and d_embed denotes the embedding of the number of retained digits of the current coordinates in base r.
+
+D.3 Architecture of the Geometry-Aware Transformer 
+
+In summary, we present the architecture of the geometry-aware transformer block in algorithm 1, where both the encoder and decoder are composed of T identical transformer blocks stacked sequentially. 
+
+Algorithm 1 Architecture of the Geometry-Aware Transformer Block   
+
+> 1: function
+
+MultiHeadAttention( h, x ′, u, mask)  
+
+> 2:
+
+i, j ← mask 
+
+> 3:
+
+dij 
+
+N (L+1)  
+
+> i,j =1
+
+← cdist (repeat (x′, L + 1)) {Getting Pairwise Distances of Reference Structures}  
+
+> 4:
+
+qi ← (LN (hi + φ1(x′ 
+
+> i−N
+
+))) W1 
+
+> 5:
+
+kj , v j ← (LN (hj + φ2(x′ 
+
+> j
+
+)) W2 
+
+> 6:
+
+{qhi , k hj , v hj }Nd 
+
+> h=1
+
+← split (qi, k j , v j ; Nd) {Splitting into Nd Heads}  
+
+> 7:
+
+αhij ← softmax j  
+
+> ⟨qhi,k hj⟩√Hd
+
++ 1
+
+> R
+
+PRk=1 φhd (d(k) 
+
+> ij
+
+)
+
+! 
+
+> 8:
+
+oi ← concat (P 
+
+> j
+
+αhij vhj )Nd
+
+> h=1
+
+W3  
+
+> 9: return
+
+o   
+
+> 10: end function
+> 11: function
+
+TransformerBlock( h, x ′, u, mask)  
+
+> 12:
+
+o1 ← MultiHeadAttention (h, x ′, u, mask ) {Multi-Head Attention}  
+
+> 13:
+
+h ← h + o1 
+
+> 14:
+
+o2 ← φ3(LN (h)) {Pre-LayerNorm}  
+
+> 15:
+
+h ← h + o2  
+
+> 16: return
+
+h 
+
+> 17: end function
+
+D.4 Log-density Computation 
+
+We use the decoder outputs hd ∈ RN (L+1) ×H to compute log-densities. For the first N L discrete variables in 
+
+s, each hd[i] (1 ≤ i ≤ N L ) is passed through a two-layer FFN to genera the logits for r3 classes at position i,which are then converted to log-probabilities using the log-softmax function. Next, the remaining N continuous variables yi (1 ≤ i ≤ N ) are modeled using a BMM, as described in proposition 4.2. The architecture of the BMM and the corresponding log-density computations are detailed in algorithm 2. 23 Algorithm 2 Architecture of the Beta Mixture Model   
+
+> 1: function
+
+BMM1( h) 
+
+> 2:
+
+o ← φp(h) {Mapping Features to 3K Parameters}  
+
+> 3:
+
+{pi, α i, β i}Ki=1 ← split (o; K) 
+
+> 4:
+
+αi ← clamp (αi; [ −3, 3]) , β i ← clamp (βi; [ −3, 3]) {Clamping the Shape Parameters for Numerical Stability}  
+
+> 5:
+
+αi ← exp( αi), β i ← exp( βi) {Exponentiation to Ensure Positivity}  
+
+> 6:
+
+pi ← exp( pi)/ PKj=1 exp( pj ) {Softmax for Mixture Probabilities}   
+
+> 7: return
+
+BMM ({pi, α i, β i}Ki=1 )   
+
+> 8: end function
+> 9: function
+
+log_prob( h, y ) 
+
+> 10:
+
+y ← rL 
+
+> a
+
+y {Scaling to [0 , 1) } 
+
+> 11:
+
+vx, v y , v z ← split (y; 3) {Separating the Three Components of y} 
+
+> 12:
+
+hx ← SiLU (φ1(h))  
+
+> 13:
+
+mx ← BMM1 (hx) 
+
+> 14:
+
+log q ← log_prob (mx, v x) {Computing Log-Densities using the Built BMM Model}  
+
+> 15:
+
+hy ← SiLU (concat (hx, v x)W1) {Integrating the Context and the Previous Component into Features}  
+
+> 16:
+
+my ← BMM1 (hy ) 
+
+> 17:
+
+log q ← log q + log_prob (my , v y ) 
+
+> 18:
+
+hz ← SiLU (concat (hy , v y )W2) 
+
+> 19:
+
+mz ← BMM1 (hz ) 
+
+> 20:
+
+log q ← log q + log_prob (mz , v z )  
+
+> 21: return
+
+log q + 3( L log r − log a) {Change-of-Variables Formula}  
+
+> 22: end function
+
+## E Training and Evaluation Details 
+
+E.1 Training Details 
+
+Two-Stage Training Scheme In practice, we employ a two-stage training strategy to improve performance: 1. Stage I. We first train the model using only the negative log-likelihood objective LNLL , with λ1 = 1 and 
+
+λ2 = 0 . The learning rate is set to 1e-3. 2. Stage II. After convergence of the first stage, we continue training by incorporating the energy-matching objective Lenergy , thereby exploiting the force-field labels to rescale and refine the energy landscape. In this stage, we set λ1 = 1 and λ2 = 0 .01 , with a learning rate of 2e-4. Specifically, we find that jointly optimizing both objectives from scratch leads to a substantial degradation in the convergence of the log-likelihood. This is likely because the model allocates excessive attention to adjusting the relative scale of the predicted energies before it has established a reliable likelihood model. As a result, the optimization becomes unstable and struggles to capture the underlying data distribution effectively, which motivates our adoption of the two-stage training scheme. Ablation studies on the proposed two-stage training strategy are provided in section 5.4, highlighting the critical role of the energy-alignment term in steering the learned distribution toward the true Boltzmann distribution. 
+
+Optimizer and Scheduler We adopt the AdamW optimizer for model training, with momentum parameters 
+
+β1 = 0 .9 and β2 = 0 .95 , and a weight decay of 1e-2 [ 40 ]. Training is performed using BF16 precision to improve computational efficiency while preserving numerical stability. We employ a learning-rate warm-up schedule consisting of 4,000 warm-up steps. Following the warm-up phase, the learning rate is controlled by a cosine-annealing scheduler with a cycle length of 100 epochs and a minimum learning rate of 1e-6 [ 39 ]. The scheduler is updated once per epoch. 
+
+Training Algorithm In summary, we present the training algorithm of CARD in algorithm 3. 24 Algorithm 3 Training Algorithm of CARD 
+
+Require: Training systems S = {S1, S 2, · · · } , embedding Hι, encoder Eϕ, decoder Dξ , mapping to log-densities 
+
+Fψ , batch size B, number of reference structures R 
+
+> 1:
+
+Initialize all trainable parameters θ = {ι, ϕ, ξ, ψ } 
+
+> 2:
+
+while θ have not converged do  
+
+> 3:
+
+Sample S = {U, p, z, C, u } ∼ S  
+
+> 4:
+
+Sample x = {x(b)}Bb=1 ∼ p {Sampling Structures for a Mini-Batch}  
+
+> 5:
+
+o ← generate_order (z, u, C) {Determining the Atom Ordering}  
+
+> 6:
+
+z, u, x ← reorder (z, u, x ; o) {Reordering Atoms}  
+
+> 7:
+
+u ← pca_alignment (u), x ← pca_alignment (x) {Aligning Structures to a Unique Pose}  
+
+> 8:
+
+{s(b)} ← { to_seq (x(b))}Bb=1 {Converting Structures to Sequences According to equation (14)}  
+
+> 9:
+
+z′, u ′, x ′ ← input_expansion (z, u, x ) {Expanding Raw Inputs to Match the Sequence}  
+
+> 10:
+
+h ← H ι(z′) 
+
+> 11:
+
+{h(i) 
+
+> e
+
+}Ri=1 ← E ϕ(h, u ′, u ) 
+
+> 12:
+
+he ← 1
+
+> R
+
+PRi=1 h(i) 
+
+> e
+
+{Mean Pooling over References}  
+
+> 13:
+
+{h(b) 
+
+> d
+
+}Bb=1 ← D ξ (he, x ′, u ) 
+
+> 14:
+
+{log q(b) 
+
+> θ
+
+}Bb=1 ← { log_prob (Fψ (h(b) 
+
+> d
+
+), s (b))}Bb=1 {Log-Density Computation}  
+
+> 15:
+
+LNLL ← − 1
+
+> BN
+
+PBb=1 
+
+PNi=1 log q(b) 
+
+> θ
+
+[i] 
+
+> 16:
+
+{U (b) 
+
+> θ
+
+}Bb=1 ← {− PNi=1 log q(b) 
+
+> θ
+
+[i]}Bb=1  
+
+> 17:
+
+{ ˜U (b) 
+
+> θ
+
+}Bb=1 ← { U (b) 
+
+> θ
+
+− 1
+
+> B
+
+PBi=1 U (i) 
+
+> θ
+
+}Bb=1 {Mean Centering within the Mini-Batch}  
+
+> 18:
+
+{ ˜U (b)}Bb=1 ← { U (x(b)) − 1
+
+> B
+
+PBi=1 U (x(i))}Bb=1  
+
+> 19:
+
+Lenergy ← 1
+
+> B
+
+PBb=1 ˜U (b) 
+
+> θ
+
+− ˜U (b) 
+
+> 20:
+
+L ← λ1LNLL + λ2Lenergy  
+
+> 21:
+
+θ ← optimizer( L; θ) 
+
+> 22:
+
+end while  
+
+> 23:
+
+return θ
+
+25 Algorithm 4 Inference Algorithm of CARD  
+
+> Require:
+
+embedding Hι, encoder Eϕ, decoder Dξ , mapping to log-densities Fψ , radix r, depth L, number of atoms N , atomic numbers z, covalent bond indices C, reference structures u = {u(i)}Ri=1  
+
+> 1:
+
+Initialize x′ ← 0  
+
+> N(L+1) ×3
+> 2:
+
+o ← generate_order (z, u, C) {Determining the Atom Ordering}  
+
+> 3:
+
+z, u ← reorder (z, u ; o) {Reordering Atoms}  
+
+> 4:
+
+u ← pca_alignment (u) {Aligning Structures to a Unique Pose}  
+
+> 5:
+
+z′, u ′ ← input_expansion (z, u ) {Expanding Raw Inputs to Match the Sequence}  
+
+> 6:
+
+h ← H ι(z′) 
+
+> 7:
+
+{h(i) 
+
+> e
+
+}Ri=1 ← E ϕ(h, u ′, u ) 
+
+> 8:
+
+he ← 1
+
+> R
+
+PRi=1 h(i) 
+
+> e
+
+{Mean Pooling over References}   
+
+> 9: for
+
+i = 1 to N L do  
+
+> 10:
+
+hd ← D ξ (he, x ′, u ) 
+
+> 11:
+
+qθ ← softmax (Fψ (hd)) {Predicting Probabilities for the r3 Classes}  
+
+> 12:
+
+Sample k ∼ Categorical( qθ [i])  
+
+> 13:
+
+k′ ← kx ky kz
+
+⊤ {Recovering 3D Indices from k = ( kxky kz )r }  
+
+> 14: if
+
+i ≤ N then  
+
+> 15:
+
+x′[i] ← a/r · k′ − a/ 2  
+
+> 16: else
+> 17:
+
+x′[i] ← x′[i − N ] + a · r−⌈ i/N ⌉ · k′    
+
+> 18: end if
+> 19: end for
+> 20: for
+
+i = N L + 1 to N (L + 1) do  
+
+> 21:
+
+hd ← D ξ (he, x ′, u ) 
+
+> 22:
+
+Sample ∆x ∼ BMM (Fψ (hd)[ i]) {Sampling Coordinates from BMM as Residuals}  
+
+> 23:
+
+x′[i] ← x′[i − N ] + a/r L · ∆x  
+
+> 24: end for
+> 25:
+
+x ← x′[N L + 1 : , . . . ] 
+
+> 26:
+
+x ← recover (x; o) {Recovering the Original Atom Order}   
+
+> 27: return
+
+x
+
+E.2 Hyperparameters 
+
+The hyperparameters of CARD used in our experiments are summarized in table 4, where the best-performing values among multiple candidates are highlighted in bold.   
+
+> Table 4 Hyperparameters of CARD used in our experiments. Among parameters with multiple candidate values, those achieving the highest evaluation performance are highlighted in bold .
+
+Radix r Depth L Scaler a Dimension H # Heads Nd # Layers T # Mixtures K # References R
+
+[3 , 4, 5] [2 , 3, 4] 30 Å 512 8 8 16 10 
+
+E.3 Multistate Equilibrium Free Energy Simulation Protocols 
+
+Reference free energy values for the solvation (section 5.1) and endstate correction (section 5.2) tasks were obtained using Multistate Equilibrium Free Energy Simulations (MFES), an alchemical FEP method that provides statistically optimal estimates of the free energy changes along the defined alchemical pathways. Our implementation of MFES follows the protocol provided by Tkaczyk et al. [58] . Specifically, we define 11 intermediate states (including the two endstates) by linearly interpolating the potential energy between the initial and the target systems. For each intermediate state, equilibrium trajectories were generated through 5 ns MD simulations, with conformations recorded every 1 ps. To prevent underestimation of the variance, the trajectories were further subsampled at 5 ps intervals to reduce temporal correlations. The free energy 26 differences between the two endstates were then computed from these decorrelated conformations using the MBAR estimator [54]. 
+
+## F Additional Experimental Results 
+
+F.1 Ablation Study 
+
+To systematically evaluate the effectiveness and robustness of our proposed method, we conducted additional ablation studies on the vacuum-to-toluene free energy task. 
+
+Atom Ordering We first investigated the impact of different atom ordering strategies on model performance by comparing our proposed topology-guided and distance-based methods against a random ordering baseline. As shown in table 5, both the topology-guided and distance-based strategies significantly outperform the random baseline, with the topology-guided approach yielding slightly better results. This confirms that a structurally meaningful atom ordering is vital for the autoregressive model to effectively leverage contextual information. 
+
+Model Architecture We subsequently evaluated the necessity of CARD’s key components and its coarse-to-fine architecture. As indicated in table 5, the full model surpasses an ablated version lacking the geometry attention bias, confirming that incorporating spatial priors from reference structures enhances performance. Furthermore, we evaluated CARD against a vanilla continuous autoregressive baseline, which is constructed by disabling radix decomposition ( L = 0 ) and replacing the BMM with a Gaussian Mixture Model (GMM) to handle unbounded coordinates. The substantial margin by which CARD beats this baseline clearly demonstrates the superiority of our coarse-to-fine modeling framework.   
+
+> Table 5 Ablation study on the effect of model architecture on performance, evaluated on the solvation free energy task from vacuum to toluene. All settings are evaluated with Stage I training only. The best result for each metric is shown bold .
+
+Model Architecture MAE RMSE R2 Pct ( <1) full (topology-guided atom ordering) 0.81 1.34 0.91 77.1 
+
+w/ distance-based atom ordering 1.12 1.67 0.86 67.1 w/ random atom ordering 1.73 2.50 0.72 38.0 w/o decomposition (vanilla autoregressive) 1.29 1.64 0.87 38.6 w/o geometry attention bias 1.17 1.76 0.86 64.3 
+
+Reference Structures Next, we assessed the robustness of CARD with respect to the quantity and quality of the reference structures. To evaluate quantity, we selected subsets of {1, 2, 4, 8} reference structures from the full 10 ns MD trajectories. To evaluate quality, we sampled 10 reference structures exclusively from the initial 1 ns and 100 ps segments of the trajectories. All evaluations were performed at test time using the full model trained through both Stage I and Stage II. As detailed in table 6, performance remains remarkably stable provided that more than one reference structure is used, demonstrating CARD’s strong robustness to variations in both reference quantity and quality. 
+
+Training Set Size Finally, to evaluate the model’s sensitivity to training data volume, we trained the full two-stage CARD model on a randomly reduced subset of 10,000 molecules (down from the original 40,303). As shown in table 7, limiting the training data causes only a marginal performance drop. Crucially, the MAE stays well below the 1 kcal/mol threshold for chemical accuracy, demonstrating CARD’s strong data efficiency and robustness. 27 Table 6 Test-time ablation study on the number and quality of reference structures, evaluated on the vacuum-to-toluene solvation free energy task with the model trained on both Stage I and Stage II. The column Reference Source indicates the segment of the trajectory from which the reference structures were sampled. Best results are shown in bold .
+
+# References R Reference Source MAE RMSE R2 Pct ( <1) 10 10 ns MD 0.71 1.27 0.92 82.9 110 ns MD 1.02 2.19 0.76 71.4 2 0.78 1.39 0.90 81.4 4 0.70 1.31 0.91 85.7 
+
+8 0.78 1.37 0.91 80.0 10 1 ns MD 0.69 1.25 0.92 80.0 10 100 ps MD 0.79 1.53 0.89 80.0   
+
+> Table 7 Ablation study on the training set size, evaluated on the vacuum-to-toluene solvation free energy task with the model trained on both Stage I and Stage II. Best results are shown in bold .
+
+# Training Molecules MAE RMSE R2 Pct ( <1) 40,303 0.71 1.27 0.92 82.9 
+
+10,000 0.84 1.44 0.90 76.5 
+
+F.2 Scalability to Peptides 
+
+To demonstrate the scalability of CARD to larger systems, we evaluated its performance on peptides by comparing it against two strong Boltzmann generators: Prose [ 57 ] and TarFlow [ 68 ] (with the latter adapted as a Boltzmann generator in Tan et al. [57] ). Both baselines are known to generalize across varying peptide sequence lengths. For a fair comparison, we retrained CARD on peptides up to 4 amino acids (AA) from the many-peptides-md dataset [ 57 ], strictly following the data splits from Prose. Specifically, since the dataset does not provide ground-truth energy labels, the model was trained exclusively via Stage I without the energy-alignment term. Evaluations were carried out on the 2AA and 4AA test sets, each comprising 30 peptide systems. Following the protocol in Prose, we utilized the Wasserstein-2 distance between the generated and reference MD ensembles for evaluation. This was computed on both the torus and time-lagged independent components, denoted as Torus-W2 and TICA-W2, respectively. As shown in table 8, even when limited to Stage I training, CARD achieves performance comparable to these state-of-the-art Boltzmann generators on both the 2AA and 4AA test sets. Furthermore, it experiences noticeably less performance degradation than the baselines when transitioning from 2AA to 4AA. This demonstrates not only its robust scalability to larger systems of up to 100 atoms, but also its superior capacity for sequence length generalization.     
+
+> Table 8 Unweighted proposal performance on the 2AA and 4AA test sets of the many-peptides-md dataset. Each method generates 10,000 proposals for evaluation without resampling. W2denotes the Wasserstein-2 distance. The best result for each metric is bolded .
+
+Model 2AA (30 systems) 4AA (30 systems) 
+
+Torus-W2 (↓) Torus-W2 (↓) TICA-W2 (↓)TarFlow 0.178 0.882 0.384 
+
+Prose 0.261 0.916 0.546 CARD (Stage I) 0.296 0.832 0.384 
+
+Furthermore, we compared the computational efficiency of CARD against Prose in table 9. While CARD achieves comparable performance with significantly fewer parameters, its training throughput and inference 28 memory footprint remain on the same scale as Prose. This suggests that although CARD is highly scalable and parameter-efficient, its current implementation and underlying architecture still have room for system-level engineering optimization. 
+
+Table 9 Model size and computational cost comparison between Prose and CARD on the many-peptides-md dataset. CARD is trained on sequences up to length 4, while Prose is trained on sequences up to length 8. Peak GPU memory is measured during inference on the same device and reported in mean ±std, using a batch size of 512 per test peptide. 
+
+Model # Parameters (M) Training Iterations Peak GPU Memory Allocated (GB) 2AA (30 systems) 4AA (30 systems) Prose 285 260 H100 hours 3.33 ±0.19 4.21 ±0.27 CARD 44.5 640 A100 hours 2.30 ±0.53 5.35 ±1.18 
+
+F.3 Overlap Diagnostic 
+
+We conducted overlap diagnostics on the vacuum-to-toluene solvation free energy task to determine the reliability of the predicted values. For each test system, we computed the bidirectional reweighting effective sample sizes (ESS) between the CARD proposal (state 0) and the reference MD ensembles (state 1) in both vacuum and toluene environments. For both the 0 → 1 and 1 → 0 directions, we recorded the minimum ESS across the vacuum and toluene phases to serve as a conservative lower bound for the phase-space overlap. As shown in figure 8, we plotted the absolute error of the predicted relative free energies (with respect to MFES) against the minimum, maximum, and harmonic mean of ESS 0→1 and ESS 1→0. Notably, both the maximum and the harmonic mean value of the bidirectional ESS exhibit strong Spearman correlations, demonstrating their utility as practical indicators of potential failure modes. 1.0 1.5 2.0 2.5 3.0 3.5            
+
+> min(ESS)
+> 1
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> F (kcal/mol)
+> SPCC=-0.256 246810 12
+> max(ESS)
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> F (kcal/mol)
+> SPCC=-0.421 1.0 1.5 2.0 2.5 3.0 3.5 4.0
+> hmean(ESS)
+> 1
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> F (kcal/mol)
+> SPCC=-0.412
+
+Figure 8 Correlation between free energy prediction error and the overlap of CARD proposal (state 0) and MD ensembles (state 1) in the vacuum-to-toluene solvation free energy task. Overlap is quantified using Effective Sample Size (ESS), computed in both directions (0 →1 and 1 →0). For each molecule, the minimum (left), maximum (middle), and harmonic mean (right) of its two directional ESS values are used as the x-axis to plot the panels. 
+
+F.4 PCA Alignment Instability Analysis 
+
+We assessed the potential instability of PCA alignment using the 3D conformers provided in the SDF files. For each molecule, we performed PCA on the centered atomic coordinates and checked whether any pair of principal axes was nearly degenerate (i.e., having a relative difference in eigenvalues within a fixed tolerance of 0.02). Molecules meeting this near-degeneracy criterion were flagged as potential alignment failures, and the overall failure rate was calculated as the fraction of flagged cases across the dataset. The resulting failure rate was remarkably low, accounting for only 0.057% (23/40,303) of the entire ZINC-derived dataset, and dropping to exactly 0% across all test sets. This confirms that PCA degeneracy is highly uncommon among these small molecules and does not compromise the validity of our results. 29 G Computational Infrastructure 
+
+As described in section E.1, we employ a two-stage training strategy for our model. Stage I training was performed on 32 NVIDIA A100 SXM 80GB GPUs with a batch size of 200 and a maximum of 100 epochs, with a single model converging in approximately 4 days (around 40 epochs). Stage II training was conducted on 16 NVIDIA A100 SXM 80GB GPUs using the same batch size and epoch limit, with each model requiring roughly 10 days to complete. All inference tasks were carried out on NVIDIA Tesla V100 SXM2 32GB GPUs. 30
