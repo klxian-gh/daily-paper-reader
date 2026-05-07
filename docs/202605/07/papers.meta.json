@@ -1,0 +1,93 @@
+{
+  "label": "2026-05-07",
+  "date": "2026-05-07",
+  "generated_at": "2026-05-07T20:24:59",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202605/07/2605.00427v1-kinetically-arrested-twin-domain-state-in-formamidinium-lead-iodide",
+      "section": "quick",
+      "title_en": "Kinetically Arrested Twin-Domain State in Formamidinium Lead Iodide",
+      "authors": "Xia Liang, Milos Dubajic, Zezhu Zeng, Yang Lu, Johan Klarbring, Samuel D. Stranks, Aron Walsh",
+      "date": "2026-05-01",
+      "pdf": "https://arxiv.org/pdf/2605.00427v1",
+      "score": "6.0",
+      "evidence": "具有DFT精度的分子动力学模拟",
+      "tldr": "本研究利用机器学习力场的大规模分子动力学模拟，揭示了甲胺铅碘（FAPbI3）钙钛矿在介观尺度上的结构动力学。研究发现，在100K以下，FAPbI3会形成一种动力学受阻的亚稳态孪晶域网络（γ'态），而非单一的体相。这种状态由FA阳离子重取向变慢与晶格倾斜能垒的相互作用决定，解释了实验中观察到的弥散散射和Urbach能异常增加，强调了热历史对钙钛矿结构与光电性能的关键决定作用。",
+      "tags": "query:qmmm",
+      "abstract_en": "Hybrid lead halide perovskites exhibit a delicate interplay between average crystallographic symmetry, local structural disorder and A-site orientational dynamics, giving rise to unusual vibrational and electronic behaviour. Here, we combine large-scale molecular dynamics with a density-functional-theory-accurate machine learning force field to resolve the structural dynamics of perovskites across mesoscopic length scales. In formamidinium lead iodide FAPbI$_{3}$, we identify a high-temperature $α$ phase with dynamic local order and correlated tilt nanodomains, an ordered $γ$ phase with long-range $a^{+}a^{+}a^{+}$ tilt coherence, and, below $\\sim$100~K, a history-dependent $γ'$ state consisting of locally $γ$-like nanoscale regions separated by sharp twin-like boundaries. This low-temperature disordered state is not a distinct bulk polymorph, but a kinetically arrested metastable twin-domain network selected by the interplay between shallow tilt energetics and slowing FA reorientation. This picture provides a consistent explanation for the low-temperature diffuse scattering features observed experimentally, and accounts for the broadened low-energy vibrational response found in the simulations. Furthermore, this unique structural landscape imprints a spatially varying electronic disorder that directly impacts macroscopic optoelectronic properties, evidenced by an anomalous increase in the Urbach energy at low temperatures. Our results reconcile the debated low-temperature behaviour of FAPbI$_{3}$ in terms of competition between ordered and arrested structural states, and show more broadly that in hybrid perovskites the organic cation can actively select the macroscopic structural and electronic response through its reorientation kinetics, placing thermal history on equal footing with composition as a determinant of structural and optoelectronic properties.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.02685v1-a-unified-microscopic-picture-of-cation-and-anion-migration-in-mapbi3",
+      "section": "quick",
+      "title_en": "A Unified microscopic picture of cation and anion migration in MAPbI$_3$",
+      "authors": "Viren Tyagi, Geert Brocks, Shuxia Tao",
+      "date": "2026-05-04",
+      "pdf": "https://arxiv.org/pdf/2605.02685v1",
+      "score": "6.0",
+      "evidence": "基于DFT训练势能的分子动力学",
+      "tldr": "本研究通过基于密度泛函理论训练的神经网络势函数进行分子动力学模拟，系统研究了MAPbI3中碘和甲胺（MA）缺陷的迁移机制。研究发现，大多数缺陷在室温下具有极高的迁移率，能垒仅为0.15-0.20 eV。特别地，MA间隙离子通过多离子协同机制实现快速迁移，而MA空位则表现为不可移动。这一发现修正了关于杂化钙钛矿离子传输的传统认知，强调了集体分子运动在离子迁移中的关键作用。",
+      "tags": "query:qmmm",
+      "abstract_en": "Passivating defects and restricting defect mobilities in halide perovskites to increase device lifetimes has become a main field of research. Modeling structure and mobility of point defects is an essential contribution to this endeavor. We employ molecular dynamics, based on neural network potentials trained on density functional theory data, to model ion migration in MAPbI$_3$ triggered by I and MA vacancies or interstitials. Most of these species diffuse rapidly at room temperature, with migration barriers between 0.15 and 0.20 eV. MA interstitials are highly mobile despite their molecular nature, owing to a concerted migration mechanism involving multiple MA ions. No evidence of MA vacancy migration is obtained. Whereas diffusion of I-related defects appreciably depends on their charge state, diffusion of MA defects does not. These results revise the conventional picture of ion transport in hybrid perovskites and highlight the role of collective molecular motion in enabling fast ionic migration.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.03394v1-from-enhanced-sampling-to-human-readable-representations-of-protein-dynamics",
+      "section": "quick",
+      "title_en": "From Enhanced Sampling to Human-Readable Representations of Protein Dynamics",
+      "authors": "Souvik Mondal, Michael A. Sauer, Matthias Heyden",
+      "date": "2026-05-05",
+      "pdf": "https://arxiv.org/pdf/2605.03394v1",
+      "score": "6.0",
+      "evidence": "蛋白质动力学的增强采样",
+      "tldr": "蛋白质构象动力学研究受限于集体变量（CV）的物理可解释性。本研究提出一种全自动框架，将增强采样轨迹转化为人类可读的表示。通过结合频率选择非谐波模式分析与加权动态互相关矩阵，该方法能自动识别关键残基对和结构域，将复杂的CV转化为简单的几何描述符，在保持动力学特征的同时显著提升了结果的可解释性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Understanding protein conformational dynamics is essential for elucidating biological function but remains challenging due to the wide range of timescales and the complexity of collective motions. Enhanced sampling methods overcome timescale limitations of conventional molecular dynamics, yet their effectiveness depends on the choice of collective variables (CVs), which are often difficult to define and may lack physical interpretability. In particular, collective variables derived from machine learning or collective vibrational modes can efficiently capture slow dynamics but are not easily mapped onto intuitive structural descriptors. Here, we present a fully automated framework that transforms enhanced sampling trajectories into human-readable representations of protein dynamics. Our approach combines enhanced sampling along CVs derived from frequency-selective anharmonic mode analysis with a post hoc analysis of biased trajectories using weighted dynamic cross-correlation matrices. From these, we identify residue pairs and domains exhibiting correlated and anti-correlated motions, yielding simple domain-domain distances that serve as physically interpretable CVs. We apply this method to five proteins, including KRAS and HIV-1 protease, and show that it consistently identifies biologically relevant domains and motions without prior system-specific knowledge. Projection onto these distances produces free energy surfaces that reproduce known conformational states with low statistical uncertainty while maximizing independent dynamical information. This workflow enables systematic recasting of complex CVs into simple geometric descriptors without loss of essential dynamics. Its generality and automation make it broadly applicable for interpreting enhanced sampling simulations and generating interpretable conformational ensembles for integration with emerging machine learning approaches.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.04102v1-meta-legnet-a-transferable-and-interpretable-framework-for-surface-adsorption-prediction-via-self-defined-adsorption-environment-learning",
+      "section": "quick",
+      "title_en": "Meta-LegNet: A Transferable and Interpretable Framework for Surface Adsorption Prediction via Self-Defined Adsorption-Environment Learning",
+      "authors": "Yifan Li, Arravind Subramanian, Xiaoqing Liu, Qiujie Lyu, Sergey Kozlov, Lei Shen",
+      "date": "2026-05-03",
+      "pdf": "https://arxiv.org/pdf/2605.04102v1",
+      "score": "6.0",
+      "evidence": "计算催化和反应路径",
+      "tldr": "针对催化计算中吸附位点识别成本高、难以扩展至复杂体系的挑战，本文提出Meta-LegNet框架。该框架结合SE(3)等变消息传递、体素多尺度聚合与元学习，学习跨体系的可迁移吸附环境表示。通过局部-全局分解生成可解释的原子归因图，并利用模板匹配策略在无需穷举的情况下预测新表面的吸附位点，显著加速了催化剂筛选过程。",
+      "tags": "query:qmmm",
+      "abstract_en": "A central challenge in computational catalysis is the identification of low-energy and chemically plausible adsorption configurations, as these directly affect adsorption energies, reaction pathways, and catalytic performance. Existing approaches generally rely on enumerating candidate adsorption sites followed by iterative refinement through density functional theory calculations or machine-learning-based relaxations. However, such workflows remain computationally expensive and are difficult to scale to complex surfaces or multi-adsorbate systems. Here, we introduce Meta-LegNet, a graph learning framework that combines SE(3)-equivariant atom-level message passing with voxel-based multiscale aggregation and cross-domain meta-learning to learn transferable representations of local adsorption environments across diverse catalyst--adsorbate systems. Rather than following a conventional regression-only paradigm, Meta-LegNet encodes local chemical environments using invariant radial features and equivariant directional information, and further incorporates broader structural context through coordinate-frame voxel pooling, assignment-based upsampling, and gated feature fusion. The resulting local-global decomposition produces atom-resolved attribution maps, which are processed to identify adsorption-relevant local environments in an interpretable manner. Based on the learned representations, we further construct an adsorption-environment database and develop a template-matching strategy to propose likely adsorption sites on previously unexplored surfaces without exhaustive site enumeration. Overall, our results suggest that learning transferable adsorption environments provides an accurate, interpretable, and practical route for accelerating catalyst screening.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.04134v1-model-synthesis-and-identifiability-analysis-of-stiff-chemical-reaction-systems-with-invaert-networks",
+      "section": "quick",
+      "title_en": "Model synthesis and identifiability analysis of stiff chemical reaction systems with inVAErt networks",
+      "authors": "Sreejata Dey, Guoxiang Grayson Tong, Jonathan F. MacArt, Daniele E. Schiavazzi",
+      "date": "2026-05-05",
+      "pdf": "https://arxiv.org/pdf/2605.04134v1",
+      "score": "6.0",
+      "evidence": "学习化学动力学和反应速率的数据驱动副本",
+      "tldr": "本研究针对化学动力学中具有挑战性的刚性常微分方程组，提出了一种基于inVAErt网络的数据驱动框架。该方法首先利用条件残差网络或LSTM构建高效的仿真器，随后通过inVAErt网络解决从物种浓度反推反应速率、积分时间和初始条件的病态反向问题。实验涵盖了从简单到复杂的多种化学系统，不仅实现了高精度的状态预测，还通过流形分析验证了参数的可辨识性，为复杂化学反应系统的建模与分析提供了新工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "We consider the problem of learning data-driven replicas for stiff systems of ordinary differential equations arising in chemical kinetics that can be evaluated with high computational efficiency. We first focus on training emulators for families of reaction equations under varying reaction rates, using conditional residual networks or long-short term memory architectures. We then apply a recently proposed data-driven framework known as ``inVAErt networks'' to address the ill-posed inverse problem of inferring reaction rates, integration time, and possibly initial conditions from a target set of species concentrations - a problem that has received relatively little attention in the literature. The proposed approach is demonstrated on chemical systems with reversible and irreversible kinetics, spanning 2 to 20 differential equations, 3 to 20 chemical species, and 3 to 25 reaction rate parameters. Relative root mean squared errors produced by the proposed emulators range from $10^{-5}$ for lower-dimensional systems to $10^{-4}$ and $10^{-3}$ for an air pollution model and a hydrogen-air reaction system, respectively. Manifolds of non-identifiable reaction rates recovered by the proposed approach can be analytically verified for simple systems and are consistent with local identifiability analysis in higher dimensions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.04483v1-cdfci-high-performance-parallel-software-for-many-body-large-scale-eigenvalue-problems",
+      "section": "quick",
+      "title_en": "CDFCI: High-Performance Parallel Software for Many-Body Large-Scale Eigenvalue Problems",
+      "authors": "Yuejia Zhang, Zhe Wang, Jianfeng Lu, Yingzhou Li",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.04483v1",
+      "score": "6.0",
+      "evidence": "用于从头算电子结构和量子化学问题的并行软件",
+      "tldr": "CDFCI 是一款针对大规模非相对论费米子哈密顿量特征值问题的高性能并行软件。它结合了基于坐标下降的选定组态相互作用（SCI）算法与高效的共享内存并行策略，适用于从头算电子结构和凝聚态物理模型。该软件在保持高精度的同时，在现代多核架构上展现出优于或等同于 CIPSI、SHCI 和 DMRG 等主流方法的性能，并提供 Python 接口以便集成。",
+      "tags": "query:qmmm",
+      "abstract_en": "CDFCI is a shared-memory parallel numerical program for computing low-lying eigenpairs of large-scale, non-relativistic fermionic Hamiltonians. The software is designed to handle a broad class of many-body quantum models, including both ab initio electronic structure Hamiltonians and lattice-based Hamiltonians arising in condensed matter physics. CDFCI combines an efficient coordinate-descent-based selected configuration interaction algorithm with dedicated parallelization strategies, achieving high performance on modern multi-core architectures. Benchmark results on representative quantum chemistry and condensed matter test cases demonstrate that CDFCI attains state-of-the-art accuracy with competitive performance compared to established selected configuration interaction (such as CIPSI or SHCI) and DMRG implementations. The software is open-source, extensively documented, and provides a Python interface for seamless integration with PySCF and other many-body simulation workflows.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

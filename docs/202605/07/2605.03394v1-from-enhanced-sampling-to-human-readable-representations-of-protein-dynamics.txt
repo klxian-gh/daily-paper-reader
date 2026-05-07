@@ -1,0 +1,235 @@
+Title: From Enhanced Sampling to Human-Readable Representations of Protein Dynamics
+
+URL Source: https://arxiv.org/pdf/2605.03394v1
+
+Published Time: Wed, 06 May 2026 00:41:58 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# From Enhanced Sampling to Human-Readable Representations of Protein Dynamics 
+
+Souvik Mondal, 1 Michael A. Sauer, 1 and Matthias Heyden 1, ∗
+
+> 1
+
+School of Molecular Sciences, Arizona State University, Tempe, AZ 85287, U.S.A. 
+
+(Dated: May 6, 2026) Understanding protein conformational dynamics is essential for elucidating biological function but remains challenging due to the wide range of timescales and the complexity of collective motions. Enhanced sampling methods overcome timescale limitations of conventional molecular dynamics, yet their effectiveness depends on the choice of collective variables (CVs), which are often difficult to define and may lack physical interpretability. In particular, collective variables derived from machine learning or collective vibrational modes can efficiently capture slow dynamics but are not easily mapped onto intuitive structural descriptors. Here, we present a fully automated framework that transforms enhanced sampling trajectories into human-readable representations of protein dy-namics. Our approach combines enhanced sampling along CVs derived from frequency-selective anharmonic mode analysis with a post hoc analysis of biased trajectories using weighted dynamic cross-correlation matrices. From these, we identify residue pairs and domains exhibiting correlated and anti-correlated motions, yielding simple domain-domain distances that serve as physically in-terpretable CVs. We apply this method to five proteins, including KRAS and HIV-1 protease, and show that it consistently identifies biologically relevant domains and motions without prior system-specific knowledge. Projection onto these distances produces free energy surfaces that reproduce known conformational states with low statistical uncertainty while maximizing independent dynam-ical information. This workflow enables systematic recasting of complex CVs into simple geometric descriptors without loss of essential dynamics. Its generality and automation make it broadly appli-cable for interpreting enhanced sampling simulations and generating interpretable conformational ensembles for integration with emerging machine learning approaches. 
+
+I. INTRODUCTION 
+
+Protein dynamics is essential for many biological func-tions and involves a wide range of timescales – from fast bond vibrations in femtoseconds to slow conformational changes over milliseconds[1–3]. Identifying key residues or domains that drive these dynamics is vital to under-standing functional mechanisms and offers significant po-tential for the rational design of enzymes with custom activity or the development of highly specific allosteric drugs. Molecular dynamics (MD) simulations are a pow-erful approach to capture atomistic details of protein motion[4]. Although advances in computational tech-niques and hardware have extended accessible simula-tion timescales, conventional MD simulations still face significant challenges in exploring rare or slow confor-mational transitions, especially those occurring beyond the microsecond regime[5–8]. Novel machine learning models can help to overcome such limitations but rely on the availability of sufficient training data.[9] To over-come the timescale limitations of unbiased MD, many enhanced sampling techniques have been developed over the years[10–18]. Most of these techniques rely on collec-tive variables (CVs) to efficiently drive transitions of in-terest. The selection of these CVs usually relies on phys-ical intuition or experimental observations[19]. However, when the relevant conformational changes are unknown or complex, defining suitable CVs can become a major  
+
+> ∗mheyden1@asu.edu
+
+challenge. As a result, the performance of CV-based methods strongly depends on the quality of the chosen variables – poor choices can lead to inefficient sampling and incomplete exploration of the energy landscape[19]. Various methods are used to identify suitable collective variables (CVs) based on structural or dynamic data from unbiased simulations. Structure-based approaches fo-cus on low-frequency vibrations that are often associated with large-amplitude motions of biomolecules. These methods typically apply harmonic normal mode analysis to a model of the system’s potential energy, either coarse-grained (e.g., elastic network models) or atomistic[20, 21]. However, for the lowest frequencies of a biomolecu-lar system, the validity of harmonic approximations is intrinsically limited.[22–24] Alternatively, dynamics-based approaches such as Principal Component Analysis (PCA)[20, 25, 26] and Time-lagged Independent Com-ponent Analysis (TICA)[27, 28] extract collective vari-ables (CVs) from simulation data, potentially avoiding the limitations of harmonic approximations. PCA iden-tifies CVs that correspond to the largest variance, rep-resenting the most significant motions observed in the simulation[20, 25, 26], while TICA focuses on extract-ing CVs associated with the slowest dynamics[27, 28]. Despite their advantages, these methods often encounter challenges related to sampling limitations in the available simulation trajectories and the derived CVs may not be consistently reproducible in independent simulations. Machine learning (ML) methods provide novel pow-erful tools to identify collective variables (CVs) from simulation data[29–32]. They excel at extracting low-dimensional representations of slow dynamics from ex-
+
+> arXiv:2605.03394v1 [cond-mat.stat-mech] 5 May 2026
+
+2tended simulations. A key advantage of ML-derived CVs is their ability to capture nonlinear combina-tions of geometric variables, often outperforming manual approaches.[33] Further, deep learning can be applied di-rectly to simulation trajectories without the need for cus-tom feature engineering.[34] However, many ML methods still rely on extensive simulation data for training. We recently developed a high-throughput method for enhanced conformational sampling that requires only short simulations on the nanosecond timescale to reli-ably identify effective CVs.[35–37] Our approach is based on a FREquency-SElective ANharmonic (FRESEAN) mode analysis of molecular vibrations that isolates low-frequency vibrations and collective degrees of freedom associated with conformational change.[24] We identify CVs suitable for conformational sampling through zero frequency fluctuations that describe diffusive behavior and solvent damping due to modulated protein-solvent interactions.[38] Metadynamics simulations based on our CVs generate free energy surfaces with small statistical errors that reproduce the known behavior for a diverse set of enzymes.[37]. For direct comparisons to data from the literature, we unbias metadynamics trajectories and project them into geometric variable spaces (distance, angles, etc.) used in previous literature. After unbias-ing and projecting our simulations, we obtain free energy surfaces with statistical errors on the order of kB T that demonstrate the effectiveness of our approach to robustly enhance conformational sampling.[37] However, without a known space of geometrical vari-ables, e.g. , to compare to experiments or prior simula-tions, interpreting free energy surfaces in a space de-scribed by complicated CVs can be challenging. This is equally true for non-linear CVs generated with ML meth-ods or CVs describing the concerted motions of many atoms such as low-frequency vibrations. In such cases, it is desirable to recast the free energy surface into a set of simpler ’human-readable’ variables that directly represent geometrical measures, e.g. , distances. Here, we propose a straightforward approach to automatically identify residue-residue or domain-domain distances re-lated to the conformational changes observed in biased trajectories generated in enhanced sampling simulations with an independent set of CVs. Our approach utilizes weighted averages over biased trajectories to compute a dynamic cross correlation matrix (DCCM)[39] from which we extract residues and domains that move col-lectively or against each other using a simple algorithm. Our application to a set of previously studied test systems shows that this approach, combined with enhanced sam-pling along CVs obtained from FRESEAN mode analysis, allows for a ’human-readable’ characterization of protein collective dynamics without the need of any prior system-specific knowledge.   
+
+> II. THEORY A. Dynamic Cross-Correlation Matrix from Biased Trajectories
+
+To identify correlated motions in our biased simula-tions, we select Cα atoms from each amino acid residue and remove translational and rotational motion from the trajectory by minimizing the root mean squared devia-tion (RMSD) relative to a reference structure. We then compute the average protein structure ⟨r⟩ of the unbi-ased ensemble as a weighted expectation value over the time steps ts of the biased simulation trajectory. 
+
+⟨r⟩ =
+
+P 
+
+> s
+
+w(ts) r(ts)
+
+P 
+
+> s
+
+w(ts) (1) The weights w(ts) correct for the bias potential applied at coordinates r(ts) (defined after projection into low-dimensional CV-space). 
+
+w(ts) = eVbias [r(ts)] (2) We then define the displacements from the average structure as ∆r t = rt −⟨ r⟩, which can be split into three-dimensional displacement vectors ∆r t,i for the Cα atom of each residue i. The dynamic cross-correlation matrix (DCCM) is then defined as: 
+
+Cij = ⟨∆ri · ∆rj ⟩⟨∆ri · ∆ri⟩ 12 · ⟨ ∆rj · ∆rj ⟩ 12
+
+, (3) where each average is again computed as a weighted ex-pectation value: 
+
+⟨∆ri · ∆rj ⟩ =
+
+P 
+
+> s
+
+w(ts) ∆ ri(ts) · ∆rj (ts)
+
+P 
+
+> s
+
+w(ts) (4) The resulting entries Cij in the DCCM range from −1
+
+to +1 with positive (negative) values that indicate cor-related (anti-correlated) motion of residue pairs. For the analysis of multiple independent metadynam-ics simulations, we constructed the DCCM from overall averages of ⟨r⟩ and ⟨∆ri · ∆rj ⟩ over all trajectories.  
+
+> B. Identifying Correlated and Anti-Correlated Domains
+
+To identify residue and domain pairs that best repre-sent the collective dynamics observed in our enhanced sampling simulations, we first calculated separate sums of positive and negative elements for each row i of the symmetric DCCM. 
+
+z+ 
+
+> i
+
+= X
+
+> j
+
+(Cij |Cij > 0) (5) 
+
+z− 
+
+> i
+
+= X
+
+> j
+
+(Cij |Cij < 0) (6) 3Rows with large sums of positive elements correspond to residues in collectively moving domains. Rows with large (negative) sums of negative elements correspond to residues that move against a collectively moving domain. We aim to identify residues and residue pairs that have both properties. Our first selected residue corresponds to the index i that maximizes z+ 
+
+> i
+
+− z− 
+
+> i
+
+and we label it 
+
+a1. Based on our selection, residue a1 belongs to a collec-tively moving domain that moves against another collec-tively moving domain. We then simply select the residue that is most anti-correlated to residue a1 by identifying the index a2 of the most negative element in row a1 of the DCCM. This selection yields a pair of residues that are each part of collectively moving domains that exhibit anti-correlated dynamics. The distance between these residues provides a suitable collective variable to charac-terize this collective motion with a simple variable. To further reduce the impact of local fluctuations, we can identify the other residues that are part of the collec-tively moving domains by analyzing rows a1 and a2 of the DCCM. Using a simple threshold value (we use +0 .5), we select the residues whose dynamics are most corre-lated with residues a1 and a2, respectively. The residues form the domains A1 and A2 and we use the distance between their centers of mass to describe their collective anti-correlated motion. Next, we aim to identify residues that exhibit dynam-ics that is maximally uncorrelated to the residue pair a1
+
+and a2 to generate a second independent variable. For this purpose, we remove the sign of the values in rows 
+
+a1 and a2 of the DCCM and add them. In the result-ing list, we identify the minimum value (least correla-tions with a1 and a2) and label the corresponding index 
+
+b1. As before, we identify the residue that is most anti-correlated to residue b1 by identifying the index b2 of the most negative element in row b1 of the DCCM. This selec-tion of b1 and b2 prioritizes the absence of correlations to residues a1 and a2. Alternative choices are possible that place a greater emphasis on residues b1 and b2 being part of a collectively moving domain. However, despite not prioritizing collective motion in the selection of residues 
+
+b1 and b2, we frequently observed that both are part of collectively moving domains using the same formalism described above (for domains A1 and A2) to define the domains B1 and B2.Thus, independent of the complexity of the CVs used to enhance sampling, we can now characterize the sampled conformational changes using simple domain-domain dis-tances (A1 − A2) and (B1 − B2). 
+
+> C. Free Energy Surfaces in Distinct Variable Spaces
+
+Recasting free energy surfaces from one set of vari-ables (the CVs used during enhanced sampling) into an-other (here: domain-domain distances) is straightfor-ward. The weights of each simulation time frame de-fined in Eq. 2 can be combined with the evaluations of the new set of CVs, e.g. , dA = distance ( A1 − A2) and 
+
+dB = distance ( B1 − B2) to construct a weighted his-togram in the corresponding space. After normalization, this results in the unbiased probability distribution as a function of the new variables: 
+
+p (dA, d B ) = 
+
+P 
+
+> s
+
+w(ts) δ (dA(ts) − dA) δ (dB (ts) − dB )
+
+P 
+
+> s
+
+w(ts) ,
+
+(7) where the Kronecker δ function is used to assign time frames to a specific bin of the histogram. Normalized histograms or probability distributions can be averaged over multiple simulation trajectories. The result can then be converted back into a free energy surface defined by the new set of CVs: 
+
+∆G (dA, d B ) = −kB T ln [ p (dA, d B )] (8)  
+
+> III. RESULTS AND DISCUSSION
+
+Our test systems are five proteins that we have studied previously using enhanced sampling simulations biased along anharmonic low-frequency vibrations.[37] These proteins are hen egg-white lysozyme (HEWL), HIV-1 Protease (HIV-1 Pr), myeloid cell leukemia 1 (MCL-1), ribose binding protein (RBP), and Kirsten rat sarcoma virus (KRAS). Compared to our previous work, where we used geometric variables from the literature to recast free energies into a ’human-readable’ format, here we propose an automated strategy to extract such variables directly from the biased simulations without the need of prior knowledge. For brevity, we focus our following analysis on a single system, KRAS, in the main text and provide the corresponding results for the four other proteins in the Supporting Information (SI).  
+
+> A. Dynamic Cross Correlations
+
+In Figure 1, we plotted the average DCCM obtained from 20 trajectories generated in separate 100 ns well-tempered metadynamics simulations of KRAS. In these simulations, we used low-frequency vibrations as CVs to define the bias potential and computed the DCCM from weighted averages as described in the Methods section. Additional simulation details are given in Ref. 37 and analogous results for HEWL, HIV-Pr, MCL-1 and RBP are shown in Figure S1 of the SI. Using the algorithm described in the Theory section, we identified the residue pairs a1 =Ile36 and a2 =Asn85 as well as b1 =Glu76 and b2 =Asn26, which participate in collective and anti-correlated dynamics. The matrix elements corresponding to both residue pairs are indi-cated with circles in Figure 1. Notably, our algorithm does not simply select the most anti-correlated residue pair, which would correspond to the most negative ele-ment in the DCCM. Instead, the a1/a 2 pair corresponds 4to the most collective anti-correlated motion in the sim-ulated protein as expected for protein domains moving against each other. We select the anti-correlated b1/b 2
+
+pair based on the lack of correlation with the a1/a 2 pair.         
+
+> FIG. 1. DCCM computed as a weighted average from en-hanced sampling simulations of the protein KRAS. We high-lighted the selected anti-correlated residue pairs a1/a 2and
+> b1/b 2with circles and the corresponding rows ( a1and b1) and columns ( a2and b2) with light and dark gray rectangles, re-spectively. See Figure S1 in the SI for DCCMs obtained for HEWL, HIV-1 Pr, MCL-1 and RBP.
+
+The numerical values in the rows/columns of the sym-metric DCCM for selected residues a1, a2, b1 and b2
+
+(highlighted in Figure 1) allow us to easily identify residues that participate in collective motion. We plot-ted these numerical values in Figure 2. Using a simple threshold value of +0.5, we identified residues forming the collectively moving domains A1, A2, B1 and B2 as-sociated with each of the selected residues. Notably, the residues of collectively moving domains are not necessar-ily close in sequence space. For example, domain A2 for KRAS consists of two sets of amino acids (residues 83-89 and residues 122-125) that are separated in sequence but in direct contact with each other in the folded struc-ture. We identified at least one collectively moving do-main formed by non-sequential sets of amino acids for each of the other four proteins as well (Figure S2 in the SI).  
+
+> B. Collective Domains
+
+We verified in our previous work that the enhanced sampling simulations for each system reproduce known conformational transitions[37]. Thus, the collectively moving domains identified by the algorithm presented here should provide alternative descriptions of these known transitions. For example, we correctly identify the moving parts of the α− and β−domains involved in the lid-opening of HEWL as domains A1 and A2. Simi-larly, we identify residues corresponding to the flap, flap                                    
+
+> FIG. 2. Numerical values in rows/columns (A) a1= 36 and
+> a2= 85 and (B) b1= 76 and b2= 26 of the DCCM, each in light and dark gray, respectively While self-correlations are 1 by definition, numerical values for other amino acids quantify their correlations with residues (A) a1and a2(A) and (B)
+> b1and b2.We use a simple threshold criterion indicated by the dashed red line to identify residues that form collectively moving domains A1,A2,B1and B2with residues a1,a2,b1
+> and b2in their center. The selected residues for each domain are highlighted by a shaded area under the corresponding plot for correlations that exceed the threshold. Both plots also quantify the anti-correlation between the a1/2and b1/2See Figure S2 in the SI for DCCM columns and rows obtained for HEWL, HIV-1 Pr, MCL-1 and RBP.
+
+elbow, and cantilever domains in each HIV-1 Pr monomer as A1 and A2, which move in opposite directions during the close-to-open transition of the enzyme[40]. For KRAS, our analysis readily identified residues in the highly conserved switch I and switch II domains, which are essential for its function and known to be dynamic.[41] As shown in Figure 3, we identified residues 32-37 as A1 that overlap with the switch I domain of KRAS (residues 25-40). Notably, more stringent defini-tions of the switch I domain of KRAS in the literature point only to residues 30-40 [41] or residues 30-38 [42], and thus further zero in on the residues that we identi-fied as domain A1. Residues 83-89, which we identified as part of domain A2, correspond to a loop that pre-cedes the helix α3 in KRAS and has been identified as an allosteric site involved in the modulation of nucleotide hydrolysis [43, 44]. Similarly, we identified residues 76-77 as domain B1, which are located at one end of the switch II domain. Interestingly, residues 24-28, which form do-main B2 and feature anti-correlated motion relative to domain B1, are located at the beginning of the switch 5I domain, indicating a dynamic coupling between both conserved domains.       
+
+> FIG. 3. Location within the KRAS sequence of domains A1,
+> A2,B1and B2as identified by their collective dynamics using our algorithm described in the Theory section.
+
+We note that our detection of residues in highly con-served regulatory domains of KRAS did not require prior any knowledge or long simulation trajectories. Our en-hanced sampling simulations utilized anharmonic low-frequency vibrations as CVs that were detected in 20 ns simulations. While we averaged results over 20 indepen-dent enhanced sampling simulations, neither of them ex-ceeded 100 ns of simulation time.  
+
+> C. Projecting into Human-Readable Space
+
+Center-of-mass distances between collectively moving domains in the anti-correlated pairs dA = |A1 − A2| and 
+
+dB = |B1 − B2| provide intuitive choices for CVs that are straightforward to interpret. Further, we expect them to capture the essential conformational changes of KRAS. We visualized both pairs of domains and the vectors that connect them in Figure 4.       
+
+> FIG. 4. Visualization of the collectively moving domains
+> A1,A2,B1and B2(gray and black) and their corresponding interdomain distances (orange) in the 3D structure of KRAS (cartoon representation).
+
+We then used both domain-domain distances to con-struct free energy surfaces after unbiasing the metady-namics simulations. The results for KRAS are shown in Figure 5 together with statistical errors obtained from standard deviation over the 20 independent simulations. Analogous free energy surfaces for HEWL, HIV-1Pr, MCL-1 and RBP as a function of their respective domain-domain distances are shown in Figure S3 of the SI. A notable feature of the domain-domain distances that we extract from the DCCM is that correlations between them are minimal by construction. This can increase the information content compared to CVs that are in-herently correlated and thus do not provide independent information on the conformational changes. The latter is frequently observed for user-defined CVs used in the lit-erature [45–48]. Telltale signs are, for example, 2D free energy surfaces with free energy minima exclusively along the diagonal. At the same time, correlations between our domain pairs are only minimized but not forbidden, and we expect to see any mechanistic correlations in our anal-ysis of the resulting free energy surfaces. Movement along the distance dA can be expected to be highly collective due to the specifics of our selection algorithm. This is not necessarily the case for motion along dB . In both cases, the degree of collectivity or size of a collectively moving domain can be easily assessed through visualization of the rows/columns a1, a2, b1 and 
+
+b2 as shown in Figure 2. For example, the domains A1
+
+and A2 in KRAS in Figure 2 consist of roughly 10 amino acids, while the corresponding domains in HIV-1 Pr or RBP are substantially larger (see Figure S2 in the SI). Collective motion does not strictly imply large ampli-tudes. In principle, a collective vibration around a sharp minimum would also give rise to large correlations in the DCCM used here to identify the domains A1 and A2. In practice, however, if the underlying enhanced sampling simulations sample a collective motion of large ampli-tude, as is the case here, the dA distance can be expected to be associated with it. For KRAS, we observe a free energy minimum elon-gated along dA that allows for an almost barrier-free motion of roughly 0.4 nm for distances between 2.1 and 2.5 nm. Distances of 2.7 nm or 3.0 nm are accessible with moderate free energy costs of 10 kJ/mol and 15 kJ/mol, respectively. Movement along dB is more restricted over-all and somewhat dependent on dA. For dA between 2.1 and 2.3 nm, changes in dB are essentially anti-correlated. For dA between 2.3 and 2.6 nm, dB remains mostly fixed at 2.1 nm, while for larger dA, |B1 − B2| can switch be-tween two states with dB close to 1.9 nm and 2.1 nm separated by a small barrier. Thus, this 0.2 nm motion of the domains B1 and B2 depends on the preceding sep-aration of the domains A1 and A2.When analyzing the finer details of the free energy sur-face, it is necessary to consider the statistical uncertain-ties associated with our analysis. The lower panel of Fig-ure 5 shows the statistical errors of the free energy. The latter are determined by error propagation from stan-dard deviations and errors of the mean of the probability distributions obtained after weighting the configurations in independent metadynamics simulation trajectories as defined in Eq. 7. 6                 
+
+> FIG. 5. Conformational ensemble of KRAS as a func-tion of the domain-domain distances dA=|A1−A2|and
+> dB=|B1−B2|. The average free energy surface (top panel) is obtained after unbiasing 20 ×100 ns metadynamics tra-jectories, generating weighted histograms as a function of
+> dAand dB, averaging the corresponding probability distri-butions, and conversion into free energies. We estimated the statistical accuracy of our free energy surface (bottom panel) based on the standard deviation of the histograms obtained from the 20 metadynamics trajectories. The uncertainties are reported both as standard deviations and errors of the mean.
+
+The lowest free energy states are generally sampled most reliably, even in biased simulations, and thus fea-ture the lowest statistical uncertainty. However, even states with free energies around +20 kJ/mol relative to the minimum feature statistical errors below 3 kJ/mol after averaging over 20 trajectories. We note that, in un-biased simulations, the probability to sample such states is approximately 3000 times lower compared to the global free energy minimum. Thus, consistent sampling of these states can be directly attributed to the enhanced sam-pling along the low-frequency vibrations employed as CVs.  
+
+> IV. CONCLUSION
+
+Enhanced sampling simulations of proteins and other biomolecules are increasingly based on CVs that are tuned to accelerate conformational transitions but are less amenable to straightforward human interpretation. Our own recent work combines longstanding concepts on the role of low-frequency vibrations in protein conforma-tional dynamics[49] with a new approach to isolate these vibrations from short dynamics simulations that does not rely on harmonic approximations[24, 35–37]. Other re-cent approaches utilize ML to construct CVs that are nonlinear functions of input features used to train the network[19, 32, 50, 51]. However, interpreting simulation trajectories that are biased along complex CVs can be challenging. A simple visualization of a biased trajectory can be highly mis-leading because large amplitude motions may feature low thermodynamic weights. Similarly, free energy surfaces as a function of complex CVs are non-trivial to read. With sufficient sampling, biased simulations can always be recast into an alternative set of CVs. However, even then it can be a challenge of its own to choose a set of CVs that simultaneously captures the important dynam-ics while being easy to interpret. Characterization of conformational ensembles ex-tracted from unbiased simulations initiated for different states on free energy surfaces [52] can provide clues on key structural changes. However, such procedures remain a manual and potentially ambiguous task. In particular, for CVs derived from ML methods, the computational cost associated with the evaluation of neu-ral network-based CVs can be a burden during biased simulations and analysis. This can be circumvented with suitable surrogate variables that approximate the output of non-linear neural networks as simplified linear combi-nations of a subset of the input features.[53] Such sur-rogate variables can also simplify direct interpretation if a surrogate variable is dominated by a small number of input features. However, even a surrogate variable domi-nated by a single input feature can be hard to interpret in terms of a specific structural change if that input feature is a highly non-linear function of the system coordinates, 
+
+e.g. , a solvent coordination number. Here, we proposed a fully automated procedure that identifies the distances between collectively moving do-mains as human-readable CVs that capture the essential dynamics obtained from enhanced sampling simulations. Our method uses a weighted analysis of dynamic cross correlations for biased simulation trajectories and a sim-ple algorithm to extract the collectively moving domains. We applied this approach to a recent set of enhanced sam-pling simulations with known conformational dynamics and readily identified key inter-domain motions for each system. Notably, the entire simulation protocol, which uses anharmonic low-frequency vibrations sampled from short equilibrium simulations as CVs, does not require any prior knowledge of the system and thus can be fully 7automated. We anticipate that such fully automated enhanced sampling protocols will play a critical role in the gen-eration of extensive protein conformational ensembles, which not only expand our knowledge of specific proteins but also provide essential training data for ML predictors of protein dynamics [9].  
+
+> V. METHODS
+
+The detailed protocols for the all-atom molecular dynamics simulations of all systems are described in Ref. 37, which also provides brief descriptions of FRE-SEAN mode analysis and well-tempered metadynamics simulations. In summary, we performed molecular dy-namics simulations with GROMACS 2022.5 beginning with crystal structures from the following PDB entries: 5WCC (KRAS), 1HEL (HEWL), 1BVE (HIV-1 Pro-tease), 3WIX (MCL-1), and 1DRJ (RBP). The selection of force fields for each system was based on prior stud-ies in the literature to enable direct comparisons. [46– 48, 54, 55]  
+
+> FIG. 6. Enhanced sampling protocol with automatic gener-ation of CVs suitable for enhanced sampling (zero-frequency modes detected from FRESEAN mode analysis) and pro-jection on distances of anti-correlated domains as "human-readable" CVs.
+
+We adhered to the protocol outlined in Fig. 6. Af-ter energy-minimzation and equilibration, we conducted unrestrained NPT simulations for 20 ns of each system during which coordinates and velocities were stored ev-ery 20 fs. The all-atom trajectories of the protein were converted into a coarse-grained representation in which each amino acid (except for glycine) is represented by two beads (centers of mass and center of mass velocities of backbone and side chain atoms). [36] Glycine residues are presented by a single bead. The coarse-grained trajectory is then aligned with a (coarse-grained) reference struc-ture, where rotations are applied to both coordinates and velocities. We then performed FRESEAN mode analy-sis by calculating a matrix of mass-weighted time veloc-ity cross correlation functions for all coarse-grained de-grees of freedom with a maximum correlation time of 2 ps. [24] The matrix terms were time-symmetrized and transformed into the frequency domain with a Gaussian window function with a width of 10 cm −1.The two lowest-frequency vibrational modes (modes 7 and 8 at zero frequency) were chosen as collective vari-ables (CVs) for enhanced sampling.[37] We performed an unbiased MD simulation for 100 ns and extracted 20 configurations (coordinates and ve-locities sampled every 5 ns) as starting configurations for separate replicas of well-tempered metadynamics simulations. [56] The metadynamics simulations were performed with the PLUMED 2.8.2 plugin in GRO-MACS 2022.5 using the zero-frequency modes as CVs af-ter backmapping from the coarse-grained to an all-atom representation. Each of metadynamics simulation was run for 100 ns and the resulting free energy surface (in-verted cumulative biasing potential) was converted into an unbiased probability distribution prior to averaging and converting back to free energies. 
+
+> ACKNOWLEDGMENTS
+
+This work is supported by the National Science Foun-dation (CHE-2154834) and the National Institute of Gen-eral Medical Sciences (R01GM148622). The authors ac-knowledge Research Computing at Arizona State Univer-sity for providing high performance computing resources that have contributed to the research results reported within this work.     
+
+> [1] K. Henzler-Wildman and D. Kern, Dynamic personalities of proteins, Nature 450 , 964 (2007). [2] W. J. Wedemeyer, E. Welker, and H. A. Scheraga, Proline cis- trans isomerization and protein folding, Biochemistry
+> 41 , 14637 (2002). [3] D. D. Boehr, H. J. Dyson, and P. E. Wright, An nmr perspective on enzyme dynamics, Chem. Rev. 106 , 3055 (2006). [4] M. Karplus and J. A. McCammon, Molecular dynam-ics simulations of biomolecules, Nat. Struct. Biol. 9, 646 (2002). [5] R. O. Dror, R. M. Dirks, J. Grossman, H. Xu, and D. E. Shaw, Biomolecular simulation: A computational micro-scope for molecular biology, Annu. Rev. Biophys. 41 , 429 (2012). [6] D. E. Shaw, P. J. Adams, A. Azaria, J. A. Bank, B. Bat-
+
+8
+
+son, A. Bell, M. Bergdorf, J. Bhatt, J. A. Butts, T. Cor-reia, et al. , Anton 3: Twenty microseconds of molecular dynamics simulation before lunch, in Proceedings of the International Conference for High Performance Comput-ing, Networking, Storage and Analysis (2021) pp. 1–11. [7] P. Ayaz, A. Lyczek, Y. Paung, V. R. Mingione, R. E. Ia-cob, P. W. de Waal, J. R. Engen, M. A. Seeliger, Y. Shan, and D. E. Shaw, Structural mechanism of a drug-binding process involving a large conformational change of the protein target, Nat. Commun. 14 , 1885 (2023). [8] J. B. Greisman, L. Willmore, C. Y. Yeh, F. Giordanetto, S. Shahamadtar, H. Nisonoff, P. Maragakis, and D. E. Shaw, Discovery and validation of the binding poses of allosteric fragment hits to protein tyrosine phosphatase 1b: From molecular dynamics simulations to x-ray crys-tallography, J. Chem. Inf. and Model. 63 , 2644 (2023). [9] S. Lewis, T. Hempel, J. Jiménez-Luna, M. Gastegger, Y. Xie, A. Y. Foong, V. G. Satorras, O. Abdin, B. S. Veeling, I. Zaporozhets, Y. Chen, S. Yang, A. E. Foster, A. Schneuing, J. Nigam, F. Barbero, V. Stimper, A. Campbell, J. Yim, M. Lienen, Y. Shi, S. Zheng, H. Schulz, U. Munir, R. Sordillo, R. Tomioka, C. Clementi, and F. Noé, Scalable emulation of protein equilibrium ensembles with generative deep learning, Sci-ence 389 , eadv9817 (2025). [10] R. C. Bernardi, M. C. Melo, and K. Schulten, Enhanced sampling techniques in molecular dynamics simulations of biological systems, Biochim. Biophys. Acta, Gen. Subj. 
+
+1850 , 872 (2015). [11] A. Mitsutake, Y. Sugita, and Y. Okamoto, Generalized-ensemble algorithms for molecular simulations of biopoly-mers, Biomolecules 60 , 96 (2001). [12] G. M. Torrie and J. P. Valleau, Nonphysical sampling distributions in monte carlo free-energy estimation: Um-brella sampling, J. Comput. Phys. 23 , 187 (1977). [13] B. Isralewitz, J. Baudry, J. Gullingsrud, D. Kosztin, and K. Schulten, Steered molecular dynamics investigations of protein function, J. Mol. Graph. Model. 19 , 13 (2001). [14] J. Schlitter, M. Engels, and P. Krüger, Targeted molecu-lar dynamics: a new approach for searching pathways of conformational transitions, J. Mol. Graph. 12 , 84 (1994). [15] J. Hénin and C. Chipot, Overcoming free energy barriers using unconstrained molecular dynamics simulations, J. Chem. Phys. 121 , 2904 (2004). [16] A. Laio and M. Parrinello, Escaping free-energy minima, Proc. Natl. Acad. Sci. U.S.A 99 , 12562 (2002). [17] Y. Sugita and Y. Okamoto, Replica-exchange molecular dynamics method for protein folding, Chem. Phys. Lett. 
+
+314 , 141 (1999). [18] D. Hamelberg, J. Mongan, and J. A. McCammon, Ac-celerated molecular dynamics: a promising and efficient simulation method for biomolecules, J. Chem. Phys. 120 ,11919 (2004). [19] S. Mehdi, Z. Smith, L. Herron, Z. Zou, and P. Tiwary, Enhanced sampling with machine learning, Ann. Rev. Phys. Chem. 75 (2024). [20] N. Go, T. Noguti, and T. Nishikawa, Dynamics of a small globular protein in terms of low-frequency vibrational modes., Proc. Natl. Acad. Sci. U.S.A 80 , 3696 (1983). [21] D. v. Aalten, J. Findlay, A. Amadei, and H. Berendsen, Essential dynamics of the cellular retinol-binding protein evidence for ligand-induced conformational changes, Pro-tein Eng. Des. Sel. 8, 1129 (1995). [22] S. Hayward, A. Kitao, and N. G¯ o, Harmonicity and an-harmonicity in protein dynamics: a normal mode anal-ysis and principal component analysis, Proteins. Struct. Funct. Bioinf. 23 , 177 (1995). [23] J. Ma, Usefulness and limitations of normal mode anal-ysis in modeling dynamics of biomolecular complexes, Structure 13 , 373 (2005). [24] M. A. Sauer and M. Heyden, Frequency-selective anhar-monic mode analysis of thermally excited vibrations in proteins, J. Chem. Theory Comput. 19 , 5481 (2023). [25] A. E. García, Large-amplitude nonlinear motions in pro-teins, Phys. Rev. Lett. 68 , 2696 (1992). [26] A. Amadei, A. B. Linssen, and H. J. Berendsen, Essential dynamics of proteins, Proteins Struct. Funct. Bioinf. 17 ,412 (1993). [27] Y. Naritomi and S. Fuchigami, Slow dynamics of a pro-tein backbone in molecular dynamics simulation revealed by time-structure based independent component analy-sis, J. Chem. Phys. 139 (2013). [28] F. Noé and C. Clementi, Kinetic distance and kinetic maps from molecular dynamics simulation, J. Chem. Theory Comput. 11 , 5002 (2015). [29] H. Sidky, W. Chen, and A. L. Ferguson, Machine learning for collective variable discovery and enhanced sampling in biomolecular simulation, Mol. Phys. 118 , e1737742 (2020). [30] Y. Wang, J. M. L. Ribeiro, and P. Tiwary, Machine learn-ing approaches for analyzing and enhancing molecular dynamics simulations, Curr. Opin. Struct. Biol. 61 , 139 (2020). [31] F. Noé, A. Tkatchenko, K.-R. Müller, and C. Clementi, Machine learning for molecular simulation, Annu. Rev. Phys. Chem. 71 , 361 (2020). [32] J. Hanni and D. Ray, Data efficient learning of molec-ular slow modes from nonequilibrium metadynamics, J. Chem. Phys. 162 (2025). [33] H. Fu, H. Bian, X. Shao, and W. Cai, Collective variable-based enhanced sampling: From human learning to ma-chine learning, J. Phys. Chem. Lett. 15 , 1774 (2024). [34] T. Fröhlking, L. Bonati, V. Rizzi, and F. L. Gerva-sio, Deep learning path-like collective variable for en-hanced sampling molecular dynamics, J. Chem. Phys. 
+
+160 (2024). [35] S. Mondal, M. A. Sauer, and M. Heyden, Exploring con-formational landscapes along anharmonic low-frequency vibrations, J. Phys. Chem. B 128 , 7112 (2024). [36] M. A. Sauer, S. Mondal, M. Cano, and M. Heyden, High-throughput computation of anharmonic low-frequency protein vibrations, J. Phys. Chem. B 129 , 10739 (2025). [37] M. A. Sauer, S. Mondal, B. Neff, S. Maiti, and M. Hey-den, Fast sampling of protein conformational dynamics, Sci. Adv. 12 , eaea4617 (2026). [38] B. Neff and M. Heyden, Protein-water energy trans-fer via anharmonic low-frequency vibrations (2026), arXiv:2601.02699 [cond-mat.soft]. [39] J. McCammon, Protein dynamics, Rep. Prog. Phys. 47 ,1 (1984). [40] V. Hornak, A. Okur, R. C. Rizzo, and C. Simmerling, Hiv-1 protease flaps spontaneously open and reclose in molecular dynamics simulations, Proc. Natl. Acad. Sci. U.S.A 103 , 915 (2006). [41] T. Pantsar, The current understanding of kras protein structure and dynamics, Comput. Struct. Biotechnol. J. 
+
+18 , 189 (2020). [42] H. J. Kim, H. N. Lee, M. S. Jeong, and S. B. Jang, Onco-9
+
+genic kras: signaling and drug resistance, Cancers 13 ,5599 (2021). [43] V. Jani, U. Sonavane, and R. Joshi, Insight into struc-tural dynamics involved in activation mechanism of full length kras wild type and p-loop mutants, Heliyon 10 
+
+(2024). [44] N. Bery, S. Legg, J. Debreczeni, J. Breed, K. Embrey, C. Stubbs, P. Kolasinska-Zwierz, N. Barrett, R. Mar-wood, J. Watson, et al. , Kras-specific inhibition using a darpin binding to a site in the allosteric lobe, Nat. Com-mun. 10 , 2607 (2019). [45] M. G. Costa, P. R. Batista, A. Gomes, L. S. Bastos, M. Louet, N. Floquet, P. M. Bisch, and D. Perahia, Mdexciter: Enhanced sampling molecular dynamics by excited normal modes or principal components obtained from experiments, J. Chem. Theory Comput. 19 , 412 (2023). [46] Y. M. Huang, J. A. McCammon, and Y. Miao, Replica exchange gaussian accelerated molecular dynamics: Im-proved enhanced sampling and free energy calculation, J. Chem. Theory Comput. 14 , 1853 (2018). [47] W. Ren, H. M. Dokainish, A. Shinobu, H. Oshima, and Y. Sugita, Unraveling the coupling between conforma-tional changes and ligand binding in ribose binding pro-tein using multiscale molecular dynamics and free-energy calculations, J. Phys. Chem. B 125 , 2898 (2021). [48] M. Benabderrahmane, R. Bureau, A. S. Voisin-Chiret, and J. Sopkova-de Oliveira Santos, Insights into mcl-1 conformational states and allosteric inhibition mech-anism from molecular dynamics simulations, enhanced sampling, and pocket crosstalk analysis, J. Chem. Inf. Model. 60 , 3172 (2020). [49] B. Brooks and M. Karplus, Harmonic dynamics of pro-teins: normal modes and fluctuations in bovine pancre-atic trypsin inhibitor., Proc. Natl. Acad. Sci. U.S.A 80 ,6571 (1983). [50] J. M. L. Ribeiro, P. Bravo, Y. Wang, and P. Tiwary, Reweighted autoencoded variational bayes for enhanced sampling (rave), J. Chem. Phys. 149 (2018). [51] Y. Wang, J. M. L. Ribeiro, and P. Tiwary, Past–future information bottleneck for sampling molecular reaction coordinate simultaneously with thermodynamics and ki-netics, Nat. Commun. 10 , 3573 (2019). [52] V. Istomin and G. Piccini, Festa: A polygon-based ap-proach for extracting relevant structures from free energy surfaces obtained in molecular simulations, J. Chem. Inf. Model. 65 , 1 (2024). [53] S. Chatterjee and D. Ray, Acceleration with inter-pretability: A surrogate model-based collective variable for enhanced sampling, J. Chem. Theory Comput. 21 ,1561 (2025). [54] A. De Simone, R. W. Montalvao, C. M. Dobson, and M. Vendruscolo, Characterization of the interdomain mo-tions in hen lysozyme using residual dipolar couplings as replica-averaged structural restraints in molecular dy-namics simulations, Biochemistry 52 , 6480 (2013). [55] J. Chen, S. Zhang, W. Wang, L. Pang, Q. Zhang, and X. Liu, Mutation-induced impacts on the switch trans-formations of the gdp-and gtp-bound k-ras: insights from multiple replica gaussian accelerated molecular dynamics and free energy analysis, J. Chem. Inf. Model. 61 , 1954 (2021). [56] A. Barducci, G. Bussi, and M. Parrinello, Well-tempered metadynamics: a smoothly converging and tunable free-energy method, Phys. Rev. Lett. 100 , 020603 (2008). 1
+
+# Supporting Information: From Enhanced Sampling to Human-Readable Representations of Protein Dynamics 
+
+FIG. S1. Dynamic cross-correlation matrices (DCCMs) computed as weighted averages from enhanced sampling simulations for HEWL, HIV-1 protease, MCL-1, and ribose-binding protein (RBP). Each DCCM is constructed from biased trajectories using the weighting procedure described in the Methods and Theory sections. Matrix elements range from -1 to +1, indicating anti-correlated and correlated motions, respectively. These results are analogous to the KRAS DCCM shown in Figure 1 of the main text. 2
+
+FIG. S2. Numerical values in selected rows and columns of the DCCMs for HEWL, HIV-1 protease, MCL-1, and ribose-binding protein (RBP), corresponding to the residues identified by the selection algorithm described in the Theory section. For each system, rows/columns associated with residues a1, a2 and b1, b2 are shown (light and dark gray, respectively). The plotted values quantify correlations of all residues with the selected residues, with self-correlations equal to 1 by definition. A threshold criterion (dashed line) is used to identify residues forming the collectively moving domains A1, A2, B1, and B2, highlighted by shaded regions. These plots are analogous to those shown for KRAS in Figure 2 of the main text. 3
+
+FIG. S3. Free energy surfaces for HEWL, HIV-1 protease, MCL-1, and ribose-binding protein (RBP) as functions of the domain-domain distances dA = |A1 − A2| and dB = |B1 − B2|, obtained after unbiasing enhanced sampling trajectories. For each system, free energy surfaces are constructed from weighted histograms averaged over multiple independent metadynamics simulations, as described in the Methods section. The resulting surfaces provide human-readable representations of the confor-mational ensembles and are directly comparable to the KRAS results shown in Figure 5 of the main text.
