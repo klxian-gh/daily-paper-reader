@@ -1,0 +1,131 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-08T20:37:04.723156+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05658v1",
+      "title": "Quantum-classical solvation hydrodynamics: Hamiltonian functionals and dissipation",
+      "abstract": "We propose a mixed quantum-classical hydrodynamic framework to model short-time inertial effects in the non-adiabatic evolution of a quantum solute coupled to a classical polar solvent. Drawing upon the work of Burghardt and Bagchi [Chem. Phys. 329 (2006), 343], we employ the Hamiltonian approach to incorporate consistent backreaction and preserve quantum decoherence beyond standard Ehrenfest dynamics. The solvent is treated as an ideal polar fluid and the quantum solute state is correlated to both the position and molecular orientation coordinates of the liquid. This approach retains essential solute-solvent correlations while significantly reducing the computational complexity of previous approaches. We further incorporate dissipative terms to capture both inertial effects and polarization relaxation. After establishing the general setting for non-local dielectric continua, the Marcus local approximation is integrated into the model thereby extending traditional solvation theory to account for collective fluid sloshing on fast timescales.",
+      "authors": [
+        "François Gay-Balmaz",
+        "Cesare Tronci"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.comp-ph",
+        "physics.flu-dyn",
+        "quant-ph"
+      ],
+      "published": "2026-05-07T04:20:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.05658v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "mixed quantum-classical hydrodynamic framework for solute-solvent coupling",
+      "llm_evidence_cn": "用于溶质-溶剂耦合的混合量子-经典流体动力学框架",
+      "llm_evidence": "用于溶质-溶剂耦合的混合量子-经典流体动力学框架",
+      "canonical_evidence": "用于溶质-溶剂耦合的混合量子-经典流体动力学框架",
+      "llm_tldr_en": "Proposes a mixed quantum-classical framework to model non-adiabatic evolution in solvation dynamics.",
+      "llm_tldr_cn": "提出了一种混合量子-经典框架，用于模拟溶剂化动力学中的非绝热演化。",
+      "llm_tldr": "提出了一种混合量子-经典框架，用于模拟溶剂化动力学中的非绝热演化。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.06122v1",
+      "title": "Variationally Compressing Quantum Circuits to Approximate Nonadiabatic Molecular Quantum Dynamics",
+      "abstract": "Quantum simulation has begun to penetrate the field of quantum chemistry in hopes of efficiently calculating ground state energies and approximating real-time evolution. With modern research highlighting nonadiabatic dynamics, tunably approximating deep circuits representing potential landscapes becomes crucial for simulating real quantum systems. Variationally approximating unitaries allows for shallower circuits and accuracy tunable to hardware fidelity, so long as the observable quantities are preserved. We show the variational compression of Trotter terms preserve reaction rate coefficients via classical emulation of a hybrid quantum-classical optimization method, as well as fast-forwarded adiabatic dynamics on quantum hardware. Compressed circuits can be incorporated with product-formula-based time evolution to approximate dynamics of a particle in two coupled harmonic potentials, allowing tunability when removing high-cost qubit interactions. Approximate rate coefficients are recovered after substituting terms in a nonadiabatic dynamic process, giving proof-of-principle for observable preservation under variational optimization. Attention is paid to minimizing qubit and gate-count resources.",
+      "authors": [
+        "Joshua M. Courtney",
+        "P. C. Stancil"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-07T12:30:52+00:00",
+      "link": "https://arxiv.org/pdf/2605.06122v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "approximating molecular quantum dynamics and reaction rates",
+      "llm_evidence_cn": "模拟分子量子动力学和反应速率",
+      "llm_evidence": "模拟分子量子动力学和反应速率",
+      "canonical_evidence": "模拟分子量子动力学和反应速率",
+      "llm_tldr_en": "Uses variational quantum circuits to simulate nonadiabatic molecular dynamics and preserve reaction rates.",
+      "llm_tldr_cn": "利用变分量子电路模拟非绝热分子动力学并保持反应速率系数。",
+      "llm_tldr": "利用变分量子电路模拟非绝热分子动力学并保持反应速率系数。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06489v1",
+      "title": "TDDFT Gradients and Nonadiabatic Couplings with Minimal Auxiliary Basis Set Approximation for Fewest-Switches Surface Hopping Dynamics",
+      "abstract": "The electronic structure calculations remain a major bottleneck in ab initio nonadiabatic molecular dynamics. We develop an efficient TDDFT-based FSSH implementation in the GPU4PySCF package for medium-sized molecular systems. Our approach combines density fitting, TDDFT with minimal auxiliary basis sets (TDDFT-ris), and an approximate Z-vector solver to reduce the computational cost of TDDFT excited states and derivative coupling calculations. These approximations introduce negligible errors in realistic FSSH workloads while maintaining high computational efficiency. Benchmark results show that, for 73-atom systems with a triple-$ζ$ basis set, individual electronic structure calculations are completed within one minute on a single NVIDIA A100 GPU.",
+      "authors": [
+        "Cheng Fan",
+        "Zhichen Pu",
+        "Zehao Zhou",
+        "Yuanheng Wang",
+        "Yi Qin Gao",
+        "Qiming Sun"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-07T16:11:48+00:00",
+      "link": "https://arxiv.org/pdf/2605.06489v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "efficient electronic structure for nonadiabatic molecular dynamics",
+      "llm_evidence_cn": "用于非绝热分子动力学的高效电子结构计算",
+      "llm_evidence": "用于非绝热分子动力学的高效电子结构计算",
+      "canonical_evidence": "用于非绝热分子动力学的高效电子结构计算",
+      "llm_tldr_en": "Develops efficient TDDFT-based dynamics for molecular systems, reducing computational bottlenecks.",
+      "llm_tldr_cn": "开发了基于TDDFT的高效分子动力学方法，减少了电子结构计算的瓶颈。",
+      "llm_tldr": "开发了基于TDDFT的高效分子动力学方法，减少了电子结构计算的瓶颈。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -6,41 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-07
-- 运行时间：2026-05-07 20:24:50 UTC
+- 最新运行日期：2026-05-08
+- 运行时间：2026-05-08 20:37:22 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：3
 - 精读区：0
-- 速读区：6
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦钙钛矿材料的微观演化机制与蛋白质动力学的可解释性表征。
-重点揭示了 MAPbI3 中阴阳离子迁移的统一图景，以及 FAPbI3 中动力学受阻的孪晶域状态。
-建议深入探索微观结构缺陷对光伏器件稳定性的影响，并尝试将复杂采样转化为直观的物理模型。
-- 详情：[/202605/07/README](/202605/07/README)
+今日聚焦量子-经典溶剂化流体动力学与非绝热分子动力学的算法前沿。
+重点探讨了哈密顿泛函在溶剂化耗散中的应用，以及通过变分压缩量子线路和极小辅助基组优化非绝热动力学模拟。
+建议关注如何利用这些计算优化方案，在保证精度的前提下显著提升复杂分子系统的演化模拟效率。
+- 详情：[/202605/08/README](/202605/08/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Kinetically Arrested Twin-Domain State in Formamidinium Lead Iodide](/202605/07/2605.00427v1-kinetically-arrested-twin-domain-state-in-formamidinium-lead-iodide)  
+1. [Quantum-classical solvation hydrodynamics: Hamiltonian functionals and dissipation](/202605/08/2605.05658v1-quantum-classical-solvation-hydrodynamics-hamiltonian-functionals-and-dissipation)  
+   标签：评分：7.0/10、query:qmmm
+   evidence：用于溶质-溶剂耦合的混合量子-经典流体动力学框架
+2. [Variationally Compressing Quantum Circuits to Approximate Nonadiabatic Molecular Quantum Dynamics](/202605/08/2605.06122v1-variationally-compressing-quantum-circuits-to-approximate-nonadiabatic-molecular-quantum-dynamics)  
    标签：评分：6.0/10、query:qmmm
-   evidence：具有DFT精度的分子动力学模拟
-2. [A Unified microscopic picture of cation and anion migration in MAPbI$_3$](/202605/07/2605.02685v1-a-unified-microscopic-picture-of-cation-and-anion-migration-in-mapbi3)  
+   evidence：模拟分子量子动力学和反应速率
+3. [TDDFT Gradients and Nonadiabatic Couplings with Minimal Auxiliary Basis Set Approximation for Fewest-Switches Surface Hopping Dynamics](/202605/08/2605.06489v1-tddft-gradients-and-nonadiabatic-couplings-with-minimal-auxiliary-basis-set-approximation-for-fewest-switches-surface-hopping-dynamics)  
    标签：评分：6.0/10、query:qmmm
-   evidence：基于DFT训练势能的分子动力学
-3. [From Enhanced Sampling to Human-Readable Representations of Protein Dynamics](/202605/07/2605.03394v1-from-enhanced-sampling-to-human-readable-representations-of-protein-dynamics)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：蛋白质动力学的增强采样
-4. [Meta-LegNet: A Transferable and Interpretable Framework for Surface Adsorption Prediction via Self-Defined Adsorption-Environment Learning](/202605/07/2605.04102v1-meta-legnet-a-transferable-and-interpretable-framework-for-surface-adsorption-prediction-via-self-defined-adsorption-environment-learning)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：计算催化和反应路径
-5. [Model synthesis and identifiability analysis of stiff chemical reaction systems with inVAErt networks](/202605/07/2605.04134v1-model-synthesis-and-identifiability-analysis-of-stiff-chemical-reaction-systems-with-invaert-networks)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：学习化学动力学和反应速率的数据驱动副本
-6. [CDFCI: High-Performance Parallel Software for Many-Body Large-Scale Eigenvalue Problems](/202605/07/2605.04483v1-cdfci-high-performance-parallel-software-for-many-body-large-scale-eigenvalue-problems)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：用于从头算电子结构和量子化学问题的并行软件
+   evidence：用于非绝热分子动力学的高效电子结构计算
 
 
 <div class="dpr-home-promo-card">
