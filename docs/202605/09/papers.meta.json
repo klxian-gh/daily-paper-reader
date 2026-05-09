@@ -1,0 +1,37 @@
+{
+  "label": "2026-05-09",
+  "date": "2026-05-09",
+  "generated_at": "2026-05-09T19:52:22",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/09/2605.05460v1-agentic-discovery-of-exchange-correlation-density-functionals",
+      "section": "quick",
+      "title_en": "Agentic Discovery of Exchange-Correlation Density Functionals",
+      "authors": "Titouan Duston, Jiashu Liang, Yuanheng Wang, Weihao Gao, Xuelan Wen, Nan Sheng, Weiluo Ren, Yang Sun, Yixiao Chen",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.05460v1",
+      "score": "6.0",
+      "evidence": "自动发现用于DFT的交换相关泛函",
+      "tldr": "本研究针对密度泛函理论中交换相关（XC）泛函设计长期依赖人工经验的挑战，提出了一种基于大语言模型的智能体搜索系统。该系统通过迭代的“计划-执行-总结”循环，利用进化历史自动提议并优化泛函的数学形式。实验发现的 SAFS26-a 泛函在热化学基准测试中比顶级基准 ωB97M-V 提升了 9% 的性能。研究同时强调，在 AI 辅助科学发现中，必须引入物理约束以防止模型利用非物理捷径。",
+      "tags": "query:qmmm",
+      "abstract_en": "The development of accurate exchange-correlation (XC) functionals remains a longstanding challenge in density functional theory (DFT). The vast majority of XC functionals have been hand designed by human researchers combining physical insight, exact constraints, and empirical fitting. Recent advances in large language models enable a systematic, automated alternative to this human-driven design loop. This report presents an agentic search system in which an LLM proposes structured functional-form changes guided by evolutionary history. The system attempts to improve functional performance through an iterative plan-execute-summarize loop, where improvements are measurable by optimizing functional parameters against a standard thermochemistry dataset, then evaluating performance on a held-out subset. The strongest discovered functional, SAFS26-a (Seed Agentic Functional Search 2026), improves upon the gold-standard ωB97M-V baseline by ~9%. These results also surface a cautionary lesson for AI-assisted science: models powerful enough to discover genuine improvements are equally capable of exploiting unphysical shortcuts to game the benchmark; domain expertise translated into explicitly enforced constraints remains essential to keeping results scientifically grounded.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/09/2605.06215v1-functionalagent-towards-end-to-end-on-top-functional-design",
+      "section": "quick",
+      "title_en": "FunctionalAgent: Towards end-to-end on-top functional design",
+      "authors": "Yuhao Chen, Donald G. Truhlar, Xiao He",
+      "date": "2026-05-07",
+      "pdf": "https://arxiv.org/pdf/2605.06215v1",
+      "score": "6.0",
+      "evidence": "量子化学研究与密度泛函理论",
+      "tldr": "本研究针对强关联分子系统，提出了一种名为FunctionalAgent的自动化智能体系统，旨在优化多构型对密度泛函理论（MC-PDFT）中的on-top泛函设计。该系统通过协调多个专业子智能体，实现了从数据集构建、活性空间生成到泛函拟合与评估的全流程闭环自动化。利用该系统，研究者成功开发了MC26和COF26两种新型泛函，其中COF26在基准测试中展现了卓越的预测精度，显著提升了泛函开发的效率与性能。",
+      "tags": "query:qmmm",
+      "abstract_en": "Multiconfiguration pair-density functional theory (MC-PDFT) offers an efficient and accurate framework for computing electronic energies in strongly correlated molecular systems, with the quality of the on-top functional being a key determinant of its predictive accuracy. Here we introduce FunctionalAgent, an agentic system for fully automated functional development. FunctionalAgent orchestrates a team of specialized sub-agents to decompose the development process into dataset construction, active-space generation, MCSCF calculation and descriptor generation, loss-function construction, and functional fitting, optimization, and evaluation, thereby linking all stages into a closed-loop automated workflow. Using FunctionalAgent, we developed MC26, a hybrid meta-GGA on-top functional that achieves improved overall accuracy on the training set compared with other methods evaluated on the same benchmark dataset. We further introduce COF26, a new functional form that, owing to the optimized training process, achieves the best performance on both the training and test sets.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

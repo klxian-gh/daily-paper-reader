@@ -6,32 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-08
-- 运行时间：2026-05-08 20:37:22 UTC
+- 最新运行日期：2026-05-09
+- 运行时间：2026-05-09 19:52:11 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：0
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦量子-经典溶剂化流体动力学与非绝热分子动力学的算法前沿。
-重点探讨了哈密顿泛函在溶剂化耗散中的应用，以及通过变分压缩量子线路和极小辅助基组优化非绝热动力学模拟。
-建议关注如何利用这些计算优化方案，在保证精度的前提下显著提升复杂分子系统的演化模拟效率。
-- 详情：[/202605/08/README](/202605/08/README)
+今日聚焦 AI Agent 驱动的科学发现，探索了密度泛函与端到端功能设计的自动化新范式。
+重点展示了 Agentic Discovery 与 FunctionalAgent 如何利用自主智能体实现物理化学泛函的精准发现与高效设计。
+建议关注 AI 智能体在底层科学规律发现中的应用，把握科研自动化从“辅助”向“自主”跨越的前沿趋势。
+- 详情：[/202605/09/README](/202605/09/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Quantum-classical solvation hydrodynamics: Hamiltonian functionals and dissipation](/202605/08/2605.05658v1-quantum-classical-solvation-hydrodynamics-hamiltonian-functionals-and-dissipation)  
-   标签：评分：7.0/10、query:qmmm
-   evidence：用于溶质-溶剂耦合的混合量子-经典流体动力学框架
-2. [Variationally Compressing Quantum Circuits to Approximate Nonadiabatic Molecular Quantum Dynamics](/202605/08/2605.06122v1-variationally-compressing-quantum-circuits-to-approximate-nonadiabatic-molecular-quantum-dynamics)  
+1. [Agentic Discovery of Exchange-Correlation Density Functionals](/202605/09/2605.05460v1-agentic-discovery-of-exchange-correlation-density-functionals)  
    标签：评分：6.0/10、query:qmmm
-   evidence：模拟分子量子动力学和反应速率
-3. [TDDFT Gradients and Nonadiabatic Couplings with Minimal Auxiliary Basis Set Approximation for Fewest-Switches Surface Hopping Dynamics](/202605/08/2605.06489v1-tddft-gradients-and-nonadiabatic-couplings-with-minimal-auxiliary-basis-set-approximation-for-fewest-switches-surface-hopping-dynamics)  
+   evidence：自动发现用于DFT的交换相关泛函
+2. [FunctionalAgent: Towards end-to-end on-top functional design](/202605/09/2605.06215v1-functionalagent-towards-end-to-end-on-top-functional-design)  
    标签：评分：6.0/10、query:qmmm
-   evidence：用于非绝热分子动力学的高效电子结构计算
+   evidence：量子化学研究与密度泛函理论
 
 
 <div class="dpr-home-promo-card">

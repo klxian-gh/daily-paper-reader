@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-09T19:51:53.805739+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05460v1",
+      "title": "Agentic Discovery of Exchange-Correlation Density Functionals",
+      "abstract": "The development of accurate exchange-correlation (XC) functionals remains a longstanding challenge in density functional theory (DFT). The vast majority of XC functionals have been hand designed by human researchers combining physical insight, exact constraints, and empirical fitting. Recent advances in large language models enable a systematic, automated alternative to this human-driven design loop. This report presents an agentic search system in which an LLM proposes structured functional-form changes guided by evolutionary history. The system attempts to improve functional performance through an iterative plan-execute-summarize loop, where improvements are measurable by optimizing functional parameters against a standard thermochemistry dataset, then evaluating performance on a held-out subset. The strongest discovered functional, SAFS26-a (Seed Agentic Functional Search 2026), improves upon the gold-standard ωB97M-V baseline by ~9%. These results also surface a cautionary lesson for AI-assisted science: models powerful enough to discover genuine improvements are equally capable of exploiting unphysical shortcuts to game the benchmark; domain expertise translated into explicitly enforced constraints remains essential to keeping results scientifically grounded.",
+      "authors": [
+        "Titouan Duston",
+        "Jiashu Liang",
+        "Yuanheng Wang",
+        "Weihao Gao",
+        "Xuelan Wen",
+        "Nan Sheng",
+        "Weiluo Ren",
+        "Yang Sun",
+        "Yixiao Chen"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-06T21:36:43+00:00",
+      "link": "https://arxiv.org/pdf/2605.05460v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "automated discovery of exchange-correlation functionals for DFT",
+      "llm_evidence_cn": "自动发现用于DFT的交换相关泛函",
+      "llm_evidence": "自动发现用于DFT的交换相关泛函",
+      "canonical_evidence": "自动发现用于DFT的交换相关泛函",
+      "llm_tldr_en": "Uses LLMs to automate the discovery of exchange-correlation functionals for quantum chemical calculations.",
+      "llm_tldr_cn": "利用大语言模型自动发现用于量子化学计算的交换相关泛函。",
+      "llm_tldr": "利用大语言模型自动发现用于量子化学计算的交换相关泛函。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.06215v1",
+      "title": "FunctionalAgent: Towards end-to-end on-top functional design",
+      "abstract": "Multiconfiguration pair-density functional theory (MC-PDFT) offers an efficient and accurate framework for computing electronic energies in strongly correlated molecular systems, with the quality of the on-top functional being a key determinant of its predictive accuracy. Here we introduce FunctionalAgent, an agentic system for fully automated functional development. FunctionalAgent orchestrates a team of specialized sub-agents to decompose the development process into dataset construction, active-space generation, MCSCF calculation and descriptor generation, loss-function construction, and functional fitting, optimization, and evaluation, thereby linking all stages into a closed-loop automated workflow. Using FunctionalAgent, we developed MC26, a hybrid meta-GGA on-top functional that achieves improved overall accuracy on the training set compared with other methods evaluated on the same benchmark dataset. We further introduce COF26, a new functional form that, owing to the optimized training process, achieves the best performance on both the training and test sets.",
+      "authors": [
+        "Yuhao Chen",
+        "Donald G. Truhlar",
+        "Xiao He"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.AI"
+      ],
+      "published": "2026-05-07T13:16:16+00:00",
+      "link": "https://arxiv.org/pdf/2605.06215v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemical investigation and density functional theory",
+      "llm_evidence_cn": "量子化学研究与密度泛函理论",
+      "llm_evidence": "量子化学研究与密度泛函理论",
+      "canonical_evidence": "量子化学研究与密度泛函理论",
+      "llm_tldr_en": "Introduces an agentic system for automated development of functionals in multiconfiguration pair-density functional theory.",
+      "llm_tldr_cn": "引入一种智能体系统，用于多构型配对密度泛函理论中泛函的自动化开发。",
+      "llm_tldr": "引入一种智能体系统，用于多构型配对密度泛函理论中泛函的自动化开发。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
