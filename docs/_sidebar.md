@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-05-10 <!--dpr-date:20260510-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/10/2605.01625v1-prime-protein-representation-via-physics-informed-multiscale-equivariant-hierarchies" data-sidebar-item="{&quot;title&quot;: &quot;PRIME: Protein Representation via Physics-Informed Multiscale Equivariant Hierarchies&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.01625v1-prime-protein-representation-via-physics-informed-multiscale-equivariant-hierarchies&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;从原子到全局水平的多尺度物理信息蛋白质表征&quot;}">PRIME: Protein Representation via Physics-Informed Multiscale Equivariant Hierarchies</a>
   * 2026-05-09 <!--dpr-date:20260509-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/09/2605.05460v1-agentic-discovery-of-exchange-correlation-density-functionals" data-sidebar-item="{&quot;title&quot;: &quot;Agentic Discovery of Exchange-Correlation Density Functionals&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.05460v1-agentic-discovery-of-exchange-correlation-density-functionals&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;自动发现用于DFT的交换相关泛函&quot;}">Agentic Discovery of Exchange-Correlation Density Functionals</a>

@@ -1,0 +1,23 @@
+{
+  "label": "2026-05-10",
+  "date": "2026-05-10",
+  "generated_at": "2026-05-10T20:39:11",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202605/10/2605.01625v1-prime-protein-representation-via-physics-informed-multiscale-equivariant-hierarchies",
+      "section": "quick",
+      "title_en": "PRIME: Protein Representation via Physics-Informed Multiscale Equivariant Hierarchies",
+      "authors": "Viet Thanh Duy Nguyen, John K. Johnstone, Truong-Son Hy",
+      "date": "2026-05-02",
+      "pdf": "https://arxiv.org/pdf/2605.01625v1",
+      "score": "6.0",
+      "evidence": "从原子到全局水平的多尺度物理信息蛋白质表征",
+      "tldr": "蛋白质是具有多尺度物理特性的系统，但现有表示学习方法往往忽略了不同空间分辨率之间的层级关系。本文提出PRIME框架，通过构建包含表面、原子、残基、二级结构和蛋白质五个层级的嵌套结构图，并利用物理启发的分配算子实现双向信息交换。实验表明，PRIME在蛋白质折叠分类和反应类别预测等任务上表现优异，显著超越了现有的几何图神经网络和预训练模型，证明了多尺度层级建模在捕捉蛋白质功能特性方面的有效性。",
+      "tags": "query:qmmm",
+      "abstract_en": "Proteins are inherently multiscale physical systems whose functional properties emerge from coordinated structural organization across multiple spatial resolutions, ranging from atomic interactions to global fold topology. However, existing protein representation learning methods typically operate at a single structural level or treat different sources of structural information as parallel modalities, without explicitly modeling their hierarchical relationships. We introduce PRIME (Protein Representation via Physics-Informed Multiscale Equivariant Hierarchies), a unified framework that models proteins as a nested family of five physically grounded structural graphs spanning surface, atomic, residue, secondary-structure, and protein levels. Adjacent levels are connected through deterministic, physics-informed assignment operators, enabling bidirectional information exchange via bottom-up aggregation and top-down contextual refinement. Experiments on standard protein representation learning benchmarks demonstrate strong and competitive performance across diverse tasks, with particularly notable gains on the Fold Classification benchmark, where PRIME outperforms the strongest geometric GNN baseline by margins of 13.80 and 18.30 points on the harder Superfamily and Fold splits, and achieves a state-of-the-art accuracy of 84.10% on Reaction Class prediction, surpassing all baseline methods, including ESM. Ablation studies confirm that each structural level contributes complementary and non-redundant information, and adaptive cross-attention analysis reveals that PRIME autonomously identifies the most task-relevant structural resolutions at prediction time. Our source code is publicly available at https://github.com/HySonLab/PRIME",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
