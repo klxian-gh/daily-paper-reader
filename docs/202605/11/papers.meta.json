@@ -1,0 +1,51 @@
+{
+  "label": "2026-05-11",
+  "date": "2026-05-11",
+  "generated_at": "2026-05-11T21:03:53",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202605/11/2605.05746v1-polarizable-atomic-multipoles-for-learning-long-range-electrostatics",
+      "section": "quick",
+      "title_en": "Polarizable atomic multipoles for learning long-range electrostatics",
+      "authors": "Dongjin Kim, Daniel S. King, Yoonjae Park, Roya Savoj, Sebastien Hamel, Xiaoyu Wang, Bingqing Cheng",
+      "date": "2026-05-07",
+      "pdf": "https://arxiv.org/pdf/2605.05746v1",
+      "score": "6.0",
+      "evidence": "改进复杂系统势能面精度的方法论桥梁",
+      "tldr": "本研究针对机器学习原子间势能（MLIP）在处理离子、极性和界面系统时面临的长程静电与极化难题，提出了一种基于可极化原子多极子的半局部框架。该框架利用局部等变描述符预测环境相关的潜多极子，并通过线性响应捕捉非局部电荷转移与极化。实验证明，该方法在多个基准测试中显著提升了势能面精度，并能准确预测Born有效电荷、红外及拉曼光谱等物理响应性质，为构建物理透明的MLIP提供了新途径。",
+      "tags": "query:qmmm",
+      "abstract_en": "Long-range electrostatics and polarization remain central obstacles to extending machine learning interatomic potentials (MLIPs) to ionic, polar, and interfacial systems. Here, we introduce a semi-local framework for learning electrostatics from energies and forces using polarizable atomic multipoles. Local equivariant descriptors predict environment-dependent latent monopoles, dipoles, and quadrupoles, while residual non-local charge transfer and polarization are captured by non-self-consistent linear response in induced charges and dipoles. Across four diverse benchmarks and four short-range MLIP architectures, the multipole hierarchy and response terms systematically improve potential energy surface accuracy, with the largest gains in systems where long-range effects are essential. More importantly, the learned latent variables recover physically meaningful electrical responses: accurate Born effective charge tensors, emergent polarizabilities, infrared spectra in close agreement with experiments, and semi-quantitative Raman spectra for bulk water and hybrid MAPbI$_3$ perovskite. This systematically improvable, physically transparent framework enables MLIPs trained on standard energy and force labels to predict polarization-sensitive observables.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/11/2605.07437v1-spin-lattice-coupling-enables-adaptive-adsorption-in-magnetically-driven-electrocatalysts",
+      "section": "quick",
+      "title_en": "Spin-lattice coupling enables adaptive adsorption in magnetically-driven electrocatalysts",
+      "authors": "Arnold Gaje, Lulu Li, Felipe A. Garcés-Pineda, Camilo A. Mesa, Ghazaleh Abdolhosseini, Aditya K. Kushwaha, Dora Zalka, Elzbieta Trzop, Nicolas Godin, Raffaella Torchio, María Escudero-Escribano, Eric Collet, Sixto Giménez, Niels Keller, José Ramón Galán-Mascarós, Núria López, Ernest Pastor",
+      "date": "2026-05-08",
+      "pdf": "https://arxiv.org/pdf/2605.07437v1",
+      "score": "6.0",
+      "evidence": "催化循环和中间体的DFT模拟",
+      "tldr": "本研究针对电催化析氧反应（OER）中中间体能量耦合导致的过电位限制，提出利用磁场作为外部刺激来打破标度关系。通过对镍铁羟基氧化物的光谱测量和密度泛函理论模拟，发现磁场能通过增强自旋-晶格耦合改变表面化学吸附并引入结构灵活性，从而调节反应能垒。这一发现为通过外部刺激调控多态能量景观提供了新策略。",
+      "tags": "query:qmmm",
+      "abstract_en": "A major challenge in electrochemistry is to decouple the reactive intermediates of a catalytic cycle to optimise their energies independently. During the oxygen evolution reaction (OER), such energy interdependence results from the need to generate multiple adsorbates at the same site and sets the minimum overpotential. Here, we show that an external stimulus, such as a magnetic field, can relax the scaling relationships between intermediates during the OER. Spectroscopic measurements and Density Functional Theory simulations in Ni-Fe oxyhydroxides reveal that applying a magnetic field alters surface chemisorption and injects structural flexibility at the interface. We interpret these observations as a consequence of stimulated changes in the spin-lattice coupling, which allow access to quasi-degenerate oxygenated intermediates that modulate the reaction energy demands. Our findings redefine the scaling limitations as state-projected rather than intrinsic and establish external stimulation as a strategy to navigate multi-state energy landscapes in electrocatalysis and sensing applications.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/11/2605.07670v1-harnessing-structural-disorder-unraveling-hydrogen-evolution-in-monolayer-amorphous-carbon-via-first-principles-simulations-and-machine-learned-potentials",
+      "section": "quick",
+      "title_en": "Harnessing Structural Disorder: Unraveling Hydrogen Evolution in Monolayer Amorphous Carbon via First-Principles Simulations and Machine-Learned Potentials",
+      "authors": "Sreehari M S, Ashutosh Krishna Amaram, Raghavan Ranganathan",
+      "date": "2026-05-08",
+      "pdf": "https://arxiv.org/pdf/2605.07670v1",
+      "score": "6.0",
+      "evidence": "催化反应机理的第一性原理模拟",
+      "tldr": "本研究探讨了单层非晶碳（MAC）在析氢反应（HER）中的潜力。通过第一性原理计算和机器学习势函数（MLIP），研究发现MAC中丰富的结构缺陷（如5、6、7元环）和局部曲率显著提升了催化活性。相比于结晶碳材料，MAC提供了更广泛的吸附位点，其中约15%的位点表现出优异的吉布斯自由能，表明通过优化局部结构特征，MAC有望成为替代贵金属的高效催化剂。",
+      "tags": "query:qmmm",
+      "abstract_en": "Disorder and defective coordination in the catalytic plane are crucial for enhancing the Hydrogen Evolution Reaction (HER) on two-dimensional catalysts. Amorphous materials are disordered, making them catalytically adaptive for many reactions. In this work, the HER capabilities of Monolayer Amorphous Carbon (MAC) were studied in comparison with crystalline carbon derivatives, such as pristine graphene (GE) and graphyne derivatives. MAC generated from melt-quench simulations revealed a diverse framework of predominantly sp2 and sp3 carbons with numerous 5-, 6-, and 7-membered rings. Density Functional Theory (DFT) calculations investigated free-energy variations in hydrogen adsorption for each material. According to Sabatier's principle, optimum activity is achieved when the Gibbs free energy (Delta GH) change approaches zero. Crystalline carbon materials possess limited active sites, with beta-graphyne showing the best Delta GH value of +0.34 eV. The adsorption study for MAC was conducted in 30 distinct local environments, where core structural properties were analyzed against varying radii. Calculations showed a Delta GH distribution for MAC ranging from -0.02 eV to +1.35 eV. To evaluate activity across the entire MAC surface, a MACE MLIP foundation model was finetuned, achieving optimal energy and force fitting of 1.67 meV/atom and 29.15 meV/A, respectively. The MLIP predicted Delta GH values from -0.91 eV to +1.70 eV, with approximately 15% of sites exhibiting values below +0.25 eV. Feature analysis revealed that 7-membered rings, curvature, and ripple height enhance HER activity. Our findings suggest that, with careful optimization of local features, MAC can be tuned to compete with noble metal catalysts.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
