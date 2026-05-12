@@ -1,0 +1,586 @@
+Title: Machine learning the non-radiative decay modes in photochemical processes
+
+URL Source: https://arxiv.org/pdf/2605.08381v1
+
+Published Time: Tue, 12 May 2026 00:17:04 GMT
+
+Number of Pages: 53
+
+Markdown Content:
+# Machine learning the non-radiative decay modes in photochemical processes 
+
+# Debarshi Banerjee, †,‡ Gonzalo D´ ıaz Mir´ on, † Alex Rodriguez, †,¶ and Ali Hassanali ∗,†
+
+†International Centre for Theoretical Physics (ICTP), Strada Costiera 11, 34151 Trieste, Italy 
+
+‡Scuola Internazionale Superiore di Studi Avanzati (SISSA), via Bonomea 265, 34136 Trieste, Italy 
+
+¶Dipartimento di Matematica, Informatica e Geoscienze, Universit´ a degli Studi di Trieste, via Alfonso Valerio 12/1, 34127, Trieste, Italy 
+
+E-mail: ahassana@ictp.it 
+
+Abstract 
+
+Non-radiative decay in photoexcited molecular systems is driven by nuclear motion that guides the system toward conical intersections (CIs), where electronic states be-come degenerate and nonadiabatic transitions occur. Identifying the nuclear degrees of freedom responsible for accessing these regions from nonadiabatic molecular dy-namics (NAD) simulations remains challenging due to the high dimensionality and collective nature of the underlying motions. Here, we introduce an unsupervised, information-theoretic framework based on the Differentiable Information Imbalance (DII) to identify the nuclear coordinates governing CI access directly from trajectory surface hopping (TSH) simulations. By quantifying correlations between structural descriptors and electronic observables, including energy gaps and oscillator strengths, 
+
+1
+
+> arXiv:2605.08381v1 [physics.chem-ph] 8 May 2026
+
+the method ranks nuclear degrees of freedom according to their predictive relevance. A multi-step analysis protocol further enables the extraction of low-dimensional, physi-cally interpretable modes associated with non-radiative decay. We apply the framework to a diverse set of systems, including the methaniminium cation, furan, L-glutamine, L-pyroglutamine–ammonium, and a photoactive molecular motor. Across all systems, the method recovers known mechanistic coordinates governing non-radiative decay while also providing insight into the relative importance of competing modes when multi-ple structural distortions contribute to CI access. The analysis additionally reveals a systematic distinction between observables: energy gaps are typically controlled by a small number of localized coordinates, whereas oscillator strengths depend on more collective and distributed structural rearrangements. Overall, the DII-based frame-work combines predictive power with direct interpretability, providing a general and scalable route for extracting mechanistic insight from high-dimensional data coming from NAD simulations and constructing reduced-dimensional models of excited-state dynamics. 
+
+# 1 Introduction 
+
+Photoinduced processes in molecular systems are frequently governed by chemistry associated with ultrafast transitions between electronic states. In polyatomic molecules, these transi-tions are typically mediated by conical intersections (CIs) 1–3 , which represent points of degen-eracy between adiabatic potential energy surfaces. At such geometries, the Born–Oppenheimer approximation breaks down and nuclear and electronic motions become strongly coupled, enabling efficient non-radiative relaxation pathways. Conical intersections therefore play a central role in photochemical reactivity, controlling excited-state lifetimes and branch-ing ratios in systems ranging from small organic chromophores to biological molecules and photoactive materials. A widely used theoretical framework for investigating these processes is trajectory sur-2face hopping (TSH), which allows for simulating non-adiabatic molecular dynamics (NAD) in high-dimensional systems in a computationally efficient manner. Modern implementations allow the generation of large ensembles of excited-state trajectories that capture complex relaxation mechanisms and competing decay channels. Despite this progress, extracting mechanistic insight from such simulations remains challenging. 4 In particular, it is often un-clear which nuclear degrees of freedom actively drive the approach to the conical intersection within the high-dimensional configuration space sampled by the trajectories. From a theoretical perspective, the topology of a conical intersection is locally character-ized by the branching space, spanned by the gradient difference and non-adiabatic coupling vectors (NACVs), which lift the degeneracy between the intersecting electronic states. 5–8 
+
+However, this description is strictly local and typically obtained at optimized minimum-energy conical intersection (MECI) geometries. In dynamical simulations, trajectories may approach the intersection along collective nuclear distortions that are not trivially related to these local vectors, and the relevant coordinates may involve nonlinear combinations of atomic motions distributed across the molecule. 9,10 As a consequence, identifying the domi-nant degrees of freedom governing access to CIs from a large ensemble of trajectories remains a nontrivial problem. This challenge becomes even more pronounced for larger systems where the number of nuclear degrees of freedom grows rapidly and the relevant motions are often distributed across many coupled coordinates. 11–15 
+
+In recent years, machine learning techniques have become increasingly embedded in both the execution and analysis of molecular simulations. 16,17 The behavior of molecular systems is generally governed by fluctuations across high-dimensional free-energy landscapes, 18 which complicates the task of extracting clear mechanistic interpretations from simulation data. This challenge has motivated substantial efforts toward developing data-driven methodolo-gies capable of characterizing, interrogating, and rationalizing the complex dynamical behav-ior observed in molecular simulations. In the context of nonadiabatic molecular dynamics (NAD), the selection of such coordinates has often relied on chemical intuition and visual 3inspection of trajectories, where key distortions are inferred by examining representative geometries or displacement patterns associated with electronic transitions. A variety of different approaches have been proposed to identify the nuclear degrees of freedom governing excited-state dynamics and nonradiative decay. Early efforts largely relied on normal mode analysis or principal component analysis (PCA) to extract dominant motions from molecular dynamics trajectories, which were then used to construct reduced-dimensionality models such as linear vibronic coupling (LVC) Hamiltonians or to guide quantum dynamics simulations 13,19–21 . However, normal mode analysis is intrinsically a local, harmonic description defined around a reference minimum and is therefore most appropriate for small-amplitude motions in relatively rigid systems. In strongly anharmonic regimes, such as those involving large structural rearrangements or dissociation, the normal mode picture breaks down and may fail to capture the relevant nuclear distortions driving the dynamics. PCA has also been widely applied to trajectory surface hopping simulations to identify collective nuclear motions associated with internal conversion or intersystem crossing pathways 14,20,22–24 . However, because PCA ranks modes according to structural variance, it may emphasize large-amplitude or low-frequency motions that are not directly relevant to nonadiabatic transitions, while neglecting smaller-amplitude motions that lead to electronic transitions. This limitation has been explicitly observed in several systems, where dominant principal components correspond to collective motions which may not necessarily lead to non-adiabatic transitions. 13 
+
+To overcome these limitations, nonlinear dimensionality reduction techniques, such as diffusion maps and related manifold learning approaches, have been employed to extract low-dimensional reaction coordinates directly from nonadiabatic dynamics simulations 10,25,26 .While these methods can capture nonlinear correlations in the data, the resulting collective variables are often difficult to interpret physically and require additional, sometimes ad hoc, procedures to map them back onto chemically meaningful internal coordinates 11,12 .Alternative strategies based on clustering combined with PCA or multidimensional scaling 4have also been used to identify distinct dynamical channels, with mechanistic insight obtained by comparing representative structures across clusters 12,14 . In parallel, information-theoretic approaches have been introduced to quantify the relationship between structural descriptors and electronic observables, for example by computing mutual information between internal coordinates or atom-centered features and quantities such as energy gaps or nonadiabatic couplings 27–31 . While these methods provide a more direct link between nuclear motion and electronic response, they typically operate at the level of individual descriptors or atoms, and do not directly yield collective modes suitable for reduced-dimensionality dynamical models. These considerations highlight the need for approaches that can identify collective nuclear coordinates directly from dynamical data, while explicitly incorporating their relevance to electronic structure changes and nonadiabatic processes. In this work we address this problem using the information imbalance framework in-troduced by Glielmo and co-workers 32,33 , which provides an information-theoretic approach to quantify the predictive relationship between different representations of a system. The method evaluates how well the neighborhood structure defined by one set of variables can reproduce that defined by another, thereby enabling the identification of coordinates that retain the most relevant information about a target observable. 34–36 In the context of non-adiabatic dynamics, this allows us to determine which nuclear degrees of freedom best encode the approach to the conical intersection as reflected in quantities such as the electronic energy gap or hopping events along trajectory surface hopping simulations. By applying this framework to ensembles of TSH trajectories, we identify low-dimensional collective coordinates governing CI access directly from dynamical data, without relying on optimized intersection geometries or predefined reaction coordinates. We first demonstrate the approach on well-characterized model systems, including the methaniminium cation 9,37–39 
+
+and furan 40,41 , where the extracted motions can be directly compared with established mech-anistic interpretations. We then extend the analysis to two amino-acid systems, L-glutamine and L-pyroglutamine-ammonium, which are central to the phenomenon of non-aromatic flu-5orescence studied extensively in our group (NAF) 42–50 and exhibit more complex photo-physical behavior. NAF refers to photoinduced light emission from chemical systems that lack conventional aromatic or extended π-conjugated chromophores 47,51–54 . In the specific cases considered here, experiments showed that L-glutamine is not optically active, but upon heating in water and complexation with an ammonium ion it undergoes a chemical transfor-mation to form L-pyroglutamine-ammonium, a supramolecular assembly stabilized by short hydrogen bonds and displaying enhanced fluorescence. 44 Finally, we consider a well-studied class of photoactive molecular motors 55–59 , illustrating the ability of the method to uncover mechanistically relevant degrees of freedom in larger and structurally diverse systems. The paper is organized as follows. Section 2 introduces the Information Imbalance frame-work, and the analysis protocol used to identify nuclear coordinates relevant to non-radiative decay pathways. Section 3 presents applications to the methaniminium cation, furan, L-glutamine, L-pyroglutamine-ammonium, and a photoactive molecular motor, focusing on the coordinates controlling energy gaps and oscillator strengths. Finally, Section 4 summa-rizes the main conclusions and discusses the implications of the framework for extracting interpretable reduced-dimensional models of excited-state dynamics. 6a b c
+
+d eFigure 1: Molecular systems investigated in this work: (a) Methaniminium cation, (b) Fu-ran, (c) L-glutamine, (d) L-pyroglutamine–ammonium, and (e) Molecular Motor: 9-(2,4,7-trimethyl-2,3-dihydro-1H-inden-1-ylidene)-9H-fluorene. 
+
+# 2 Methods 
+
+In this work, we employ an unsupervised machine learning approach based on the Infor-mation Imbalance (II) method to identify the nuclear degrees of freedom most relevant for understanding the mechanism associated with non-radiative decay. The II framework, the NAD dataset, and the analysis protocol are described next. 
+
+# 2.1 Information Imbalance (II) 
+
+The information imbalance (II) is a statistical test, introduced by Glielmo et al. ,32 which quantifies the relationship between different distance measures defined over the same dataset. Within the present context, we use II to determine whether structural coordinates can explain variations in observables such as the electronic energy gap between states. Since vanishing 7energy gaps correspond to the approach to a conical intersection, identifying structural vari-ables that encode the energy-gap landscape provides a direct route to identifying the nuclear motions responsible for accessing the crossing of two potential energy surfaces. In cases where oscillator strengths are also available, the same framework can be used to identify structural coordinates that correlate with the emergence of bright and dark states, corre-sponding to regions of high and low oscillator strength, respectively. We therefore begin by briefly reviewing the information imbalance formalism. Information imbalance provides a quantitative measure for comparing the information content of two distance metrics, dA and dB , defined over the same set of data points. In our application, dB corresponds to distances defined in the space of electronic observables (such as the energy gap or oscillator strength), while dA corresponds to distances defined in a structural representation of the system, such as internal coordinates or Coulomb matrix elements (which will be introduced in the next section). For example, distances in the electronic observable space can be defined between two configurations i and j as dij B = ∥∆Ei − ∆Ej ∥ , where ∆ Ei and ∆ Ej denote the electronic en-ergy gaps associated with configurations i and j, respectively, and ∥ · ∥ denotes the Euclidean norm. Distances dij A are defined analogously using a chosen set of structural coordinates, or Coulomb Matrix elements. Given a distance metric dA, one can define rij A as the rank of point j among all points in the dataset when ordered by their distance from point i according to dA. Similarly, rij B denotes the rank of point j with respect to point i according to the distance metric dB . Intuitively, the representation A is considered informative about representation B if configurations that are close neighbors according to dA also remain close neighbors according to dB . In other words, dA is informative with respect to dB when the neighborhood structure defined by dA
+
+preserves the neighborhood structure defined by dB .The II from dA to dB is defined as: 8∆( dA → dB ) := 2
+
+N ⟨rB | rA ≤ k⟩, (1) where N is the total number of points in the data set and k is the number of nearest neighbor points that are considered. Eq.1 gives us the II, represented as ∆( dA → dB ), as a number between 0 and 1. ∆( dA → dB ) = 0 occurs when all points that are nearest neighbors according to dA remain nearest neighbors in dB , whereas ∆( dA → dB ) = 1 occurs when the nearest neighbors according to dA are randomly distributed in dB . The former case is when dA is maximally informative with respect to dB , and the latter is when it is minimally informative. A recent development extends the original II framework by introducing a differentiable formulation. 33 In this approach, the individual features that define a distance metric are multiplied by learnable weights, which are optimized through gradient-based methods. By allowing the weights to adapt during optimization, this formulation naturally accommodates heterogeneous features that may differ substantially in their physical units or numerical scales. Consequently, it avoids the need for manual pre-processing or ad hoc rescaling of the input variables. This approach, termed the Differentiable Information Imbalance (DII), enables the au-tomatic identification of the most informative subset of structural descriptors for a given dataset. By learning the optimal weighting of features that best preserves the neighborhood structure of a target representation, DII effectively determines which coordinates contribute most strongly to defining the relevant distance metric. The DII can be formally written as 
+
+DII (dA(www) → dB ) := 2
+
+N 2
+
+> N
+
+X
+
+> i,j =1
+
+cij (λ, d A(www)) rij B (2) where, 
+
+cij (λ, d A(www)) := e−dij A (www)/λ 
+
+P 
+
+> m̸=i
+
+e−dim A (www)/λ (3) In this expression, www denotes a set of variational parameters that are optimized via gradi-9ent descent to assign different relative weights to the features defining the distance dA. The hyperparameter λ is selected based on characteristic length scales of the dataset, typically determined from the average and minimum nearest-neighbor distances. Through this opti-mization procedure, the method simultaneously identifies which features in dA contain the most predictive information with respect to dB and determines the optimal combination in which these features should contribute to the distance metric. In the limiting case λ → 0, the DII formulation (Eq. 2) reduces to a continuous analogue of the standard Information Imbalance defined in Eq. 1. In realistic applications where Information Imbalance (II) has been employed across di-verse problems, there is no universal threshold for what constitutes an informative value; however, empirical benchmarks can be established. In practice, II values in the range of 0.1–0.4 are typically considered highly informative and represent near-optimal performance, particularly in molecular systems where noise and imperfect correlations between descrip-tor spaces (e.g., structural features) and target observables (e.g., energy gaps or oscillator strengths) are unavoidable. Values between 0.4–0.7 still indicate a moderate degree of in-formativeness, while values in the range of 0.7–0.9 correspond to weak correlations. Values approaching 1.0, by contrast, indicate an absence of meaningful information content. 33–36,60 
+
+In the present work, the DII framework is applied in a sequence of dimensionality-reduction steps aimed at quantifying how strongly different internal structural degrees of freedom encode variations in the electronic energy gaps sampled along the TSH trajectories. To efficiently explore the space of possible feature combinations, and to avoid the combi-natorial growth associated with testing all possible subsets, we employ the forward greedy selection strategy introduced in Ref. 32. This search procedure is combined with the DII implementation provided in the DADApy Python library. 61 
+
+10 2.2 Coulomb Matrix Descriptors 
+
+We start by computing the Coulomb matrix 62 (CM) between all atoms for the trajectories in a given electronic state. The Coulomb matrix is defined as: CM ij =
+
+
+
+0.5Z2.4 
+
+> i
+
+for i = j 
+
+> ZiZj
+> Rij
+
+for i̸ = j
+
+(4) The diagonal elements can be seen as the interaction of an atom with itself and are essentially a polynomial fit of the atomic energies to the nuclear charge Zi. The off-diagonal elements represent the Coulomb repulsion between nuclei i and j.
+
+# 2.3 Chemical Systems 
+
+There are 5 systems under study, and these trajectories were published in Refs. 9,37,63,64: Methaniminium Cation, Furan, L-glutamine (L-gln), L-pyroglutamine-ammonium (L-pyro), and Molecular Motor: 9-(2,4,7-trimethyl-2,3-dihydro-1H-inden-1-ylidene)-9H-fluorene. Fig.1 shows the chemical structures of the 5 systems studied in this work. All the systems studied in this work were simulated in prior work done by some of the authors using TSH at the time-dependent density functional tight binding (TD-DFTB) level of theory and their non-radiative decay mechanisms were validated against higher levels of electronic structure theory, either time-dependent density functional theory (TD-DFT) or multireference configuration interaction with single and double excitations (MR-CISD) de-pending on the system. TD-DFT is a widely used electronic-structure approach for comput-ing excited-state properties, including excitation energies, oscillator strengths, and excited-state gradients. TD-DFTB is a semi-empirical approximation to TD-DFT that retains the same general framework while substantially reducing the computational cost, making it well suited for generating large ensembles of NAD trajectories. 11 2.4 Protocol for Analysis 
+
+The main steps of the protocol are summarized in Figure 2. Below we outline important technical aspects of each step. The procedure begins with input data coming from NAD trajectories such as the positions of all particles as a function of time. In addition, in NAD simulations, one typically has the evolution of other physical quantities associated with the optical properties such as the electronic energy gap and the oscillator strength. 1. Extract the Coulomb Matrix (CM Sl 
+
+> ij
+
+) for each frame of an ensemble of NAD trajectories in a given electronic excited state, Sl, for each pair of atoms i and j. Accumulate the results over all the frames to make a probability distribution of the elements of the Coulomb Matrix P Sl . We also compute the Coulomb Matrix for all the frames in the state the system hops to (CM Sl−1 ), and the corresponding probability distribution of all pairwise Coulomb Matrix values, P (CM ij |Sl) and P (CM ij |Sl−1). In general the system can hop between any two electronic states ( Sl → Sl−1). Specifically for the CI that we will focus on in this work, we look at transitions from S1 → S0.2. Compute the Jensen-Shannon divergence (JSD), which is a symmetrized version of the Kullback–Leibler Divergence (KLD) 65 , between P (CM ij |Sl) and P (CM ij |Sl−1). The KLD, which is a measure of similarity between 2 probability distributions R and 
+
+Q, is defined as 
+
+DKL (R|| Q) = X
+
+> x∈X
+
+R(x) log R(x)
+
+Q(x)Instead, the JSD is defined so as to symmetrize the KLD 
+
+DJS = 0 .5( DKL (R|| M ) + DKL (Q|| M )) , where M = 0 .5( R + Q)12 NAD trajectory 
+
+{Xt, ∆Etl,l −1}
+
+Descriptors 
+
+CM Sl 
+
+> ij
+
+, R Sl
+
+Build P (CM ij |Sl), P (CM ij |Sl−1) Step 1 
+
+JSD( P (CM ij |Sl), P (CM ij |Sl−1)) > Threshold 
+
+↓
+
+CM Sl
+
+> hotspot
+
+Step 2 
+
+DII 
+
+
+
+CM Sl 
+
+> hotspot
+
+→ ∆El,l −1
+
+
+
+→ CM Sl 
+
+> f
+
+Step 3 
+
+DII 
+
+
+
+RSl → CM Sl
+
+> f
+
+
+
+→ RSl 
+
+> selected
+
+Step 4 
+
+DII 
+
+
+
+RSl 
+
+> selected
+
+→ ∆El,l −1
+
+
+
+Step 5 
+
+Interpretable Modes 
+
+Figure 2: Workflow for identifying state-relevant internal coordinates from trajectory data. Starting from NAD trajectories, Coulomb matrix descriptors are constructed and compared across electronic states using the Jensen–Shannon divergence to identify structurally relevant atom pairs (“hotspots”). These are evaluated via DII against the energy gap to construct a filtered descriptor set CM f . Internal coordinates are then selected based on their predictive power with respect to CM f and used for final feature selection against ∆ El,l −1. Boxes high-lighted in teal are steps using the descriptors and statistical analysis methods, and in orange are the steps where the DII is used. 13 The outcome of determining the JSD is that it gives us “hotspots” of pairwise atomic interactions (i.e., Coulomb Matrix elements) that change significantly from one state to another. This allows us to do a first dimensionality reduction step selecting only these “hotspot” atoms . We do this hotspot selection based on a threshold value of the JSD that we select such that the hotspots are those values where the JSD > threshold. These selected Coulomb Matrix hotspots are labeled as CM Sl
+
+> hotspot
+
+. threshold is an adjustable parameter. 3. Next, we compute the DII(CM Sl 
+
+> hotspot
+
+→ ∆El,l −1), for all atoms i, j belonging to the “hotspots”, assuming we are analysing the NAD trajectory where the system jumps from Sl to Sl−1. In addition, where the oscillator strength ( f osc ) is available, we also compute DII(CM Sl 
+
+> hotspot
+
+→ f osc l,l −1). We filter the results of these DII calculations to identify a small set of Coulomb-matrix elements, and therefore the corresponding atom pairs, whose structural variations are most informative of changes in the electronic energy gaps. The filtering is done by selecting the nfeatures (default value selected in this work is 10) values with the least DII. We denote these filtered hotspots from the Coulomb Matrix as CM Sl 
+
+> f
+
+.These coordinates describe nuclear motions that modulate the relative electronic-state energies during excited-state relaxation. When such motions lead to closure of the relevant energy gap, they provide a dynamical signature of approach toward a CI region. Oscillator strengths are then analyzed as a complementary electronic target, allowing us to determine which coordinates govern the intensity of the emission. 4. While the Coulomb-matrix analysis identifies the atom pairs that are most informative of the target electronic observable, these descriptors are not always the most chemically interpretable representation of the underlying motion. We therefore map the selected atoms onto an internal-coordinate representation, which allows the relevant structural changes to be expressed in terms of bonds, angles, and dihedrals. 14 Next, for all frames belonging to a given electronic state Sl, we generate the Z-matrix representation RSl using a combination of the quantum chemistry software ORCA 66–69 
+
+and an in-house python script, which contains the corresponding internal coordinates, including bonds, angles, and dihedrals. To ensure that the motions involving the atoms selected in the Coulomb-matrix step are explicitly represented, we augment this set with additional internal coordinates constructed from those atoms when they are not already included in the default Z-matrix. Then we compute DII( RSl 
+
+> k
+
+→ CM Sl 
+
+> f
+
+), i.e., we compute the DII for every internal coordinate ( RSl 
+
+> k
+
+) to the Coulomb Matrix hotspots that best explain the energy gaps/oscillator strengths. This allows us to select a subset of internal coordinates ( RSl
+
+> selected
+
+). As in the previous step, here also we do the feature selection such that a specified nfeatures (set to 10 by default) of the most informative coordinates are selected as the RSl
+
+> selected
+
+.5. We subsequently do a final round of DII calculations using the selected internal co-ordinates to determine which ones best predict the energy gaps/oscillator strengths - DII( RSl 
+
+> selected
+
+→ ∆El,l −1) and DII( RSl 
+
+> selected
+
+→ f osc l,l −1). This gives us a set of physi-cally interpretable modes that are most informative on the energy gaps and oscillator strengths. One motivation for adopting this multistep procedure, rather than directly computing the DII between all internal coordinates and the energy gaps, is to reduce the dimensionality of the candidate feature space. While in principle DII can directly infer the modes from a much larger and highly redundant set of internal coordinates, it needs a number of samples that grows exponentially with the number of features to perform feature selection in this space. This would be computationally intractable, particularly for larger systems. 15 3 Results 
+
+In this section, we apply the workflow to a variety of systems of diverse photochemistry. We begin with two benchmark systems that have been extensively studied in photochemistry using NAD simulations, methaniminium cation and furan, to test whether the selected co-ordinates recover established non-radiative decay mechanisms. We then analyze two amino-acid systems, extensively studied in our group in the context of non-aromatic fluorescence (NAF) 42–49 , L-glutamine (L-gln) and L-pyroglutamine-ammonium (L-pyro), where we ex-amine descriptors for both the energy gap and the oscillator strength, f osc . Finally, we consider an overcrowded alkene molecular motor, a light-driven molecular machine in which photoexcitation is converted into directional rotation around a central double-bond axle. 55–57 
+
+Because motor function depends on the non-radiative relaxation from the excited state to the ground state, this system provides a chemically motivated test case for identifying the coordinates that govern both non-radiative decay and bright-to-dark state conversion. 58,59,64 
+
+# 3.1 Methaniminium Cation 
+
+Methaniminium cation (CH 2NH +2 ) serves as a minimal model for protonated Schiff bases which are critical in the photophysics of retinal 70 and has been investigated with several electronic-structure methods. 9,37–39 We analyze TSH trajectories computed with TD-DFTB in a previous work published by our group. 64 
+
+16 a
+
+c
+
+b
+
+d
+
+S2 → S 1 S1 → S 0
+
+S2 → S 1 S1 → S 0  
+
+> 121
+
+Figure 3: (a) DII between Coulomb-matrix descriptors and energy gaps as a function of the number of selected features. Purple corresponds to the S 2 → S1 and green corresponds to the S 1 → S0 relaxation channels respectively. (b) Most informative atom pairs (“hotspots”) identified from Coulomb matrix analysis are highlighted. The left and right parts of the panel corresponds to the S 2 → S1 and S 1 → S0 channels respectively. (c) DII between internal coordinates and energy gaps as a function of the number of selected features. Purple corresponds to the S 2 → S1 and green corresponds to the S 1 → S0 relaxation channels respectively. (d) The most informative structural modes extracted from the DII analysis: The S 2 → S1 transition is governed primarily by C–N stretching (left), while the S 1 → S0
+
+channel involves the H(C) −C−N−H(N) torsion and C −N stretching (right). The photochemistry of CH 2NH +2 primarily involves studying the excitation to the S2
+
+state and the subsequent non-radiative decays to S1 and then S0. The photochemistry of this system is well known to be described by these three states. 9,37 We thus analyze two non-radiative channels: S2 → S1 and S1 → S0. In Fig. 3a we report DII(CM S2 
+
+> ij
+
+→ ∆E2,1) (purple) and DII(CM S1 
+
+> ij
+
+→ ∆E1,0) (green), i.e., how well selected Coulomb-matrix (CM) atom pairs explain each energy gap. The S2 → S1 curve decreases substantially faster, indicating that a small number of pairwise descriptors already captures much of the relevant information for 17 ∆E2,1, whereas ∆ E1,0 requires a larger set of pairwise descriptors and the features that are selected are less informative on the energy gap. Figure 3b identifies the dominant pairs: for 
+
+S2 → S1, {C,N }, {N,H2 }, and {C,H1 }; for S1 → S0, {C,N } remains important, with {N,H1 }
+
+and {C,H1 } completing the top three. These are the aforementioned “hotspots” identified in Step 2 of the analysis protocol. We then translate these pair-level signatures into chemically interpretable internal coor-dinates according to Steps 4 and 5 in the analysis protocol. In Fig. 3c, only 2–3 features are sufficient to approach the minimum DII for S2 → S1, while the S1 → S0 curve decreases more slowly and saturates at a higher DII. The top coordinates are shown in Fig. 3d. For S2 → S1,the leading mode is clearly C −N stretching, followed by a torsion around the C −N bond (SI Fig. S1a). This agrees with earlier work identifying the C −N stretch as the dominant coordinate for the S2/S 1 crossing. In contrast, for S1 → S0, the most informative coordinate is the H(C) −C−N−H(N) dihedral, with C −N stretching as a secondary contributor and N−CH 2 pyramidalization appearing as the next relevant degree of freedom (SI Fig. S1b). The single-feature DII values in Fig. 3c (about 0.70 for S2/S 1 and about 0.85 for S1/S 0)further support this asymmetry: one dominant coordinate explains the upper-state decay significantly better than it explains the lower-state decay. As additional coordinates are included, the stronger drop for S2 → S1 and the more modest improvement for S1 →
+
+S0 indicate that the latter process is intrinsically more collective. This is consistent with previous mechanistic analyses reporting that access to the S1/S 0 seam involves coupled torsion, C −N stretching, and pyramidalization-type distortions of the CH 2 group. 9,37 . In summary, these findings demonstrate that our protocol provides a semi-automated manner for diagnosing relevant photochemical decay pathways in a well studied system involving non-adiabatic hops associated with three electronic states. 18 3.2 Furan 
+
+Furan is another canonical benchmark for non-adiabatic dynamics and was also investigated in a previous study from our group. 64 Our analysis focuses on the S1/S 0 non-radiative decay channel. Figure 4a (purple curve) reports DII(CM S1 
+
+> ij
+
+→ ∆E1,0) as a function of the number of selected Coulomb-matrix (CM) features. This decreases gradually, from about 0.89 to about 0.63 over the first eight features, indicating that no single atom pair dominates the gap fluctuations. The most informative CM pairs are shown as the inset in Fig. 4a: one 
+
+{C,C } and two {C,O } pairs, emphasizing that the relevant structural signal is distributed over the heteroatom-containing ring framework. a b
+
+Figure 4: (a) DII between Coulomb-matrix descriptors and the S 1 → S0 energy gap as a function of the number of selected features (purple) and DII between internal coordinates and S1 → S0 energy gap as a function of the number of selected features (green). The inset shows the most informative atom pairs (“hotspots”) identified from Coulomb matrix analysis are highlighted: the O atom and the two adjacent C atoms. (b) The most informative structural modes extracted from the DII analysis: the C −O−C−H dihedral and a C −O stretching coordinate. Moving to the chemically interpretable internal coordinates (green curve in Fig. 4a), we observe that the ranked internal-coordinate representation lowers DII from about 0.84 to about 0.45 only after including six modes, again pointing to a collective decay coordinate. The leading interpretable modes are shown in Fig. 4b: a C −O−C−H dihedral and a C −Ostretching coordinate. SI Fig. S2 shows the next-ranked contributions, including the second C−O stretch, the C −O−C angle, and a C −C distance; an explicit ring-puckering coordinate 19 also appears among the top six selected features. Altogether, these modes describe coupled out-of-plane deformation (the C −O−C−H dihedral and C −O−C angle are most notably correlated to the ring puckering) and ring-opening (the C −O and C −C stretches), consistent with prior theoretical studies that associate furan’s non-radiative decay with puckering and ring-opening pathways in a multidimensional photochemical landscape. 40,41,64 .
+
+# 3.3 L-glutamine 
+
+The preceding two systems demonstrate that our protocol can identify non-radiative decay modes in well-studied prototypical molecules with different numbers of electronic states and active nuclear degrees of freedom. We next turn to amino-acid-based systems associated with NAF, beginning with L-glutamine (L-gln). Experimentally, L-gln is non-fluorescent, consis-tent with efficient non-radiative relaxation back to the ground state on a short timescale. Motivated by this connection between structural constraints, and different non-radiative de-cay mechanisms and fluorescence properties, we analyze not only the energy gap ∆ E1,0 but also the oscillator strength f osc 1,0 along the trajectories. This allows us to determine if the oscillator strength can be explained accurately by simple structural coordinates. a
+
+# Δ𝐸 !,# 𝑓 !,#
+
+> $%&
+
+b
+
+Figure 5: (a) DII between internal coordinates and energy gap/oscillator strength as a func-tion of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. (b) The most informative structural modes extracted from the DII analysis: The ∆ E1,0 is governed primarily by the carbonyl C −O stretch and an O −Hdistance (left), while the f osc 1,0 is described by the O −H and H −N stretching (right). 20 In SI Fig. S4a we compare DII trends for two targets, ∆ E1,0 (green) and f osc 1,0 (purple), using selected Coulomb-matrix (CM) elements. The contrast is striking: for the energy gap, DII drops from about 0.58 to about 0.32 with only two selected features and then plateaus, whereas for oscillator strength it remains much higher (about 0.95 to about 0.72 over 10 features). SI Fig. S4b shows the corresponding key atom pairs: for ∆ E1,0, the dominant signal involves the carbonyl atoms plus one neighboring NH +3 hydrogen; for f osc 1,0 ,the carbonyl oxygen and all three NH +3 hydrogens are most implicated. The same hierarchy appears with chemically interpretable internal coordinates. In Fig. 5a we display the DII results for both ∆ E1,0 (green) and f osc 1,0 (purple) using the internal coor-dinates. Fig. 5b shows that the top two descriptors are the carbonyl C −O stretch and an O−H distance associated with proton transfer; together they already recover the low-DII regime ( ∼ 0.32). In fact, the single feature associated with the C −O stretch already yields a DII of ∼ 0.58, indicating that this coordinate alone captures a substantial fraction of the structural information relevant to the energy gap. For the oscillator strength, the best descriptors are proton-transfer-related distances (O −H and H −N), but the DII stays near 
+
+∼ 0.76, indicating weaker direct structural predictability than for the energy gap. This is consistent with previous L-gln analyses, where non-radiative decay is dominated by localized carbonyl/proton-transfer motion. 48,63 
+
+The analysis of the oscillator strength is particularly noteworthy, as it highlights a dis-tinct behavior compared to the energy gap. Specifically, the DII values remain significantly higher, indicating that the oscillator strength is governed by more complex relationships than those captured by the simple structural modes considered here. Nevertheless, mod-erate correlations are still observed. Importantly, the modes that are most informative for describing the energy gap are not necessarily identical to those relevant for f osc .21 3.4 L-pyroglutamine-ammonium 
+
+In contrast to L-gln, L-pyroglutamine-ammonium (L-pyro) corresponds to the fluorescent product formed after chemical transformation of L-gln upon heating in water, as shown experimentally in previous work. 44 Subsequent nonadiabatic dynamics studies further showed that the short-hydrogen bonds in L-pyro suppress access to the dominant non-radiative decay pathway by restricting the carbonyl-elongation mode and associated proton-transfer motion. 48,63 As a result, only about 20% of trajectories in the present ensemble undergo non-radiative relaxation to the ground state. This makes L-pyro a challenging case of a system with a limited amount of data because the analysis must recover meaningful decay coordinates from a limited number of reactive events. a
+
+# Δ𝐸 !,#
+
+b
+
+# 𝑓 !,#
+
+> $%&
+
+Figure 6: (a) DII between internal coordinates and energy gap/oscillator strength as a func-tion of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. (b) The most informative structural modes extracted from the DII analysis: The ∆ E1,0 is governed primarily by the carbonyl C −O stretch and the proton transfer involving the two O −H distances (top), while the f osc 1,0 is described by a O −H stretch, a C −C−O−H dihedral, and a C −N ring stretch (bottom). In SI Fig. S6a we analyze DII trends for both ∆ E1,0 and f osc 1,0 using selected Coulomb-matrix (CM) features. Both curves decrease gradually, indicating pronounced collectivity. The energy gap remains more predictable than oscillator strength (DII approaches ∼ 0.50 for ∆ E1,0 versus ∼ 0.66 for f osc 1,0 ), again showing that pairwise structural descriptors are less effective for optical observables. SI Fig. S6b highlights atoms from the top five CM pairs; 22 these are concentrated around carbonyl C −O groups, the inter-dimer hydrogen-bond region, and the carbon atom adjacent to the carbonyl. Similar modes were identified by work done in our group in Ref. 48. The internal-coordinate analysis in Fig. 6a gives a consistent picture. For ∆ E1,0, the leading coordinates are the carbonyl C −O stretch and the proton-transfer coordinate in-volving the two O −H bonds (top panel of Fig. 6b). For f osc 1,0 , the most relevant features shift toward proton-transfer and nearby torsional motions: an O −H coordinate, a C −C−O−Hdihedral, and again a C −N ring stretch (bottom panel of Fig. 6b). The slow DII saturation that we see for both ∆ E1,0 and f osc 1,0 ) in Fig. 6a confirms that both observables are governed by coupled distortions rather than by a single dominant mode. As in the case of L-gln, the modes governing f osc only partially overlap with those corre-lated with the energy gap. In particular, the O −H stretching mode associated with proton transfer is common to both. In contrast, the C −N ring stretch and the C −C−O−H dihedral are uniquely relevant for f osc and do not appear among the dominant modes describing the energy gap. This further reinforces the non-trivial observation that modes strongly corre-lated with the oscillator strength are not necessarily those that most effectively explain the energy gap. We note that the oscillator strength ( f osc 1,0 ) depends on both the energy gap (∆ E1,0) and the transition dipole moment (TDM). Given the partial overlap between the coordinates selected for the energy gap and those for the oscillator strength, it is natural to question whether this overlap arises primarily from the explicit dependence of f osc on ∆ E. To assess this, we examined DII( RS1 
+
+> selected
+
+→ f osc 1,0 (TDM)), where f osc 1,0 (TDM) denotes the oscillator strength constructed by retaining only the TDM contribution, excluding the energy gap term. For both L-gln and L-pyro, the resulting DII values are nearly identical to those obtained using the full oscillator strength (SI Fig. S5 and SI Fig. S7). In particular, the absolute magnitudes differ by less than 0 .02–0 .03, the trends across the DII curves are also consistent, and the dominant physical modes remain unchanged relative to those identified 23 from DII( RS1 
+
+> selected
+
+→ f osc 1,0 ). We will see in the next section however that this is not necessarily true in general. 
+
+# 3.5 Molecular Motors 
+
+Next, we analyze the overcrowded molecular motor 71 , a light-activated system where pho-toexcitation initiates rotation around a central double-bond region. 57 
+
+This motor is also a useful test case because the key early-time photophysics combines two coupled observables: non-radiative relaxation and a bright-to-dark transition in S1 (drop in oscillator strength) before ground-state recovery. 55 Previous studies implicate central-bond torsion, bond-stretching and pyramidalization in this process, 58,59,64 but disagree on which motion is the main driver. 55,56,59 Our goal here is to identify the most informative (“parent”) coordinate directly from trajectory data. a b
+
+Figure 7: (a) DII between internal coordinates and energy gap/oscillator strength as a func-tion of the number of selected features. Purple corresponds to the f osc 1,0 , red corresponds to f osc 1,0 (TDM), and green corresponds to the ∆ E1,0 respectively. (b) The most informative structural modes extracted from the DII analysis: both the ∆ E1,0 and the f osc 1,0 is governed primarily by the central torsion dihedral and the central double bond stretch that are high-lighted. In SI Fig. S9a, DII computed from selected Coulomb-matrix (CM) features decreases rapidly for both targets, reaching about ∼ 0.27 for ∆ E1,0 and ∼ 0.35 for f osc 1,0 . The most 24 informative CM pairs are highlighted in SI Fig. S9b: for the energy gap, {C1,C3 }, {C1,C5 },and {C2,C6 }; for oscillator strength, {C2,C4 }, {C1,C3 }, and {C1,C5 }. These pairs mainly track atoms whose relative geometry changes strongly along the central-bond rotation path-way. We subsequently map this signal to interpretable internal coordinates. As shown in Fig-ure 7a with only three coordinates, DII already reaches very low values (about 0.17 for ∆ E1,0
+
+(green) and about 0.33 for f osc 1,0 (purple)), indicating that a compact coordinate set captures most of the relevant dynamics. The leading coordinates are the central torsional dihedral and the associated double-bond stretch (Fig. 7b), with an additional smaller contribution from a second nearby dihedral (SI Fig. S10). Quantitatively, the primary dihedral alone yields DII values of approximately 0.35 for ∆E1,0 and 0.46 for f osc 1,0 , making it the single most informative coordinate for both non-radiative decay and bright-to-dark conversion. As in previous cases, however, the correlation between structural coordinates and the oscillator strength remains weaker, as reflected by the higher DII value. While the central dihedral captures the behavior of the energy gap nearly optimally, its correlation with the oscillator strength is comparatively less precise. The next most relevant contributions arise from the central double-bond stretch and an ad-ditional dihedral around the same region (SI Fig. S10), although their influence is clearly less significant. In contrast to the L-gln and L-pyro systems, the modes governing the energy gap and oscillator strength in this system coincide. In both cases, the central torsional di-hedral and the associated double-bond stretch emerge as the most informative coordinates, representing a notable scenario in which structural modes exhibit a relatively strong corre-lation with the oscillator strength. Taken together, these results support a mechanism in which torsional motion about the central bond acts as the primary driving coordinate, while the double-bond stretch and pyramidalization arise predominantly as secondary, coupled responses rather than primary triggers. This system also highlights a practical strength of the protocol. The CM-filtering step 25 alone does not explicitly return all atoms of the final parent dihedral, yet the subsequent internal-coordinate ranking resolves the dominant mechanistic mode unambiguously. In other words, the multi-step DII procedure can disentangle coupled photochemical coordinates even when the first feature-selection stage is not directly interpretable in terms of a single geometrical mode. The strong overlap between the modes governing the energy gap and the oscillator strength that we observed in the previous section motivated a more detailed analysis of the contribution arising solely from the transition dipole moment (TDM), i.e., f osc 1,0 (TDM). As before, we compute DII( RS1 
+
+> selected
+
+→ f osc 1,0 (TDM)), shown as the red curve in Fig. 7a. In contrast to the behavior observed for L-gln and L-pyro, the DII in this case saturates at a significantly higher value ( ∼ 0.44) compared to that obtained using the full oscillator strength (purple curve), which reaches ∼ 0.27. Similarly, the top three coordinates yield a DII of only ∼ 0.54 for f osc 1,0 (TDM), as opposed to ∼ 0.33 for the full f osc 1,0 . Notably, these top three coordinates are identical to those identified previously, and appear in the same order; however, their ability to describe the TDM-only contribution is markedly reduced relative to their performance for the full oscillator strength. This behavior contrasts quite signifi-cantly with the L-gln and L-pyro systems, where f osc 1,0 (TDM) closely mirrors the behavior of 
+
+f osc 1,0 . The present results therefore indicate that, in this molecular motor system, the energy gap plays a more dominant role in determining the oscillator strength than in the amino acid systems considered earlier. More generally, repeating our protocol with other types of electronic observables coming from population analysis in quantum chemistry 66–69 where the electron density is partitioned into atomic contributions, could be interesting to explore in the future within this context. 26 3.6 Non-Radiative Decay Pathways Along Principal Components a b
+
+Figure 8: (a) Methaniniminium Cation: DII between the leading PCs and energy gaps as a function of the number of selected features. Purple corresponds to the S 2 → S1 and green corresponds to the S 1 → S0 relaxation channels respectively. (b) L-gln: DII between the leading PCs and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. The internal-coordinate analysis presented above starts from a broad structural represen-tation and systematically selects the coordinates that are most informative of the target electronic observables. In some of the systems we studied (L-gln and Molecular Motors), this procedure leads to a rapid decrease of the DII, indicating that a small number of local-ized coordinates is sufficient to capture most of the relevant structural information. However, in other systems (Furan and L-pyro), the DII decreases more gradually as additional coordi-nates are included. This behavior suggests that the changes in the energy gap may depend on a more distributed nuclear distortion rather than on a small set of localized bonds, angles, or dihedrals. To assess this possibility, we complement the internal-coordinate analysis with a princi-pal component (PC) based representation of the trajectory ensemble. Principal components provide a linear, variance-maximizing basis for nuclear motion and therefore offer a com-pact description of correlated, delocalized fluctuations in configuration space. 72 We therefore compute the DII between PC coordinates and the relevant electronic observables across all 27 systems, using PCA not as an alternative to the chemically interpretable coordinate selection protocol, but as a reference representation for evaluating the extent to which the observables are controlled by collective nuclear motion. Compared to the final step of the protocol where we use internal coordinates, when using PCs we instead compute DII(PC Sl 
+
+> i
+
+→ ∆El,l −1) and DII(PC Sl 
+
+> i
+
+→ f osc 
+
+> l,l −1
+
+) for each PC i, to determine the PCs that contribute most to the energy gap and the oscillator strength respectively. For the methaniminium cation, projecting the dynamics onto PCs substantially enhances predictability. In particular, DII(PC S2 
+
+> i
+
+→ ∆E2,1) and DII(PC S1 
+
+> i
+
+→ ∆E1,0) decrease rapidly with the number of retained components (Fig. 8a) , with the first ∼10 PCs nearly saturating the predictability of the S2/S 1 gap. A similar trend is observed for ∆ E1,0, where the DII is reduced to ∼ 0.32, significantly below the ∼ 0.60 obtained using the top internal coordinates. This demonstrates that collective combinations of motions encode a large fraction of the information relevant to nonadiabatic relaxation, consistent with previous observations that dimensionality reduction techniques can recover dominant reaction pathways directly from trajectory data without prior mechanistic assumptions. 11,15 Similar trends are observed in Furan (see caption of SI Fig. S3 for a more detailed summary). In contrast, the amino-acid systems reveal a qualitatively different regime. As shown in Fig. 8b, for L-gln the PC representation performs significantly worse for the energy gap ∆E1,0, with the DII saturating near ∼ 0.80, compared to ∼ 0.32 obtained using only two interpretable internal coordinates. This clearly indicates that the dominant relaxation co-ordinate is highly localized, and that its signal is diluted when embedded into delocalized PC directions. For the oscillator strength f osc 1,0 , PCs provide only a marginal improvement (∼ 0.73 versus ∼ 0.76), suggesting that this observable has a somewhat more collective character but still does not benefit strongly from a purely variance-based representation. This breakdown of PCA highlights a known limitation: while PCs optimally capture struc-tural variance, they do not necessarily align with the physically relevant directions governing electronic transitions. In L-pyro (SI Fig. S8) , PCs noticeably improve the mapping to the 28 oscillator strength (DII decreases from ∼ 0.72 to ∼ 0.63), indicating that f osc 1,0 is influenced by more distributed structural rearrangements. However, the improvement for the energy gap is minimal ( ∼ 0.56 to ∼ 0.54). Finally, for the molecular motors (SI Fig. S11), PC-based descriptors achieve low DII val-ues ( ∼ 0.29 for the energy gap and ∼ 0.33 for oscillator strength), confirming that collective motions are highly informative in these larger, more flexible systems. These values however, remain slightly higher than those obtained using targeted internal coordinates, again point-ing to the presence of specific mechanistic directions that are not optimally aligned with variance-maximizing modes. Taken together, these results establish a clear dichotomy. Principal components are highly effective at compressing high-dimensional trajectory data and can capture substantial pre-dictive information, particularly in systems where the dynamics is intrinsically collective. This is consistent with their widespread use in analyzing nonadiabatic dynamics, where they can reveal dominant motion patterns without prior knowledge. 14,23 However, because PCs are constructed solely based on structural variance, they may fail to isolate the specific nuclear distortions that control electronic transitions, especially when these are localized or weakly represented in the global variance. 13 In contrast, the DII-selected internal coordinates retain direct physical interpretability while achieving comparable, or in several cases supe-rior predictive power, highlighting their suitability for mechanistic analysis of nonadiabatic processes. 
+
+# 4 Discussion 
+
+Across all systems studied here, the information-imbalance workflow provides a consistent strategy to move from high-dimensional trajectory data to a compact, physically inter-pretable set of decay coordinates. The main practical outcome is that we can rank candidate descriptors by information content and then map those rankings to mechanistic modes, rather 29 than imposing a reaction coordinate a priori . This is especially useful for excited-state dy-namics, where multiple coupled distortions can coexist and where local CI descriptors are not always straightforward to transfer to dynamical ensembles. Several system-level trends emerge from the results. First, the method distinguishes local-ized from collective decay channels in a chemically transparent way. Methaniminium shows a relatively localized dominant coordinate for S2/S 1 but a more collective S1/S 0 channel, while furan displays broad collectivity with coupled puckering and ring-opening coordinates. In L-gln, the key energy-gap signal remains strongly localized (carbonyl stretching/proton-transfer coordinates), whereas in L-pyro the same observables are more distributed and require a broader coordinate set although the dominant modes are still the same carbonyl stretching and proton-transfer coordinates. For molecular motors, the analysis identifies tor-sion around the central bond as the parent mode governing both non-radiative decay and bright-to-dark conversion. The molecular-motor case highlights how the workflow can clarify competing mechanistic interpretations in strongly coupled photochemical systems. Prior work has debated whether bright-state quenching is primarily associated with pyramidalization or with central-bond torsional/elongation coordinates. 55,56,59 Here, the DII analysis identifies the central torsional coordinate as the most informative descriptor for both ∆ E1,0 and f osc 1,0 , while the central bond stretch and pyramidalization appear as secondary, coupled responses. Thus, the analysis supports a picture in which torsional motion around the central bond acts as the parent coordinate that explains both energy-gap closure and the change of the oscillator strength. Equally important, this parent mode is recovered even when the initial CM-filtering stage does not directly isolate all dihedral atoms, highlighting the added mechanistic value of the full multi-step II workflow for strongly coupled photochemical pathways. Second, the analysis reveals a systematic asymmetry between electronic targets: the energy gap is generally easier to explain than the oscillator strength using simple interpretable structural descriptors. This distinction is physically expected because the oscillator strength 30 contains both an energetic and a transition-dipole moment contribution. To disentangle these two effects, we additionally analyzed the transition-dipole contribution alone. This decomposition shows an interesting duality: in the case of L-gln and L-pyro we observe that both the extent to which the internal coordinates describe f osc and f osc (TDM) (as reflected by the value of the DII), as well as the dominant coordinates involved in the description remain consistent. Thus, in these systems, the transition dipole itself is controlled by structural changes that are less localized than the modes that govern the energy gap. On the other hand, the molecular motor provides a contrasting case: the same central torsional coordinate governs both ∆ E and f osc , and the TDM-only analysis indicates that the bright-to-dark conversion is also organized by the same coupled torsional/bond-stretching motion. However, in this case, the explainability of f osc (TDM) is substantially reduced rela-tive to f osc . This suggests that the stronger structural predictability of f osc arises primarily from the explicit contribution of ∆ E. Thus, while the same structural features also influ-ence the TDM contribution, their correlation with f osc (TDM) is significantly weaker than with the full oscillator strength. Overall, these results show that the coordinate controlling energy gap closure is not generally identical to the coordinate controlling optical activity, although the two can coincide in systems where the same structural distortion controls both non-radiative decay and electronic-state character. This approach is also data-efficient. In particular, the L-pyro case shows that mechanis-tically meaningful modes can be recovered even when only a limited fraction of trajectories exhibits hopping events. This is relevant for realistic NAD simulations, where computa-tional cost can restrict analysis to a few thousand representative frames (often only a subset of all generated configurations). Even in these data-limited settings, the internal-coordinate ranking remains robust enough to extract dominant channels. Principal component (PC) descriptors are useful for identifying collective structural dis-tortions in NAD simulations that explain the energy gap. However, they are not universally optimal for predicting electronic observables. In cases where the relevant photochemical pro-31 cess is localized, explicit internal coordinates can provide superior predictive performance. Furthermore, the most informative PCs are not necessarily those that capture the largest structural variance, and their relevance must therefore be evaluated explicitly. In this sense, PC analysis should be viewed as a diagnostic tool for detecting collective motions that corre-late with electronic observables (such as energy gaps or oscillator strengths), rather than as a substitute for physically interpretable internal coordinates. The II-based approach can also be used to determine the most informative principal components in predicting the energy gap which could then in turn be used to create low-dimensional representations of systems where the nuclear motion is also described quantum mechanically, such as in multiconfig-urational time-dependent Hartree (MCTDH) with linear vibronic coupling (LVC) models. This is an extension of the approach done previously in Ref. 13 where normal modes were selected based on a linear fit to energy gaps. In conclusion, the II-based protocol offers a unified and scalable route to identify non-radiative decay modes directly from trajectory ensembles, while retaining mechanistic inter-pretability across systems ranging from small benchmarks to complex fluorescent materials and molecular motors. 
+
+# Data Availability 
+
+The programs and workflow to reproduce the results are available at https://github.com/ debarshibanerjee/ML_Conical_Intersections . The trajectory and full analysis data is available from the corresponding author on reasonable request. 
+
+# Acknowledgement 
+
+DB, GDM, and AH acknowledge the funding received by the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation program (Grant No. 101043272 - HyBOP). The views and opinions expressed are those of the authors only 32 and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them. DB, GDM, and AH also acknowledge CINECA for their resources on the cluster Leonardo (from the Convenzione triennale ICTP Anni 2024-2026 project). DB and AH acknowledge the use of AI tools for improving the text and readability of the manuscript. 
+
+# References 
+
+(1) Yarkony, D. R. Diabolical conical intersections. Reviews of Modern Physics 1996 , 68 ,985–1013. (2) Levine, B. G.; Mart´ ınez, T. J. Isomerization Through Conical Intersections. Annual Review of Physical Chemistry 2007 , 58 , 613–634. (3) Matsika, S. Electronic Structure Methods for the Description of Nonadiabatic Effects and Conical Intersections. Chemical Reviews 2021 , 121 , 9407–9449. (4) Dreuw, A. Why Computational Photochemistry Is Challenging and Will Probably Re-main So: A Quantum Chemist’s Perspective. Advanced Science 2026 , e21012. (5) Atchity, G. J.; Xantheas, S. S.; Ruedenberg, K. Potential energy surfaces near intersec-tions. The Journal of Chemical Physics 1991 , 95 , 1862–1876. (6) Yarkony, D. R. Conical Intersections: The New Conventional Wisdom. The Journal of Physical Chemistry A 2001 , 105 , 6277–6293. (7) Domcke, W.; Yarkony, D. R. Role of Conical Intersections in Molecular Spectroscopy and Photoinduced Chemical Dynamics. Annual Review of Physical Chemistry 2012 ,
+
+63 , 325–352. 33 (8) Gozem, S.; Melaccio, F.; Valentini, A.; Filatov, M.; Huix-Rotllant, M.; Ferr´ e, N.; Fru-tos, L. M.; Angeli, C.; Krylov, A. I.; Granovsky, A. A.; Lindh, R.; Olivucci, M. Shape of Multireference, Equation-of-Motion Coupled-Cluster, and Density Functional Theory Potential Energy Surfaces at a Conical Intersection. Journal of Chemical Theory and Computation 2014 , 10 , 3074–3084. (9) Barbatti, M.; Aquino, A. J. A.; Lischka, H. Ultrafast two-step process in the non-adiabatic relaxation of the CH2 molecule. Molecular Physics 2006 , 104 , 1053–1060. (10) Virshup, A. M.; Chen, J.; Mart´ ınez, T. J. Nonlinear dimensionality reduction for nona-diabatic dynamics: The influence of conical intersection topography on population transfer rates. The Journal of Chemical Physics 2012 , 137 , 22A519. (11) Li, X.; Xie, Y.; Hu, D.; Lan, Z. Analysis of the Geometrical Evolution in On-the-Fly Surface-Hopping Nonadiabatic Dynamics with Machine Learning Dimensionality Reduction Approaches: Classical Multidimensional Scaling and Isometric Feature Map-ping. Journal of Chemical Theory and Computation 2017 , 13 , 4611–4623. (12) Li, X.; Hu, D.; Xie, Y.; Lan, Z. Analysis of trajectory similarity and configuration similarity in on-the-fly surface-hopping simulation on multi-channel nonadiabatic pho-toisomerization dynamics. The Journal of Chemical Physics 2018 , 149 , 244104. (13) Mai, S.; Gonz´ alez, L. Identification of important normal modes in nonadiabatic dy-namics simulations by coherence, correlation, and frequency analyses. The Journal of Chemical Physics 2019 , 151 , 244115. (14) Zhu, Y.; Peng, J.; Kang, X.; Xu, C.; Lan, Z. The principal component analysis of the ring deformation in the nonadiabatic surface hopping dynamics. Physical Chemistry Chemical Physics 2022 , 24 , 24362–24382. (15) Zhu, Y.; Peng, J.; Xu, C.; Lan, Z. Unsupervised Machine Learning in the Analysis 34 of Nonadiabatic Molecular Dynamics Simulation. The Journal of Physical Chemistry Letters 2024 , 15 , 9601–9619. (16) Jackson, N. E.; Savoie, B. M.; Statt, A.; Webb, M. A. Introduction to Machine Learning for Molecular Simulation. Journal of Chemical Theory and Computation 2023 , 19 ,4335–4337, PMID: 37489106. (17) Westermayr, J.; Marquetand, P. Machine Learning for Electronically Excited States of Molecules. Chemical Reviews 2021 , 121 , 9873–9926. (18) Glielmo, A.; Husic, B. E.; Rodriguez, A.; Clementi, C.; No´ e, F.; Laio, A. Unsupervised Learning Methods for Molecular Simulation Data. Chemical Reviews 2021 , 121 , 9722– 9758, PMID: 33945269. (19) Zauleck, J. P. P.; Thallmair, S.; Loipersberger, M.; De Vivie-Riedle, R. Two New Meth-ods To Generate Internal Coordinates for Molecular Wave Packet Dynamics in Reduced Dimensions. Journal of Chemical Theory and Computation 2016 , 12 , 5698–5708. (20) Capano, G.; Penfold, T. J.; Chergui, M.; Tavernelli, I. Photophysics of a copper phenan-throline elucidated by trajectory and wavepacket-based quantum dynamics: a syner-getic approach. Physical Chemistry Chemical Physics 2017 , 19 , 19590–19600. (21) Delmas, V.; Nardi, A. N.; Merritt, I. C. D.; Fert´ e, A.; Fdez. Galv´ an, I.; Vacher, M. Automated Selection of Nuclear Coordinates for Reduced Dimensionality Nonadiabatic Dynamics. Journal of Chemical Theory and Computation 2025 , 21 , 6611–6621. (22) Atkins, A. J.; Gonz´ alez, L. Trajectory Surface-Hopping Dynamics Including Intersys-tem Crossing in [Ru(bpy)3 ]2+. The Journal of Physical Chemistry Letters 2017 , 8,3840–3845. (23) Peng, J.; Xie, Y.; Hu, D.; Lan, Z. Analysis of bath motion in MM-SQC dynamics 35 via dimensionality reduction approach: Principal component analysis. The Journal of Chemical Physics 2021 , 154 , 094122. (24) Rukin, P. S.; Fortino, M.; Prezzi, D.; Rozzi, C. A. Complementing Adiabatic and Nona-diabatic Methods To Understand Internal Conversion Dynamics in Porphyrin Deriva-tives. Journal of Chemical Theory and Computation 2024 , 20 , 10759–10769. (25) Belyaev, A. K.; Domcke, W.; Lasser, C.; Trigila, G. Nonadiabatic nuclear dynamics of the ammonia cation studied by surface hopping classical trajectory calculations. The Journal of Chemical Physics 2015 , 142 , 104307. (26) Richings, G. W.; Habershon, S. Analyzing Grid-Based Direct Quantum Molecular Dy-namics Using Non-Linear Dimensionality Reduction. Molecules 2021 , 26 , 7418. (27) Tavadze, P.; Avenda˜ no Franco, G.; Ren, P.; Wen, X.; Li, Y.; Lewis, J. P. A Machine-Driven Hunt for Global Reaction Coordinates of Azobenzene Photoisomerization. Jour-nal of the American Chemical Society 2018 , 140 , 285–290. (28) How, W. B.; Wang, B.; Chu, W.; Tkatchenko, A.; Prezhdo, O. V. Significance of the Chemical Environment of an Element in Nonadiabatic Molecular Dynamics: Feature Selection and Dimensionality Reduction with Machine Learning. The Journal of Phys-ical Chemistry Letters 2021 , 12 , 12026–12032. (29) How, W. B.; Wang, B.; Chu, W.; Kovalenko, S. M.; Tkatchenko, A.; Prezhdo, O. V. Dimensionality reduction in machine learning for nonadiabatic molecular dynamics: Ef-fectiveness of elemental sublattices in lead halide perovskites. The Journal of Chemical Physics 2022 , 156 , 054110. (30) Zhou, G.; Chu, W.; Prezhdo, O. V. Structural Deformation Controls Charge Losses in MAPbI3: Unsupervised Machine Learning of Nonadiabatic Molecular Dynamics. ACS Energy Letters 2020 , 5, 1930–1938. 36 (31) Mangan, S. M.; Zhou, G.; Chu, W.; Prezhdo, O. V. Dependence between Structural and Electronic Properties of CsPbI3: Unsupervised Machine Learning of Nonadiabatic Molecular Dynamics. The Journal of Physical Chemistry Letters 2021 , 12 , 8672–8678. (32) Glielmo, A.; Zeni, C.; Cheng, B.; Cs´ anyi, G.; Laio, A. Ranking the information content of distance measures. PNAS Nexus 2022 , 1, pgac039. (33) Wild, R.; Wodaczek, F.; Del Tatto, V.; Cheng, B.; Laio, A. Automatic feature selection and weighting in molecular systems using Differentiable Information Imbalance. Nature Communications 2025 , 16 , 270. (34) Donkor, E. D.; Laio, A.; Hassanali, A. Do Machine-Learning Atomic Descriptors and Order Parameters Tell the Same Story? The Case of Liquid Water. Journal of Chemical Theory and Computation 2023 , 19 , 4596–4605. (35) Donkor, E. D.; Offei-Danso, A.; Rodriguez, A.; Sciortino, F.; Hassanali, A. Beyond Local Structures in Critical Supercooled Water through Unsupervised Learning. The Journal of Physical Chemistry Letters 2024 , 15 , 3996–4005. (36) Di Pino, S.; Banerjee, D.; Monti, M.; Mir´ on, G. D.; Cassone, G.; Hassanali, A. Decon-structing the origins of interfacial catalysis: Why electric fields are inseparable from solvation. The Journal of Chemical Physics 2025 , 163 , 184505. (37) Barbatti, M.; Granucci, G.; Persico, M.; Ruckenbauer, M.; Vazdar, M.; Eckert-Maksi´ c, M.; Lischka, H. The on-the-fly surface-hopping program system Newton-X: Ap-plication to ab initio simulation of the nonadiabatic photodynamics of benchmark sys-tems. Journal of Photochemistry and Photobiology A: Chemistry 2007 , 190 , 228–240. (38) Hollas, D.; ˇSiˇ st´ ık, L.; Hohenstein, E. G.; Mart´ ınez, T. J.; Slav´ ıˇ cek, P. Nonadiabatic Ab Initio Molecular Dynamics with the Floating Occupation Molecular Orbital-Complete Active Space Configuration Interaction Method. Journal of Chemical Theory and Com-putation 2018 , 14 , 339–350. 37 (39) Suchan, J.; Janoˇ s, J.; Slav´ ıˇ cek, P. Pragmatic Approach to Photodynamics: Mixed Landau–Zener Surface Hopping with Intersystem Crossing. Journal of Chemical Theory and Computation 2020 , 16 , 5809–5820. (40) Fuji, T.; Suzuki, Y.-I.; Horio, T.; Suzuki, T.; Mitri´ c, R.; Werner, U.; Bonaˇ ci´ c-Kouteck´ y, V. Ultrafast photodynamics of furan. The Journal of Chemical Physics 2010 ,
+
+133 , 234303. (41) Oesterling, S.; Schalk, O.; Geng, T.; Thomas, R. D.; Hansson, T.; De Vivie-Riedle, R. Substituent effects on the relaxation dynamics of furan, furfural and β-furfural: a com-bined theoretical and experimental approach. Physical Chemistry Chemical Physics 
+
+2017 , 19 , 2025–2035. (42) Arnon, Z. A.; Kreiser, T.; Yakimov, B.; Brown, N.; Aizen, R.; Shaham-Niv, S.; Makam, P.; Qaisrani, M. N.; Poli, E.; Ruggiero, A.; Slutsky, I.; Hassanali, A.; Shir-shin, E.; Levy, D.; Gazit, E. On-off transition and ultrafast decay of amino acid lumi-nescence driven by modulation of supramolecular packing. iScience 2021 , 24 , 102695. (43) Kumar, A.; Alom, S. E.; Ahari, D.; Priyadarshi, A.; Ansari, M. Z.; Swaminathan, R. Role of charged amino acids in sullying the fluorescence of tryptophan or conjugated Dansyl probe in monomeric proteins. Biophysical Journal 2022 , 121 , 416a. (44) Stephens, A. D. et al. Short hydrogen bonds enhance nonaromatic protein-related flu-orescence. Proceedings of the National Academy of Sciences 2021 , 118 , e2020389118. (45) Pinotsi, D.; Grisanti, L.; Mahou, P.; Gebauer, R.; Kaminski, C. F.; Hassanali, A.; Kaminski Schierle, G. S. Proton transfer and structure-specific fluorescence in hydrogen bond-rich protein structures. Journal of the American Chemical Society 2016 , 138 ,3046–3057. (46) Grisanti, L.; Sapunar, M.; Hassanali, A.; Doˇ sli´ c, N. Toward Understanding Optical 38 Properties of Amyloids: A Reaction Path and Nonadiabatic Dynamics Study. Journal of the American Chemical Society 2020 , 142 , 18042–18049. (47) Morzan, U. N.; D´ ıaz Mir´ on, G.; Grisanti, L.; Gonz´ alez Lebrero, M. C.; Kamin-ski Schierle, G. S.; Hassanali, A. Non-aromatic fluorescence in biological matter: the exception or the rule? The Journal of Physical Chemistry B 2022 , 126 , 7203–7211. (48) Mir´ on, G. D. et al. The carbonyl-lock mechanism underlying non-aromatic fluorescence in biological matter. Nature Communications 2023 , 14 , 7325. (49) Banerjee, D.; Chibh, S.; Tiwari, O. S.; Mir´ on, G. D.; Monti, M.; Yakir, H. R.; Pawar, S.; Fixler, D.; Shimon, L. J. W.; Gazit, E.; Hassanali, A. Crystallization of L-Cysteine in Heavy Water Induces Intrinsic Fluorescence. Angewandte Chemie International Edition 
+
+2025 , 64 , e202505331. (50) Monti, M.; Cimmino, L.; D´ ıaz Mir´ on, G.; Diaferia, C.; Banerjee, D.; Stella, M.; Vitagliano, L.; Accardo, A.; Hassanali, A. Investigating the Role of pH and Coun-terions in the Intrinsic Fluorescence of Solid-State l -Lysine. The Journal of Physical Chemistry B 2025 , 129 , 13105–13116. (51) Chen, X.; Luo, W.; Ma, H.; Peng, Q.; Yuan, W. Z.; Zhang, Y. Prevalent intrinsic emis-sion from nonaromatic amino acids and poly (amino acids). Science China Chemistry 
+
+2018 , 61 , 351–359. (52) Tomalia, D. A.; Klajnert-Maculewicz, B.; Johnson, K. A.-M.; Brinkman, H. F.; Janaszewska, A.; Hedstrand, D. M. Non-traditional intrinsic luminescence: inexpli-cable blue fluorescence observed for dendrimers, macromolecules and small molecular structures lacking traditional/conventional luminophores. Progress in Polymer Science 
+
+2019 , 90 , 35–117. (53) Tang, S.; Yang, T.; Zhao, Z.; Zhu, T.; Zhang, Q.; Hou, W.; Yuan, W. Z. Nonconven-39 tional luminophores: characteristics, advancements and perspectives. Chemical Society Reviews 2021 , 50 , 12616–12655. (54) Zhang, Q.; Zhao, Z.; Yang, G.; Li, A.; Cui, Y.; Cai, Y.; Yin, Z.; Tan, Y.; Zhou, C.; Peng, Q.; Yuan, W. Z. Synergistic Photoluminescence Enhancement in Nonaromatic Amino Acids and Sugars via Glycosylation. Advanced Functional Materials 2025 ,2423603. (55) Conyard, J.; Addison, K.; Heisler, I. A.; Cnossen, A.; Browne, W. R.; Feringa, B. L.; Meech, S. R. Ultrafast dynamics in the power stroke of a molecular rotary motor. Nature Chemistry 2012 , 4, 547–551. (56) Kazaryan, A.; Lan, Z.; Sch¨ afer, L. V.; Thiel, W.; Filatov, M. Surface Hopping Excited-State Dynamics Study of the Photoisomerization of a Light-Driven Fluorene Molecular Rotary Motor. Journal of Chemical Theory and Computation 2011 , 7, 2189–2199. (57) Garc´ ıa-L´ opez, V.; Liu, D.; Tour, J. M. Light-Activated Organic Molecular Motors and Their Applications. Chemical Reviews 2020 , 120 , 79–124. (58) Pang, X.; Cui, X.; Hu, D.; Jiang, C.; Zhao, D.; Lan, Z.; Li, F. “Watching” the Dark State in Ultrafast Nonadiabatic Photoisomerization Process of a Light-Driven Molecular Rotary Motor. The Journal of Physical Chemistry A 2017 , 121 , 1240–1249. (59) Wen, J.; Mai, S.; Gonz´ alez, L. Excited-State Dynamics Simulations of a Light-Driven Molecular Motor in Solution. The Journal of Physical Chemistry A 2023 , 127 ,9520–9529. (60) Wild, R.; Sozio, E.; Margiotta, R. G.; Dellai, F.; Acquasanta, A.; Del Ben, F.; Tascini, C.; Curcio, F.; Laio, A. Maximally informative feature selection using In-formation Imbalance: Application to COVID-19 severity prediction. Scientific Reports 
+
+2024 , 14 , 10744. 40 (61) Glielmo, A.; Macocco, I.; Doimo, D.; Carli, M.; Zeni, C.; Wild, R.; d’Errico, M.; Rodriguez, A.; Laio, A. DADApy: Distance-based analysis of data-manifolds in Python. 
+
+Patterns 2022 , 3 .(62) Rupp, M.; Tkatchenko, A.; M¨ uller, K.-R.; Von Lilienfeld, O. A. Fast and Accurate Modeling of Molecular Atomization Energies with Machine Learning. Physical Review Letters 2012 , 108 , 058301. (63) Di´ az Miro´ n, G.; Lien-Medrano, C. R.; Banerjee, D.; Morzan, U. N.; Sentef, M. A.; Gebauer, R.; Hassanali, A. Exploring the Mechanisms behind Non-aromatic Fluores-cence with the Density Functional Tight Binding Method. Journal of Chemical Theory and Computation 2024 , 20 , 3864–3878. (64) Di´ az Miro´ n, G.; Lien-Medrano, C. R.; Banerjee, D.; Monti, M.; Aradi, B.; Sentef, M. A.; Niehaus, T. A.; Hassanali, A. Non-adiabatic couplings in surface hopping with tight binding density functional theory: The case of molecular motors. Journal of Chemical Theory and Computation 2024 , 20 , 10602–10614. (65) Kullback, S.; Leibler, R. A. On information and sufficiency. The annals of mathematical statistics 1951 , 22 , 79–86. (66) Neese, F. The ORCA program system. Wiley Interdisciplinary Reviews: Computational Molecular Science 2012 , 2, 73–78. (67) Neese, F. Software update: the ORCA program system, version 4.0. Wiley Interdisci-plinary Reviews: Computational Molecular Science 2018 , 8, e1327. (68) Neese, F.; Wennmohs, F.; Becker, U.; Riplinger, C. The ORCA quantum chemistry program package. The Journal of Chemical Physics 2020 , 152 .(69) Neese, F. Software update: The ORCA program system–Version 5.0. Wiley Interdisci-plinary Reviews: Computational Molecular Science 2022 , 12 , e1606. 41 (70) Yang, X.; Manathunga, M.; Gozem, S.; L´ eonard, J.; Andruni´ ow, T.; Olivucci, M. Quantum–classical simulations of rhodopsin reveal excited-state population splitting and its effects on quantum efficiency. Nature chemistry 2022 , 14 , 441–449. (71) Delden, R. A. v.; Wiel, M. K. J. t.; Jong, H. d.; Meetsma, A.; Feringa, B. L. Exploring the boundaries of a light-driven molecular motor design: new sterically overcrowded alkenes with preferred direction of rotation. Organic & Biomolecular Chemistry 2004 ,
+
+2, 1531–1541. (72) Buchner, M.; Ladanyi, B. M.; Stratt, R. M. The short-time dynamics of molecular liquids. Instantaneous-normal-mode theory. The Journal of Chemical Physics 1992 ,
+
+97 , 8522–8535. 42 Supporting Information Available S2 → S 1 S1 → S 0
+
+# a b
+
+Figure S1: Methaniminium Cation: Additional internal-coordinate modes for the metha-niminium cation: (a) Mode relevant for the S 2 → S1 transition which involves a torsion around the C −N bond. (b) Modes relevant for the S 1 → S0 transition, which involves a torsion around the C −N bond as well as the pyramidalization of the CH 2 group. 43 a b
+
+# cFigure S2: Furan: Additional internal-coordinate modes for Furan that explain the S 1 →
+
+S0 non-radiative relaxation: (a) C −O stretch. (b) C −O−C angle. (c) C −C separation that corresponds to the ring opening mode. 44 1 2 3 4 5 6 7 8 9 10 
+
+# Number of selected features 
+
+# 0.3 
+
+# 0.4 
+
+# 0.5 
+
+# 0.6 
+
+# 0.7 
+
+# 0.8 
+
+# 0.9 
+
+# 1.0 
+
+> DII
+
+PC S1 
+
+> i
+
+E1, 0 Figure S3: Furan: DII between the leading PCs and energy gap (∆ E1,0) as a function of the number of selected features. The inclusion of PCs continues to lower the DII to ∼ 0.32. This indicates that, even when a select number of chemically intuitive coordinates already captures part of the dynamics, additional predictive information is contained in more delocalized collective modes. Such behavior reflects the inherently high-dimensional and strongly coupled nature of nonadia-batic dynamics, where multiple nuclear degrees of freedom contribute simultaneously to the evolution toward conical intersections. 45 a b
+
+# Δ𝐸 !,# 𝑓 !,#
+
+> $%&
+
+Figure S4: L-gln: (a) DII between Coulomb-matrix descriptors and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. (b) Most informative atom pairs (“hotspots”) identified from Coulomb matrix analysis are highlighted. The left and right parts of the panel corresponds to the ∆ E1,0 and f osc 1,0 respectively. 46 1 2 3 4 5 6 7 8 9 10 
+
+# Number of selected features 
+
+# 0.70 
+
+# 0.75 
+
+# 0.80 
+
+# 0.85 
+
+# 0.90 
+
+# 0.95 
+
+# 1.00 
+
+> DII
+
+RS1 
+
+> selected
+
+f osc 1, 0 
+
+RS1 
+
+> selected
+
+f osc 1, 0 (TDM) Figure S5: L-gln: DII between internal coordinates and the oscillator strength ( f osc 1,0 ) and the part of the oscillator strength corresponding to the Transition Dipole Moment only (f osc 1,0 (TDM)) as a function of the number of selected features in faint purple and more bold purple respectively. 47 a
+
+# Δ𝐸 !,#
+
+# 𝑓 !,#
+
+> $%&
+
+bFigure S6: L-pyro: (a) DII between Coulomb-matrix descriptors and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. (b) Most informative atom pairs (“hotspots”) identified from Coulomb matrix analysis are highlighted. The top and bottom parts of the panel corresponds to the ∆ E1,0 and f osc 1,0 respectively. 48 1 2 3 4 5 6 7 8 9 10 
+
+# Number of selected features 
+
+# 0.70 
+
+# 0.75 
+
+# 0.80 
+
+# 0.85 
+
+# 0.90 
+
+# 0.95 
+
+# 1.00 
+
+> DII
+
+RS1 
+
+> selected
+
+f osc 1, 0 
+
+RS1 
+
+> selected
+
+f osc 1, 0 (TDM) Figure S7: L-pyro: DII between internal coordinates and the oscillator strength ( f osc 1,0 ) and the part of the oscillator strength corresponding to the Transition Dipole Moment only (f osc 1,0 (TDM)) as a function of the number of selected features in faint purple and more bold purple respectively. 49 1 2 3 4 5 6 7 8 9 10 
+
+# Number of selected features 
+
+# 0.5 
+
+# 0.6 
+
+# 0.7 
+
+# 0.8 
+
+# 0.9 
+
+# 1.0 
+
+> DII
+
+PC S1 
+
+> i
+
+E1, 0 
+
+PC S1 
+
+> i
+
+f osc 1, 0 Figure S8: L-pyro: DII between the leading PCs and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. 50 a  
+
+> 12
+> 3
+> 45
+> 6
+
+# bFigure S9: Molecular Motor: (a) DII between Coulomb-matrix descriptors and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 , red corresponds to f osc 1,0 (TDM), and green corresponds to the ∆ E1,0 respectively. (b) Most informative atom pairs (“hotspots”) identified from Coulomb matrix analysis are highlighted. The atoms involved in the hotspots for both ∆ E1,0 and f osc 1,0 are highlighted together and numbered to distinguish the different C atoms. 51 Figure S10: Molecular Motor: Additional internal-coordinate mode involving a secondary torsion around the central dihedral for the molecular motor system that explain the S 1 →
+
+S0 energy gap (∆ E1,0) as well as the oscillator strength ( f osc 1,0 ). 52 1 2 3 4 5 6 7 8 9 10 
+
+# Number of selected features 
+
+# 0.2 
+
+# 0.3 
+
+# 0.4 
+
+# 0.5 
+
+# 0.6 
+
+# 0.7 
+
+# 0.8 
+
+# 0.9 
+
+# 1.0 
+
+> DII
+
+PC S1 
+
+> i
+
+E1, 0 
+
+PC S1 
+
+> i
+
+f osc 1, 0 
+
+PC S1 
+
+> i
+
+f osc 1, 0 (TDM) Figure S11: Molecular Motor: DII between the leading PCs and energy gap/oscillator strength as a function of the number of selected features. Purple corresponds to the f osc 1,0 and green corresponds to the ∆ E1,0 respectively. 53

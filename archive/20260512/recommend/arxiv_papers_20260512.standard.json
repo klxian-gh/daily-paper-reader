@@ -1,0 +1,340 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-12T21:25:03.628025+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [
+    {
+      "id": "2605.09752v1",
+      "title": "Polarizable Embedding QM/MM for Periodic Systems",
+      "abstract": "A general polarizable embedded (PE) quantum mechanics/molecular mechanics scheme for periodic systems is presented, describing mutual polarization of the two subsystems. The QM system, described with density functional theory (DFT), is coupled to a single center multipole expansion (SCME) model, characterising H$_2$O molecules in the MM region. In SCME the H$_2$O molecules are ascribed anisotropic dipole and quadrupole polarizabilities and permanent multipoles up to and including the hexadecapole. Our embedding scheme illustrates a smooth and efficient convergence pattern of the periodic interaction potential by introducing a single and clustered multipole expansion points in the far-field. By choosing the near- and far-field expansion of the potential carefully the PE-QM/MM calculation matches the level of accuracy of a the QM calculation. In the short range, the electrostatic interaction between the QM and MM subsystems is damped with a real-space and pair-wise isotropic damping functions - resulting in a screened interaction and preventing over-polarization. In molecular dynamics simulations the two subsystems are separated with the elastic scattering assisted flexible inner region [Kirchhoff et. al. JCTC, 2021, 17, 9, 5863] - ensuring a smooth transition in the radial distribution at the boundary between the two subsystems.",
+      "authors": [
+        "Julian Bessner",
+        "Anoop Ajaya Kumar Nair",
+        "Magnus Andreas Hilduberg Christiansen",
+        "Timo Jacob",
+        "Hannes Jónsson",
+        "Elvar Örn Jónsson"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-05-10T21:00:21+00:00",
+      "link": "https://arxiv.org/pdf/2605.09752v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "polarizable embedding QM/MM scheme for periodic systems",
+      "llm_evidence_cn": "周期性系统的极化嵌入QM/MM方案",
+      "llm_evidence": "周期性系统的极化嵌入QM/MM方案",
+      "canonical_evidence": "周期性系统的极化嵌入QM/MM方案",
+      "llm_tldr_en": "Presents a general polarizable embedded QM/MM scheme for periodic systems using DFT and multipole expansion.",
+      "llm_tldr_cn": "提出了一种通用的周期性系统极化嵌入QM/MM方案，结合了DFT和多极矩展开模型。",
+      "llm_tldr": "提出了一种通用的周期性系统极化嵌入QM/MM方案，结合了DFT和多极矩展开模型。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.09394v1",
+      "title": "Systematic Fine-Tuning of MACE Interatomic Potentials for Catalysis",
+      "abstract": "Once trained, machine-learned interatomic potentials (MLIPs) provide a fast and accurate way to study catalytic reaction pathways, but their performance strongly depends on the training set. Here, we compare nine MLIPs trained with different data sets and strategies, including from-scratch (FS) training and fine-tuning (FT) of large foundation models. The models are evaluated on reaction energies, $E_{r}$, and reaction energy barriers, $E_{a}$, for 141 reactions, including CO$_2$ reduction to C$_2$ and C$_3$ products, propane dehydrogenation, hydrogen intercalation on Pd, and out-of-distribution oxygen evolution reaction (OER) on metal oxides. FS models trained with 5%--10% perturbed high-energy configurations from molecular dynamics or contour exploration reduce the error by more than twofold compared with models trained only on relaxation trajectories. In contrast, FT MLIPs are less sensitive to sampling and transfer well to out-of-distribution reactions. An MLIP fine-tuned on metallic catalysts achieves a 0.30 eV MAE for OER on iridium oxide polymorphs, outperforming out-of-the-box MACE-MH-1 by 0.08 eV and the best FS model by 0.14 eV. A model fine-tuned to O and OH adsorption on metal oxides gives a 0.19 eV reaction-barrier MAE for out-of-distribution CO$_2$RR on Cu, comparable to an FS model trained on in-distribution C--C bond-breaking reactions. Finally, a large MLIP fine-tuned on 49,860 configurations gives the best overall performance across metallic and metal-oxide catalysts and was used to screen a large left-out set of bimetallic alloys, achieving a 0.15 eV MAE for $E_{r}$, even for adsorbates on unseen Miller-index surfaces such as (532). This work identifies the training configurations needed for accurate FS and FT MLIPs for catalytic reaction modeling.",
+      "authors": [
+        "Nima Karimitari",
+        "Jacob Clary",
+        "Derek Vigil-Fowler",
+        "Ravishankar Sundararaman",
+        "Gábor Csányi",
+        "Christopher Sutton"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-05-10T07:43:42+00:00",
+      "link": "https://arxiv.org/pdf/2605.09394v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "machine-learned interatomic potentials for catalytic reaction pathways and barriers",
+      "llm_evidence_cn": "用于催化反应路径和能垒的机器学习原子间势",
+      "llm_evidence": "用于催化反应路径和能垒的机器学习原子间势",
+      "canonical_evidence": "用于催化反应路径和能垒的机器学习原子间势",
+      "llm_tldr_en": "Evaluates fine-tuning strategies for MLIPs to accurately study catalytic reaction pathways and energy barriers.",
+      "llm_tldr_cn": "评估了机器学习原子间势的微调策略，用于准确研究催化反应路径和能垒。",
+      "llm_tldr": "评估了机器学习原子间势的微调策略，用于准确研究催化反应路径和能垒。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2605.07714v1",
+      "title": "Selectivity- and Activity-Aware Catalyst Descriptors for CO$_2$ Hydrogenation on Alloy Nanocatalysts using Machine-Learned Force Fields",
+      "abstract": "Adsorption energy distributions (AEDs) have emerged as a powerful and increasingly adopted descriptor for catalytic performance in high-entropy alloys and, more recently, in conventional metallic alloy nanocrystal catalysts. By accounting for diverse adsorption sites and crystallographic facets, AEDs more fully represent nanoparticle-based catalytic surfaces and show strong promise for accelerating rational design and discovery of heterogeneous catalysts, especially for CO$_2$ hydrogenation. However, previous approaches have not sufficiently resolved facet-specific contributions, despite the catalytic significance and prevalence of certain Miller planes in nanoscale catalysts, limiting their applicability in predicting activity and selectivity. Here, we introduce an updated facet-resolved framework for predicting catalytic activity, which also enables insight into selectivity toward C1 products. Universal machine-learned force fields trained on Open Catalyst Project data were employed to compute adsorption energetics across 226 experimentally observed metals, binary alloys, and ternary alloys, encompassing 1.4 million adsorption sites on 2,626 crystallographically distinct surfaces. Using statistical and unsupervised learning techniques, we analyzed facet-specific AEDs to identify highly active and methanol-selective facets. Our approach provides insight into the relationship between structure and catalytic performance metrics like activity and selectivity, and presents a set of alloy compositions and their respective surface orientations for experimental validation toward highly selective CO$_2$ hydrogenation.",
+      "authors": [
+        "Prajwal Pisal",
+        "Ondřej Krejčí",
+        "Patrick Rinke"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "physics.chem-ph",
+        "physics.comp-ph",
+        "physics.data-an"
+      ],
+      "published": "2026-05-08T13:17:37+00:00",
+      "link": "https://arxiv.org/pdf/2605.07714v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "catalytic performance descriptors and reaction pathways using machine-learned force fields",
+      "llm_evidence_cn": "使用机器学习力场的催化性能描述符和反应路径",
+      "llm_evidence": "使用机器学习力场的催化性能描述符和反应路径",
+      "canonical_evidence": "使用机器学习力场的催化性能描述符和反应路径",
+      "llm_tldr_en": "Develops catalyst descriptors using ML force fields to represent nanoparticle surfaces in CO2 hydrogenation.",
+      "llm_tldr_cn": "利用机器学习力场开发催化描述符，以表征二氧化碳加氢中的纳米颗粒表面。",
+      "llm_tldr": "利用机器学习力场开发催化描述符，以表征二氧化碳加氢中的纳米颗粒表面。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.08381v1",
+      "title": "Machine learning the non-radiative decay modes in photochemical processes",
+      "abstract": "Non-radiative decay in photoexcited molecular systems is driven by nuclear motion toward conical intersections (CIs), where electronic states become degenerate and nonadiabatic transitions occur. Identifying the nuclear degrees of freedom responsible for CI access from nonadiabatic molecular dynamics (NAD) simulations remains challenging because the underlying motions are high-dimensional and collective. Here, we introduce an unsupervised, information-theoretic framework based on Differentiable Information Imbalance (DII) to identify the nuclear coordinates governing CI access directly from trajectory surface hopping (TSH) simulations. By quantifying correlations between structural descriptors and electronic observables, including energy gaps and oscillator strengths, the method ranks nuclear degrees of freedom by predictive relevance. A multi-step protocol then extracts low-dimensional, physically interpretable modes associated with non-radiative decay. We apply the framework to the methaniminium cation, furan, L-glutamine, L-pyroglutamine-ammonium, and a photoactive molecular motor. Across all systems, the method recovers known mechanistic coordinates while revealing the relative importance of competing modes when multiple structural distortions contribute to CI access. The analysis also reveals a systematic distinction between observables: energy gaps are typically governed by a small number of localized coordinates, whereas oscillator strengths depend on more collective and distributed structural rearrangements. Overall, the DII-based framework combines predictive power with direct interpretability, providing a general and scalable route for extracting mechanistic insight from high-dimensional NAD data and constructing reduced-dimensional models of excited-state dynamics.",
+      "authors": [
+        "Debarshi Banerjee",
+        "Gonzalo Díaz Mirón",
+        "Alex Rodriguez",
+        "Ali Hassanali"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.mtrl-sci",
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-08T18:40:36+00:00",
+      "link": "https://arxiv.org/pdf/2605.08381v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "identifying coordinates from nonadiabatic molecular dynamics simulations",
+      "llm_evidence_cn": "从非绝热分子动力学模拟中识别坐标",
+      "llm_evidence": "从非绝热分子动力学模拟中识别坐标",
+      "canonical_evidence": "从非绝热分子动力学模拟中识别坐标",
+      "llm_tldr_en": "Uses an information-theoretic framework to identify key nuclear coordinates in nonadiabatic molecular dynamics.",
+      "llm_tldr_cn": "利用信息论框架从非绝热分子动力学模拟中识别关键核坐标。",
+      "llm_tldr": "利用信息论框架从非绝热分子动力学模拟中识别关键核坐标。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.08988v1",
+      "title": "Benchmarking Compositional Generalisation for Machine Learning Interatomic Potentials",
+      "abstract": "Machine Learning Interatomic Potentials play a fundamental role in computational chemistry and materials science, enabling applications from molecular dynamics simulations to drug design and materials discovery. While recent approaches can estimate inter-atomic forces with high precision, it remains unclear to what extent they can generalise to previously unseen molecules. Do they learn the compositional structure of chemistry, capturing how molecular fragments and their combinations determine properties, or do they primarily learn to interpolate patterns that are specific to the training examples? To address this question, we propose a benchmark consisting of four tasks that require some form of compositional generalisation. In each task, models are tested on molecules that were unseen during training, but the training data is chosen such that generalisation to the test examples should be feasible for models that learn the underlying physical principles. Our empirical analysis shows that the considered tasks are highly challenging for state-of-the-art models, with errors on out-of-distribution examples often an order of magnitude higher than on in-distribution examples, even when using foundation models that have been pre-trained on millions of molecules.",
+      "authors": [
+        "Amir Masoud Nourollah",
+        "Irtaza Khalid",
+        "Stefano Leoni",
+        "Steven Schockaert"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CE"
+      ],
+      "published": "2026-05-09T15:12:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.08988v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine learning interatomic potentials for molecular dynamics",
+      "llm_evidence_cn": "用于分子动力学的机器学习原子间势能",
+      "llm_evidence": "用于分子动力学的机器学习原子间势能",
+      "canonical_evidence": "用于分子动力学的机器学习原子间势能",
+      "llm_tldr_en": "This paper benchmarks the compositional generalization of machine learning interatomic potentials.",
+      "llm_tldr_cn": "该论文评估了机器学习原子间势能在处理未见分子时的组合泛化能力。",
+      "llm_tldr": "该论文评估了机器学习原子间势能在处理未见分子时的组合泛化能力。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.09495v1",
+      "title": "Enabling Structure-Only Initialization and Out-of-Distribution Generalization in GNN-based Molecular Dynamics Simulators",
+      "abstract": "Machine learning-based simulators offer the potential to model the dynamics of complex systems more efficiently than classical approaches, while retaining differentiability, a key property for materials design. Graph neural network (GNN)-based simulators have shown strong performance across a range of physical domains, including molecular dynamics. However, their reliance on temporal context for accurate prediction limits their use in inverse design settings, where simulations must be initialized from a single static configuration. Moreover, inverse design requires robust out-of-distribution (OOD) generalization, as candidate structures typically lie outside the training domain. Here, we address both challenges by introducing two complementary strategies that enable stable and accurate structure-only initialization of GNN-based simulations. To directly target OOD generalization, we propose an inference-time physics-based optimization framework that constrains model predictions to remain physically consistent during rollout. In addition, we introduce a differentiable, GNN-based barostat that enables accurate tracking of system dimensions and pressure, critical for capturing macroscopic responses and supporting OOD generalization. We evaluate these approaches in the context of uniaxial compression of disordered elastic networks spanning a broad range of geometries, Poisson ratios, and microscopic behaviors. We find that, together, these methods substantially improve rollout stability and enable reliable OOD generalization, including regimes with distinct, more complex dynamics than those in the training data. These results show that, when properly initialized and constrained, GNN-based simulators can serve as efficient and generalizable tools for materials discovery and structural optimization, advancing their use in materials, molecular, and dynamical system design.",
+      "authors": [
+        "S. A. Shteingolts",
+        "Salman N. Salman",
+        "Dan Mendels"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cs.LG",
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-10T12:00:21+00:00",
+      "link": "https://arxiv.org/pdf/2605.09495v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "GNN-based molecular dynamics simulators",
+      "llm_evidence_cn": "基于GNN的分子动力学模拟器",
+      "llm_evidence": "基于GNN的分子动力学模拟器",
+      "canonical_evidence": "基于GNN的分子动力学模拟器",
+      "llm_tldr_en": "Enhances GNN-based molecular dynamics simulators for better initialization and out-of-distribution generalization.",
+      "llm_tldr_cn": "增强了基于GNN的分子动力学模拟器，改善了初始化和分布外泛化能力。",
+      "llm_tldr": "增强了基于GNN的分子动力学模拟器，改善了初始化和分布外泛化能力。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10312v1",
+      "title": "FusionRCG: Orchestrating Recursive Computation Graphs across GPU Memory Hierarchies",
+      "abstract": "Evaluating high-dimensional integrals via deep hierarchical recurrences is a dominant cost in quantum chemistry. While CPUs manage these efficiently, GPUs suffer a critical mismatch: limited per-thread memory is quickly overwhelmed by an explosion of simultaneously live intermediate variables. As recurrence scales, this forces massive data spilling to global memory, collapsing performance into a severe memory-bound regime. We present FusionRCG, a framework that jointly optimizes computation graph structure and GPU memory mapping. Exploiting the inherent topological flexibility of recurrence graphs, using electron repulsion integrals as an example, we contribute: (1) liveness-aware graph orchestration to minimize peak live intermediates; (2) algebraic dimensionality reduction via stepwise Cartesian-to-spherical fusion, shrinking intermediate footprints by up to $7.7\\times$; and (3) an adaptive multi-tier kernel architecture routing graphs across the memory hierarchy. Evaluated on NVIDIA A100 GPUs, FusionRCG achieves up to $3.09\\times$ end-to-end SCF speedup over GPU4PySCF and maintains $75\\%$ parallel efficiency at 64~GPUs, successfully rescuing these workloads from memory-bound limits.",
+      "authors": [
+        "Yihong Zhang",
+        "Xinran Wei",
+        "Junshi Chen",
+        "Fusong Ju",
+        "Wei Hu",
+        "Jinlong Yang",
+        "Huanhuan Xia"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cs.DC",
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-11T10:12:25+00:00",
+      "link": "https://arxiv.org/pdf/2605.10312v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "optimizing quantum chemistry integrals on GPUs",
+      "llm_evidence_cn": "在GPU上优化量子化学积分计算",
+      "llm_evidence": "在GPU上优化量子化学积分计算",
+      "canonical_evidence": "在GPU上优化量子化学积分计算",
+      "llm_tldr_en": "Presents FusionRCG to optimize high-dimensional integral evaluation for quantum chemistry on GPUs.",
+      "llm_tldr_cn": "提出FusionRCG框架，优化GPU上量子化学高维积分的计算效率。",
+      "llm_tldr": "提出FusionRCG框架，优化GPU上量子化学高维积分的计算效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10363v1",
+      "title": "Accelerating Locality-Driven Integration in Quantum Chemistry with Block-Structured Matrix Multiplication",
+      "abstract": "Locality-driven integration is a pervasive computational pattern in quantum chemistry, arising whenever spatially localized basis functions interact through numerical quadrature or integral screening. The dominant matrix multiplications in these tasks exhibit dynamic, structured sparsity driven by spatial locality, posing significant challenges for both dense batched kernels and generic sparse formats on GPUs. We present KerneLDI, a GPU-oriented framework that addresses this regime by co-designing data layout, screening logic, and matrix-computation operators to realize block-structured matrix multiplication for locality-driven integration. KerneLDI reorganizes operand matrices into a unified block-filtered representation that retains only spatially relevant blocks, and executes the resulting contractions with customized dense block multipliers that adapt proven dense-matmul optimizations to retained block pairs. We develop and evaluate KerneLDI on exchange--correlation (EXC) integration in Kohn--Sham density functional theory, a representative and computationally critical instance of this pattern. Across diverse molecular systems, KerneLDI preserves numerical accuracy while delivering up to 10$\\times$ speedup for EXC evaluation over a dense GPU baseline, scales favorably with increasing system size and multi-GPU parallelism, accelerates end-to-end self-consistent field calculations, and yields nearly 6$\\times$ throughput improvement for ab initio molecular dynamics.",
+      "authors": [
+        "Xinran Wei",
+        "Yan Pan",
+        "Fusong Ju",
+        "Zehao Zhou",
+        "Yihong Zhang",
+        "Lin Huang",
+        "Jianwei Zhu",
+        "Jia Zhang",
+        "Huanhuan Xia",
+        "Bin Shao",
+        "Tao Qin"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cs.DC",
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-11T11:08:19+00:00",
+      "link": "https://arxiv.org/pdf/2605.10363v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerating integration in quantum chemistry",
+      "llm_evidence_cn": "加速量子化学中的积分计算",
+      "llm_evidence": "加速量子化学中的积分计算",
+      "canonical_evidence": "加速量子化学中的积分计算",
+      "llm_tldr_en": "Presents a GPU framework to accelerate locality-driven integration in quantum chemistry tasks.",
+      "llm_tldr_cn": "提出了一个GPU框架，用于加速量子化学任务中由局部驱动的积分计算。",
+      "llm_tldr": "提出了一个GPU框架，用于加速量子化学任务中由局部驱动的积分计算。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
