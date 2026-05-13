@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-05-13 <!--dpr-date:20260513-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/13/2605.10507v1-mathematical-analysis-and-numerical-methods-for-the-computation-of-transport-coefficients-in-molecular-dynamics" data-sidebar-item="{&quot;title&quot;: &quot;Mathematical analysis and numerical methods for the computation of transport coefficients in molecular dynamics&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.10507v1-mathematical-analysis-and-numerical-methods-for-the-computation-of-transport-coefficients-in-molecular-dynamics&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;分子动力学中输运系数的数值计算方法&quot;}">Mathematical analysis and numerical methods for the computation of transport coefficients in molecular dynamics</a>
   * 2026-05-12 <!--dpr-date:20260512-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/12/2605.09752v1-polarizable-embedding-qmmm-for-periodic-systems" data-sidebar-item="{&quot;title&quot;: &quot;Polarizable Embedding QM/MM for Periodic Systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.09752v1-polarizable-embedding-qmmm-for-periodic-systems&quot;, &quot;score&quot;: &quot;9.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;qmmm&quot;}], &quot;evidence&quot;: &quot;周期性系统的极化嵌入QM/MM方案&quot;}">Polarizable Embedding QM/MM for Periodic Systems</a>

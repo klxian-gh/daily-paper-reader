@@ -1,0 +1,23 @@
+{
+  "label": "2026-05-13",
+  "date": "2026-05-13",
+  "generated_at": "2026-05-13T20:50:39",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202605/13/2605.10507v1-mathematical-analysis-and-numerical-methods-for-the-computation-of-transport-coefficients-in-molecular-dynamics",
+      "section": "quick",
+      "title_en": "Mathematical analysis and numerical methods for the computation of transport coefficients in molecular dynamics",
+      "authors": "Noe Blassel, Louis Carillo, Shiva Darshan, Raphael Gastaldello, Alessandra Iacobucci, Elisa Marini, Regis Santet, Xiaocheng Shang, Gabriel Stoltz, Urbain Vaes",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10507v1",
+      "score": "6.0",
+      "evidence": "分子动力学中输运系数的数值计算方法",
+      "tldr": "本文综述了分子动力学中计算输运系数的数学分析与数值方法。研究涵盖了基于外部驱动场的非平衡态方法、基于平衡态时间相关函数的Green-Kubo和Einstein公式，以及监测系统恢复稳态的瞬态技术。文章不仅提供了数值误差分析框架，还探讨了控制变量和重要性采样等方差缩减技术，为高效计算输运系数提供了理论指导。",
+      "tags": "query:qmmm",
+      "abstract_en": "We review various numerical approaches to compute transport coefficients in molecular dynamics. These approaches can be broadly classified into three groups: (i) nonequilibrium methods based on applying an external driving field to the system, measuring the average response in the system, and evaluating the related linear response coefficient; (ii) approaches reformulating the transport coefficient of interest through a time correlation function for the equilibrium dynamics (the most popular instances being Green--Kubo and Einstein formulas); (iii) transient techniques, where the transport coefficient can be computed by monitoring the return to the steady state of a dynamics perturbed off its stationary distribution. For all three classes of methods, we provide elements of numerical analysis, allowing to estimate or at least quantify the level of numerical errors in the estimator of the transport coefficient; and also briefly present recent attempts to more efficiently compute transport coefficients with variance reduction approaches such as control variates, importance sampling and coupling methods. The computation of transport coefficients remains nonetheless challenging and will continue requiring research efforts in the foreseeable future.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
