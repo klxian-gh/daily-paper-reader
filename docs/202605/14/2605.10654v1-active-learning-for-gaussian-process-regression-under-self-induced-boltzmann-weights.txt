@@ -1,0 +1,3096 @@
+Title: Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights
+
+URL Source: https://arxiv.org/pdf/2605.10654v1
+
+Published Time: Tue, 12 May 2026 03:24:02 GMT
+
+Number of Pages: 32
+
+Markdown Content:
+# ACTIVE LEARNING FOR GAUSSIAN PROCESS REGRESSION 
+
+# UNDER SELF -I NDUCED BOLTZMANN WEIGHTS 
+
+Jixiang Qing ∗ Henry Moss ∗ Matthias Sachs ∗
+
+## ABSTRACT 
+
+We consider the active learning problem where the goal is to learn an unknown function with low prediction error under an unknown Boltzmann distribution induced by the function itself. This self-induced weighting arises naturally in problems such as potential energy surface (PES) modeling in computational chemistry, yet poses unique challenges as the target distribution is unknown and its partition function is intractable. We propose AB-SID-iVAR , a Gaussian Process-based acquisition function that approximates the intractable Bayesian target distribution in closed form while avoiding partition function estimation, and is applicable to both discrete and continuous input domains. We also analyze a Thompson sampling alternative ( TS-SID-iVAR ) as a higher variance Monte Carlo variant. Despite the unknown target, under mild conditions, we establish that the terminal prediction error vanishes with high probability, and provide a tighter average-case guarantee. We demonstrate consistent improvements over existing approaches in this setting on synthetic benchmarks and real-world PES modeling and drug discovery tasks. 
+
+## 1. Introduction 
+
+Learning an unknown function from data is a fundamental problem in statistics and machine learning. When function evaluations are expensive, sequential experimental design Pukelsheim [2006], Fedorov [2013], Huan et al. [2024] (also known as Active Learning (AL) Settles [2009], Rainforth et al. [2024]) provides a principled approach to optimize data acquisition based on a predictive surrogate. Gaussian processes Williams and Rasmussen [2006] are a popular choice with convergence guarantees under mild regularity conditions Krause et al. [2008], Srinivas et al. [2009], Vakili et al. [2021]. 
+
+Knowledge level of P     
+
+> Ambiguity Set PBoltzmann Form eλf +bExact
+
+?
+
+Less More 
+
+DRAL SIDAL (ours) Known-target 
+
+Figure 1: Spectrum of AL methods by knowledge of the target distribu-tion Pf , where the goal is to minimize prediction error Ex∼Pf [( f (x) −
+
+ˆf (x)) 2]. Left : DRAL assumes Pf lies in an ambiguity set. Middle :SIDAL (ours) knows Pf takes Boltzmann form exp( λf + b) but f itself is unknown. Right : Known-target has exact Pf .Given a surrogate, an acquisition function 
+
+characterizes the utility criterion motivated by the learning objective, such as minimizing prediction error over input space weighted by a target distribution P , with uniform distribu-tion as the most common scenario. Under this scheme, available knowledge about P natu-rally shapes the acquisition strategy: when 
+
+P is fully specified, weighted uncertainty re-duction applies Seo et al. [2000], Kirsch et al. [2021], Smith et al. [2023]; when P is un-known, one may instead specify possible P
+
+through an ambiguity set P under a Distri-butionally Robust Active Learning (DRAL) framework [Frogner et al., 2021, Takeno et al., 2025]. Viewing the aforementioned variants on the unified spectrum (Figure 1) of knowledge about P , we argue that many applications naturally fall between established methods. For instance, in molecular modeling and free energy estimation, the distribution of interest takes the Boltzmann form [Frenkel and Smit, 2023] weighted by the unknown energy function 
+
+> ∗
+
+MARS: Mathematics for AI in Real-world Systems, School of Mathematical Sciences, Lancaster University, Lancaster, LA1 4YF, United Kingdom. Correspondence to: {j.qing, m.sachs}@lancaster.ac.uk 
+
+> arXiv:2605.10654v1 [cs.LG] 11 May 2026
+
+Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Ground Truth     
+
+> Random Sampling
+> (wmse=0.0265)
+> Uncertainty Sampling
+> (wmse=0.3116)
+> Integrated MSE
+> (wmse=0.0145)
+> AB-SID-iVAR
+> (wmse=0.0012)
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> Weighted Squared Error
+
+Figure 2: Comparison of active learning methods on the (continuous input) Gramacy 2D function [Gramacy and Lee, 2008], aiming to minimize prediction error under a self-induced Boltzmann distribution Pf ∝ exp( −f ). Left: ground truth with high-probability regions shaded in blue; accurate prediction is mainly required in these regions. Right: weighted squared error (heatmap, log scale) after 40 queries (black dots: •); contours show the learned GP posterior mean. SID-unaware baselines include Random Sampling (RS), Uncertainty Sampling (US), and Integrated MSE (IMSE). Our method AB-SID-iVAR balances exploration and concentration by placing samples in high-probability regions, achieving substantially lower weighted MSE (wmse) than baselines. itself. We categorize this setting as Active Learning under a Self-Induced Distribution (SIDAL) , where the target distribution P depends on the unknown function f . Specifically, P often takes a Boltzmann form (Assumption 3.1). To the best of our knowledge, this setting has not been formally studied in the active learning literature. While related heuristics have emerged in scientific domains, they require careful tuning and lack theoretical guarantees; we defer a detailed discussion to Appendix A. 
+
+Contributions Aiming to fill the aforementioned gap, we propose an SID-aware AL algorithm under the GP surrogate model, which samples to reduce the weighted mean-squared-error (MSE) sequentially. Building upon the theoretical analysis of Srinivas et al. [2009], Cai and Scarlett [2024], Takeno et al. [2025],we provide sublinear convergence guarantees for the terminal prediction error in both high-probability and average (a.k.a., in-expectation) forms. Our contributions can be summarized as follows: • We formalize the novel problem of active learning under self-induced distributions (Section 3.1), capturing scenarios where the target distribution depends on the unknown function itself. • We propose a simple-to-implement acquisition function AB-SID-iVAR (fully defined by Eq. 3 and Table 1) that is free of partition function estimation and applies to both discrete and continuous input domains. A Thompson sampling variant ( TS-SID-iVAR ) offering a bias-variance tradeoff is also analyzed. • We provide sublinear convergence guarantees under high-probability and average settings (Section 4.2), explicitly accounting for Monte Carlo approximation error in continuous domains, and show (Section 4.3) that existing heuristics admit convergence analysis under our framework. • We demonstrate competitive empirical performance on both synthetic (Figure 2, 3) and real-world problems in PES modeling and drug discovery (Figure 4, 5). 
+
+## 2. Preliminaries 
+
+2.1. Gaussian Processes 
+
+We model the unknown function using Gaussian Process (GP) regression, a natural choice for active learning due to its closed-form posterior updates and calibrated uncertainty estimates. Given a positive semi-definite kernel k : X ×X → R,which is normalized as k(x, x ) ≤ 1, and data Dt = {(xi, y i)}ti=1 , the predictive distribution is: 
+
+μt(x) = k(x, Xt)( Kt + τ 2I)−1yt, k t(x, x ′) = k(x, x ′) − k(x, Xt)( Kt + τ 2I)−1k(Xt, x ′), (1) where Xt = ( x1, . . . , x t) denotes the sequence of queried inputs, yt = ( y1, . . . , y t)⊤ the corresponding noisy observations, Kt = k(Xt, Xt) ∈ Rt×t the kernel (Gram) matrix, and σ2 
+
+> t
+
+(x) := kt(x, x ) the predictive variance at x
+
+given the data Dt.
+
+2.2. Regularity Assumptions 
+
+We assume the regularity of f is consistent with the kernel k. We primarily consider the Bayesian setting where 
+
+f ∼ GP (0 , k ), and follow this assumption throughout unless stated otherwise; analogous (theoretical) results hold 2Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights under the frequentist setting where f lies in the reproducing kernel Hilbert space (RKHS) Hk with bounded norm. For continuous input domains, we additionally have the following regularity requirement on the kernel: 
+
+Assumption 2.1 (Kernel Regularity) . The kernel k is stationary and four times differentiable. This is satisfied by common kernels such as squared exponential and Matérn-ν with ν > 2. Under this assumption, sample paths of f ∼ GP (0 , k ) are Lipschitz continuous with high probability [Ghosal and Roy, 2006, Srinivas et al., 2009], and the posterior mean μt is similarly Lipschitz [Vakili et al., 2021, Takeno et al., 2025]. Together, these ensure the prediction error f (x) − μt(x) is Lipschitz: 
+
+Lemma 2.2 (Prediction Error Lipschitz Continuity Takeno et al. [2025]) . Under Assumption 2.1 with compact input domain X ⊂ [0 , r ]d, f (x) − μt(x) is L-Lipschitz with probability at least 1 − δ, where L = bplog(4 ad/δ ) for kernel-dependent constants a, b .
+
+This enables a high-probability uniform prediction error guarantee using GP as a model of f for continuous input: 
+
+Lemma 2.3 (GP Confidence Bound) . Pick δ ∈ (0 , 1) and t ∈ N. Then with probability at least 1 − δ, for all x ∈ X :
+
+|f (x) − μt−1(x)| ≤ β1/2 
+
+> t
+
+σt−1(x) + ϵt,
+
+where for finite |X | < ∞: βt = 2 log( |X | /δ ), ϵt = 0 ; for continuous X ⊂ [0 , r ]d under Assumption 2.1: βt =2d log( tdr + 1) + 2 log(2 /δ ), ϵt = L/t .
+
+The non-negative ϵt in the continuous case is induced by approximating f − μt−1 on [0 , r ]d using a Cartesian grid of spacing 1/(dt ), and βt grows logarithmically with t due to a union bound over (tdr + 1) d grid points. The proof follows from Srinivas et al. [2009] Lemma 5.1 for discrete X , and Takeno et al. [2025] when using the Lipschitz constant L
+
+from Lemma 2.2. 
+
+## 3. Problem Setting and Performance Analysis 
+
+We query f to obtain noisy observations y = f (x) + ϵ with ϵ ∼ N (0 , τ 2). Given a surrogate model ˆf (x) built from the current dataset Dt, our goal is to sequentially select T query points that minimize the expected squared error under a distribution induced by f itself, which we term the Self-Induced Distribution (SID) Pf :
+
+L( ˆf ) = Ex∼Pf
+
+ ˆf (x) − f (x)
+
+2
+
+, (2) where we have the following assumption regarding the SID: 
+
+Assumption 3.1 (Boltzmann Self-Induced Distribution) . The target distribution Pf (x) takes the Boltzmann distribution form † Pf (x) = Z−1 
+
+> f
+
+exp( λf (x) + b(x)) where: (i) λ̸ = 0 ; (ii) the bias function b : X → R is known and bounded; (iii) the partition function Zf < ∞.We use the GP predictive mean ˆf (x) = μt(x) as our surrogate. While μt is not the Bayes-optimal estimator for Eq. 2 (which otherwise requires intractable integrations), this gap vanishes as the posterior concentrates (Appendix C.1). Different from standard AL or DRAL as elaborated in Figure 1, one key challenge here is that the SID Pf itself depends on the unknown function f , creating a circular dependence dilemma. To establish that learning under SID is feasible, we derive upper bounds on L( ˆf ) by relating the unknown Pf to the computable surrogate Pμt . These upper bounds, presented in both high-probability and average forms, inform our algorithm design in the next section. To first establish a high-probability bound, we decompose the density ratio between Pf and Pμt into a pointwise Boltzmann factor difference and a partition function difference: 
+
+Lemma 3.2 (Log-Density Ratio) . Let g1, g 2 : X → R and define Pgi ∝ eλg i+b for i = 1 , 2. Define ∆( x) := 
+
+|g1(x) − g2(x)| and ∆max := sup x∈X ∆( x). Then: 
+
+|log Pg1 (x) − log Pg2 (x)| ≤ | λ|(∆( x) + ∆ max ).
+
+We state this lemma abstractly for reuse later (in Lemma C.4). Substituting (g1, g 2) = ( f, μ t) and combining with the confidence bound (Lemma 2.3), we convert expectations under the unknown Pf to the computable PμT :          
+
+> †We parameterize using λdirectly; this corresponds to λ=−1/˜Tin the physical Boltzmann distribution with temperature parameter ˜T>0.
+
+3Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Lemma 3.3 (High-Probability MSE Bound) . Pick δ ∈ (0 , 1) . Under Assumption 3.1, let βT , ϵ T be as in Lemma 2.3. Then with probability at least 1 − δ:
+
+L(μT ) ≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+·
+
+
+
+βT · Ex∼PμT
+
+σ2 
+
+> T
+
+(x) + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+,
+
+where σmax ,T = max x∈X σT (x).
+
+The exponential prefactor arises from bounding the partition function ratio, which requires uniform control of f − μT
+
+over all of X and is challenging to avoid in high-probability analysis [Cai and Scarlett, 2024]. As we shall see in Section 4.2, while convergence is unaffected, this introduces additional logarithmic factors in the terminal prediction error bound. To circumvent estimating the partition function ratio entirely, we take expectation over f |D T , which allows 
+
+Zf /Z μT to be absorbed via Jensen’s inequality. The Gaussian posterior structure then admits closed-form control via Moment Generating Function (MGF) identities, yielding the following average upper bound: 
+
+Lemma 3.4 (Average MSE Bound) . Under Assumption 3.1: 
+
+Ef |D T
+
+EPf
+
+(f − μT )2 ≤ e2λ2
+
+(1 + 4 λ2) · EPμT [σ2 
+
+> T
+
+(x)] .
+
+Without the βT factor, this yields a tighter terminal error bound that better reflects finite-query and average-case performance. Notably, both upper bounds reflect the intrinsic difficulty of the problem: a more concentrated target distribution makes accurate prediction in high-probability regions more challenging. 
+
+## 4. Methodology 
+
+4.1. Proposed Algorithms 
+
+Both upper bounds involve weighted posterior variance, suggesting variance reduction as the algorithmic objective. To this end, our proposed integrated Variance Reduction (iVAR) minimizes expected posterior variance over a tractable unnormalized SID surrogate ˜pu 
+
+> t−1
+
+(we use ˜pt−1 for its normalized version): 
+
+xt = arg min  
+
+> x∈¯Xt
+
+Z
+
+> x⋆∈X
+
+˜pu
+
+> t−1
+
+(x⋆)σ2 
+
+> t
+
+(x⋆ | xt = x) dx ⋆, (3) where a potential set ¯Xt restricts the search to uncertain regions to ensure sufficient exploration. We propose 
+
+AB-SID-iVAR , with the surrogate ˜put−1 defined in Table 1. Table 1: SID-iVAR variants. AB-SID : closed-form zero-order Taylor approximation of Ef |D t−1 [Pf ] (Ap-pendix B.1.1); biased, low-variance. TS-SID : single poste-rior sample as MC estimate; unbiased, high-variance. Both share constraint set ¯Xt.
+
+AB-SID TS-SID 
+
+˜pu 
+
+> t−1
+
+eλμ t−1+ λ22 σ2 
+
+> t−1+b
+
+eλ ˜ft−1+b, ˜ft−1
+
+> draw
+
+∼ f |D t−1
+
+¯Xt = {x : σ2
+
+> t−1
+
+(x) ≥ E˜pt−1 [σ2
+
+> t−1
+
+]}
+
+Algorithm 1 AB/TS-SID-iVAR 
+
+Require: X , GP prior (0 , k ), budget T , D0
+
+1: for t = 1 , . . . , T do 
+
+2: Compute μt−1, σ2 
+
+> t−1
+
+from Dt−1
+
+3: Construct ˜pu 
+
+> t−1
+
+via AB or TS-SID 
+
+4: Construct ¯Xt (Table 1) 
+
+5: xt ← arg min x∈ ¯Xt
+
+R ˜pu
+
+> t−1
+
+(x⋆)σ2 
+
+> t
+
+(x⋆ | x) dx ⋆
+
+6: Observe yt = f (xt) + ϵt; update Dt
+
+7: end for 
+
+8: return μT
+
+AB-SID (Approximate Bayesian SID) approximates the intractable Bayesian SID Ef |D t−1 [Pf ] in closed form via a zero-order Taylor expansion (Appendix B.1). ‡ Alternatively, one can approximate this integral via a single Monte Carlo sample, yielding TS-SID (Thompson Sampling SID), which offers a bias-variance tradeoff (Table 1). Both methods avoid estimation of the partition function. While both algorithms apply directly in discrete domains, continuous X ⊂ [0 , r ]d requires approximating both the constraint set ¯Xt and the integral in Eq. 3. We use MCMC to sample from ˜pu 
+
+> t−1
+
+and approximate the integral; for TS-SID ,we additionally approximate sample trajectories ˜ft−1 via pathwise conditioning [Wilson et al., 2021]. § Importantly, our theoretical analysis is agnostic to the specific MCMC sampler. 
+
+> ‡
+
+A first-order correction is available (Appendix B.1.1) with marginally better accuracy (Figure 6), but requires O(|X | 2) additional covariance computations for discrete X .
+
+> §
+
+The constraint set ¯Xt is always non-empty under the approximation. 
+
+4Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Algorithm Summary. The overall procedure is summarized in Algorithm 1. The key design choices are: (1) the SID surrogate’s form ˜pt−1 that approximates the unknown target distribution, and (2) the potential set ¯Xt that ensures exploration of uncertain regions. For continuous X , the integral in Line 5 and the threshold in ¯Xt are approximated via MCMC samples from ˜pt−1.
+
+4.2. Theoretical Analysis 
+
+We now show that iteratively optimizing over the surrogate ˜pt−1 yields vanishing prediction error under the true SID 
+
+Pf , and analyze the rate at which the terminal error L(μT ) converges to zero as T → ∞ . Our analysis depends on the maximum information gain γT = max x1,...,x T I(y1: T ; f ), which is sublinear in T for standard kernels [Srinivas et al., 2009]. We state results for continuous X directly, as discrete X is a simplified case with ϵT = ϵMC = 0 .
+
+High-Probability Guarantee Theorem 4.1 (High-Probability Terminal MSE Bound) . Under Assumptions 2.1 and 3.1, let X ⊂ [0 , r ]d be compact. Consider AB-SID or TS-SID selecting xt ∈ ¯Xt (Table 1), where the constraint threshold at each iteration is estimated via M Monte Carlo samples. Then for any δ ∈ (0 , 1) , with probability at least 1 − δ:
+
+L(μT ) ≤ e2( κ+2) |λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1βT γT
+
+T + βT ϵMC + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+, (4) 
+
+where κ = 1 for AB-SID , κ = 2 for TS-SID , C1 = 2 / log(1 + τ −2), βT , ϵ T are as in Lemma 2.3 with failure probability δ/ 2, and the cumulative MC error ϵMC = 2 log(4 /δ )3T +
+
+q log(4 /δ )2M T . For finite X with exact threshold computation, ϵT = ϵMC = 0 .
+
+The upper bound in Eq. 4 consists of three components: (i) the information gain term γT 
+
+> T
+
+; (ii) a cumulative MC error ϵMC from approximating the constraint threshold via MC sampling; and (iii) terms involving ϵT from extending pointwise GP confidence bounds to the entire continuous domain. Unlike prior work [Takeno et al., 2025] which assumes exact computation, our analysis explicitly accounts for this MC error. The exponential prefactor, as elaborated earlier, arises from bounding the density ratio between Pf and PμT , with TS-SID incurring a larger factor ( κ = 2 ) due to the additional Thompson sampling approximation. Further analyzing each term in the upper bound yields the following convergence rate. 
+
+Corollary 4.2 (High-Probability Termination MSE Convergence Rate) . Under the conditions of Theorem 4.1: (i) M is constant ⇒ L (μT ) = O(T −1/2+ ϵ); (ii) M = Ω( T ) ⇒ L (μT ) = O(T −1+ ϵ); for arbitrarily small ϵ > 0. The ϵ arises from the prefactor eO(√log T ), which is o(T ϵ) for any ϵ > 0.
+
+The two cases reflect a trade-off between computational cost and convergence rate: with constant M , the cumulative MC error term 
+
+q log(4 /δ )2M T = O(1 /√T ) dominates; increasing M tightens the bound but does not change the T −1/2
+
+rate. With M = Ω( T ), the MC error becomes O(1 /T ), recovering the near-optimal rate. In both cases, the bound vanishes as T → ∞ : although the prefactor eO(√log T ) grows without bound, it grows slower than any polynomial, so the polynomial decay in T still dominates. 
+
+Average Guarantee To complement the high-probability upper bound, we provide an average-case upper bound with tighter logarithmic factors. 
+
+Theorem 4.3 (Average MSE Bound) . Under Assumption 3.1, consider AB-SID or TS-SID selecting xt ∈ ¯Xt (Table 1), where the constraint threshold at each iteration is estimated via M Monte Carlo samples. Then for any δ ∈ (0 , 1) , with probability at least 1 − δ:
+
+Ef
+
+EPf
+
+(f − μT )2 ≤ e2λ2
+
+(1 + 4 λ2)e2(1+ κ)|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1γT
+
+T + ϵMC 
+
+
+
+, (5) 
+
+where κ, βT , ϵT , and ϵMC are as in Theorem 4.1, and the outer expectation is over f ∼ GP (0 , k ). For finite X with exact threshold computation, ϵT = ϵMC = 0 .
+
+As detailed in Appendix C.6.1, the average upper bound achieves the same asymptotic rates as Corollary 4.2, but with tighter logarithmic factors. Specifically, the main term is γT /T rather than βT γT /T , and the prefactor exponent is also reduced from 2( κ + 2) |λ| to 2( κ + 1) |λ|.5Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 0 10 20 30 40 50                                                         
+
+> Iteration
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> Weighted MSE
+> Forrester ( d= 1 )
+> 010 20 30 40 50
+> Iteration
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Gramacy ( d= 1 )
+> 020 40 60 80 100
+> Iteration
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> Branin ( d= 2 )
+> 020 40 60 80 100
+> Iteration
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> Gramacy ( d= 2 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 0
+> Weighted MSE
+> GP prior ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Hartmann ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 0
+> 10 1
+> 10 2
+> Ishigami ( d= 3 )
+> 0100 200 300
+> Iteration
+> 10 1
+> Hartmann ( d= 6 )
+> RS US EPIG IMSE GHAL TS-SID-iVAR-AB-SID-iVAR-
+
+Figure 3: Weighted MSE convergence on synthetic benchmarks across dimensions d = 1 to d = 6 . Each panel shows median performance over 30 random seeds (shaded regions: interquartile range). AB-SID-iVAR - ¯X consistently achieves lower weighted MSE than baselines (RS, US, IMSE), with the gap widening in higher dimensions. 
+
+Frequentist Setting. While we focus on the Bayesian setting, analogous rates hold under the assumption f ∈ H k
+
+with ∥f ∥Hk ≤ B. The proof is identical with βT replaced by its RKHS counterpart [Vakili et al., 2021, Takeno et al., 2025]; since both versions of βT scale as O(log T ), the rates remain unchanged. 
+
+Other Performance Metrics. While our main focus is L( ˆf ) defined in Eq. (2) , the analysis extends to any metric controlled by posterior uncertainty: 
+
+Remark 4.4 (General Performance Metrics) . Suppose a metric MT satisfies 
+
+EPf [MT ] ≤ C · EPμT [g(σT (x))] 
+
+for some non-decreasing g : R≥0 → R≥0 and C > 0. Then EPf [MT ] → 0 as T → ∞ . For instance, ℓp losses satisfy this condition via Lemma 2.3 with g(σ) = ( β1/2 
+
+> T
+
+σ + ϵT )p, and thus inherit the same convergence rates. 
+
+4.3. Analyzing Existing Heuristics 
+
+The heuristic active learning approaches mentioned in the Related Works section and detailed in Appendix D.2, differ in various ad-hoc practical choices, but share a common algorithmic structure (which we term Generic Heuristic Active Learning, GHAL ), targeting variance reduction under a Boltzmann surrogate as in our methods. This connection, together with the analytical tools developed in Section 3, allows us to make a first attempt at analyzing their convergence properties. Specifically, at each iteration, starting from a point outside the feasible region ¯X ′ 
+
+> t
+
+:= {x : σ2
+
+> t−1
+
+(x) ≥ η}
+
+with threshold η > 0, a Markov chain is simulated targeting a surrogate distribution of generic form ˜pt−1 ∝
+
+exp  λμ t−1(x) + λh (σ2
+
+> t−1
+
+(x)) + b(x), where h(σ2) is a smooth transformation of σ2, until the chain crosses into the feasible region, at which point xt is queried; if the Markov chain does not cross into the feasible region, the sample of maximum uncertainty is queried. If we assume that exploration by the Markov chain is exhaustive so that 
+
+σ2
+
+> t−1
+
+(xt) ≥ min {η, max x∈X σ2
+
+> t−1
+
+(x)}, the conditions of the following convergence guarantee are satisfied: 
+
+Proposition 4.5. For a fixed threshold η ∈ (0 , 1] , define ¯X ′ 
+
+> t
+
+:= {x : σ2
+
+> t−1
+
+(x) ≥ η}. Consider an active learning algorithm that selects xt from the set ¯X ′ 
+
+> t
+
+if ¯X ′
+
+> t
+
+̸ = ϕ and xt = arg max x σt−1(x) otherwise. Then, under Assumptions 2.1 and 3.1, for any δ ∈ (0 , 1) , with probability at least 1 − δ:
+
+L(μT ) = O(T −1+ ϵ) (6) 
+
+for arbitrarily small ϵ > 0 and sufficiently large T such that η > C 1γT /T .
+
+To the best of our knowledge, this is the first convergence analysis under the SIDAL framework for heuristic active learning methods tackling this problem. 6Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+## 5. Experiments 
+
+We validate our proposed methods against Random Sampling ( RS ), Uncertainty Sampling ( US ), Integrated Mean Squared Error ( IMSE ) [Sacks et al., 1989, Seo et al., 2000], Expected Predictive Information Gain ( EPIG ) [Smith et al., 2023], and GHAL detailed in Appendix D.2. We omit comparing with DRAL as it optimizes for worst-case performance over an ambiguity set rather than exploiting the known Boltzmann form. We use a Matérn-5/2 GP surrogate by default. For our methods, we set λ = 1 and b(x) = 0 as default (see Appendix D.8 for sensitivity to other settings). Each experiment starts with a single initial sample and is repeated 30 times with different random seeds. Full experimental setup is deferred to Appendix D.1. 
+
+5.1. Synthetic Experiments 
+
+We first evaluate AL performance on standard synthetic benchmarks spanning d = 1 to d = 6 . Results are illus-trated in Figure 3. AB-SID-iVAR consistently achieves lower weighted MSE than baselines, with the gap becoming more pronounced in higher dimensions. The Thompson sampling variant TS-SID-iVAR is competitive but exhibits higher variance across seeds, particularly on multimodal targets such as Branin. US shows a clear failure mode: by concentrating queries in high-uncertainty regions regardless of their probability under Pf , it can perform worse than random sampling. IMSE is a strong baseline as it also minimizes integrated variance, but learns uniformly and thus underperforms SID-aware approaches. GHAL , while SID-aware and competitive in some tasks, exhibits high variance and inconsistent performance due to its sensitivity to hyperparameters η and h; in contrast, our methods avoid task-specific hyperparameter tuning. 
+
+Ablation Study. To understand the contribution of different components, we conduct an ablation study under two set-tings: (1) using μt−1 as a naive surrogate for SID (i.e., eλμ t−1 ), tested with both our acquisition (denoted μ-SID-iVAR )and EPIG (denoted μ-SID-EPIG ) to verify that combining any acquisition function with a plug-in SID surrogate is insufficient, and (2) removing the constraint set (denoted SID-iVAR -ϕ). Results are shown in Figure 8 and analyzed in detail in Appendix D.4. While these variants achieve comparable performance on benchmarks dominated by a broad basin (e.g., Hartmann), both plug-in variants fail in scenarios where the target distribution has well-separated modes (Branin) or strongly oscillatory structure (Ishigami), as the point estimate μt−1 discards posterior uncertainty and commits prematurely to whichever mode is discovered first. This validates that the Bayesian treatment of f in our surrogate ˜pt−1, alongside the constraint set ¯Xt, enables its robust performance. Finally, we report computational cost comparisons in Appendix D.6. In discrete domains, our methods are slightly slower than IMSE (<10 seconds per iteration). In continuous domains, our methods incur higher per-iteration cost than 
+
+IMSE (which uses uniform random samples) due to MCMC sampling and constrained acquisition optimization, but remain practical ( <30 seconds per iteration), a sensitivity regarding MCMC particle size at Figure 9 in Appendix D.7 also shows that the empirical performance stays the same while using N = 250 d particles. 
+
+5.2. Potential Energy Surface Modeling 
+
+Learning the potential energy surface (PES) E(x) of an atomistic system is a natural SIDAL instance: downstream molecular dynamics samples configurations from the Boltzmann distribution PE (x) ∝ exp( −E(x)/k BT ) (i.e., 
+
+λ = −(kBT )−1 < 0, b ≡ 0, where T > 0 denotes the thermal temperature and kB is the Boltzmann constant), so prediction accuracy is only required where this self-induced density places mass, typically a small, a priori unknown fraction of configuration space corresponding to physically accessible states. Ground-truth queries to E using, e.g., density functional theory Szabo and Ostlund [2012], typically cost hours to weeks per evaluation, making sample efficiency essential. We benchmark the proposed methods on four PES fitting problems, the PES of (i) a hydrogen molecule on a copper surface ( H2 on Cu ), (ii) a hydrogen atom on a copper cluster ( H2 on Cu Cluster), (iii) a highly symmetric silicon cluster (Si Crystal), and (iv) a water molecule on a platinum surface ( H2O on Pt ). Details, including coordinate parameterizations and λ values, are deferred to Appendix D.5.1. The result summarized in Figure 4 shows that AB-SID-iVAR consistently achieves the lowest weighted MSE, the performance of GHAL, on the other hand, varies between problems, indicating its sensitivity to the specification of hyperparameters. 
+
+5.3. Molecular Drug Discovery 
+
+Finally, we evaluate our methods on a discrete pool-based active learning problem using real molecular dataset. In practice, evaluating molecular properties is expensive hence drug discovery campaigns prioritize accurate predictions 7Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 0 20 40 60 80 100                         
+
+> Iteration
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> Weighted MSE
+> H2on Cu ( d= 2 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 1
+> 10 3H on Cu Cluster ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 2
+> 10 3
+> Si Crystal ( d= 3 )
+> 0100 200 300
+> Iteration
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> H2O on Pt ( d= 6 )
+> RS US EPIG IMSE GHAL TS-SID-iVAR-AB-SID-iVAR-
+
+Figure 4: Weighted MSE convergence on four PES fitting tasks of increasing dimensionality: H2 on Cu (d=2 ), H on Cu 13 (d=3 ), Si Crystal (d=3 ), and H2O on Pt (d=6 ). AB-SID-iVAR consistently achieves the lowest error across systems. 0.0 0.1 0.2  
+
+> Function value y
+
+Median 1 ( = 25)    
+
+> 0.0 0.1 0.2
+> Function value y
+
+Median 1 ( = 75)     
+
+> 0.0 0.1 0.2 0.3
+> Function value y
+
+Median 2 ( = 25)     
+
+> 0.0 0.1 0.2 0.3
+> Function value y
+
+Median 2 ( = 75)                                                   
+
+> 0100 200 300
+> Iteration
+> 10 3
+> 10 2
+> Weighted MSE
+> 0100 200 300
+> Iteration
+> 10 5
+> 10 4
+> 10 3
+> 10 2
+> 0100 200 300
+> Iteration
+> 10 3
+> 10 2
+> 0100 200 300
+> Iteration
+> 10 5
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 100 20 51
+> Top k%
+> 10
+> 5
+> 0
+> R2 on top  k%
+> 100 20 51
+> Top k%
+> 10
+> 5
+> 0
+> 100 20 51
+> Top k%
+> 8
+> 6
+> 4
+> 2
+> 0
+> 100 20 51
+> Top k%
+> 8
+> 6
+> 4
+> 2
+> 0
+> Pool yTilted P(y)RS US EPIG IMSE AB-SID-iVAR-
+
+Figure 5: Active learning for molecular property prediction on GuacaMol scoring functions (Median 1, Median 2). The target distribution Pλ(x) ∝ exp( λf (x)) emphasizes high-scoring compounds, relevant for drug discovery where accurate predictions matter most for promising candidates. Top: pool distribution (gray) vs. Boltzmann-tilted density (red). Middle: weighted MSE convergence over 300 iterations; AB-SID-iVAR achieves one to two orders of magnitude lower error than baselines. Bottom: R2 on top k% compounds ranked by Boltzmann weight; baselines degrade to negative R2 as k shrinks while AB-SID-iVAR remains near zero. Pool contains approximately 20,000 molecules with Tanimoto kernel GP. for promising candidates over uniform accuracy across the library. This naturally matches the SIDAL setting, where the Boltzmann density concentrates on high-scoring compounds that matter most for downstream screening. We use a GP with a Tanimoto kernel over Morgan fingerprints as the surrogate, suited for the discrete molecular domain. This also tests whether our method remains effective beyond the kernel regularity assumed in our theory (Assumption 2.1). We evaluate on the GuacaMol benchmark [Brown et al., 2019] ( ≈20,000 molecules) using two drug-likeness scoring functions (Median 1, Median 2), with λ ∈ { 25 , 75 } ¶ controlling target concentration (Figure 5, top row). Setup details are deferred to Appendix D.5.2. Increasing λ from 25 to 75 sharpens the target, concentrating mass on the highest-
+
+> ¶
+
+We note the large λ is offset by the narrow score range f ∈ [0 .1, 0.3] (Figure 5, top row). 
+
+8Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights scoring molecules. This exponential tilting appears broadly, including guided sampling in diffusion models [Song et al., 2023] and reward-tilted preference alignment [Rafailov et al., 2023]. Based on the convergence curves, AB-SID-iVAR 
+
+demonstrates strong performance, converging roughly an order of magnitude lower at λ = 25 , and this benefit becomes more pronounced at λ = 75 . This reflects the increased cost of learning uniformly when only a narrow slice of the input space is of interest. Further inspecting final model quality, the bottom row evaluates R2 || on the top-k% of molecules ranked by Boltzmann weight. At k = 100% represent uniform learning objective, all methods achieve comparable R2, reflecting uniform-average performance. As k decreases toward the elite subset, however, SID-unaware baselines degrade to strongly negative R2, indicating predictions worse than a constant baseline on the molecules that matter most. In comparison, 
+
+AB-SID-iVAR demonstrates significantly better prediction accuracy in high-value regions. The pairwise plots in Figure 11 confirm this finding: dark (high-weight) points align with the diagonal only for AB-SID-iVAR , while baselines show systematic spread or bias. Together, these results demonstrate that SID-unaware methods can appear reasonable under global metrics yet fail on the subset relevant for downstream screening, and λ provides a principled mechanism to specify which output region should be learned well, without requiring prior knowledge of where these regions lie in input space. 
+
+## 6. Conclusions 
+
+We formalized the problem of active learning under self-induced distributions (SIDAL), where the target distribution depends on the unknown function being learned. We proposed two uncertainty reduction acquisition functions based on Gaussian Process surrogates that approximate the intractable Bayesian target in closed form while avoiding partition function estimation. Our theoretical analysis establishes that the terminal prediction error vanishes with high probability under mild conditions, with tighter logarithmic factors available under an average-case analysis; a detailed elaboration of limitations and future work is deferred to Appendix E. Empirically, our methods consistently outperform SID-unaware baselines across synthetic benchmarks and real-world problems, with the gap widening as the target concentrates or the input dimension increases. 
+
+Acknowledgments 
+
+This work was supported by Research England under the Expanding Excellence in England (E3) funding stream, which was awarded to MARS: Mathematics for AI in Real-world Systems in the School of Mathematical Sciences at Lancaster University. 
+
+## References                     
+
+> Tara Akhound-Sadegh, Jarrid Rector-Brooks, Avishek Joey Bose, Sarthak Mittal, Pablo Lemos, Cheng-Hao Liu, Marcin Sendera, Siamak Ravanbakhsh, Gauthier Gidel, Yoshua Bengio, et al. Iterated denoising energy matching for sampling from boltzmann densities. arXiv preprint arXiv:2402.06121 , 2024. Tara Akhound-Sadegh, Jungyoon Lee, Avishek Joey Bose, Valentin De Bortoli, Arnaud Doucet, Michael M Bronstein, Dominique Beaini, Siamak Ravanbakhsh, Kirill Neklyudov, and Alexander Tong. Progressive inference-time annealing of diffusion models for sampling from boltzmann densities. arXiv preprint arXiv:2506.16471 , 2025. Maximilian Balandat, Brian Karrer, Daniel Jiang, Samuel Daulton, Ben Letham, Andrew G Wilson, and Eytan Bakshy. Botorch: A framework for efficient monte-carlo bayesian optimization. Advances in neural information processing systems , 33:21524–21538, 2020. Ilyes Batatia, Philipp Benner, Yuan Chiang, Alin M Elena, Dávid P Kovács, Janosh Riebesell, Xavier R Advincula, Mark Asta, Matthew Avaylon, William J Baldwin, et al. A foundation model for atomistic materials chemistry. The Journal of chemical physics , 163(18), 2025. Nathan Brown, Marco Fiscato, Marwin HS Segler, and Alain C Vaucher. Guacamol: benchmarking models for de novo molecular design. Journal of chemical information and modeling , 59(3):1096–1108, 2019. Richard H Byrd, Peihuang Lu, Jorge Nocedal, and Ciyou Zhu. A limited memory algorithm for bound constrained optimization.
+> SIAM Journal on scientific computing , 16(5):1190–1208, 1995. Xu Cai and Jonathan Scarlett. Kernelized normalizing constant estimation: bridging bayesian quadrature and bayesian optimization. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 38, pages 11150–11158, 2024. Pierre Del Moral, Arnaud Doucet, and Ajay Jasra. Sequential monte carlo samplers. Journal of the Royal Statistical Society Series B: Statistical Methodology , 68(3):411–436, 2006.
+> || We use R2= 1 −P
+> i(yi−ˆyi)2/P
+> i(yi−¯y)2computed on the top-k%subset, where ¯yis the subset mean.
+
+9Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Blake R Duschatko, Jonathan Vandermause, Nicola Molinari, and Boris Kozinsky. Uncertainty driven active learning of coarse grained free energy models. npj Computational Materials , 10(1):9, 2024. Valerii Vadimovich Fedorov. Theory of optimal experiments . Elsevier, 2013. David A Freedman. On tail probabilities for martingales. the Annals of Probability , pages 100–118, 1975. Daan Frenkel and Berend Smit. Understanding molecular simulation: from algorithms to applications . Elsevier, 2023. Charlie Frogner, Sebastian Claici, Edward Chien, and Justin Solomon. Incorporating unlabeled data into distributionally-robust learning. J. Mach. Learn. Res. , 22(1), January 2021. ISSN 1532-4435. Subhashis Ghosal and Anindya Roy. Posterior consistency of gaussian process prior for nonparametric binary regression. 2006. Robert B Gramacy and Herbert KH Lee. Gaussian processes and limiting linear models. Computational Statistics & Data Analysis ,53(1):123–136, 2008. Xun Huan, Jayanth Jagalur, and Youssef Marzouk. Optimal experimental design: Formulations and computations. Acta Numerica ,33:715–840, 2024. Jonas Hübotter, Lenart Treven, Yarden As, and Andreas Krause. Transductive active learning: Theory and applications. Advances in Neural Information Processing Systems , 37:124686–124755, 2024. Carl Hvarfner, Erik Orm Hellsten, and Luigi Nardi. Vanilla bayesian optimization performs great in high dimensions. arXiv preprint arXiv:2402.02229 , 2024. Ajay Jasra, David A Stephens, Arnaud Doucet, and Theodoros Tsagaris. Inference for lévy-driven stochastic volatility models via adaptive sequential monte carlo. Scandinavian Journal of Statistics , 38(1):1–22, 2011. Ryosuke Jinnouchi, Kazutoshi Miwa, Ferenc Karsai, Georg Kresse, and Ryoji Asahi. On-the-fly active learning of interatomic potentials for large-scale atomistic simulations. The Journal of Physical Chemistry Letters , 11(17):6946–6955, 2020. Andreas Kirsch, Tom Rainforth, and Yarin Gal. Test distribution-aware active learning: A principled approach against distribution shift and outliers. arXiv preprint arXiv:2106.11719 , 2021. Dieter Kraft. A software package for sequential quadratic programming. Forschungsbericht- Deutsche Forschungs- und Versuch-sanstalt fur Luft- und Raumfahrt , 1988. Andreas Krause, Ajit Singh, and Carlos Guestrin. Near-optimal sensor placements in gaussian processes: Theory, efficient algorithms and empirical studies. Journal of Machine Learning Research , 9(2), 2008. Maksim Kulichenko, Kipton Barros, Nicholas Lubbers, Ying Wai Li, Richard Messerly, Sergei Tretiak, Justin S Smith, and Benjamin Nebgen. Uncertainty-driven dynamics for active learning of interatomic potentials. Nature computational science , 3(3):230–239, 2023. Zhenwei Li, James R Kermode, and Alessandro De Vita. Molecular dynamics with on-the-fly machine learning of quantum-mechanical forces. Physical review letters , 114(9):096405, 2015. RuiKang OuYang, Bo Qiang, and José Miguel Hernández-Lobato. Bnem: A boltzmann sampler based on bootstrapped noised energy matching. arXiv preprint arXiv:2409.09787 , 2024. Evgeny V Podryabinkin and Alexander V Shapeev. Active learning of linearly parametrized interatomic potentials. Computational Materials Science , 140:171–180, 2017. Friedrich Pukelsheim. Optimal design of experiments . SIAM, 2006. Rafael Rafailov, Archit Sharma, Eric Mitchell, Christopher D Manning, Stefano Ermon, and Chelsea Finn. Direct preference optimization: Your language model is secretly a reward model. Advances in neural information processing systems , 36: 53728–53741, 2023. Tom Rainforth, Adam Foster, Desi R Ivanova, and Freddie Bickford Smith. Modern bayesian experimental design. Statistical Science , 39(1):100–114, 2024. Jerome Sacks, William J Welch, Toby J Mitchell, and Henry P Wynn. Design and analysis of computer experiments. Statistical science , 4(4):409–423, 1989. Christian Schäfer and Nicolas Chopin. Sequential monte carlo on large binary sampling spaces. Statistics and Computing , 23(2): 163–184, 2013. Sebastian Schnur and Axel Groß. Properties of metal–water interfaces studied from first principles. New Journal of Physics , 11(12): 125003, 2009. Sambu Seo, Marko Wallat, Thore Graepel, and Klaus Obermayer. Gaussian process regression: Active data selection and test point rejection. In Proceedings of the IEEE-INNS-ENNS International Joint Conference on Neural Networks (IJCNN) , volume 3, pages 241–246, 2000. Burr Settles. Active learning literature survey. 2009. Freddie Bickford Smith, Andreas Kirsch, Sebastian Farquhar, Yarin Gal, Adam Foster, and Tom Rainforth. Prediction-oriented bayesian active learning. In International conference on artificial intelligence and statistics , pages 7331–7348. PMLR, 2023. 
+
+10 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+B Smits and MF Somers. The quantum dynamics of h2 on cu (111) at a surface temperature of 925 k: Comparing state-of-the-art theory to state-of-the-art experiments 2. The Journal of Chemical Physics , 158(1), 2023. Jiaming Song, Qinsheng Zhang, Hongxu Yin, Morteza Mardani, Ming-Yu Liu, Jan Kautz, Yongxin Chen, and Arash Vahdat. Loss-guided diffusion models for plug-and-play controllable generation. In International Conference on Machine Learning , pages 32483–32498. PMLR, 2023. Niranjan Srinivas, Andreas Krause, Sham M Kakade, and Matthias Seeger. Gaussian process optimization in the bandit setting: No regret and experimental design. arXiv preprint arXiv:0912.3995 , 2009. Wojciech G Stark, Cas van der Oord, Ilyes Batatia, Yaolong Zhang, Bin Jiang, Gábor Csányi, and Reinhard J Maurer. Benchmarking of machine learning interatomic potentials for reactive hydrogen dynamics at metal surfaces. Machine Learning: Science and Technology , 5(3):030501, 2024. Frank H Stillinger and Thomas A Weber. Computer simulation of local order in condensed phases of silicon. Physical review B , 31 (8):5262, 1985. Attila Szabo and Neil S Ostlund. Modern quantum chemistry: introduction to advanced electronic structure theory . Courier Corporation, 2012. Shion Takeno, Yoshito Okura, Yu Inatsu, Tatsuya Aoyama, Tomonari Tanaka, Satoshi Akahane, Hiroyuki Hanada, Noriaki Hashimoto, Taro Murayama, Hanju Lee, et al. Distributionally robust active learning for gaussian process regression. arXiv preprint arXiv:2502.16870 , 2025. Austin Tripp, Sergio Bacallado, Sukriti Singh, and José Miguel Hernández-Lobato. Tanimoto random features for scalable molecular machine learning. Advances in Neural Information Processing Systems , 36:33656–33686, 2023. Sattar Vakili, Henry Moss, Artem Artemev, Vincent Dutordoir, and Victor Picheny. Scalable thompson sampling using sparse gaussian process models. Advances in neural information processing systems , 34:5631–5643, 2021. Cas van der Oord, Matthias Sachs, Dávid Péter Kovács, Christoph Ortner, and Gábor Csányi. Hyperactive learning for data-driven interatomic potentials. npj Computational Materials , 9(1):168, 2023. Jonathan Vandermause, Steven B Torrisi, Simon Batzner, Yu Xie, Lixin Sun, Alexie M Kolpak, and Boris Kozinsky. On-the-fly active learning of interpretable bayesian force fields for atomistic rare events. npj Computational Materials , 6(1):20, 2020. Christopher KI Williams and Carl Edward Rasmussen. Gaussian processes for machine learning , volume 2. MIT press Cambridge, MA, 2006. James T Wilson, Viacheslav Borovitskiy, Alexander Terenin, Peter Mostowsky, and Marc Peter Deisenroth. Pathwise conditioning of gaussian processes. Journal of Machine Learning Research , 22(105):1–47, 2021. Mingli Yang, Koblar A Jackson, Christof Koehler, Thomas Frauenheim, and Julius Jellinek. Structure and shape variations in intermediate-size copper clusters. The Journal of chemical physics , 124(2), 2006. Kai Yu, Jinbo Bi, and Volker Tresp. Active learning via transductive experimental design. In Proceedings of the 23rd international conference on Machine learning , pages 1081–1088, 2006. 
+
+11 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+## Appendix Contents 
+
+A Related Works 12 B Methodology Details 13 
+
+B.1 Acquisition Functions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13 B.1.1 AB-SID . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13 B.1.2 TS-SID . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14 B.1.3 Acquisition Illustrations . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 B.1.4 MCMC approximation of ˜pt . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 
+
+C Theoretic Analysis 15 
+
+C.1 Non-Bayes Optimality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15 C.2 Lemma 3.2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16 C.3 Lemma 3.3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16 C.4 Lemma 3.4 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17 C.5 Theorem 4.1 and Corollary 4.2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18 C.6 Theorem 4.3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23 C.6.1 Rate Analysis for Average MSE Bound . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23 C.7 Proposition 4.5 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23 
+
+D Experimental Details and Additional Experimental Investigations 24 
+
+D.1 Experimental Setup Details . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24 D.2 Generic Adapatation of Heuristics Active Learning Algorithms . . . . . . . . . . . . . . . . . . . . 25 D.3 Discrete Experimental Results . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25 D.4 Ablation Study . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26 D.5 Real World Problems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27 D.5.1 Potential Energy Surface Modeling . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27 D.5.2 Molecular Drug Discovery . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28 D.6 Runtime Report and Compute Resources . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28 D.7 Sensitivity Analysis of MCMC sample size . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28 D.8 Sensitivity Analysis of λ and b . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29 D.9 Molecular Drug Discovery . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29 
+
+E Limitations and Future Work 30 
+
+## A Related Works 
+
+Several lines of work consider active learning with structured targets rather than uniform error across the input domain. These methods differ in how the target is specified: a known finite set of test points [Yu et al., 2006, Hübotter et al., 2024], a continuous target distribution P [Kirsch et al., 2021, Smith et al., 2023], or an ambiguity set containing possible 
+
+P when it cannot be exactly specified [Frogner et al., 2021, Takeno et al., 2025], hence optimizing for worst-case performance over the set. In all cases, the target does not depend on the unknown function being learned. 12 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Outside the AL literature, related heuristics have emerged in scientific domains [Li et al., 2015, Podryabinkin and Shapeev, 2017, Vandermause et al., 2020, Jinnouchi et al., 2020, van der Oord et al., 2023, Kulichenko et al., 2023, Duschatko et al., 2024], where a surrogate model guides Markov Chain Monte Carlo (MCMC) sampling from a tilted Boltzmann distribution and triggers a query when predictive uncertainty exceeds a pre-specified threshold. These methods often require careful tuning of hyperparameters and lack theoretical guarantees. In Section 4.3, we formalize a generalized version of such heuristics within our framework and for the first time analyze their convergence properties. 
+
+## B Methodology Details 
+
+B.1 Acquisition Functions 
+
+Starting from one-step look-ahead MSE minimization, we make two approximations: (i) replace squared error with posterior variance (according to lemma 2.3), and (ii) treat Pf as fixed when evaluating variance reduction, avoiding the need to recompute partition functions for each hypothetical observation. This reduces the acquisition function to minimizing Ef |Dt−1 EPf [σ2 
+
+> t
+
+| xt = x], which requires approximating Ef |Dt−1 [Pf (x⋆)] . Substituting the Boltzmann form: 
+
+Ef |Dt−1 [Pf (x⋆)] = Ef |Dt−1
+
+ eλf (x⋆)+ b(x⋆)
+
+Zf
+
+
+
+. (7) 
+
+B.1.1 AB-SID 
+
+For notation simplicity, let A = eλf (x⋆)+ b(x⋆) and B = Zf . In order to compute E[A/B ], We approximate E[A/B ]
+
+via Taylor expansion around B = E[B]:
+
+AB = A
+
+E[B] − A(B − E[B]) (E[B]) 2 + A(B − E[B]) 2
+
+(E[B]) 3 − · · · .
+
+Taking expectation: 
+
+E
+
+ AB
+
+
+
+= E[A]
+
+E[B] − E[A(B − E[B])] (E[B]) 2 + E[A(B − E[B]) 2](E[B]) 3 − · · · .
+
+For the second term, note that: 
+
+E[A(B − E[B])] = E[AB ] − E[A]E[B] = Cov( A, B ),
+
+therefore, 
+
+E
+
+ AB
+
+
+
+= E[A]
+
+E[B]
+
+| {z } 
+
+> T0
+
+− Cov( A, B )(E[B]) 2
+
+| {z }
+
+> T1
+
++ E[A(B − E[B]) 2](E[B]) 3 − · · · 
+
+Zero-Order Term T0 For the first term T1, substituting A and B’s expression back: 
+
+Ef |D [Pf (x⋆)] ≈ Ef |D [eλf (x⋆)+ b(x⋆)]
+
+Ef |D [Zf ]
+
+For the numerator, again using the Gaussian MGF identity, we have: 
+
+Ef |D [eλf (x⋆)+ b(x⋆)] = exp 
+
+
+
+λμ t(x⋆) + λ2
+
+2 σ2 
+
+> t
+
+(x⋆) + b(x⋆)
+
+
+
+Similarly, for the partition function: 
+
+Ef |D [Zf ] = X
+
+> x′
+
+exp 
+
+
+
+λμ t(x′) + λ2
+
+2 σ2 
+
+> t
+
+(x′) + b(x′)
+
+
+
+First-Order T1 For the first-order term 
+
+T1 = − Cov( A, B )(E[B]) 2
+
+13 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights For Cov( A, B ), since B = Zf = P 
+
+> x′
+
+eλf (x′)+ b(x′), by bi-linearity of covariance: 
+
+Cov( A, B ) = X
+
+> x′
+
+Cov 
+
+
+
+eλf (x⋆)+ b(x⋆), e λf (x′)+ b(x′)
+
+To evaluate this we first introduce the following helper lemma. 
+
+Lemma B.1 (Exponential Covariance under Joint Gaussian) . Let (U, V ) be jointly Gaussian with means (μU , μ V ),variances (σ2 
+
+> U
+
+, σ 2 
+
+> V
+
+), and covariance κ. Then: 
+
+Cov( eλU , e λV ) = E[eλU ]E[eλV ]
+
+
+
+eλ2κ − 1
+
+
+
+Proof. By the joint MGF of Gaussian random variables: 
+
+E[eλU +λV ] = exp 
+
+
+
+λ(μU + μV ) + λ2
+
+2 (σ2 
+
+> U
+
++ σ2 
+
+> V
+
++ 2 κ)
+
+
+
+The product of marginal MGFs: 
+
+E[eλU ] · E[eλV ] = exp 
+
+
+
+λ(μU + μV ) + λ2
+
+2 (σ2 
+
+> U
+
++ σ2 
+
+> V
+
+)
+
+
+
+Therefore: 
+
+Cov( eλU , e λV ) = E[eλU · eλV ] − E[eλU ]E[eλV ] = E[eλU ]E[eλV ]
+
+
+
+eλ2κ − 1
+
+
+
+Applying Lemma B.1 with U = f (x⋆) + b(x⋆) 
+
+> λ
+
+, V = f (x′) + b(x′) 
+
+> λ
+
+, and hence κ = kt−1(x⋆, x ′):
+
+Cov 
+
+
+
+eλf (x⋆)+ b(x⋆), e λf (x′)+ b(x′)
+
+= E
+
+h
+
+eλf (x⋆)+ b(x⋆)i
+
+E
+
+h
+
+eλf (x′)+ b(x′)i  
+
+eλ2kt−1(x⋆,x ′) − 1
+
+
+
+Summing over x′:
+
+Cov( A, B ) = E[A] X
+
+> x′
+
+E
+
+h
+
+eλf (x′)+ b(x′)i  
+
+eλ2kt−1(x⋆,x ′) − 1
+
+
+
+Since E[B] = P 
+
+> x′
+
+E
+
+h
+
+eλf (x′)+ b(x′)
+
+i
+
+, the first-order term becomes: 
+
+T1 = − E[A](E[B]) 2
+
+X
+
+> x′
+
+E
+
+h
+
+eλf (x′)+ b(x′)i  
+
+eλ2kt−1(x⋆,x ′) − 1
+
+
+
+= − E[A]
+
+E[B]
+
+X
+
+> x′
+
+E
+
+h
+
+eλf (x′)+ b(x′)
+
+i
+
+E[B]
+
+
+
+eλ2kt−1(x⋆,x ′) − 1
+
+
+
+= − E[A]
+
+E[B] ·
+
+P 
+
+> x′
+
+˜pu
+
+> t−1
+
+(x′)
+
+
+
+eλ2kt−1(x⋆,x ′) − 1
+
+P 
+
+> x′′
+
+˜pu
+
+> t−1
+
+(x′′ )
+
+where ˜pu
+
+> t−1
+
+(x′) = e  
+
+> 
+> λμ t−1(x′)+ λ22σ2
+> t−1(x′)+ b(x′)
+> 
+
+, the same unnormalized surrogate as in Table 1. 
+
+B.1.2 TS-SID 
+
+Another approach is to approximate Eq. 7 by a Monte Carlo estimate, 
+
+Ef |Dt−1 [Pf (x⋆)] ≈ 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+ eλf i(x⋆)+ b(x⋆)
+
+Zfi
+
+
+
+.
+
+Specifically we use N = 1 , which corresponds to Thompson sampling. 14 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights MC-SID (MC=1024) AB-SID (0th order) AB-SID (1st order) TS-SID (MC=1) 
+
+Figure 6: Acquisition function comparison on a 2D GP prior. We use Monte Carlo with 1024 samples (MC-SID, leftmost) as a reference approximation of Eq. 7. The zero-order AB-SID approximation closely matches the reference contours regardless of training data size ( •), while the first-order correction provides marginal improvement especially when data is abundant. TS-SID (single posterior sample) shows higher variability. Stars ( ) indicate the acquisition maximum. 
+
+B.1.3 Acquisition Illustrations 
+
+In order to better understand the approximation efficacy of the zero order and first order approximation of Eq. 7, we provide a two dimensional visual comparison of different acquisition function variants in Figure 6, which helps justifying the usage of our zero order approximation. 
+
+B.1.4 MCMC approximation of ˜pt
+
+We leverage Sequential Monte Carlo (SMC) Del Moral et al. [2006] as our importance sampler for Pf , using annealed tempering with Random Walk Metropolis (RWM) rejuvenation steps. The temperature schedule is adaptively determined via bisection to maintain a target effective sample size (ESS) ratio Jasra et al. [2011], Schäfer and Chopin [2013]. 
+
+## C Theoretic Analysis 
+
+C.1 Non-Bayes Optimality 
+
+We note that the Bayes-optimal estimator minimizes the posterior expected loss: 
+
+R( ˆf ) = Ef |Dt
+
+" X
+
+> x∈X
+
+Pf (x) · ( ˆf (x) − f (x)) 2
+
+#
+
+Taking the derivative with respect to ˆf :
+
+dR d ˆf = Ef |Dt [2 Pf · ( ˆf − f )] = 0 
+
+This yields: 
+
+ˆf ⋆(x′) = Ef |Dt [Pf (x′) · f (x′)] 
+
+Ef |Dt [Pf (x′)] ̸ = μt(x′)
+
+Since Pf (x′) = g(f (x′)) /Z f depends on f through both g(f (x′)) and the partition function Zf = P 
+
+> x
+
+g(f (x)) , the numerator and denominator involve the intractable expectation. Hence we use μt(x) as a computationally tractable approximation. 15 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Algorithm 2 Sequential Monte Carlo (SMC) Sampling 
+
+Require: Log unnormalized density log ˜ p(x), bounds [l, u ], particles N , ESS threshold α, RWM steps K
+
+Ensure: Weighted samples {(xi, w i)}Ni=1 approximating p(x) ∝ ˜p(x)
+
+1: xi ∼ Uniform (l, u ) for i = 1 , . . . , N // Initialize particles 
+
+2: log wi ← 0 for all i // Uniform weights 
+
+3: τ ← 0 // Initial temperature 
+
+4: while τ < 1 do 
+
+5: τprev ← τ
+
+6: τ ← min( τ ′, 1) where τ ′ satisfies ESS (τ ′) ≈ α · N // Adaptive tempering 
+
+7: log wi ← log wi + ( τ − τprev ) · log ˜ p(xi) for all i // Reweight 
+
+8: if ESS < α · N then 
+
+9: {xi} ← SystematicResample ({xi}, {log wi}) // Resample 
+
+10: log wi ← 0 for all i
+
+11: end if 
+
+12: for k = 1 , . . . , K do 
+
+13: xi ← RWM (xi, τ · log ˜ p) for all i // Rejuvenate 
+
+14: end for 
+
+15: end while 
+
+16: return {(xi, exp(log wi)) }Ni=1 
+
+C.2 Lemma 3.2 
+
+Proof. Expanding the log-density difference: 
+
+log Pg1 (x) − log Pg2 (x) = λ(g1(x) − g2(x)) + log Zg2 − log Zg1
+
+where Zgi = R 
+
+> x′
+
+eλg i(x′)+ b(x′)dx ′. The first term by definition is: 
+
+|λ(g1(x) − g2(x)) | = |λ|∆( x)
+
+For the partition function ratio: 
+
+Zg1 =
+
+Z
+
+> x′
+
+eλg 2(x′)+ b(x′)eλ(g1(x′)−g2(x′)) dx ′
+
+Since |g1(x′) − g2(x′)| ≤ ∆max for all x′ by definition: 
+
+e−| λ|∆max Zg2 ≤ Zg1 ≤ e|λ|∆max Zg2
+
+Taking logarithms: 
+
+| log Zg1 − log Zg2 | ≤ | λ|∆max (8) Combining via triangle inequality: 
+
+| log Pg1 (x) − log Pg2 (x)| ≤ | λ|∆( x) + |λ|∆max 
+
+C.3 Lemma 3.3 
+
+Proof. By Lemma 2.3, with probability at least 1 − δ, at iteration T we have: 
+
+|f (x) − μT (x)| ≤ β1/2 
+
+> T
+
+σT (x) + ϵT , ∀x ∈ X 
+
+Applying Lemma 3.2 with (g1, g 2) = ( f, μ T ) we have ∆( x) = |f (x) − μT (x)| ≤ β1/2 
+
+> T
+
+σT (x) + ϵT and ∆max ≤
+
+β1/2 
+
+> T
+
+σmax ,T + ϵT . Additionally with log partition function difference inequality (Eq. 8): 
+
+log Pf (x)
+
+PμT (x) ≤ | λ|| f (x) − μT (x)| + |λ|∆max 
+
+≤ | λ|(β1/2 
+
+> T
+
+σT (x) + ϵT ) + |λ|(β1/2 
+
+> T
+
+σmax ,T + ϵT )
+
+16 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Using σT (x) ≤ σmax ,T and exponentiating: 
+
+Pf (x)
+
+PμT (x) ≤ e2|λ|(β1/2   
+
+> Tσmax ,T +ϵT)
+
+Bounding the MSE: 
+
+EPf [( f − μT )2] = EPμT
+
+ Pf (x)
+
+PμT (x) (f (x) − μT (x)) 2
+
+
+
+≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+· EPμT
+
+h
+
+(β1/2 
+
+> T
+
+σT (x) + ϵT )2i
+
+= e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+· EPμT
+
+h
+
+βT σ2 
+
+> T
+
+(x) + 2 β1/2 
+
+> T
+
+σT (x)ϵT + ϵ2
+
+> T
+
+i
+
+≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+·
+
+
+
+βT · EPμT
+
+σ2 
+
+> T
+
+(x) + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+where the last inequality holds as σT ≤ 1.
+
+C.4 Lemma 3.4 
+
+We first establish a helper lemma for expectations involving Gaussian random variables. 
+
+Lemma C.1. Let (ξ, ζ ) be jointly Gaussian with E[ξ] = E[ζ] = 0 , V(ξ) = u2, V(ζ) = w2, and Cov( ξ, ζ ) = c. Then: 
+
+E[ξ2eλζ ] = ( u2 + λ2c2)eλ2w2/2
+
+Proof. Using the conditional distribution ξ|ζ ∼ N 
+
+ cw2 ζ, u 2 − c2
+
+> w2
+
+
+
+:
+
+E[ξ2|ζ] = V[ξ|ζ] + ( E[ξ|ζ]) 2 = u2 − c2
+
+w2 + c2
+
+w4 ζ2
+
+By the tower property: 
+
+E[ξ2eλζ ] = E E[ξ2eλζ |ζ] = E eλζ E[ξ2|ζ] = E
+
+
+
+eλζ 
+
+
+
+u2 − c2
+
+w2 + c2
+
+w4 ζ2
+
+ 
+
+=
+
+
+
+u2 − c2
+
+w2
+
+
+
+E[eλζ ] + c2
+
+w4 E[ζ2eλζ ]
+
+Using the Gaussian MGF, E[eλζ ] = eλ2w2/2 and E[ζ2eλζ ] = ( w2 + λ2w4)eλ2w2/2
+
+
+
+i.e., dE[eλζ ]
+
+> dλ 2
+
+
+
+, the result follows. Now we prove Lemma 3.4. 
+
+Proof. Let rt(x) = f (x) − μt−1(x) denote the residual. Under the GP posterior, rt(x) ∼ N (0 , σ 2
+
+> t−1
+
+(x)) . Using 
+
+f (x) = μt−1(x) + rt(x) and noting that Zf = Zμt−1 · EPμt−1 [eλr t(x′)], the weighted MSE becomes: 
+
+Lt := EPf [rt(x)2] = 
+
+Z eλμ t−1(x)+ b(x) · eλr t(x)
+
+Zμt−1 · EPμt−1 [eλr t(x′)] rt(x)2dx = EPμt−1 [eλr t(x)rt(x)2]
+
+EPμt−1 [eλr t(x′)]
+
+Applying Jensen’s inequality to the denominator (using convexity of ex): 
+
+Lt ≤ EPμt−1 [eλr t(x)rt(x)2] · e−λEPμ t−1 [rt(x′)] 
+
+Define ¯rt := EPμt−1 [rt(x′)] . Since e−λ¯rt does not depend on x, we have: 
+
+Lt ≤ EPμt−1 [eλr t(x)rt(x)2] · e−λ¯rt = EPμt−1 [rt(x)2eλ(rt(x)−¯rt)]
+
+17 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Taking the posterior expectation over f |Dt−1 and applying Fubini’s theorem: 
+
+Ef |Dt−1 [Lt] ≤ EPμt−1
+
+h
+
+Ef |Dt−1
+
+h
+
+rt(x)2eλ(rt(x)−¯rt)ii 
+
+Define ζ(x) := rt(x) − ¯rt. Under the posterior, (rt(x), ζ (x)) are jointly Gaussian with: 
+
+V(ζ(x)) = σ2
+
+> t−1
+
+(x) + V 2 
+
+> t−1
+
+− 2Ct−1(x)Cov( rt(x), ζ (x)) = σ2
+
+> t−1
+
+(x) − Ct−1(x)
+
+where 
+
+V 2 
+
+> t−1
+
+: = Ef |Dt−1
+
+
+
+Ex′∼Pμt−1 [rt(x′)] 
+
+2
+
+= Ef |Dt−1
+
+h
+
+E(x′,x ′′ )∼P 2
+
+> μt−1
+
+[rt(x′)rt(x′′ )] 
+
+i
+
+= E(x′,x ′′ )∼P 2
+
+> μt−1
+
+[kt−1(x′, x ′′ )] 
+
+and (similarly) 
+
+Ct−1(x) := Cov( rt(x), ¯rt) = Ef |Dt−1 [rt(x)¯ rt] = Ef |Dt−1
+
+h
+
+rt(x)Ex′∼Pμt−1 [rt(x′)] 
+
+i
+
+= Ex′∼Pμt−1 [kt−1(x, x ′)] 
+
+using Ef |Dt−1 [rt(x)] = 0 and Ef |Dt−1 [rt(x)rt(x′)] = kt−1(x, x ′) and Fubini’s theorem. By Cauchy-Schwarz inequality on the positive semi-definite kernel (i.e., |kt−1(x, x ′)| ≤ σt−1(x)σt−1(x′) ≤ σt−1(x)), we have |Ct−1(x)| ≤ σt−1(x), so: 
+
+|σ2
+
+> t−1
+
+(x) − Ct−1(x)| ≤ | σ2
+
+> t−1
+
+(x)| + |Ct−1(x)| ≤ 2σt−1(x)
+
+V(ζ(x)) ≤ 4
+
+Applying Lemma C.1 with ξ = rt(x) and ζ = ζ(x) as defined above, we have u2 = σ2
+
+> t−1
+
+(x), w2 = V(ζ(x)) , and 
+
+c = σ2
+
+> t−1
+
+(x) − Ct−1(x):
+
+Ef |Dt−1 [rt(x)2eλζ (x)] = ( σ2
+
+> t−1
+
+(x) + λ2(σ2
+
+> t−1
+
+(x) − Ct−1(x)) 2)eλ2V(ζ(x)) /2
+
+≤ (σ2
+
+> t−1
+
+(x) + 4 λ2σ2
+
+> t−1
+
+(x)) e2λ2
+
+= (1 + 4 λ2)σ2
+
+> t−1
+
+(x) · e2λ2
+
+Finally, taking expectation over x ∼ Pμt−1 :
+
+Ef |Dt−1 [Lt] ≤ e2λ2
+
+(1 + 4 λ2) · EPμt−1 [σ2
+
+> t−1
+
+(x)] 
+
+C.5 Theorem 4.1 and Corollary 4.2 
+
+We first recall a standard result on information gain. 
+
+Lemma C.2 (Information Gain Bound [Srinivas et al., 2009, Lemma 5.4]) . For any sequence of GP queries x1, . . . , x T :
+
+> T
+
+X
+
+> t=1
+
+σ2
+
+> t−1
+
+(xt) ≤ C1γT ,
+
+where C1 = 2 / log(1 + τ −2) and τ 2 is the noise variance. 
+
+Lemma C.3 (Variance Bound for AB-SID-iVAR ). Consider AB-SID-iVAR selecting xt ∈ ¯Xt where ¯Xt is defined in Table 1. If the constraint threshold at each iteration is estimated via M Monte Carlo samples, then for any 
+
+δGP , δ MC ∈ (0 , 1) , with probability at least 1 − δGP − δMC :
+
+EPμT [σ2 
+
+> T
+
+] ≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT
+
+T + 2 log(2 /δ MC )3T +
+
+r log(2 /δ MC )2M T 
+
+!
+
+,
+
+where βT , ϵ T are as in Lemma 2.3 with failure probability δGP . For finite X with exact threshold computation, the 
+
+log(2 /δ MC ) terms vanish. 
+
+18 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Proof. The proof proceeds in four parts: (1) relating the surrogate distribution to the target, (2) establishing a martingale structure for MC errors, (3) bounding the cumulative variance, and (4) handling the distribution shift. Since ˜pu 
+
+> t−1
+
+= eλμ t−1+ λ22 σ2 
+
+> t−1+b
+
+and its normalized version satisfies ˜pt−1(x) ∝ Pμt−1 (x) · e λ22 σ2 
+
+> t−1
+
+, we have: 
+
+E˜pt−1 [σ2
+
+> t−1
+
+] = EPμt−1 [σ2 
+
+> t−1
+
+· e λ22 σ2 
+
+> t−1
+
+]
+
+EPμt−1 [e λ22 σ2 
+
+> t−1
+
+]
+
+≥ EPμt−1 [σ2
+
+> t−1
+
+], (9) where the last inequality uses Cov Pμt−1 (σ2
+
+> t−1
+
+, e λ22 σ2 
+
+> t−1
+
+) ≥ 0: let x, x ′ i.i.d. 
+
+∼ Pμt−1 , h(x) = σ2
+
+> t−1
+
+(x), w(x) = e λ22 σ2
+
+> t−1(x)
+
+.Since w is increasing in h, (h(x) − h(x′)) and (w(x) − w(x′)) have the same sign, so Cov( h, w ) = 12 E[( h(x) −
+
+h(x′))( w(x) − w(x′))] ≥ 0.The MC estimate of the ¯X ’s threshold at round t:
+
+ˆE˜pt−1 [σ2
+
+> t−1
+
+] := 1
+
+M
+
+> M
+
+X
+
+> i=1
+
+σ2
+
+> t−1
+
+(x(i)), x(i) i.i.d. 
+
+∼ ˜pt−1. (10) Let Ft−1 denote the σ-algebra generated by Dt−1 = {(xi, y i)}t−1 
+
+> i=1
+
+. Since ˜pt−1 is fully determined by μt−1 and σ2
+
+> t−1
+
+,which are Ft−1-measurable, the estimation error 
+
+ξt := ˆE˜pt−1 [σ2
+
+> t−1
+
+] − E˜pt−1 [σ2
+
+> t−1
+
+] = 1
+
+M
+
+> M
+
+X
+
+> i=1
+
+σ2
+
+> t−1
+
+(x(i)) − E˜pt−1 [σ2
+
+> t−1
+
+] (11) satisfies E[ξt|F t−1] = 0 , forming a martingale difference sequence. Since σ2
+
+> t−1
+
+(x) ∈ [0 , 1] by kernel normalization, the increments are bounded |ξt| ≤ 1. For the conditional variance, given Ft−1, the expectation term is a constant and the samples x(i) i.i.d. 
+
+∼ ˜pt−1, so by the sample mean variance formula: 
+
+Var( ξt|F t−1) = Var 1
+
+M
+
+> M
+
+X
+
+> i=1
+
+σ2
+
+> t−1
+
+(x(i)) Ft−1
+
+!
+
+= 1
+
+M Var x∼ ˜pt−1 (σ2
+
+> t−1
+
+(x)) ≤ 14M ,
+
+where the last inequality uses Var( Y ) ≤ 1/4 for any random variable Y ∈ [0 , 1] . Hence, the cumulative error 
+
+ST := PTt=1 ξt has total conditional variance VT := PTt=1 Var( ξt|F t−1) ≤ T 
+
+> 4M
+
+.By Freedman’s inequality [Freedman, 1975] (and abuse of notation of ϵ), for any ϵ > 0:
+
+Pr ( |ST | ≥ ϵ) ≤ 2 exp 
+
+
+
+− ϵ2
+
+2( VT + ϵ/ 3) 
+
+
+
+≤ 2 exp 
+
+
+
+− ϵ2
+
+2( T / (4 M ) + ϵ/ 3) 
+
+
+
+.
+
+To obtain a high-probability bound, we seek ϵ such that the r.h.s. is at most δM C . This requires: 
+
+ϵ2
+
+2( T / (4 M ) + ϵ/ 3) ≥ log(2 /δ M C ).
+
+Rearranging yields the quadratic inequality, we have: 
+
+ϵ2 − 2 log(2 /δ M C )3 ϵ − T log(2 /δ M C )2M ≥ 0.
+
+The positive root of the corresponding equality is: 
+
+ϵ+ = log(2 /δ M C )3 +
+
+s
+
+log 2(2 /δ M C )9 + T log(2 /δ M C )2M .
+
+Therefore, with probability at least 1 − δM C :
+
+|ST | ≤ log(2 /δ M C )3 +
+
+s
+
+log 2(2 /δ M C )9 + T log(2 /δ M C )2M ≤ 2 log(2 /δ M C )3 +
+
+r T log(2 /δ M C )2M ,
+
+19 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights where the last (optional) inequality uses √a + b ≤ √a + √b to obtain a cleaner rate analysis. Using Eq. 9 and the algorithm’s selection rule σ2
+
+> t−1
+
+(xt) ≥ ˆE˜pt−1 [σ2
+
+> t−1
+
+],
+
+EPμt−1 [σ2
+
+> t−1
+
+] ≤ E˜pt−1 [σ2
+
+> t−1
+
+]= ˆE˜pt−1 [σ2
+
+> t−1
+
+] −
+
+ˆE˜pt−1 [σ2
+
+> t−1
+
+] − E˜pt−1 [σ2
+
+> t−1
+
+]
+
+
+
+≤ σ2
+
+> t−1
+
+(xt) −
+
+ˆE˜pt−1 [σ2
+
+> t−1
+
+] − E˜pt−1 [σ2
+
+> t−1
+
+]
+
+
+
+≤ C1γT +
+
+> T
+
+X
+
+> t=1
+
+ˆE˜pt−1 [σ2
+
+> t−1
+
+] − E˜pt−1 [σ2
+
+> t−1
+
+]
+
+
+
+.
+
+Summing over t = 1 , . . . , T and applying Lemma C.2 and Part 2: 
+
+> T
+
+X
+
+> t=1
+
+EPμt−1 [σ2
+
+> t−1
+
+] ≤ C1γT + |ST | ≤ C1γT + 2 log(2 /δ M C )3 +
+
+r T log(2 /δ M C )2M (12) By monotonicity of posterior variance, σ2 
+
+> T
+
+(x) ≤ σ2
+
+> t−1
+
+(x) for all x ∈ X and t ≤ T :
+
+T · EPμT [σ2 
+
+> T
+
+] ≤
+
+> T
+
+X
+
+> t=1
+
+EPμT [σ2
+
+> t−1
+
+].
+
+To relate EPμT [σ2
+
+> t−1
+
+] to EPμt−1 [σ2
+
+> t−1
+
+], we bound the density ratio. By Lemma 2.3, with probability at least 1 − δGP :
+
+|μT (x) − μt−1(x)| ≤ | f (x) − μT (x)| + |f (x) − μt−1(x)| ≤ 2β1/2 
+
+> T
+
++ 2 ϵT ,
+
+where we used σT (x), σ t−1(x) ≤ 1.Applying Lemma 3.2 with g1 = μT , g2 = μt−1, ∆( x) ≤ 2β1/2 
+
+> T
+
++ 2 ϵT , and ∆max ≤ 2β1/2 
+
+> T
+
++ 2 ϵT :
+
+PμT (x)
+
+Pμt−1 (x) ≤ e4|λ|(β1/2  
+
+> T+ϵT)
+
+.
+
+Therefore: 
+
+EPμT [σ2
+
+> t−1
+
+] = EPμt−1
+
+
+
+σ2 
+
+> t−1
+
+· PμT
+
+Pμt−1
+
+
+
+≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· EPμt−1 [σ2
+
+> t−1
+
+].
+
+Summing over t and applying Eq. 12: 
+
+T · EPμT [σ2 
+
+> T
+
+] ≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+> T
+
+X
+
+> t=1
+
+EPμt−1 [σ2
+
+> t−1
+
+]
+
+≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT + 2 log(2 /δ M C )3 +
+
+r T log(2 /δ M C )2M
+
+!
+
+.
+
+Dividing by T :
+
+EPμT [σ2 
+
+> T
+
+] ≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT
+
+T + 2 log(2 /δ M C )3T +
+
+r log(2 /δ M C )2M T 
+
+!
+
+.
+
+For finite X with exact threshold computation, ˆE˜pt−1 [σ2
+
+> t−1
+
+] = E˜pt−1 [σ2
+
+> t−1
+
+] for all t, so ϵMC = δMC = 0 .
+
+Lemma C.4 (Variance Bound for TS-SID-iVAR) . Consider TS-SID-iVAR selecting xt ∈ ¯Xt where ¯Xt is defined in Table 1. If the constraint threshold at each iteration is estimated via M Monte Carlo samples, then for any 
+
+δGP , δ MC ∈ (0 , 1) , with probability at least 1 − δGP − δMC :
+
+EPμT [σ2 
+
+> T
+
+] ≤ e6|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT
+
+T + 2 log(2 /δ MC )3T +
+
+r log(2 /δ MC )2M T 
+
+!
+
+,
+
+where βT , ϵ T are as in Lemma 2.3 with failure probability δGP . For finite X with exact threshold computation, the 
+
+log(2 /δ MC ) terms vanish. 
+
+20 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Proof. The proof follows a similar structure to Lemma C.3, with an additional step to handle the Thompson sampling randomness. At each round t, TS-SID draws a posterior sample ˜ft−1 ∼ f |Dt−1 and defines ˜pt−1 ∝ eλ ˜ft−1+b. By Lemma 2.3 applied to the posterior sample, with probability at least 1 − δGP :
+
+| ˜ft−1(x) − μt−1(x)| ≤ β1/2 
+
+> T
+
+σt−1(x) + ϵT ≤ β1/2 
+
+> T
+
++ ϵT
+
+for all x ∈ X and t ≤ T . Applying Lemma 3.2: 
+
+Pμt−1 (x)
+
+P ˜ft−1 (x) ≤ e2|λ|(β1/2  
+
+> T+ϵT)
+
+. (13) This implies: 
+
+EP ˜ft−1
+
+[σ2
+
+> t−1
+
+] ≥ e−2|λ|(β1/2   
+
+> T+ϵT)
+
+· EPμt−1 [σ2
+
+> t−1
+
+].
+
+The algorithm estimates EP ˜ft−1
+
+[σ2
+
+> t−1
+
+] via MC samples x(i) i.i.d. 
+
+∼ P ˜ft−1 . Conditioned on ˜Ft−1 (which includes both 
+
+Dt−1 and ˜ft−1), the distribution P ˜ft−1 is fixed, so the estimation errors 
+
+ξt := ˆEP ˜ft−1
+
+[σ2
+
+> t−1
+
+] − EP ˜ft−1
+
+[σ2
+
+> t−1
+
+]
+
+form a martingale difference sequence with respect to { ˜Ft}. Following the same argument as in Lemma C.3 Part 2, with probability at least 1 − δM C :
+
+|ST | ≤ 2 log(2 /δ M C )3 +
+
+r T log(2 /δ M C )2M .
+
+The same argument as Lemma C.3 Part 3 applies with P ˜ft−1 in place of ˜pt−1, yielding: 
+
+> T
+
+X
+
+> t=1
+
+EP ˜ft−1
+
+[σ2
+
+> t−1
+
+] ≤ C1γT + |ST |.
+
+Unlike AB-SID , here we need convert from P ˜ft−1 to Pμt−1 . Using the density ratio defined in Eq. 13: 
+
+EPμt−1 [σ2
+
+> t−1
+
+] = EP ˜ft−1
+
+"
+
+σ2 
+
+> t−1
+
+· Pμt−1
+
+P ˜ft−1
+
+#
+
+≤ e2|λ|(β1/2   
+
+> T+ϵT)
+
+· EP ˜ft−1
+
+[σ2
+
+> t−1
+
+].
+
+Summing over t: TX
+
+> t=1
+
+EPμt−1 [σ2
+
+> t−1
+
+] ≤ e2|λ|(β1/2   
+
+> T+ϵT)
+
+· (C1γT + |ST |) .
+
+This additional factor of e2|λ|(β1/2   
+
+> T+ϵT)
+
+arises from the Thompson sampling approximation and is absent in AB-SID .The same argument as Lemma C.3 Part 4 gives: 
+
+EPμT [σ2
+
+> t−1
+
+] ≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· EPμt−1 [σ2
+
+> t−1
+
+].
+
+Summing over t and applying (C.5): 
+
+T · EPμT [σ2 
+
+> T
+
+] ≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+> T
+
+X
+
+> t=1
+
+EPμt−1 [σ2
+
+> t−1
+
+]
+
+≤ e4|λ|(β1/2   
+
+> T+ϵT)
+
+· e2|λ|(β1/2   
+
+> T+ϵT)
+
+· (C1γT + |ST |)= e6|λ|(β1/2   
+
+> T+ϵT)
+
+· (C1γT + |ST |) .
+
+Dividing by T and substituting the bound from Part 2: 
+
+EPμT [σ2 
+
+> T
+
+] ≤ e6|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT
+
+T + 2 log(2 /δ M C )3T +
+
+r log(2 /δ M C )2M T 
+
+!
+
+.
+
+For finite X with exact threshold computation, ˆE˜pt−1 [σ2
+
+> t−1
+
+] = EP ˜ft−1
+
+[σ2
+
+> t−1
+
+] for all t, so ϵMC = δMC = 0 .21 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights We are now able to prove Theorem 4.1. 
+
+Proof. Set δGP = δMC = δ/ 2. By union bound, the following holds with probability at least 1 − δ.By Lemma 3.3 with failure probability δ/ 2:
+
+EPf [( f − μT )2] ≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+·
+
+
+
+βT · EPμT [σ2 
+
+> T
+
+] + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+Using σmax ,T ≤ 1 (kernel normalization): 
+
+EPf [( f − μT )2] ≤ e2|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+
+
+βT · EPμT [σ2 
+
+> T
+
+] + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+By Lemma C.3 (for AB-SID ) or Lemma C.4 (for TS-SID) with failure probability δ/ 2:
+
+EPμT [σ2 
+
+> T
+
+] ≤ e2(1+ κ)|λ|(β1/2   
+
+> T+ϵT)
+
+· C1γT
+
+T + 2 log(4 /δ )3T +
+
+r log(4 /δ )2M T 
+
+!
+
+,
+
+where κ = 1 for AB-SID (prefactor e4|λ|(·)) and κ = 2 for TS-SID (prefactor e6|λ|(·)). Denoting the cumulative MC error ϵMC := 2 log(4 /δ )3T +
+
+q log(4 /δ )2M T and substituting into (C.5): 
+
+EPf [( f − μT )2] ≤ e2|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+
+
+βT · e2(1+ κ)|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1γT
+
+T + ϵMC 
+
+
+
++ 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+Using e2|λ|(·) · e2(1+ κ)|λ|(·) = e2( κ+2) |λ|(·):
+
+EPf [( f − μT )2] ≤ e2( κ+2) |λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1βT γT
+
+T + βT ϵMC 
+
+
+
++ e2|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+
+
+2β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+Since e2|λ|(·) ≤ e2( κ+2) |λ|(·) for κ ≥ 0:
+
+EPf [( f − μT )2] ≤ e2( κ+2) |λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1βT γT
+
+T + βT ϵMC + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+This enables the following convergence rate analysis: 
+
+Proof. Since βT = O(log T ), we have √βT = O(√log T ). For any ϵ > 0: ec√log T = o(T ϵ) since √log T =
+
+o(log T ). Thus the prefactor satisfies eO(√βT ) = o(T ϵ).For the MC error: • If M is constant: βT ϵMC = O
+
+ log T√T
+
+
+
+= o(T −1/2+ ϵ).• If M = Ω( T ): βT ϵMC = O
+
+ log TT
+
+
+
+= o(T −1+ ϵ).Combining the prefactor with the dominant term, for any ϵ > 0:• If M is constant: o(T ϵ) · o(T −1/2+ ϵ) = O(T −1/2+2 ϵ).• If M = Ω( T ): o(T ϵ) · o(T −1+ ϵ) = O(T −1+2 ϵ).Since ϵ > 0 is arbitrary, the result follows. 22 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+C.6 Theorem 4.3 
+
+Proof of Theorem 4.3. By Lemma 3.4: 
+
+Ef |D T
+
+EPf [( f − μT )2] ≤ e2λ2
+
+(1 + 4 λ2) · EPμT [σ2 
+
+> T
+
+].
+
+Taking expectation over DT (which traces back to f ∼ GP (0 , k ) by the tower property): 
+
+Ef
+
+EPf [( f − μT )2] ≤ e2λ2
+
+(1 + 4 λ2) · EPμT [σ2 
+
+> T
+
+].
+
+By Lemma C.3 (for AB-SID ) or Lemma C.4 (for TS-SID), with probability at least 1 − δ:
+
+EPμT [σ2 
+
+> T
+
+] ≤ e2(1+ κ)|λ|(β1/2   
+
+> T+ϵT)
+
+·
+
+ C1γT
+
+T + ϵMC 
+
+
+
+,
+
+where κ = 1 for AB-SID and κ = 2 for TS-SID. Substituting completes the proof. 
+
+C.6.1 Rate Analysis for Average MSE Bound 
+
+The average bound (Theorem 4.3) achieves the same asymptotic rates as the high-probability bound (Corollary 4.2). The prefactor e2λ2
+
+(1 + 4 λ2) is constant in T . For the remaining prefactor, since βT = O(log T ), we have 
+
+e2(1+ κ)|λ|(β1/2   
+
+> T+ϵT)
+
+= eO(√log T ) = o(T ϵ) for any ϵ > 0.For the MC error: • If M is constant: ϵMC = O(1 /√T ).• If M = Ω( T ): ϵMC = O(1 /T ).Combining the prefactor with the dominant term yields O(T −1/2+ ϵ) for constant M and O(T −1+ ϵ) for M = Ω( T ).Compared to the high-probability bound, the average bound is tighter by logarithmic factors: The main terms scale as 
+
+γT /T instead of βT γT /T , the prefactor exponent is 2(1 + κ)|λ| instead of 2( κ + 2) |λ|.
+
+C.7 Proposition 4.5 
+
+Analogous to our previous theoretical analysis, we first establish an upper bound for fixed-threshold methods, then derive the convergence rate. The key observation is that any algorithm querying points with σ2
+
+> t−1
+
+(xt) ≥ η must exit this regime within O(γT /η ) iterations by the information gain bound, after which the posterior variance remains uniformly below η by monotonicity. 
+
+Lemma C.5 (High-Probability MSE Upper Bound for Fixed-Threshold Methods) . Consider any active learn-ing algorithm that selects xt satisfying σ2
+
+> t−1
+
+(xt) ≥ η when ¯X ′ 
+
+> t
+
+:= {x : σ2
+
+> t−1
+
+(x) ≥ η}̸ = ϕ, and selects 
+
+xt = arg max x∈X σt−1(x) otherwise, where η ∈ (0 , 1] is a fixed threshold. Under Assumptions 2.1 and 3.1, let 
+
+X ⊂ [0 , r ]d be compact. Then for any δ ∈ (0 , 1) , with probability at least 1 − δ:
+
+L(μT ) ≤ e2|λ|(β1/2  
+
+> T
+> √η+ϵT)
+
+·
+
+
+
+βT η + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+provided η > C 1γT /T , where βT , ϵ T are as in Lemma 2.3 with failure probability δ, and C1 = 2 / log(1 + τ −2). For finite X , ϵT = 0 .Proof. According to the algorithm, we define the AL iteration as the following two phases: 
+
+T (1) := {t ≤ T : max  
+
+> x∈X
+
+σ2
+
+> t−1
+
+(x) ≥ η}, T (2) := {t ≤ T : max  
+
+> x∈X
+
+σ2
+
+> t−1
+
+(x) < η }.
+
+In Phase 1, by the algorithm’s selection rule, any query point satisfies σ2
+
+> t−1
+
+(xt) ≥ η. By Lemma C.2: 
+
+|T (1) | · η ≤ X 
+
+> t∈T(1)
+
+σ2
+
+> t−1
+
+(xt) ≤
+
+> T
+
+X
+
+> t=1
+
+σ2
+
+> t−1
+
+(xt) ≤ C1γT .
+
+Thus |T (1) | ≤ C1γT /η < T under the stated condition on η, ensuring Phase 2 is non-empty. 23 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Once Phase 2 begins, max x∈X σ2
+
+> t−1
+
+(x) < η by definition. Since posterior variance is monotonically non-increasing with additional observations, σmax ,T < √η and EPμT [σ2 
+
+> T
+
+(x)] < η .By Lemma 2.3, with probability at least 1 − δ, the confidence bound holds uniformly. Applying Lemma 3.3: 
+
+L(μT ) ≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+·
+
+
+
+βT · EPμT [σ2 
+
+> T
+
+(x)] + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+Substituting σmax ,T < √η and EPμT [σ2 
+
+> T
+
+] < η yields the result. Now we start to prove proposition 4.5. 
+
+Proof. By Lemma C.5, Phase 1 contains at most |T (1) | ≤ C1γT /η iterations. In Phase 2, the algorithm selects 
+
+xt = arg max x∈X σt−1(x), so σ2max ,t is non-increasing for t ∈ T (2) . Applying the information gain bound to Phase 2: 
+
+|T (2) | · σ2max ,T ≤ X 
+
+> t∈T(2)
+
+σ2
+
+> t−1
+
+(xt) ≤ C1γT .
+
+Since |T (2) | = T − | T (1) | ≥ T − C1γT /η , we obtain: 
+
+σ2max ,T ≤ C1γT
+
+T − C1γT /η .
+
+For any fixed η ∈ (0 , 1] , since γT = o(T ) for standard kernels, we have T − C1γT /η ≥ T / 2 for sufficiently large T ,yielding σ2max ,T ≤ 2C1γT /T .Applying Lemma 3.3 with σmax ,T ≤ p2C1γT /T and EPμT [σ2 
+
+> T
+
+] ≤ σ2max ,T ≤ 2C1γT /T :
+
+L(μT ) ≤ e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+·
+
+
+
+βT · 2C1γT
+
+T + 2 β1/2 
+
+> T
+
+ϵT + ϵ2
+
+> T
+
+
+
+.
+
+For the prefactor, since βT = O(log T ), γT = O((log T )c) for kernel-dependent constant c, and ϵT = O(1 /T ):
+
+β1/2 
+
+> T
+
+σmax ,T = O plog T ·
+
+r (log T )c
+
+T
+
+!
+
+= O
+
+ (log T )(c+1) /2
+
+√T
+
+
+
+= o(1) .
+
+Thus e2|λ|(β1/2    
+
+> Tσmax ,T +ϵT)
+
+= 1 + o(1) . The dominant term is βT · 2C1γT /T = O((log T )c+1 /T ), while the remaining terms satisfy 2β1/2 
+
+> T
+
+ϵT + ϵ2 
+
+> T
+
+= O(√log T /T ) = o((log T )c+1 /T ). Therefore L(μT ) = O(T −1+ ϵ) for arbitrarily small 
+
+ϵ > 0.
+
+## D Experimental Details and Additional Experimental Investigations 
+
+D.1 Experimental Setup Details 
+
+For all methods except the molecular drug discovery example, we model the objective function using a GP with a Matérn-5/2 kernel, estimate hyperparameters via maximum a posteriori (MAP) with the default priors from Hvarfner et al. [2024], and fix observation noise at τ 2 = 10 −4, except for the GP prior problem where we assume the true kernel hyperparameters are known. We pre-normalize inputs to [0 , 1] d and standardize outputs online. For acquisition function optimization over continuous domains, we use SLSQP [Kraft, 1988] to enforce the variance constraint defining ¯Xt, and L-BFGS-B [Byrd et al., 1995] otherwise, both via BoTorch [Balandat et al., 2020]. For continuous X , we approximate the acquisition function integral via Sequential Monte Carlo (SMC), which has demonstrated strong performance for sampling Boltzmann-form distributions [Akhound-Sadegh et al., 2024, 2025]. Specifically, we use N = 1000 d particles, 10 temperature levels, and 10 random walk Metropolis steps per level. For fair comparison, the same number of reference points is used for all acquisition functions requiring integration over the input space. A sensitivity study to particle number in terms of performance is also reported in Appendix D.7. 24 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+D.2 Generic Adapatation of Heuristics Active Learning Algorithms 
+
+Several heuristic active learning approaches have been proposed in the computational materials science and potential energy modeling literature for efficient assembly of data for the training of machine-learned interatomic potentials (MLIP); See, e.g., [Li et al., 2015, Podryabinkin and Shapeev, 2017, Vandermause et al., 2020, Jinnouchi et al., 2020, van der Oord et al., 2023, Kulichenko et al., 2023, Duschatko et al., 2024]. These MLIPs are required to be accurate for configurations that are probable under the specific statistical ensembles targeted in the molecular dynamics simulation in which these MLIPs are intended to be used, but accuracy of the MLIP on configurations that are very improbable within this ensemble is of less importance. As such, the problem of fitting an MLIP resembles the here presented SIDAL problem and heuristic active learning algorithms designed for these problems are natural contenders to be considered in benchmark problems. Using the notation introduced in the main body of the paper, the generic form of a query of these algorithms consists of the following sampling procedure: 1. Run a single-chain Markov Chain Monte Carlo algorithm (e.g., a stochastic thermostat or constant-energy molecular dynamics) targeting a surrogate density ˜pt−1 of the generic form 
+
+˜pt−1(x) ∝ exp  λμ t−1(x) + λh (σ2
+
+> t−1
+
+(x)) + b(x),
+
+where h(σ2) is a smooth transformation of σ2.2. Once the Markov chain reaches a configuration where a method-dependent uncertainty measure U C (x)
+
+exceeds a preset threshold, η > 0, the Markov chain terminates and the current sample is queried. Algorithms proposed in the literature differ in how these two steps are implemented, specifically in terms of the choice of the surrogate density ˜pt−1(x), and the uncertainty measure U C (see Table 2), are often motivated by problem-specific properties and constraints and thus are not necessarily suited for the generic SIDAL setting considered here. We therefore adapt the existing heuristics in the following Generic Heuristic Active Learning (GHAL) approach to fit the here considered generic SIDAL setting: 1. Run single-chain MCMC targeting ˜pt−1(x) ∝ exp( λ(μt−1(x) − τ σ t−1(x))) initialized at a point in input space close to the current training set. (This is to ensure that the uncertainty threshold is not exceeded at initialization.) 2. If σ2
+
+> t−1
+
+(x) > η , select this sample x. If the threshold is not exceeded after the maximum number of steps of the Markoc chain, select the sample with highest predictive variance σ2
+
+> t−1
+
+(x).3. Query yt = f (xt) + ϵt and update the GP posterior Note that for τ = 0 , this methods closely resembles the query strategy in the active learning loop of FLARE Vandermause et al. [2020], whereas for τ > 0, this approach resembles the Hyperactive Learning HAL method van der Oord et al. [2023] up to the form of the uncertainty measure U C used in the thresholding step. Here, both τ > 0 and the threshold η > 0 are hyper-parameters. To the best of our knowledge, there are no systematic apriori tuning strategies described in the literature. Therefore, we resort to randomly sample the values of these hyperparameters uniformly from a range of plausible values at the beginning of each active learning loop, i.e., τ ∼ U ([0 , 3]) and η ∼ U ([1 , 5]) .We mention that both HAL and the here proposed methods modify the sampling distribution, but with fundamentally different mechanisms and goals. HAL uses a single-chain reactive approach: sampling from a heuristically biased distribution and triggering queries when local uncertainty exceeds a threshold. In contrast, our method uses multi-particle proactive optimization: maintaining N particles via SMC on the true target distribution Pf ∝ exp( λf ), then selecting points that maximize variance reduction under this distribution. The linear +τ σ term in HAL is a heuristic exploration bonus, whereas our + λ2 
+
+> 2
+
+σ2 term arises from the Gaussian MGF identity E[eλf ] = eλμ + λ22 σ2
+
+, naturally weighting uncertainty by its relevance to the rare-event distribution. 
+
+D.3 Discrete Experimental Results 
+
+We evaluate the same benchmark functions on discretized domains, where X consists of a finite grid of candidate points. This setting allows exact computation of the constraint threshold E˜pt−1 [σ2
+
+> t−1
+
+] without Monte Carlo approximation, corresponding to the ϵMC = 0 case in our theoretical analysis. Results are shown in Figure 7. The overall trends mirror the continuous setting: AB-SID-iVAR - ¯X consistently achieves the lowest weighted MSE across benchmarks, with the gap widening in higher dimensions. The relative ordering of methods remains largely unchanged from the continuous experiments (Figure 3), confirming that our findings are not artifacts of MCMC approximation quality. 25 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Table 2: Summary of heuristic active learning methods for interatomic potentials. Here, 1/β = −λ > 0, corresponds, up to a constant pre-factor, to the temperature of the simulated system. f is a vector-valued quantity measuring the uncertainty in force predictions of the MLIP. 
+
+Method Sampling Distribution Uncertainty measure 
+
+FLARE [Vandermause et al., 2020] exp( −βμ ) U C = σ
+
+HAL [van der Oord et al., 2023] exp( −β(μ − τ σ )) U C = max softmax( f )
+
+UDD-AL [Kulichenko et al., 2023] exp( −β(μ + Ebias (σ))) U C = σ
+
+Notably, the MC variant TS-SID-iVAR remains competitive in general but exhibits high variance on multimodal targets such as Branin. This occurs because occasionally, when the Thompson sample concentrates on a subset of modes, the constraint threshold E˜pt−1 [σ2
+
+> t−1
+
+] becomes small, resulting in a vast feasible region ¯Xt that fails to encourage sufficient exploration. This empirical finding does not contradict our theoretical guarantees (Theorem 4.1), which are asymptotic in high probability as T → ∞ . In discrete domains, this can be empirically mitigated by adopting a more conservative threshold such as the domain-averaged variance; 0 10 20 30 40 50                                                         
+
+> Iteration
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> Weighted MSE
+> Forrester ( d= 1 )
+> 010 20 30 40 50
+> Iteration
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Gramacy ( d= 1 )
+> 020 40 60 80 100
+> Iteration
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> Branin ( d= 2 )
+> 020 40 60 80 100
+> Iteration
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> Gramacy ( d= 2 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 0
+> Weighted MSE
+> GP prior ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Hartmann ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> 10 2
+> Ishigami ( d= 3 )
+> 0100 200 300
+> Iteration
+> 10 1
+> Hartmann ( d= 6 )
+> RS US EPIG IMSE TS-SID-iVAR-AB-SID-iVAR-
+
+Figure 7: Weighted MSE convergence on synthetic benchmarks with discrete input domains across dimensions d = 1 
+
+to d = 6 . Each panel shows median performance over 30 random seeds (shaded regions: interquartile range). Results mirror the continuous setting (Figure 3), with AB-SID-iVAR - ¯X consistently achieving the lowest weighted MSE. 
+
+D.4 Ablation Study 
+
+We compare: (1) the surrogate form ( AB-SID and TS-SID versus the naive plug-in μ-SID using eλμ t−1 ), tested with both our iVAR acquisition (denoted μ-SID-iVAR ) and EPIG (denoted μ-SID-EPIG ) to verify that the choice of acquisition function alone cannot compensate for a plug-in surrogate, and (2) the presence of the constraint set ¯X versus unconstrained optimization over full X (denoted ϕ). Results are shown in Figure 8. On functions where the target distribution does not exhibit strongly separated modes (Forrester, Gramacy 1D, Hartmann), all variants perform comparably. However, when the target distribution concentrates on well-separated regions or exhibits oscillatory structure, clear failure modes emerge. On Branin, where the target distribution Pf is bimodal, both 
+
+μ-SID-iVAR and μ-SID-EPIG fail entirely as the plug-in surrogate eλμ t−1 commits to whichever mode is discovered first and cannot explore alternatives, resulting in weighted MSE that remains near its initial value throughout. On Ishigami, both plug-in variants converge substantially later than AB/TS-SID-iVAR . AB-SID and TS-SID avoid these failures by incorporating posterior uncertainty into the surrogate via the variance-inflation term λ2 
+
+> 2
+
+σ2
+
+> t−1
+
+, allowing probability mass to spread across uncertain regions. 26 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 0 10 20 30 40 50                                                           
+
+> Iteration
+> 10 4
+> 10 2
+> 10 0
+> 10 2
+> Weighted MSE
+> Forrester ( d= 1 )
+> 010 20 30 40 50
+> Iteration
+> 10 4
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Gramacy ( d= 1 )
+> 020 40 60 80 100
+> Iteration
+> 10 2
+> 10 0
+> 10 2
+> 10 4
+> Branin ( d= 2 )
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> 10 1
+> Gramacy ( d= 2 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 0
+> Weighted MSE
+> GP prior ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Hartmann ( d= 3 )
+> 050 100 150
+> Iteration
+> 10 1
+> 10 0
+> 10 1
+> 10 2
+> Ishigami ( d= 3 )
+> 0100 200 300
+> Iteration
+> 10 1
+> Hartmann ( d= 6 )
+> RS AB-SID-iVAR-AB-SID-iVAR-TS-SID-iVAR-TS-SID-iVAR--SID-iVAR--SID-iVAR--SID-EPIG
+
+Figure 8: Ablation study comparing surrogate forms, acquisition strategies, and constraint sets. ¯X : methods with the variance-threshold constraint; ϕ: unconstrained optimization over X . The μ-SID family uses the plug-in surrogate 
+
+eλμ t−1 ; μ-SID-EPIG replaces the iVAR criterion with EPIG on the same surrogate. Random sampling (RS) is included as a baseline. On problems dominated by a broad basin of comparable local minima (Hartmann d = 3 , 6), plug-in 
+
+μ-SID variants achieve competitive convergence. In more general settings, particularly when the target distribution has well-separated modes (Branin) or strongly oscillatory structure (Ishigami), AB/TS-SID-iVAR yield more robust convergence. The constraint set ¯X provides complementary robustness. On Branin and Ishigami, the unconstrained variants ( ϕ)exhibit higher variance across seeds, as they may exploit the current surrogate’s modes without sufficient exploration. 
+
+D.5 Real World Problems D.5.1 Potential Energy Surface Modeling 
+
+In all four systems below we report λ; for λ < 0, the physical temperature relates to λ via T = −(kBλ)−1, where 
+
+kB = 8 .617 × 10 −5 eV/K. Energies are reported in eV throughout. 
+
+H2 on Cu (100 ). We fit the potential energy surface of a hydrogen molecule, H2, on top of a Cu(100) surface. The chemistry of primary interest is the dissociative adsorption of H2 on the metal surface Smits and Somers [2023], which is well described by two reaction coordinates: the molecule’s distance from the surface, z, and the interatomic distance between the two H atoms, d. We fit E as a function of (z, d ). As ground truth we use a custom MACE model Stark et al. [2024] trained on H2 reactive surface configurations. The simulation cell follows standard literature setup: a single 
+
+H2 molecule above a 3 × 3, six-layer Cu(100) slab consisting of 56 Cu atoms in face-centered cubic (FCC) lattice structure, within a periodic 7.749 × 7.748 × 49 .132 Å3 unit cell. We use a conservative weighting |λ| = 1 (treated as an abstract concentration parameter rather than a physical temperature), yielding broad coverage of both the bonded and dissociated states and the barrier between them. 
+
+H on Cu 13 . We consider the adsorption of a hydrogen probe atom on a frozen 13-atom copper cluster in the icosahedral global-minimum geometry Yang et al. [2006] in vacuum. We parametrise the probe position in spherical coordinates (r, u, ϕ ) centered at the cluster centroid, 
+
+x =  rp1 − u2 cos ϕ, r p1 − u2 sin ϕ, ru  ∈ R3,
+
+where u = cos θ is used in place of the polar angle θ so that uniform sampling on (u, ϕ ) induces the uniform measure on the sphere. We restrict r ∈ [0 .5, 6.0] Å to cover surface and near-surface configurations, and exploit the icosahedral symmetry of the cluster by restricting (u, ϕ ) to a single fundamental domain [0 .7947 , 1] × [0 , π/ 5] . Energies are evaluated using the MACE-MPA-0 foundation model Batatia et al. [2025]. We use |λ| = 8 .55 eV −1, corresponding to 27 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+T ≈ 1358 K (close to the melting point of copper), at which the Boltzmann target concentrates on the cluster’s surface adsorption sites. 
+
+H2O on Pt . The energy landscape of an H2O molecule on a platinum surface features multiple physisorption wells, chemisorption minima, and dissociation pathways Schnur and Groß [2009]. We model the metal surface as a three-layer ABC-stacked Pt(111) slab in a 3 × 3 in-plane supercell with two-dimensional periodic boundary conditions (∼ 8 Å lateral spacing between water images). A single rigid H2O molecule is placed above the slab and parametrised by 6 degrees of freedom: the oxygen’s lateral position (x, y ) within the p3m1 fundamental triangle of the surface unit cell, its height z ∈ [0 .5, 5.0] Å above the topmost Pt layer, and the molecular orientation given by ZYZ Euler angles (α, cos β, γ ). As in the spherical parametrisation above, cos β replaces β for uniform sampling on SO (3) ;
+
+γ is restricted to [0 , π ) to account for the C2v symmetry of H2O. Energies are evaluated using the MACE-MPA-0 foundation model Batatia et al. [2025]. We use |λ| = 38 .68 eV −1, corresponding to room temperature T = 300 K, the standard condition for water-on-platinum experiments. 
+
+Si Crystal. We fit the potential energy of silicon in a highly symmetric diamond cubic structure, modeled by two atoms in a cubic unit cell with periodic boundary conditions. By translation invariance, the relevant degrees of freedom reduce to the displacement vector between the two atoms. As ground truth we use the Stillinger–Weber potential Stillinger and Weber [1985], a canonical empirical potential for tetrahedrally-bonded silicon. We use |λ| = 11 .60 eV −1, corresponding to T = 1000 K, a typical Si annealing / chemical vapor deposition temperature, so that the Boltzmann distribution covers a wide range of thermalised crystal states. We emphasise that this setup is a minimal benchmark: the small cell, fixed lattice vectors, and absence of defects restrict the configuration space to thermal fluctuations around a single crystalline minimum. 
+
+D.5.2 Molecular Drug Discovery 
+
+The candidate pool consists of approximately 20k molecules from the GuacaMol benchmark [Brown et al., 2019], each represented by a 2048-bit Morgan fingerprint. We use a GP with a Tanimoto kernel as our surrogate model and consider two commonly used multi-property drug-likeness scores (Median 1 and Median 2) as learning objectives, testing λ ∈ { 25 , 75 } to vary the concentration of the target distribution (Figure 5, top row). This setting lies outside our theoretical assumptions as the Tanimoto kernel is neither stationary nor differentiable; nevertheless, the problem is of practical interest and serves as a challenging test of whether AB-SID-iVAR remains effective beyond the provable regime. We omit TS-SID-iVAR as drawing posterior samples over the full 20k-point pool is computationally prohibitive, though efficient approximations exist for Tanimoto kernels [Tripp et al., 2023]. We also omit GHAL as it is designed for continuous domains. 
+
+D.6 Runtime Report and Compute Resources Compute setup. All experiments were run on an internal SLURM cluster. Each run was allocated 4 CPU cores and 32 GB of RAM on internal computational nodes without usage of any GPUs. 
+
+Per-iteration runtime. We report the per-iteration runtime (in seconds) for each method in Table 3, averaged across seeds. For our methods (AB- ¯X and TS- ¯X ), we decompose the runtime into three components: GP fitting, acquisition optimization, and SMC sampling. Several observations can be made from this analysis. First, GP fitting contributes negligibly to total runtime across all methods. Second, acquisition optimization dominates the computational cost for our methods. This is expected: optimizing the SID-iVAR objective requires evaluating the fantasy variance at all reference points for each candidate, and the ¯X constraint introduces an additional posterior evaluation per optimization step, effectively doubling the per-step cost compared to methods like IMSE, which use an unconstrained L-BFGS-B optimizer. Third, SMC sampling adds modest overhead in continuous mode but is not required for discrete domains where the candidate set is given. 
+
+D.7 Sensitivity Analysis of MCMC sample size 
+
+We investigate the sensitivity of our methods to the SMC particle size N on GP prior functions across d ∈ { 2, 4, 6, 8},testing N ∈ { 250 d, 500 d, 1000 d, 1500 d}. Figure 9 reports the weighted MSE convergence (top) and per-iteration MCMC runtime (bottom). Convergence is essentially unchanged across particle counts for both AB- ¯X and TS- ¯X , while runtime scales roughly linearly with N . TS- ¯X incurs higher cost than AB- ¯X at matched N due to pathwise-conditioned posterior sampling. This justifies N = 250 d as a sufficient default in practice. 28 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Table 3: Runtime profile (seconds per iteration, mean ± std across seeds). 
+
+d IMSE AB- ¯X AB- ¯X Breakdown TS- ¯X TS- ¯X Breakdown GP Acq Opt SMC GP Acq Opt SMC Continuous 1 0.30 ±0.04 2.3 ±0.6 0.06 ±0.01 2.2 ±0.6 0.62 ±0.16 3.6 ±1.2 0.05 ±0.01 3.5 ±1.1 1.9 ±0.7 2 0.68 ±0.09 3.7 ±1.1 0.06 ±0.02 3.3 ±1.0 0.84 ±0.32 6.0 ±1.8 0.06 ±0.01 5.6 ±1.7 3.2 ±1.1 3 1.5 ±0.2 6.1 ±1.2 0.08 ±0.01 5.2 ±1.2 1.2 ±0.3 12.8 ±2.3 0.09 ±0.02 11.9 ±2.2 7.2 ±1.4 6 4.9 ±0.7 16.3 ±3.4 0.15 ±0.03 13.3 ±2.9 3.6 ±0.8 26.2 ±5.0 0.14 ±0.03 23.3 ±4.5 14.0 ±2.7 Discrete 1 2.4 ±0.6 3.7 ±0.5 0.06 ±0.01 3.6 ±0.5 NA 4.0 ±0.5 0.05 ±0.01 3.8 ±0.5 NA 2 3.2 ±0.5 5.3 ±1.1 0.05 ±0.01 5.2 ±1.1 NA 4.6 ±2.4 0.06 ±0.02 4.4 ±2.4 NA 3 2.6 ±0.7 5.9 ±1.3 0.08 ±0.02 5.7 ±1.3 NA 6.1 ±1.1 0.08 ±0.01 5.9 ±1.1 NA 6 0.81 ±0.16 1.8 ±0.3 0.16 ±0.03 1.5 ±0.3 NA 2.0 ±0.4 0.15 ±0.03 1.7 ±0.3 NA 0 20 40 60                                                  
+
+> Iteration
+> 10 2
+> 10 1
+> Weighted MSE
+> d= 2
+> 050 100
+> Iteration
+> 10 0
+> d= 4
+> 050 100 150 200
+> Iteration
+> 10 0
+> 4 × 10 1
+> 6 × 10 1
+> d= 6
+> 0100 200
+> Iteration
+> 10 0
+> 6 × 10 1
+> 2 × 10 0
+> d= 8
+> 250·d 500·d 1000·d 1500·d
+> Particles
+> 0
+> 2
+> 4
+> MCMC time (s/iter)  d= 2
+> 250·d 500·d 1000·d 1500·d
+> Particles
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> 10.0
+> d= 4
+> 250·d 500·d 1000·d 1500·d
+> Particles
+> 0
+> 5
+> 10
+> 15
+> d= 6
+> 250·d 500·d 1000·d 1500·d
+> Particles
+> 0
+> 10
+> 20
+> d= 8
+> AB-, 250·d AB-, 500·d AB-, 1000·d AB-, 1500·d TS-, 250·d TS-, 500·d TS-, 1000·d TS-, 1500·d RS
+
+Figure 9: Sensitivity of SMC particle size N ∈ { 250 d, 500 d, 1000 d, 1500 d} on GP prior functions across d ∈{2, 4, 6, 8}. Top: weighted MSE convergence; curves overlap across particle counts. Bottom: per-iteration MCMC time, scaling linearly with N .
+
+D.8 Sensitivity Analysis of λ and b
+
+We investigate sensitivity to the temperature parameter λ and bias function b(x) on functions drawn from a 2 dimensional GP prior across λ ∈ {− 0.5, −1.0, −2.0, −5.0} with either constant or function form bias b(x) drawn from an independent GP prior. The results are illustrated in Figure 10. As |λ| increases, the target distribution Pf ∝ exp( λf + b) concentrates around the minima of f . Under weak concentration ( λ = −0.5), all methods exhibit comparable performance. However, the performance benefit gets more obvious as |λ| grows. This reflects the increasing inefficiency of uniform or uncertainty-driven sampling when the evaluation metric concentrates on a shrinking subset of the domain. The introduction of spatially-varying bias b(x) ∼ GP (bottom row) produces more complex target distributions, yet the relative ordering among methods is preserved, confirming that our framework extends beyond the b(x) = 0 setting assumed in the main experiments. 
+
+D.9 Molecular Drug Discovery 
+
+To complement the quantitative R2 analysis, Figure 11 visualizes prediction quality across the entire molecule pool. Each panel plots the GP posterior mean μ against the true score y, with points colored by their Boltzmann weight under 
+
+Pλ. This visualization directly reveals where in function-value space each method succeeds or fails. For AB-SID-iVAR , dark points (high Boltzmann weight) cluster tightly around the diagonal across all settings, indicating that the model has learned the high-value region accurately. In contrast, baseline methods exhibit two failure modes visible in the plots: (i) vertical spread of dark points, indicating high variance in predictions for task-relevant molecules, and (ii) systematic bias where dark points deviate from the diagonal, indicating the model has not adequately explored 29 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights Density                                                                                      
+
+> =0.5, b(x) = 0
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Weighted MSE Density
+> =0.5, b(x)
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> Weighted MSE
+> =1.0, b(x) = 0
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> =1.0, b(x)
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> =2.0, b(x) = 0
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> =2.0, b(x)
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> =5.0, b(x) = 0
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> =5.0, b(x)
+> 020 40 60 80 100
+> Iteration
+> 10 3
+> 10 2
+> 10 1
+> 10 0
+> RS US IMSE HAL AB-SID-iVAR-TS-SID-iVAR-
+
+Figure 10: Sensitivity analysis of temperature λ and bias b(x) on 2-dimensional GP prior samples. Top (two) row: constant bias b(x) = 0 ; bottom (two) row: function form bias b(x) ∼ GP . Columns correspond to λ ∈{− 0.5, −1.0, −2.0, −5.0} from left to right. Density plots show the ground truth with high-probability regions under 
+
+Pf ∝ exp( λf + b) shaded in blue. As |λ| increases, the target concentrates and SID-aware methods show greater relative advantage. these regions. These deficiencies become more severe at λ = 75 , where the target distribution concentrates on a narrower slice of high-scoring compounds. The pairwise plots thus provide a complementary diagnostic to the 
+
+R2-on-top-k% metric, confirming that AB-SID-iVAR ’s advantage stems from concentrating sampling effort on the Boltzmann-weighted region of interest. 
+
+## E Limitations and Future Work 
+
+Our theoretical bounds exhibit exponential dependence on |λ| through the density-ratio argument (Lemmas 3.2–3.3). While this establishes consistency for any fixed λ, the global nature of this approach, requiring uniform control of the partition function ratio across the entire domain, introduces an exponential prefactor eO(|λ|√βT ) that does not appear in analogous Bayesian optimization results for the λ → ∞ limit. Computationally, our acquisition function relies on MCMC sampling to approximate the constraint set ¯Xt and the integral in Eq. 3 over continuous domains. While Figure 9 shows that substantially smaller SMC sample sizes than those used in our experiments suffice without degrading performance, thereby reducing acquisition optimization cost, this still introduces overhead beyond methods that require only point evaluations of the surrogate. Since our algorithm is agnostic to the choice of MCMC sampler, we believe this cost can be further reduced via amortized Boltzmann distribution samplers (e.g., [OuYang et al., 2024, Akhound-Sadegh et al., 2025]). Several directions are promising for future work. On the theoretical side, developing input-dependent analyses that directly track coverage of high-probability regions, bridging our analysis with Bayesian optimization regret bounds in the λ → ∞ limit, and extending guarantees to non-Boltzmann SID forms are natural next steps. Additionally, 30 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights 
+
+Figure 11: Pairwise comparison of predicted GP posterior mean μ versus true function value y across all ≈20k GuacaMol molecules. Rows: scoring functions (Median 1, Median 2) and Boltzmann temperatures ( λ = 25 , 75 ). Columns: acquisition strategies. Point color encodes log Boltzmann weight log Pλ(y) ∝ λy (darker = higher weight, i.e., more task-relevant molecules), we omit reporting the result of EPIG here for the sake of space, and it behaves almost identical to IMSE. Ideal performance corresponds to dark points clustering tightly along the y = μ diagonal. 
+
+AB-SID-iVAR (rightmost column) achieves this across all settings, whereas baselines show systematic vertical spread or bias for high-weight molecules—particularly pronounced at λ = 75 where the target distribution is sharply concentrated. 31 Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights our preliminary analysis of GHAL (Proposition 4.5) assumes exhaustive exploration of the input space by the Markov chain; relaxing this condition to cover more general settings remains a natural direction of future study. Finally, our acquisition function couples the AB/TS-SID surrogate with the iVAR criterion as an integrated design, motivated by and analyzed through the variance-based upper bounds in Lemmas 3.3-3.4. Studying alternative integrated designs under the SIDAL framework, along with their corresponding theoretical guarantees (which would require analysis distinct from Theorem 4.1), is a promising direction for future work. 32

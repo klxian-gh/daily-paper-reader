@@ -1,0 +1,178 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-14T21:04:00.744269+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05361v1",
+      "title": "From Bulk to Surface: Structure and Dynamics of Amorphous Alumina from Deep Potential Molecular Dynamics",
+      "abstract": "Understanding the atomic-scale structure and dynamics of amorphous oxide surfaces is essential for interpreting their chemical reactivity, mechanical stability, and interfacial behavior, yet direct experimental characterization remains challenging. We employ Deep Potential (DP) molecular dynamics to generate large-scale, ab initio-quality models of amorphous Al$_2$O$_3$ bulk glasses and melt-quenched free surfaces, enabling a quantitative analysis of both structure and relaxation dynamics with statistical confidence inaccessible to direct ab initio simulation. The trained DP model reproduces experimental liquid and glass structure, captures the cooling-rate dependence of the bulk glass transition, and corrects systematic biases in the polyhedral populations predicted by widely used classical force fields. At the free surface, mass density recovers to bulk values over ~10 $\\unicode{x212B}$, while local coordination requires a slightly wider subsurface region to fully converge. The outermost layer is oxygen-enriched, exhibits altered polyhedral connectivity with contracted Al-O bonds, and hosts a broad population of under-coordinated motifs (notably AlO$_3$ and OAl$_2$) whose abundances are governed by glass stability. These reactive Lewis acid and Br$\\unicode{x00F8}$nsted base sites are locally paired in a manner consistent with bond-valence compensation, yet remain spatially dispersed rather than aggregating into extended clusters. Despite this pronounced structural heterogeneity, the surface relaxes on the same timescale as the bulk and exhibits a comparable glass transition temperature, suggesting that the disordered surface is kinetically stable once formed. Together, these results establish a molecular-level picture of amorphous alumina surfaces and demonstrate the capability of machine-learned potentials to resolve structure-property relationships in disordered oxide interfaces.",
+      "authors": [
+        "Zheng Yu",
+        "Jiayan Xu",
+        "Abhirup Patra",
+        "Sharan Shetty",
+        "Detlef Hohl",
+        "Roberto Car"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "cond-mat.dis-nn"
+      ],
+      "published": "2026-05-06T18:40:17+00:00",
+      "link": "https://arxiv.org/pdf/2605.05361v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "ab initio quality molecular dynamics for reactivity",
+      "llm_evidence_cn": "具有从头算质量的反应活性分子动力学",
+      "llm_evidence": "具有从头算质量的反应活性分子动力学",
+      "canonical_evidence": "具有从头算质量的反应活性分子动力学",
+      "llm_tldr_en": "Uses Deep Potential MD to achieve ab initio accuracy in large-scale simulations of amorphous surfaces.",
+      "llm_tldr_cn": "利用深度势能分子动力学在大规模模拟中实现非晶表面的从头算精度。",
+      "llm_tldr": "利用深度势能分子动力学在大规模模拟中实现非晶表面的从头算精度。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.07440v1",
+      "title": "On the single-Hessian Gaussian wavepacket dynamics",
+      "abstract": "Single-Hessian Gaussian wavepacket dynamics (GWD) significantly reduces the computational burden of Heller's local harmonic GWD, while maintaining comparable accuracy in approximating vibronic spectra. Here, we provide a new, symplectic derivation of the equations of motion of single-Hessian GWD and show that, unlike the local harmonic version, this method conserves the non-canonical symplectic structure on the manifold of Gaussian wavepackets and$-$for bounded dynamics in smooth potentials$-$avoids the drift of energy. Our numerical results suggest that, despite being much more efficient than the local harmonic variant, the single-Hessian GWD exhibits the same $\\mathcal{O}(\\hbar)$ asymptotic error in averages of observables. To further accelerate numerical simulations, we implement high-order time-stepping geometric integrators that are time-reversible and conserve the norm and symplectic structure exactly, regardless of the time step. In addition, we present explicit expressions for the exact evolution of the width of a single-Hessian Gaussian wavepacket in a general potential, as well as for the exact evolution of the whole wavepacket in a global harmonic potential. Using on-the-fly ab initio Gaussian wavepacket dynamics on the first excited-state surface of ammonia, we numerically confirm the conservation of geometric properties by these integrators and demonstrate that high-order integrators can enhance both accuracy and computational efficiency. We also compute the photoelectron spectrum of the difluorocarbene anion and the absorption spectrum of methylamine, and find that, in comparison with experiment, single-Hessian GWD outperforms global harmonic models and matches the accuracy of local harmonic GWD. Finally, we identify which spectral features are sensitive to the choice of reference Hessian.",
+      "authors": [
+        "Davide Barbiero",
+        "Jiří J. L. Vaníček"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "math-ph",
+        "physics.comp-ph",
+        "quant-ph"
+      ],
+      "published": "2026-05-08T08:42:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.07440v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Gaussian wavepacket dynamics for vibronic spectra",
+      "llm_evidence_cn": "用于振动光谱的高斯波包动力学",
+      "llm_evidence": "用于振动光谱的高斯波包动力学",
+      "canonical_evidence": "用于振动光谱的高斯波包动力学",
+      "llm_tldr_en": "Derives an efficient single-Hessian Gaussian wavepacket dynamics method for molecular simulations.",
+      "llm_tldr_cn": "推导了一种高效的单海森高斯波包动力学方法，用于分子模拟。",
+      "llm_tldr": "推导了一种高效的单海森高斯波包动力学方法，用于分子模拟。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10363v2",
+      "title": "Accelerating Locality-Driven Integration in Quantum Chemistry with Block-Structured Matrix Multiplication",
+      "abstract": "Locality-driven integration is a pervasive computational pattern in quantum chemistry, arising whenever spatially localized basis functions interact through numerical quadrature or integral screening. The dominant matrix multiplications in these tasks exhibit dynamic, structured sparsity driven by spatial locality, posing significant challenges for both dense batched kernels and generic sparse formats on GPUs. We present KerneLDI, a GPU-oriented framework that addresses this regime by co-designing data layout, screening logic, and matrix-computation operators to realize block-structured matrix multiplication for locality-driven integration. KerneLDI reorganizes operand matrices into a unified block-filtered representation that retains only spatially relevant blocks, and executes the resulting contractions with customized dense block multipliers that adapt proven dense-matmul optimizations to retained block pairs. We develop and evaluate KerneLDI on exchange--correlation (EXC) integration in Kohn--Sham density functional theory, a representative and computationally critical instance of this pattern. Across diverse molecular systems, KerneLDI preserves numerical accuracy while delivering up to 10$\\times$ speedup for EXC evaluation over a dense GPU baseline, scales favorably with increasing system size and multi-GPU parallelism, accelerates end-to-end self-consistent field calculations, and yields nearly 6$\\times$ throughput improvement for ab initio molecular dynamics.",
+      "authors": [
+        "Xinran Wei",
+        "Yan Pan",
+        "Fusong Ju",
+        "Zehao Zhou",
+        "Yihong Zhang",
+        "Lin Huang",
+        "Jianwei Zhu",
+        "Jia Zhang",
+        "Huanhuan Xia",
+        "Bin Shao",
+        "Tao Qin"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cs.DC",
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-11T11:08:19+00:00",
+      "link": "https://arxiv.org/pdf/2605.10363v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "accelerating locality-driven integration in quantum chemistry",
+      "llm_evidence_cn": "加速量子化学中的局部驱动积分",
+      "llm_evidence": "加速量子化学中的局部驱动积分",
+      "canonical_evidence": "加速量子化学中的局部驱动积分",
+      "llm_tldr_en": "A GPU framework to accelerate locality-driven integration tasks common in quantum chemistry simulations.",
+      "llm_tldr_cn": "一种GPU框架，用于加速量子化学模拟中常见的局部驱动积分任务。",
+      "llm_tldr": "一种GPU框架，用于加速量子化学模拟中常见的局部驱动积分任务。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10654v1",
+      "title": "Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights",
+      "abstract": "We consider the active learning problem where the goal is to learn an unknown function with low prediction error under an unknown Boltzmann distribution induced by the function itself. This self-induced weighting arises naturally in problems such as potential energy surface (PES) modeling in computational chemistry,   yet poses unique challenges as the target distribution is unknown and its partition function is intractable. We propose \\texttt{AB-SID-iVAR}, a Gaussian Process-based acquisition function that approximates the intractable Bayesian target distribution in closed form while avoiding partition function estimation, and is applicable to both discrete and continuous input domains. We also analyze a Thompson sampling alternative (\\texttt{TS-SID-iVAR}) as a higher variance Monte Carlo variant. Despite the unknown target, under mild conditions, we establish that the terminal prediction error vanishes with high probability, and provide a tighter average-case guarantee. We demonstrate consistent improvements over existing approaches in this setting on synthetic benchmarks and real-world PES modeling and drug discovery tasks.",
+      "authors": [
+        "Jixiang Qing",
+        "Henry Moss",
+        "Matthias Sachs"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-11T14:38:03+00:00",
+      "link": "https://arxiv.org/pdf/2605.10654v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "potential energy surface modeling in computational chemistry",
+      "llm_evidence_cn": "计算化学中的势能面建模",
+      "llm_evidence": "计算化学中的势能面建模",
+      "canonical_evidence": "计算化学中的势能面建模",
+      "llm_tldr_en": "Develops active learning for potential energy surface modeling, relevant to MD simulations.",
+      "llm_tldr_cn": "开发了用于势能面建模的主动学习方法，与分子动力学模拟相关。",
+      "llm_tldr": "开发了用于势能面建模的主动学习方法，与分子动力学模拟相关。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "QM/MM molecular dynamics simulations",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

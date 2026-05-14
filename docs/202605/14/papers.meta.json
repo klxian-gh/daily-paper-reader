@@ -1,0 +1,65 @@
+{
+  "label": "2026-05-14",
+  "date": "2026-05-14",
+  "generated_at": "2026-05-14T21:04:36",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202605/14/2605.05361v1-from-bulk-to-surface-structure-and-dynamics-of-amorphous-alumina-from-deep-potential-molecular-dynamics",
+      "section": "quick",
+      "title_en": "From Bulk to Surface: Structure and Dynamics of Amorphous Alumina from Deep Potential Molecular Dynamics",
+      "authors": "Zheng Yu, Jiayan Xu, Abhirup Patra, Sharan Shetty, Detlef Hohl, Roberto Car",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.05361v1",
+      "score": "6.0",
+      "evidence": "具有从头算质量的反应活性分子动力学",
+      "tldr": "本研究利用深度势能分子动力学模拟，构建了具有从头算精度的大规模非晶氧化铝模型。研究定量分析了体相与表面的结构及动力学，发现表面存在氧富集及AlO3、OAl2等欠配位活性位点。结果显示，尽管表面结构异质性强，其动力学弛豫与玻璃化转变温度却与体相一致，证明了表面的动力学稳定性，为理解氧化物界面提供了新视角。",
+      "tags": "query:qmmm",
+      "abstract_en": "Understanding the atomic-scale structure and dynamics of amorphous oxide surfaces is essential for interpreting their chemical reactivity, mechanical stability, and interfacial behavior, yet direct experimental characterization remains challenging. We employ Deep Potential (DP) molecular dynamics to generate large-scale, ab initio-quality models of amorphous Al$_2$O$_3$ bulk glasses and melt-quenched free surfaces, enabling a quantitative analysis of both structure and relaxation dynamics with statistical confidence inaccessible to direct ab initio simulation. The trained DP model reproduces experimental liquid and glass structure, captures the cooling-rate dependence of the bulk glass transition, and corrects systematic biases in the polyhedral populations predicted by widely used classical force fields. At the free surface, mass density recovers to bulk values over ~10 $\\unicode{x212B}$, while local coordination requires a slightly wider subsurface region to fully converge. The outermost layer is oxygen-enriched, exhibits altered polyhedral connectivity with contracted Al-O bonds, and hosts a broad population of under-coordinated motifs (notably AlO$_3$ and OAl$_2$) whose abundances are governed by glass stability. These reactive Lewis acid and Br$\\unicode{x00F8}$nsted base sites are locally paired in a manner consistent with bond-valence compensation, yet remain spatially dispersed rather than aggregating into extended clusters. Despite this pronounced structural heterogeneity, the surface relaxes on the same timescale as the bulk and exhibits a comparable glass transition temperature, suggesting that the disordered surface is kinetically stable once formed. Together, these results establish a molecular-level picture of amorphous alumina surfaces and demonstrate the capability of machine-learned potentials to resolve structure-property relationships in disordered oxide interfaces.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/14/2605.07440v1-on-the-single-hessian-gaussian-wavepacket-dynamics",
+      "section": "quick",
+      "title_en": "On the single-Hessian Gaussian wavepacket dynamics",
+      "authors": "Davide Barbiero, Jiří J. L. Vaníček",
+      "date": "2026-05-08",
+      "pdf": "https://arxiv.org/pdf/2605.07440v1",
+      "score": "6.0",
+      "evidence": "用于振动光谱的高斯波包动力学",
+      "tldr": "本研究探讨了单 Hessian 高斯波包动力学（GWD），旨在降低传统局部谐振方法的计算负担。作者通过辛几何推导了运动方程，证明该方法能保持非正则辛结构并避免能量漂移。通过引入高阶几何积分器，进一步提升了数值模拟的效率与稳定性。在氨分子、二氟碳烯阴离子和甲胺的测试中，该方法在保持与局部谐振方法相当精度的同时，显著优于全局谐振模型，为高效模拟分子振动光谱提供了有力工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Single-Hessian Gaussian wavepacket dynamics (GWD) significantly reduces the computational burden of Heller's local harmonic GWD, while maintaining comparable accuracy in approximating vibronic spectra. Here, we provide a new, symplectic derivation of the equations of motion of single-Hessian GWD and show that, unlike the local harmonic version, this method conserves the non-canonical symplectic structure on the manifold of Gaussian wavepackets and$-$for bounded dynamics in smooth potentials$-$avoids the drift of energy. Our numerical results suggest that, despite being much more efficient than the local harmonic variant, the single-Hessian GWD exhibits the same $\\mathcal{O}(\\hbar)$ asymptotic error in averages of observables. To further accelerate numerical simulations, we implement high-order time-stepping geometric integrators that are time-reversible and conserve the norm and symplectic structure exactly, regardless of the time step. In addition, we present explicit expressions for the exact evolution of the width of a single-Hessian Gaussian wavepacket in a general potential, as well as for the exact evolution of the whole wavepacket in a global harmonic potential. Using on-the-fly ab initio Gaussian wavepacket dynamics on the first excited-state surface of ammonia, we numerically confirm the conservation of geometric properties by these integrators and demonstrate that high-order integrators can enhance both accuracy and computational efficiency. We also compute the photoelectron spectrum of the difluorocarbene anion and the absorption spectrum of methylamine, and find that, in comparison with experiment, single-Hessian GWD outperforms global harmonic models and matches the accuracy of local harmonic GWD. Finally, we identify which spectral features are sensitive to the choice of reference Hessian.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/14/2605.10363v2-accelerating-locality-driven-integration-in-quantum-chemistry-with-block-structured-matrix-multiplication",
+      "section": "quick",
+      "title_en": "Accelerating Locality-Driven Integration in Quantum Chemistry with Block-Structured Matrix Multiplication",
+      "authors": "Xinran Wei, Yan Pan, Fusong Ju, Zehao Zhou, Yihong Zhang, Lin Huang, Jianwei Zhu, Jia Zhang, Huanhuan Xia, Bin Shao, Tao Qin",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10363v2",
+      "score": "6.0",
+      "evidence": "加速量子化学中的局部驱动积分",
+      "tldr": "针对量子化学中具有空间局域性的积分计算（如EXC积分），本文提出了KerneLDI框架。该框架通过协同设计数据布局、筛选逻辑和矩阵算子，利用块结构矩阵乘法处理动态稀疏性。在GPU上，它将操作数重组为块过滤表示，并使用定制的密集块乘法器进行计算。实验表明，该方法在保持精度的同时，显著提升了DFT计算和分子动力学模拟的速度，是加速大规模量子化学模拟的有效方案。",
+      "tags": "query:qmmm",
+      "abstract_en": "Locality-driven integration is a pervasive computational pattern in quantum chemistry, arising whenever spatially localized basis functions interact through numerical quadrature or integral screening. The dominant matrix multiplications in these tasks exhibit dynamic, structured sparsity driven by spatial locality, posing significant challenges for both dense batched kernels and generic sparse formats on GPUs. We present KerneLDI, a GPU-oriented framework that addresses this regime by co-designing data layout, screening logic, and matrix-computation operators to realize block-structured matrix multiplication for locality-driven integration. KerneLDI reorganizes operand matrices into a unified block-filtered representation that retains only spatially relevant blocks, and executes the resulting contractions with customized dense block multipliers that adapt proven dense-matmul optimizations to retained block pairs. We develop and evaluate KerneLDI on exchange--correlation (EXC) integration in Kohn--Sham density functional theory, a representative and computationally critical instance of this pattern. Across diverse molecular systems, KerneLDI preserves numerical accuracy while delivering up to 10$\\times$ speedup for EXC evaluation over a dense GPU baseline, scales favorably with increasing system size and multi-GPU parallelism, accelerates end-to-end self-consistent field calculations, and yields nearly 6$\\times$ throughput improvement for ab initio molecular dynamics.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/14/2605.10654v1-active-learning-for-gaussian-process-regression-under-self-induced-boltzmann-weights",
+      "section": "quick",
+      "title_en": "Active Learning for Gaussian Process Regression Under Self-Induced Boltzmann Weights",
+      "authors": "Jixiang Qing, Henry Moss, Matthias Sachs",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10654v1",
+      "score": "6.0",
+      "evidence": "计算化学中的势能面建模",
+      "tldr": "本研究针对由目标函数自身诱导的玻尔兹曼分布下的主动学习问题，提出了一种名为 AB-SID-iVAR 的高斯过程采集函数。该方法解决了目标分布未知且配分函数难以计算的挑战，通过闭式解近似贝叶斯目标分布，避免了复杂的配分函数估计。理论证明了其预测误差在温和条件下趋于零，并在势能面建模和药物发现等实际任务中展现出优于现有方法的性能。",
+      "tags": "query:qmmm",
+      "abstract_en": "We consider the active learning problem where the goal is to learn an unknown function with low prediction error under an unknown Boltzmann distribution induced by the function itself. This self-induced weighting arises naturally in problems such as potential energy surface (PES) modeling in computational chemistry,   yet poses unique challenges as the target distribution is unknown and its partition function is intractable. We propose \\texttt{AB-SID-iVAR}, a Gaussian Process-based acquisition function that approximates the intractable Bayesian target distribution in closed form while avoiding partition function estimation, and is applicable to both discrete and continuous input domains. We also analyze a Thompson sampling alternative (\\texttt{TS-SID-iVAR}) as a higher variance Monte Carlo variant. Despite the unknown target, under mild conditions, we establish that the terminal prediction error vanishes with high probability, and provide a tighter average-case guarantee. We demonstrate consistent improvements over existing approaches in this setting on synthetic benchmarks and real-world PES modeling and drug discovery tasks.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
