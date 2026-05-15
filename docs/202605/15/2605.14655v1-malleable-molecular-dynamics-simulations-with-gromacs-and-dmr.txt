@@ -1,0 +1,206 @@
+Title: Malleable Molecular Dynamics Simulations with GROMACS and DMR
+
+URL Source: https://arxiv.org/pdf/2605.14655v1
+
+Published Time: Fri, 15 May 2026 00:56:31 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Malleable Molecular Dynamics Simulations with GROMACS and DMR 
+
+Petter Sandås 1[0009 −0009 −2028 −7719] , Sergio Iserte 1[0000 −0003 −3654 −7924] , Íñigo Aréjula-Aísa[1] [0009 −0006 −7354 −0915] , Berk Hess 2[0000 −1111 −2222 −3333] , and Antonio J. Peña [0000 −0002 −3575 −4617]1  
+
+> 1
+
+Barcelona Supercomputing Center (BSC) 
+
+{petter.sandas, sergio.iserte, inigo.arejula, antonio.pena}@bsc.es  
+
+> 2
+
+KTH Royal Institute of Technology, Stockholm, Sweden 
+
+hess@kth.se 
+
+Abstract. Static resource allocations in high-performance computing (HPC) lead to inefficiencies for time-varying workloads, causing idle re-sources, queue delays, and higher node-hour costs. The Dynamic Man-agement of Resources (DMR) middleware enables MPI process malleabil-ity in Slurm via a simple API decoupled from scheduler internals. In this work, we integrate DMR into the GROMACS molecular dynam-ics engine to obtain a malleable variant that can dynamically adapt its MPI process count by combining communication-efficiency-aware re-configuration with GROMACS’ native checkpoint/restart mechanism. We evaluate this design on the MareNostrum 5 supercomputer, com-paring dynamic runs against static executions and quantifying recon-figuration overheads, time-to-solution, and node-hour savings for bursty GROMACS workloads. 
+
+Keywords: HPC · Dynamic Resource Management · MPI · Malleability 
+
+· Molecular Dynamics 
+
+# 1 Introduction 
+
+Modern high-performance computing (HPC) systems must cope with strongly time-varying application behavior, heterogeneous hardware, and highly con-tended shared infrastructures, yet most production workloads are still executed under static resource allocations decided at submission time. This rigidity often leads to idle resources or unnecessary queueing delays when job requirements change during execution, reducing overall system productivity and increasing node-hour consumption in large machines. MPI process malleability has emerged as a promising mechanism to address these limitations by allowing running applications to expand or shrink their process sets at runtime in coordination with the resource manager [21]. The Dy-namic Management of Resources (DMR) framework provides a middleware layer that decouples application-level malleability from scheduler internals, offering a small MPI-like API for initialization, readiness checking, and reconfiguration, and integrating with Slurm-based environments [12].  
+
+> arXiv:2605.14655v1 [cs.DC] 14 May 2026 2P. Sandås et al.
+
+GROMACS is a widely used molecular dynamics (MD) engine, heavily op-timized for both CPUs and GPUs, and a key building block in biomolecular simulation workflows that are sensitive to both performance and turnaround time [22]. Its traditional execution model assumes a fixed number of MPI ranks. However, large GROMACS campaigns typically consist of many independent simulations with heterogeneous and time-varying resource needs, making them a natural candidate for malleability to better exploit fluctuations in cluster load and improve node-hour efficiency in production settings. In this work, we integrate DMR into GROMACS to produce a malleable ver-sion that can dynamically adapt its process count at runtime. The integration is designed to be minimally invasive: DMR is initialized early in the GROMACS startup sequence, reconfiguration checks are inserted in the main molecular dy-namics loop under a communication-efficiency strategy, and DMR is coordinated with the native checkpoint handler to trigger safe reconfigurations at neighbor-search steps. Specifically, this paper makes the following contributions: 
+
+– We present a minimally invasive integration of the DMR framework into GROMACS, leveraging its existing checkpoint/restart facilities to enable MPI process malleability. 
+
+– We configure and evaluate a communication-efficiency-aware malleability policy for GROMACS on Marenostrum 5 supercomputer, quantifying re-configuration overheads, time-to-solution, and node-hour consumption for bursty workloads compared to static executions. The rest of the paper is structured as follows: Section 2 provides background on GROMACS and DMR. Section 3 describes the methodology for integrating DMR in GROMACS. Section 4 presents the evaluation results of dynamic exe-cutions compared to static ones. Section 5 reviews related work in malleability and HPC scientific applications. Finally, Section 6 concludes the paper. 
+
+# 2 Background 
+
+The two main pieces of software, GROMACS and DMR, leveraged in this re-search are introduced in this section. 
+
+2.1 GROMACS 
+
+GROMACS (GROningen MAchine for Chemical Simulations) is a high-performance molecular dynamics (MD) package widely used for simulating biomolecular sys-tems including proteins, lipids, and nucleic acids [22]. GROMACS is highly relevant in the high-performance computing (HPC) community due to its ex-ceptional performance optimization, excellent parallel scalability, and efficient utilization of modern heterogeneous computing architectures [2]. GROMACS is notable in HPC environments for several key reasons. The code is heavily optimized at the algorithmic and implementation levels, with Malleable Molecular Dynamics Simulations with GROMACS and DMR 3
+
+carefully tuned neighbor searching algorithms and highly optimized inner loops that maximize floating-point throughput on modern CPUs. GROMACS exhibits excellent strong and weak scaling properties across thousands of CPU cores, making it ideal for large-scale cluster and supercomputer deployments [17]. The package provides full support for GPU acceleration through CUDA and OpenCL. This heterogeneous computing capability is critical for maximizing throughput on modern HPC systems equipped with GPU accelerators. GRO-MACS employs efficient domain decomposition parallelization, distributing spa-tial domains across MPI ranks with optimized load balancing to minimize com-munication overhead [4]. These characteristics make GROMACS one of the most widely deployed molecular dynamics packages on top-tier supercomputers worldwide, routinely appearing in HPC benchmarking studies and demonstrating sustained perfor-mance on leading embarrassingly parallel workloads. 
+
+2.2 DMR 
+
+The Dynamic Management of Resources (DMR, pronounced “dimmer”) frame-work is a middleware layer designed to enable process malleability and dynamic resource management for MPI applications in HPC environments [9]. It serves as an orchestration bridge between the scientific application, the MPI runtime (i.e., Open MPI/PRRTE [3]), performance monitoring tools (i.e., TALP [13]), and the underlying RMS (i.e., Slurm [23]). The primary objective of DMR is to allow running jobs to dynamically acquire, release, or reconfigure compute resources at runtime, enabling applications to expand or shrink their resource footprint transparently to improve system utilization and responsiveness. Internally, DMR follows a state-driven architecture, which is exposed to de-velopers through a reduced set of API routines [7]: 
+
+– dmr_init : Initializes the dynamic environment, configures communication with the RMS, and prepares internal data structures. 
+
+– dmr_check : Invoked at synchronization points to indicate readiness for re-sizing; it evaluates policies and system feedback to decide whether a recon-figuration is necessary. 
+
+– dmr_reconfigure : Executes the selected reconfiguration and coordinates with the MPI runtime to spawn or terminate processes as required. 
+
+– dmr_finalize : Handles the final cleanup of the management layer and re-leases resources. A significant advancement in the framework is the introduction of a non-invasive methodology specifically tailored for production HPC clusters. While originally, it was often relied on customized or "invasive" scheduler modifications —such as Slurm4DMR— in controlled environments, with the new DMR@Jobs 
+
+feature, malleable applications are able to directly interact with standard, un-modified RMS deployments through user-level API calls. This approach orches-trates MPI processes across multiple independent jobs to achieve expansion and 4 P. Sandås et al. 
+
+shrinkage without requiring administrative privileges. Furthermore, DMR pro-vides a unified programming model that supports both in-memory data re-distribution via MPI and checkpoint-restart (C/R) mechanisms, allowing it to adapt to diverse scientific codes and existing application-level checkpointing logic. The framework supports sophisticated reconfiguration strategies, such as the 
+
+CE_POLICY , which utilizes performance metrics to adjust allocations based on a target communication efficiency. By allowing applications to continue executing while resource requests are pending, the framework effectively hides resource acquisition latency in heavily contended production systems. This makes DMR a robust solution for bridging the gap between experimental malleability proto-types and operational supercomputing environments [11]. 
+
+# 3 GROMACS Malleable 
+
+This section describes how GROMACS has been adapted to support malleabil-ity through integration with the DMR framework. The modifications were de-signed to be minimally invasive, leveraging GROMACS’ existing checkpointing mechanism to enable dynamic resource management without requiring extensive changes to the core simulation logic. GROMACS follows a traditional time step-based approach with MPI paral-lelization, where the simulation domain is decomposed spatially and distributed across MPI ranks. This design allows for efficient scaling but does not natively support dynamic changes in the number of processes during execution. To en-able malleability, we have integrated DMR into key points of the GROMACS codebase to allow for runtime reconfiguration while ensuring that the simulation state remains consistent and recoverable. Data redistribution is not explicitly implemented in this integration, as the checkpoint-restart mechanism of GROMACS is leveraged to handle state recov-ery and continuation across reconfigurations. This approach simplifies the imple-mentation while still providing the necessary functionality for dynamic resource management. 
+
+3.1 Initialization 
+
+The DMR initialization routine is invoked early in the GROMACS execution flow to configure the necessary environment for dynamic resource management. 
+
+             
+
+> 1void init ( int * argc , char *** argv ) {
+> 2...
+> 3DMR_AUTO ( dmr_init (* dmr_argc , * dmr_argv ) , ( void ) NULL , ( void ) NULL , ( void ) NULL ) ;
+> 4}
+
+ 
+
+Listing 1: Initialization of DMR within GROMACS. Malleable Molecular Dynamics Simulations with GROMACS and DMR 5
+
+Listing 1 illustrates the invocation of dmr_init within the GROMACS ini-tialization sequence. The arguments passed to dmr_init are derived from the command-line arguments provided to GROMACS, allowing DMR to inspect and adjust them as needed to ensure compatibility with the malleable execution model. The data redistribution arguments are intentionally left unspecified (i.e., set to NULL ). This design choice reflects the fact that the proposed technique lever-ages GROMACS’ native checkpointing mechanism for state recovery and contin-uation. As a result, no explicit data redistribution routines are required within DMR: the checkpoint-based restart mechanism, as handled internally by GRO-MACS, is sufficient to ensure consistency across reconfigurations. With more details, during the initialization phase, DMR inspects the run-time arguments passed to GROMACS to ensure that they are compatible with the malleable execution model. If certain arguments are missing, such as -cpi <filename> for checkpointing or -append for output management, DMR pro-grammatically inserts them to enforce the necessary conditions for dynamic re-configuration. This ensures that GROMACS can produce consistent checkpoints and manage output files appropriately across reconfigurations. 
+
+3.2 Reconfiguration 
+
+The synchronization point for reconfiguration is integrated into the main simu-lation loop of GROMACS, as shown in Listing 2. This loop iteratively advances the simulation through time steps, and it provides a natural point at which DMR can evaluate whether a reconfiguration should occur based on the current state of the application and the availability of resources. 
+
+                      
+
+> 1void gmx :: LegacySimulator :: do_md ()
+> 2{
+> 3...
+> 4/* Loop over MD steps */
+> 5...
+> 6if ( dmr_check ( CE_POLICY ) )
+> 7dmr_ready_reconfig =true ;
+> 8...
+> 9if ( dmr_ready_reconfig ) {
+> 10 dmr_reconfigure () ;
+> 11 ...
+> 12 }
+
+ 
+
+Listing 2: Reconfiguration logic within GROMACS. The integration logic relies on a boolean state machine to detect whether DMR has determined that a reconfiguration is necessary, based on the active policy and resource availability. In the positive case (line 10), a flag is set to indicate that the application will be reconfigured in line 14. This preparation 6 P. Sandås et al. 
+
+involves coordinating with GROMACS’ checkpointing mechanism to ensure that a consistent checkpoint is produced before invoking the reconfiguration. Following this, dmr_reconfigure is invoked, and GROMACS is allowed to terminate through its normal shutdown pathway. Process reallocation and restart are managed invisibly by DMR. In this paper, the CE_POLICY is used as the policy for triggering reconfig-uration. This policy evaluates the communication efficiency of the application and determines whether a reconfiguration is warranted to optimize the resource utilization by approching a target efficiency [10]. Notably, the DMR_AUTO macro is not used in this context, since its default behavior would early-terminate the execution before the opportunity to produce a consistent checkpoint because of GROMACS structure. Instead, the logic is implemented manually to allow for a safe checkpointing point to be reached before invoking the reconfiguration. 
+
+3.3 Checkpoint Coordination 
+
+For the integration of DMR to function correctly, it is crucial that GROMACS produces checkpoints at appropriate times during the simulation, particularly when a reconfiguration is triggered. This ensures that the application state can be reliably saved and restored across changes in the resource allocation. We have introduced in src/gromacs/mdlib/checkpointhandler.cpp addi-tional modifications within the function decideIfCheckpointingThisStepImpl ,which governs when checkpointing should occur. In a standard GROMACS execution, it interprets external signals (e.g., 
+
+SIGTERM ) to trigger checkpointing. Upon receiving such a signal, GROMACS typically defers checkpoint creation until a neighbor-search step is reached, en-suring that the simulation state is left in a consistent and well-defined configu-ration. To integrate DMR into this mechanism, a call to dmr_get_last_action is introduced. If the returned value indicates that the most recent DMR action is a reconfiguration, this condition is treated equivalently to an external checkpoint-ing signal. Consequently, checkpointing is deferred in the same manner, i.e., until the next neighbor-search step is reached. 
+
+# 4 Performance Evaluation 
+
+In our experiments, we demonstrate how in-production execution can save a non-negligible amount of compute node-hours compared to executions in exclusive reservations of resources. 
+
+4.1 Setup Configuration Infrastructure All the experiments are executed on MareNostrum 5 (MN5), a pre-exascale system integrated into the EuroHPC-JU infrastructure 3. Partic-  
+
+> 3https://bsc.es/marenostrum/marenostrum-5 Malleable Molecular Dynamics Simulations with GROMACS and DMR 7
+
+ularly, jobs are submitted to its general-purpose partition (GPP) 4, which com-prises 6,192 Intel Sapphire Rapids-based nodes, each equipped with two In-tel Xeon Platinum 8480+ processors (56 cores at 2 GHz, 112 cores total) and 256 GB of DDR5 memory, interconnected by a 100 Gbit/s ConnectX-7 NDR200 InfiniBand network and managed by Slurm 24.11.6. Open MPI 5.1.0a1, PRRTE 5.0.0a1, OpenPMIX 7.0.0a1, DLB 3.5.0, and DMR 2.0.1, conform the software stack used for the experiments. Our experiments are performed in a controlled environment with Slurm4DMR, which is a customized version of Slurm that includes the necessary modifications to support DMR’s malleability features. This environment is copnfigured on a dedicated set of nodes within MN5, ensuring that the malleable jobs can be executed without interference from other users or workloads. The experiments are scoped within 32 nodes for up to 2 hours, which fits in the QoS of the debug partition in MN5. Notice that one of the alllocated nodes is reserved to serve as the Slurm controller node, while the remaining 31 nodes act as actual compute nodes. 
+
+Application The malleable version of GROMACS designed in this paper is based on its 2025.4 version and evaluated with the mdp input stmv [18], the Satellite Tobacco Mosaic Virus solvated in TIP3P using cubic box and the CHARMM27 force field. It is configured with 1, 066 , 628 atoms, 2 fs time-step, 
+
+1.2 nm cut-offs, h-bond constraints, 0.15 nm PME grid spacing, NVT ensemble, and limited to 5, 000 time steps. The application is instantiated with one MPI rank per node and 112 OpenMP threads per rank. 
+
+Malleability Malleability uses CE_POLICY , which monitors communication ef-ficiency (CE) —the fraction of execution time spent in computation versus communication— via the TALP monitor. Ranks adjust linearly with deviation from a 95% target CE; high CE (>95%) triggers expansion for faster execution, low CE (<95%) triggers shrinkage to cut contention. Reconfiguration decisions are made every 500 timesteps; DMR implements a feature known as the inhibitor, which enforces a configurable timestep-based delay among reconfigurations. Malleable jobs are submitted with a node range from 1 to 12 ( -N1-12 ), corresponding in turn to the lower and upper bounds of the reconfigurations, which means that the job can shrink down to 1 rank or expand up to 12 ranks. 
+
+Workload The malleable GROMACS application is instantiated through Slurm jobs submitted to request computational resources. Each experiment generates and submits a workload of 10 such jobs. As common in MPI malleability evaluations to maximize system stress [7], jobs have virtually zero inter-arrival time, yielding a burst submission of all 10 jobs.  
+
+> 4https://www.bsc.es/supportkc/docs/MareNostrum5/overview/ #marenostrum-5-gpp-general-purpose-partition
+
+8 P. Sandås et al. 
+
+4.2 Results 
+
+In this section, we present the results of the performance evaluation of the mal-leable version of GROMACS within different workloads. 
+
+Baseline In order to establish a baseline for comparison, we execute the same workload of ten GROMACS jobs in a static configuration, where each job is allocated a fixed number of nodes (either 2 or 12) for the entire duration of its execution. This allows us to quantify the benefits of malleability by comparing the behavior of the malleable executions against these static baselines. 
+
+> – CE Target: 95% –
+
+(a) Execution with 2 nodes per job. 
+
+> – CE Target: 95% –
+
+(b) Execution with 12 nodes per job. 
+
+Figure 1: Execution of the workload in the static configuration. Figure 1 shows the execution of the workload in the static configurations with 2 and 12 nodes, respectively. The charts illustrate the allocated nodes (left Malleable Molecular Dynamics Simulations with GROMACS and DMR 9
+
+y-axis) over the execution time (x-axis) for each job, where each color represents one of the ten jobs. Furthermore, the y-axis on the right side shows the CE of each job (in the same color scheme as the allocated nodes) over time. The 2-node static configuration (Figure 1a) allocates two nodes to each job for the entirety of its execution, maintaining stable CE levels close to the maximum efficiency. All jobs are submitted at the same time and execute in parallel; there-fore, the total runtime approximately corresponds to the individual execution time of a single job. In total, 20 nodes are allocated, yielding a makespan of 2, 825 
+
+seconds. In contrast, the 12-node static configuration (Figure 1b) shows that all jobs are allocated 12 nodes throughout their execution, exhibiting greater fluc-tuations in CE levels. The increased availability of resources leads to a shorter individual execution time for each job, but the CE levels are generally lower than in the 2-node configuration due to the increased communication overhead among processes. All the jobs are submitted simultaneously, but only two can run simultaneously ( 12 + 12 ) due to the node partition limit of 31. In this case, 24 nodes remain allocated during the makespan of 2, 652 seconds. 
+
+Dynamic Resource Management When resubmitting the same workload with malleable jobs, we observe a different behavior in terms of resource alloca-tion and CE levels, as shown in figures 2, 3, and 4. Particularly, as shown in Figure 2, the jobs are not all running simultaneously from the beginning of the execution; they are scheduled and started at different times as resources become available. This leads to a more staggered execution pattern, where some jobs may start later than others. However, the jobs can also finish earlier due to the dynamic allocation of resources. Specifically, the first four jobs are started with 12, 12, 6, and 1 nodes, respectively, allocating the 31 available nodes. As the execution progresses, the 12-node jobs are shrunk to 10, according to the DMR policy, which detects that their CE is lower than the target threshold in Figure 3. With the first nodes released, the fifth job is initiated with 2 nodes, and likewise the sixth job is assigned 2 nodes shortly after. The dotted lines in the CE chart (Figure 2) indicate the time in which a job is scheduled to be expanded, but in which the expansion cannot occur until both resources are available and the next synchronization point is reached . For example, the fifth job is scheduled to be expanded at around 450 seconds, but it cannot be expanded until around 1, 300 seconds have elapsed. Figure 3 plots CE over time for malleable jobs. Jobs 3–5 start with higher, more stable CE values due to fewer initial nodes. Higher node counts yield lower, more variable CE from greater inter-process communication overhead. As in the 12-node static case, CE spikes at the start (or after a reconfiguration), then it sta-bilizes as averages accumulate. Reconfigurations are configured asynchronously, so application execution continues while new resources are awaited, resulting in only amortized overhead. Once resources are granted, reconfiguration awaits the next synchronization point. 10 P. Sandås et al.    
+
+> 1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th
+
+Figure 2: Execution of the workload with malleable jobs, showing the allocated nodes. The dotted lines indicate the scheduled expansions that are pending until resources are available and its next synchronization point is reached. 
+
+Figure 3: Communication efficiency of the malleable jobs over time. Malleable Molecular Dynamics Simulations with GROMACS and DMR 11 
+
+Figure 4: Overall allocated nodes over time for the malleable workload execution. Table 1 presents the reconfiguration times. Expansions are slower than shrinks due to these asynchronous waits, an effect pronounced at low node counts where slower iterations delay the dmr_check call [15]. Figure 4 shows total allocated nodes over time —the sum across all jobs at each timestep. At workload start, all 31 compute nodes remain allocated. As jobs complete and queue length drops, resources are released. However, availability does not guarantee expansion: if CE already exceeds the target threshold, new resources are not requested. Table 2 compares the three workloads by total execution time ( makespan ,column 2, in seconds) and computational cost. The latter is computed via trape-zoidal integration of the allocated-node profile over time (figures 1a, 1b, and 4), reported in node-hours ( net cost , column 3). The dynamic workload finishes fastest, since expansions accelerate jobs — even with 184 .37 s total overhead from 11 reconfigurations ( 8.24% of makespan). Conversely, the 2-node run is the slowest but cheapest, thanks to higher efficiency from reduced inter-node communication. Table 1: Aggregated reconfiguration times.                            
+
+> Category Count Time
+> All 11 16 .76 ±10 .54 s[7.83 –42 .44 ] s Expands 525 .55 ±9.99 s[15 .40 –42 .44 ] s Shrinks 69.43 ±1.63 s[7.83 –12 .34 ] s 12 P. Sandås et al.
+
+Table 2: Aggregated statistics per workload.                        
+
+> Makespan Net cost Total cost
+> Static 2-node jobs 2,825 s15 .63 n-h 25 .11 n-h Static 12-node jobs 2,652 s17 .53 n-h 23 .57 n-h Dynamic [1–12]-node jobs 2,236 s17 .15 n-h 19 .87 n-h
+
+Nevertheless, workloads run in workflow mode with pre-allocated resources: 32 nodes total, one dedicated to the Slurm controller. The per-experiment total cost appears in column 4. With 31 compute nodes, the dynamic case adapts jobs to availability (Figure 4), guided by the CE policy. Static cases cannot automat-ically be adapted to the available resources. For instance, in the 2-node case, the ten jobs are running concurrently, using 20 nodes out of 31 (see Figure 1a), while in the 12-node case, six groups of two concurrent jobs run sequentially allocating 24 nodes (see Figure 1b). 
+
+# 5 Related Work 
+
+Several research efforts have focused on developing malleable versions of full scientific applications to evaluate dynamic resizing frameworks. Early evaluations often utilized the NAS Parallel Benchmarks (NPB), including kernels such as Integer Sort (IS), Conjugate Gradient (CG), Fourier Transform (FT), and the pseudo-application LU, particularly to test the ReSHAPE framework [19]. The CG method and Jacobi solver have also been implemented on top of Flex-MPI, along with Epigraph, which represents a more complex high-performance computing (HPC) application [14]. In the domain of molecular dynamics, the mini-application LeanMD was adapted using the Charm++ runtime to imple-ment simplified force calculations [16]. Furthermore, LAMMPS, a highly com-plex classical molecular dynamics code, was developed into a malleable version by leveraging its checkpoint/restart (C/R) capabilities under the direction of ReSHAPE [20]. A malleable version of MPDATA, a fundamental component of the EULAG multiscale fluid solver, responsible for computing the advection of a non-diffusive quantity in a flow field by iterative time-stepping, has been implemented with DMR API with [8] and without [12] GPU acceleration. Unlike many previous efforts that focused on regular iterative patterns, HPG-aligner, a bioinformatics tool for RNA sequence mapping, represents a non-iterative producer-consumer application with irregular communication patterns and complex data structures implemented with DMR API [6]. Alya is a high performance computational mechanics code to solve coupled engineering problems which also adopted C/R-based malleability and communi-cation efficiency-based reconfigurations with DMR [5]. To the best of our knowledge, this is the first work to develop and evaluate a malleable version of GROMACS, demonstrating its viability and benefits for dynamic resource management in HPC environments. Malleable Molecular Dynamics Simulations with GROMACS and DMR 13 
+
+# 6 Conclusion 
+
+This work has presented a minimally invasive integration of the Dynamic Man-agement of Resources (DMR) framework into GROMACS, enabling MPI process malleability by reusing the existing checkpoint/restart mechanism and a small set of well-placed integration points in the initialization, main loop, and check-point handler. Our evaluation has compared a malleable GROMACS configuration against static workloads. The dynamic run achieves the shortest makespan because ex-pansions leverage available resources and accelerate individual jobs, even though reconfigurations introduce an aggregate overhead of only a few percent of the to-tal execution time. These results confirm that communication-efficiency-guided malleability can successfully trade off time-to-solution and resource usage sce-narios, and that DMR-enabled GROMACS can exploit resources more effectively than static counterparts. Beyond current x86-based clusters, the European PILOT (EUPilot) project aims to demonstrate a pre-exascale European accelerator platform based on long-vector RISC-V technology, co-designing hardware, system software, and flagship scientific applications [1]. Within this context, a RISC-V vector version of GRO-MACS is being developed as part of the EUPilot application portfolio, and is expected to become dynamically malleable through DMR, enabling the same communication-efficiency-driven reconfiguration strategies on future European RISC-V accelerators as those explored here on MN5. Our work thus provides an essential step towards a unified malleability story for GROMACS across current x86 supercomputers and forthcoming RISC-V-based demonstrators. 
+
+# Acknowledgments 
+
+This project is co-funded by the project The European PILOT, which has re-ceived funding from the European High-Performance Computing Joint Under-taking (JU) under grant agreements No. 101034126 and No. PCI2021-122090-2A under the MCIN/AEI and the EU NextGenerationEU/PRTR. BSC researchers are supported by the Ministerio para la Transformación Digital y de la función pública, within the framework of the Plan de Recuperación Transformación y Resiliencia, and by the European Union – NextGenerationEU. Antonio J. Peña was partially supported by the Ramón y Cajal fellowship RYC2020-030054-I funded by MCIN/AEI/10.13039/501100011033 and by “ESF Investing in your future”. The views and opinions expressed are solely those of the author(s) and do not necessarily reflect those of the European Union. Neither the European Union nor the European Commission can be held responsible for them. 14 P. Sandås et al. 
+
+# References 
+
+1. Eupilot: Pilot using independent, local and open technologies. https://eupilot. eu/ (2021), started December 2021 – Coordinated by Barcelona Supercomputing Center (BSC) 2. Abraham, M.J., Murtola, T., Schulz, R., Páll, S., Smith, J.C., Hess, B., Lin-dahl, E.: GROMACS: High performance molecular simulations through multi-level parallelism from laptops to supercomputers. SoftwareX 1-2 , 19–25 (2015). https://doi.org/10.1016/j.softx.2015.06.001 3. Gabriel, E., Fagg, G.E., Bosilca, G., Angskun, T., Dongarra, J.J., Squyres, J.M., Sahay, V., Kambadur, P., Barrett, B., Lumsdaine, A., Castain, R.H., Daniel, D.J., Graham, R.L., Woodall, T.S.: Open MPI: Goals, concept, and design of a next generation MPI implementation. In: Recent Advances in Parallel Virtual Machine and Message Passing Interface. pp. 97–104 (2004). https://doi.org/10.1007/978-3-540-30218-6_19 4. Hess, B., Kutzner, C., van der Spoel, D., Lindahl, E.: Gromacs 4: Al-gorithms for highly efficient, load-balanced, and scalable molecular simula-tion. Journal of Chemical Theory and Computation 4(3), 435–447 (2008). https://doi.org/10.1021/ct700301q 5. Iserte, S., Houzeaux, G., Sandås, P., Peña, A.J., Garcia-Gasulla, M.: Malleable computational fluid dynamics simulations. In: Proceedings of the 36th Parallel CFD International Conference. Merida, Yucatan, Mexico (Nov 2025) 6. Iserte, S., Martínez, H., Barrachina, S., Castillo, M., Mayo, R., Peña, A.J.: Dynamic reconfiguration of non-iterative scientific applications: A case study with HPG-aligner. International Journal of High Performance Computing Application 33 ,1–10 (Aug 2018). https://doi.org/10.1177/1094342018802347 7. Iserte, S., Mayo, R., Quintana-Ortí, E.S., Peña, A.J.: DMRlib: Easy-coding and ef-ficient resource management for job malleability. IEEE Transactions on Computers 
+
+70 , 1443–1457 (Sep 2020). https://doi.org/10.1109/TC.2020.3022933 8. Iserte, S., Rojek, K.: A study of the effect of process malleability in the energy effi-ciency on gpu-based clusters. Journal of Supercomputing 76 , 255–274 (Oct 2020). https://doi.org/10.1007/s11227-019-03034-x 9. Iserte, S.: High-throughput Computation through Efficient Re-source Management. Ph.D. Thesis, Universitat Jaume I (Nov 2018). https://doi.org/10.6035/14101.2018.176272 10. Iserte, S., Lopez, V., Garcia-Gasulla, M., Peña, A.J.: Parallel efficiency-aware stan-dard mpi-based malleability. In: Euro-par Workshops Proceedings. Madrid, Spain (Aug 2024) 11. Iserte, S., Madon, M., Da Costa, G., Pierson, J.M., Peña, A.J.: MPI malleability validation under replayed real-world HPC conditions. Future Generation Computer Systems p. 108305 (Dec 2025). https://doi.org/10.1016/j.future.2025.108305 12. Iserte, S., Martín-Álvarez, I., Rojek, K., Aliaga, J.I., Castillo, M., Folwarska, W., Peña, A.J.: Resource optimization with MPI process malleability for dynamic work-loads in HPC clusters. Future Generation Computer Systems p. 107949 (2025). https://doi.org/10.1016/j.future.2025.107949 13. Lopez, V., Ramirez Miranda, G., Garcia-Gasulla, M.: Talp: A lightweight tool to unveil parallel efficiency of large-scale executions. In: Proceedings of the 2021 on Performance EngineeRing, Modelling, Analysis, and VisualizatiOn STrategy. p. 3–10. PERMAVOST ’21 (2021). https://doi.org/10.1145/3452412.3462753 Malleable Molecular Dynamics Simulations with GROMACS and DMR 15 14. Martín, G., Marinescu, M.C., Singh, D.E., Carretero, J.: FLEX-MPI: an MPI ex-tension for supporting dynamic load balancing on heterogeneous non-dedicated systems. In: Proceedings of the 19th International Conference on Parallel Pro-cessing. p. 138–149. Euro-Par’13 (2013). https://doi.org/10.1007/978-3-642-40047-6_16, https://doi.org/10.1007/978-3-642-40047-6_16 
+
+15. Martín-Álvarez, I., Aliaga, J.I., Castillo, M., Iserte, S., Mayo, R.: Dy-namic spawning of MPI processes applied to malleability. The International Journal of High Performance Computing Applications 38 (2), 69–93 (2024). https://doi.org/10.1177/10943420231176527 16. Prabhakaran, S., Neumann, M., Rinke, S., Wolf, F., Gupta, A., Kale, L.V.: A batch system with efficient adaptive scheduling for malleable and evolving applications. In: IEEE International Parallel and Distributed Processing Symposium. pp. 429– 438 (2015). https://doi.org/10.1109/IPDPS.2015.34 17. Pronk, S., Páll, S., Schulz, R., Larsson, P., Bjelkmar, P., Apostolov, R., Shirts, M.R., Smith, J.C., Kasson, P.M., van der Spoel, D., Hess, B., Lindahl, E.: Gromacs 4.5: A high-throughput and highly parallel open source molecular simulation toolkit. Bioinformatics 29 (7), 845–854 (02 2013). https://doi.org/10.1093/bioinformatics/btt055 18. Páll, S.: Supplementary information for heterogeneous parallelization and ac-celeration of molecular dynamics simulations in GROMACS (Jun 2020). https://doi.org/10.5281/zenodo.3893789 19. Sudarsan, R., Ribbens, C.J.: Scheduling resizable parallel applications. In: IEEE International Symposium on Parallel and Distributed Processing. pp. 1–10 (2009). https://doi.org/10.1109/IPDPS.2009.5161077 20. Sudarsan, R., Ribbens, C.J., Farkas, D.: Dynamic resizing of parallel scientific simulations: A case study using LAMMPS. In: Computational Science (ICCS). pp. 175–184 (2009) 21. Tarraf, A., Schreiber, M., Cascajo, A., Besnard, J.B., Vef, M.A., Huber, D., Happ, S., Brinkmann, A., Singh, D.E., Hoppe, H.C., Miranda, A., Peña, A.J., Machado, R., Gasulla, M.G., Schulz, M., Carpenter, P., Pickartz, S., Rotaru, T., Iserte, S., Lopez, V., Ejarque, J., Sirwani, H., Wolf, F.: Malleability in mod-ern HPC systems: Current experiences, challenges, and future opportunities. IEEE Transactions on Parallel and Distributed Systems pp. 1–14 (Jun 2024). https://doi.org/10.1109/TPDS.2024.3406764 22. Van Der Spoel, D., Lindahl, E., Hess, B., Groenhof, G., Mark, A.E., Berendsen, H.J.C.: GROMACS: Fast, flexible, and free. Journal of Computational Chemistry 
+
+26 (16), 1701–1718 (2005) 23. Yoo, A.B., Jette, M.A., Grondona, M.: Slurm: Simple linux utility for resource man-agement. In: Job Scheduling Strategies for Parallel Processing. pp. 44–60 (2003). https://doi.org/10.1007/10968987_3
