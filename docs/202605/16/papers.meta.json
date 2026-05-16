@@ -1,0 +1,79 @@
+{
+  "label": "2026-05-16",
+  "date": "2026-05-16",
+  "generated_at": "2026-05-16T20:29:22",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202605/16/2605.08675v1-quantum-resource-reduction-for-quantum-centric-supercomputing-via-correlated-mean-field-downfolding-framework",
+      "section": "quick",
+      "title_en": "Quantum resource reduction for quantum-centric supercomputing via correlated mean-field downfolding framework",
+      "authors": "Thien Ngoc Tran, Lan Nguyen Tran",
+      "date": "2026-05-09",
+      "pdf": "https://arxiv.org/pdf/2605.08675v1",
+      "score": "6.0",
+      "evidence": "化学的量子-经典混合方法",
+      "tldr": "本研究提出了一种名为OBDF-SQD的量子-经典混合方法，旨在降低量子中心超算的资源需求。该方法利用经典的一体二阶莫勒-普莱塞特微扰理论（OBMP2）将外部轨道的动力学相关性折叠进重整化的一体算符中，构建出与原哈密顿量结构一致的有效活性空间哈密顿量，随后通过采样量子对角化（SQD）进行求解。在H6和N2分子上的测试表明，该方法在不增加量子电路复杂度的前提下，显著提升了计算精度，并具备扩展至周期性固体的潜力。",
+      "tags": "query:qmmm",
+      "abstract_en": "We present OBDF-SQD, a hybrid quantum-classical method that combines one-body downfolding~(OBDF) based on one-body Møller--Plesset second-order perturbation theory (OBMP2) with sample-based quantum diagonalization~(SQD) for use in quantum-centric supercomputing~(QCS). In this approach, OBMP2 is executed classically to fold dynamical correlation from external orbitals into a renormalized one-body operator, yielding an effective active-space Hamiltonian that retains the same operator structure as the bare Hamiltonian and therefore requires no additional quantum circuit resources. SQD is then applied to this effective Hamiltonian, where, in this work, the quantum sampling is performed via the Qiskit Aer simulator rather than actual quantum hardware. We benchmark OBDF-SQD on dissociation curves of \\ce{H6} chain, ring, and lattice systems and the \\ce{N2} molecule in the cc-pVDZ basis, comparing against standard methods and active-space SQD (CAS-SQD). We observed that OBDF-SQD consistently improves upon CAS-SQD with the same active space. The simplicity of the one-body downfolding correction also makes the approach straightforwardly extensible to periodic solids within existing quantum embedding frameworks",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/16/2605.11389v1-bistability-absolute-concentration-robustness-and-hysteresis-in-dual-site-futile-cycles-with-bifunctional-enzymes",
+      "section": "quick",
+      "title_en": "Bistability, Absolute Concentration Robustness, and Hysteresis in Dual-Site Futile Cycles with Bifunctional Enzymes",
+      "authors": "Badal Joshi, Tung D. Nguyen, Matthew D. Johnston",
+      "date": "2026-05-12",
+      "pdf": "https://arxiv.org/pdf/2605.11389v1",
+      "score": "6.0",
+      "evidence": "酶催化循环与动力学分析",
+      "tldr": "本研究深入探讨了双功能酶在双位点无效循环中的动力学作用，这类酶在细菌信号传导和代谢调节中至关重要。通过对四种特定网络结构的完整数学分析，研究者刻画了稳态的存在性、稳定性及随底物总量变化的分岔行为。研究发现，这些网络不仅具有边界稳态，还表现出双稳态、迟滞现象及多达四个正稳态。最显著的发现是，其中一个网络能同时实现双稳态与最终产物的绝对浓度稳健性（ACR），揭示了双功能酶在复杂生物调控中的独特机制。",
+      "tags": "query:qmmm",
+      "abstract_en": "Bifunctional enzymes, which catalyze both the forward and reverse steps of a substrate modification reaction, arise naturally in bacterial two-component signaling systems and metabolic regulation. Beyond their well-known role in conferring absolute concentration robustness (ACR) on substrate species, bifunctional enzymes profoundly shape the dynamical landscape of the networks in which they appear. We study a class of dual-site futile cycles in which the reverse modification steps are carried out by bifunctional enzyme-substrate compounds, and provide a complete mathematical analysis of all four such networks, characterizing the existence, number, and stability of steady states, as well as the bifurcation structure as total substrate is varied. All four networks admit boundary steady states, in contrast to the non-bifunctional case. The networks differ in the number and stability of boundary steady states, in the maximum number of positive steady states (ranging from two to four), and in whether bistability is present. In two networks, a transcritical bifurcation connects the boundary and positive steady state branches; in one case this is a backward bifurcation, producing hysteresis. Perhaps the most striking phenomenon occurs in one of the four networks, which simultaneously exhibits bistability and ACR in the final modification state, where the system can settle into either of two stable steady states with different intermediate concentrations yet identical final product concentration.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/16/2605.12823v1-hessian-matching-for-machine-learned-coarse-grained-molecular-dynamics",
+      "section": "quick",
+      "title_en": "Hessian Matching for Machine-Learned Coarse-Grained Molecular Dynamics",
+      "authors": "Sanya Murdeshwar, Sanjit Shashi, Kevin Bachelor, William Noid, Ashwin Lokapally, Razvan Marinescu",
+      "date": "2026-05-12",
+      "pdf": "https://arxiv.org/pdf/2605.12823v1",
+      "score": "6.0",
+      "evidence": "生物分子的粗粒化分子动力学",
+      "tldr": "粗粒度（CG）分子动力学模拟在生物分子研究中至关重要，但传统力匹配方法仅利用一阶梯度信息，忽略了自由能面的曲率。本文提出了一种结合随机黑塞矩阵-向量积（HVP）匹配的新框架，通过引入二阶曲率信息增强CG势能函数。该方法将目标黑塞矩阵分解为预计算的投影全原子黑塞矩阵和在线计算的协方差修正，显著提升了模型在蛋白质慢速模式下的模拟准确性和泛化能力。",
+      "tags": "query:qmmm",
+      "abstract_en": "Coarse-grained (CG) molecular dynamics enables simulations of atomic systems such as biomolecules at timescales inaccessible to all-atom (AA) methods, but existing CG neural potentials trained via force matching capture only the gradient of the free-energy surface, leaving its curvature unconstrained. We introduce a framework that augments force matching with stochastic Hessian-vector product (HVP) matching, instilling second-order curvature information into CG potentials without constructing the full Hessian. We derive a decomposition of the target CG Hessian into a model-independent projected AA Hessian, precomputed once before training, and a model-dependent covariance correction computed online at negligible cost. We construct an unbiased stochastic estimator of the Hessian-matching objective by using random probe vectors. We evaluate our method by comparing against force matching on a benchmark of nine fast-folding proteins unseen during training. HVP matching outperforms plain force matching on 8 of 9 proteins on slow-mode metrics, with reductions of up to 85% in the Kullback--Leibler divergence between the CG and reference distributions along the slowest collective mode of the largest protein. Our results demonstrate that higher-order physical supervision is a practical path to more accurate and transferable CG potentials for biomolecular simulation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/16/2605.13168v1-variance-aware-estimation-and-inference-for-michaelis--menten-models-with-heteroscedastic-errors-and-clustered-measurements",
+      "section": "quick",
+      "title_en": "Variance-Aware Estimation and Inference for Michaelis--Menten Models with Heteroscedastic Errors and Clustered Measurements",
+      "authors": "Mijeong Kim, Minkyoung Cha, Ah Young Jeong",
+      "date": "2026-05-13",
+      "pdf": "https://arxiv.org/pdf/2605.13168v1",
+      "score": "6.0",
+      "evidence": "米氏酶动力学估计与推断",
+      "tldr": "针对酶动力学数据中常见的异方差性和聚类测量问题，本文提出了一种感知方差的米氏方程（Michaelis-Menten）估计与推理方法。该方法基于条件矩限制，通过高斯工作模型实现，支持单曲线及聚类数据的参数估计。研究表明，相比传统的非线性最小二乘法，该方法在方差恢复、区间效率及固定效应覆盖率方面表现更优，并提供了配套的 R 包 inferMM，为生化动力学分析提供了更稳健的统计工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Michaelis--Menten analysis is often conducted by nonlinear least squares under a constant-variance assumption, even though enzyme-kinetic data frequently display concentration-dependent heteroscedasticity and often include repeated or clustered measurements. We develop a variance-aware procedure for Michaelis--Menten estimation and inference that is motivated by conditional moment restrictions and implemented through simple conditionally Gaussian working models. For single curves, the method reduces to one-dimensional root finding for $K_m$ followed by closed-form plug-in updates for $V_{\\max}$ and a variance scale parameter; the same score logic yields a cluster-level extension through a random-effect-induced working covariance. In simulation, modeling heteroscedasticity improved variance recovery and interval efficiency relative to homoscedastic nonlinear least squares, while cluster-aware semiparametric and NLME fits restored fixed-effect coverage far more effectively than pooled analyses that ignored clustering. In self-driving laboratory and soil exoenzyme data, heteroscedastic models achieved lower information criteria than homoscedastic nonlinear least squares, with the square-root variance function giving the most stable empirical fit among the prespecified working models. We implement the workflow in the companion \\texttt{inferMM} package for single-curve, grouped, and clustered Michaelis--Menten analysis. These results show that simple variance-function and covariance modeling can stabilize original-scale Michaelis--Menten inference when variability changes with substrate concentration or measurements are clustered.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/16/2605.14973v1-themol-dataset-torsion-hessian-and-energy-of-molecules",
+      "section": "quick",
+      "title_en": "THEMol dataset: Torsion, Hessian, and Energy of Molecules",
+      "authors": "Jiashu Liang, Tianze Zheng, Yu Xia, Xingyuan Xu, Xu Han, Zhi Wang, Siyuan Liu, Ailun Wang, Yu Liu, Shiqian Tan, Dongfei Liu, Zhichen Pu, Yuanheng Wang, Qiming Sun, Xiaojie Wu, Wen Yan",
+      "date": "2026-05-14",
+      "pdf": "https://arxiv.org/pdf/2605.14973v1",
+      "score": "6.0",
+      "evidence": "量子力学性质数据集",
+      "tldr": "THEMol是一个大规模开源量子力学属性数据集，涵盖多达50个重原子的闭壳层有机分子。它包含超过300万个Hessian矩阵、近1亿个扭转扫描几何结构以及约30亿次DFT计算的弛豫轨迹。该数据集通过全面的化学空间采样和构象搜索，提供了能量、力、二阶导数及原子多极矩等丰富信息，旨在显著提升高精度、可迁移分子势能模型的开发。",
+      "tags": "query:qmmm",
+      "abstract_en": "We present THEMol (Torsion, Hessian, Energy of Molecules), a massive open-source collection of quantum mechanical properties tailored for closed-shell organic molecules, with up to 50 heavy atoms. THEMol includes a Hessian subset with more than 3 million relaxed geometries with Hessian matrices, a TorsionScan subset with nearly 100 million constrained relaxed geometries with energies and forces, and relaxation-trajectory subsets (HessianRelax and TorsionScanRelax) that together comprise about 3 billion DFT calculations. The chemical space sampling is comprehensive, spanning twelve essential elements and diverse molecular architectures relevant to drug discovery, electrolytes, ionic liquids, and beyond. The dataset also features exhaustive conformational sampling through the TorsionScan and TorsionScanRelax subsets, including comprehensive in-ring and non-ring torsional scans. Furthermore, it contains an extensive library of Hessian matrices, computed at relaxed geometries, to capture critical second-derivative information of the potential energy landscape. Additionally, we supply electron density-derived atomic multipoles computed via the Minimal Basis Iterative Stockholder partition scheme. Organized into five distinct subsets (Hessian, TorsionScan, HessianRelax, TorsionScanRelax, and MBIS), the data encompasses optimized geometries, relaxation trajectories, and derived molecular properties. We anticipate that this massive and diverse dataset will significantly empower the development of highly accurate and transferable molecular potentials.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
