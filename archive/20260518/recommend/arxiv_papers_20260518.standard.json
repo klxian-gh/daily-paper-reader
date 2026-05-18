@@ -1,0 +1,176 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-18T21:14:59.880699+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.10312v2",
+      "title": "FusionRCG: Orchestrating Recursive Computation Graphs across GPU Memory Hierarchies",
+      "abstract": "Evaluating high-dimensional integrals via deep hierarchical recurrences is a dominant cost in quantum chemistry. While CPUs manage these efficiently, GPUs suffer a critical mismatch: limited per-thread memory is quickly overwhelmed by an explosion of simultaneously live intermediate variables. As recurrence scales, this forces massive data spilling to global memory, collapsing performance into a severe memory-bound regime. We present FusionRCG, a framework that jointly optimizes computation graph structure and GPU memory mapping. Exploiting the inherent topological flexibility of recurrence graphs, using electron repulsion integrals as an example, we contribute: (1) liveness-aware graph orchestration to minimize peak live intermediates; (2) algebraic dimensionality reduction via stepwise Cartesian-to-spherical fusion, shrinking intermediate footprints by up to $7.7\\times$; and (3) an adaptive multi-tier kernel architecture routing graphs across the memory hierarchy. Evaluated on NVIDIA A100 GPUs, FusionRCG achieves up to $3.09\\times$ end-to-end SCF speedup over GPU4PySCF and maintains $75\\%$ parallel efficiency at 64~GPUs, successfully rescuing these workloads from memory-bound limits.",
+      "authors": [
+        "Yihong Zhang",
+        "Xinran Wei",
+        "Junshi Chen",
+        "Fusong Ju",
+        "Wei Hu",
+        "Jinlong Yang",
+        "Huanhuan Xia"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph",
+        "cs.DC",
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-11T10:12:25+00:00",
+      "link": "https://arxiv.org/pdf/2605.10312v2",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Optimizing electron repulsion integrals in quantum chemistry",
+      "llm_evidence_cn": "优化量子化学中的电子排斥积分",
+      "llm_evidence": "优化量子化学中的电子排斥积分",
+      "canonical_evidence": "优化量子化学中的电子排斥积分",
+      "llm_tldr_en": "Optimizes GPU memory for quantum chemistry integrals, improving the efficiency of electronic structure calculations.",
+      "llm_tldr_cn": "优化了量子化学积分的GPU内存映射，提高了电子结构计算的效率。",
+      "llm_tldr": "优化了量子化学积分的GPU内存映射，提高了电子结构计算的效率。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.10331v1",
+      "title": "Constraint-aware functional cloning for stable and transferable machine-learned density functional theory",
+      "abstract": "We study a simple but useful test for neural exchange-correlation (XC) functionals: can a neural model reproduce an established XC functional when it is used self-consistently? We call this test functional cloning. The model is trained at the GGA level to reproduce a known semilocal functional, using either a constrained or an unconstrained architecture. The motivation is that an XC functional is not used on a fixed input. In a Kohn-Sham self-consistent-field calculation it contributes to the potential, and the resulting density is part of the outcome of the same calculation. A good pointwise fit to sampled density descriptors is therefore not by itself enough. Because the target functional is known, the error can be measured directly. We compare the clones on sampled descriptors, molecular total energies, energy differences, transfer between PySCF and SIESTA, and equations of state for crystalline solids. The constrained models reproduce the reference functional more accurately in molecular self-consistent calculations. They also give better initial parameters for later optimization against correlated molecular energies. An additional observation is that the constrained architecture already gives a reasonable solid-state baseline before cloning, as seen from randomly initialized constrained models. Clones trained only on molecular densities transfer well to solids, reproducing reference lattice constants and bulk moduli across metallic, covalent, ionic, oxide, and layered systems. Cross-code tests show that energy differences are relatively robust, while total energies depend strongly on whether the cloning descriptors come from all-electron or pseudopotential densities. These results make functional cloning a useful diagnostic before full self-consistent training of neural XC functionals.",
+      "authors": [
+        "Sara Navarro-Rodríguez",
+        "Alec Wills",
+        "Kimberly J. Daas",
+        "María Camarasa-Gómez",
+        "Marivi Fernández-Serra"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "physics.comp-ph"
+      ],
+      "published": "2026-05-11T10:33:06+00:00",
+      "link": "https://arxiv.org/pdf/2605.10331v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "machine-learned density functional theory",
+      "llm_evidence_cn": "机器学习密度泛函理论",
+      "llm_evidence": "机器学习密度泛函理论",
+      "canonical_evidence": "机器学习密度泛函理论",
+      "llm_tldr_en": "Explores functional cloning to create stable and transferable machine-learned XC functionals for DFT.",
+      "llm_tldr_cn": "探索功能克隆技术，为DFT创建稳定且可迁移的机器学习交换相关泛函。",
+      "llm_tldr": "探索功能克隆技术，为DFT创建稳定且可迁移的机器学习交换相关泛函。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "quantum chemical investigation of glycosyltransferase enzymes",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.15630v1",
+      "title": "Reweighting free energy profiles between universal machine learning interatomic potentials for fast consensus building",
+      "abstract": "Free energy profiles serve as a fundamental bridge between microscopic atomic fluctuations and macroscopic thermodynamic observables. Estimating the free energy profile along a reaction coordinate, referred to as the potential of mean force (PMF), with density functional theory (DFT) accuracy is computationally expensive. Universal machine learning interatomic potentials (MLIPs) drastically reduce this cost, but their accuracy is strongly determined by their training data and hence can be uncertain for a given system. In this work, we present a systematic and scalable framework for reweighting PMFs, initially sampled with a single 'source' MLIP, across a representative suite of target MLIPs. Because traditional direct exponential reweighting fails for large system sizes due to low phase-space overlap between potentials, we deploy robust analytical corrections. Applying this to a complex 601-atom system of Li$^+$ transport in a nanoconfined electrolyte, we demonstrate that a mean energy-gap approximation effectively bypasses statistical collapse, producing a highly stable PMF matching the target PMF. Using this approach, we recover high-fidelity target thermodynamics across multiple DFT reference levels (PBE+D3, PBE-sol, r$^2$SCAN,r$^2$SCAN-D4) at a fraction of the computational cost of full simulations. Furthermore, thermodynamic analysis reveals that the studied MLIPs partition into two distinct clusters driven by their training data. Our reweighting framework successfully recovers target thermodynamic properties--specifically, reaction and activation free energies--even when the phase-space overlap between potentials is critically low. Ultimately, this approach establishes a vital diagnostic protocol to achieve affordable cross-model consensus on materials chemistry properties without redundant, resource-intensive simulations.",
+      "authors": [
+        "Sauradeep Majumdar",
+        "Miguel Steiner",
+        "Johannes C. B. Dietschreit",
+        "Swagata Roy",
+        "Daniel Willimetz",
+        "Lukaš Grajciar",
+        "Rafael Gómez-Bombarelli"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph",
+        "cond-mat.stat-mech",
+        "cs.LG"
+      ],
+      "published": "2026-05-15T05:30:38+00:00",
+      "link": "https://arxiv.org/pdf/2605.15630v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "free energy profiles along reaction coordinates",
+      "llm_evidence_cn": "沿反应坐标的自由能曲线",
+      "llm_evidence": "沿反应坐标的自由能曲线",
+      "canonical_evidence": "沿反应坐标的自由能曲线",
+      "llm_tldr_en": "Develops a framework to reweight free energy profiles between different machine learning interatomic potentials.",
+      "llm_tldr_cn": "开发了一个在不同机器学习原子间势之间重新加权自由能曲线的框架。",
+      "llm_tldr": "开发了一个在不同机器学习原子间势之间重新加权自由能曲线的框架。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "catalytic reaction mechanism and pathway",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.15927v1",
+      "title": "Data-driven complete basis set limit estimates from a minimal auxiliary basis",
+      "abstract": "Quantum chemistry calculations are often performed using atom-centered basis sets which are chosen to balance accuracy and cost. While they are systematically improvable, the total energy converges slowly with basis set size towards the complete basis set (CBS) limit. Common extrapolation methods require several intermediate-quality calculations to afford an estimate of the CBS energy. We propose combining a pairwise interaction model with a minimal complementary auxiliary basis set (CABS) baseline to estimate the CBS energy from a single quantum chemistry calculation in a minimal basis set via Kernel-Ridge-Regression (KRR), which is more efficient than both direct and $Δ$-machine learning. We show that KRR on standard molecular representations can be improved by approximating atom-wise local kernels using Chebyshev polynomials which allows us to train KRR models efficiently on moderate compute resources, further enabling a data-driven approach towards CBS combining physical baselines capturing leading order effects with data-efficient machine learning models.",
+      "authors": [
+        "Nicolas Grimblat",
+        "Gabriel Klassen",
+        "Guido Falk von Rudorff"
+      ],
+      "primary_category": "physics.chem-ph",
+      "categories": [
+        "physics.chem-ph"
+      ],
+      "published": "2026-05-15T13:08:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.15927v1",
+      "tags": [
+        "keyword:QMMM",
+        "query:QMMM"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "quantum chemistry calculations and basis set limits",
+      "llm_evidence_cn": "量子化学计算与基组极限",
+      "llm_evidence": "量子化学计算与基组极限",
+      "canonical_evidence": "量子化学计算与基组极限",
+      "llm_tldr_en": "Estimates complete basis set limits in quantum chemistry using machine learning from minimal basis sets.",
+      "llm_tldr_cn": "利用机器学习从最小基组出发估算量子化学中的完整基组极限。",
+      "llm_tldr": "利用机器学习从最小基组出发估算量子化学中的完整基组极限。",
+      "llm_tags": [
+        "query:qmmm"
+      ],
+      "matched_query_tag": "query:qmmm",
+      "matched_query_text": "combined quantum mechanics and molecular mechanics simulation",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

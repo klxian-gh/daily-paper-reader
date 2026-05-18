@@ -1,0 +1,65 @@
+{
+  "label": "2026-05-18",
+  "date": "2026-05-18",
+  "generated_at": "2026-05-18T21:15:27",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202605/18/2605.10312v2-fusionrcg-orchestrating-recursive-computation-graphs-across-gpu-memory-hierarchies",
+      "section": "quick",
+      "title_en": "FusionRCG: Orchestrating Recursive Computation Graphs across GPU Memory Hierarchies",
+      "authors": "Yihong Zhang, Xinran Wei, Junshi Chen, Fusong Ju, Wei Hu, Jinlong Yang, Huanhuan Xia",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10312v2",
+      "score": "6.0",
+      "evidence": "优化量子化学中的电子排斥积分",
+      "tldr": "FusionRCG是一个针对量子化学中高维积分递归计算的GPU优化框架。针对GPU线程内存受限导致的大量中间变量溢出问题，该框架通过优化计算图结构和内存映射，引入活跃度感知编排、代数降维及多级内核架构。实验表明，它在NVIDIA A100上显著提升了SCF计算速度，有效解决了内存受限瓶颈，并在多GPU环境下实现了高效的并行扩展。",
+      "tags": "query:qmmm",
+      "abstract_en": "Evaluating high-dimensional integrals via deep hierarchical recurrences is a dominant cost in quantum chemistry. While CPUs manage these efficiently, GPUs suffer a critical mismatch: limited per-thread memory is quickly overwhelmed by an explosion of simultaneously live intermediate variables. As recurrence scales, this forces massive data spilling to global memory, collapsing performance into a severe memory-bound regime. We present FusionRCG, a framework that jointly optimizes computation graph structure and GPU memory mapping. Exploiting the inherent topological flexibility of recurrence graphs, using electron repulsion integrals as an example, we contribute: (1) liveness-aware graph orchestration to minimize peak live intermediates; (2) algebraic dimensionality reduction via stepwise Cartesian-to-spherical fusion, shrinking intermediate footprints by up to $7.7\\times$; and (3) an adaptive multi-tier kernel architecture routing graphs across the memory hierarchy. Evaluated on NVIDIA A100 GPUs, FusionRCG achieves up to $3.09\\times$ end-to-end SCF speedup over GPU4PySCF and maintains $75\\%$ parallel efficiency at 64~GPUs, successfully rescuing these workloads from memory-bound limits.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/18/2605.10331v1-constraint-aware-functional-cloning-for-stable-and-transferable-machine-learned-density-functional-theory",
+      "section": "quick",
+      "title_en": "Constraint-aware functional cloning for stable and transferable machine-learned density functional theory",
+      "authors": "Sara Navarro-Rodríguez, Alec Wills, Kimberly J. Daas, María Camarasa-Gómez, Marivi Fernández-Serra",
+      "date": "2026-05-11",
+      "pdf": "https://arxiv.org/pdf/2605.10331v1",
+      "score": "6.0",
+      "evidence": "机器学习密度泛函理论",
+      "tldr": "本研究提出“泛函克隆”测试，旨在评估神经网络交换相关泛函在自洽计算中重现现有泛函的能力。通过对比受物理约束与不受约束的架构，研究发现受约束模型在分子能量预测、跨软件迁移及固体状态方程模拟中表现更优。该方法证明了物理约束对提升模型稳定性和迁移性的关键作用，为开发高性能机器学习泛函提供了有效的诊断工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "We study a simple but useful test for neural exchange-correlation (XC) functionals: can a neural model reproduce an established XC functional when it is used self-consistently? We call this test functional cloning. The model is trained at the GGA level to reproduce a known semilocal functional, using either a constrained or an unconstrained architecture. The motivation is that an XC functional is not used on a fixed input. In a Kohn-Sham self-consistent-field calculation it contributes to the potential, and the resulting density is part of the outcome of the same calculation. A good pointwise fit to sampled density descriptors is therefore not by itself enough. Because the target functional is known, the error can be measured directly. We compare the clones on sampled descriptors, molecular total energies, energy differences, transfer between PySCF and SIESTA, and equations of state for crystalline solids. The constrained models reproduce the reference functional more accurately in molecular self-consistent calculations. They also give better initial parameters for later optimization against correlated molecular energies. An additional observation is that the constrained architecture already gives a reasonable solid-state baseline before cloning, as seen from randomly initialized constrained models. Clones trained only on molecular densities transfer well to solids, reproducing reference lattice constants and bulk moduli across metallic, covalent, ionic, oxide, and layered systems. Cross-code tests show that energy differences are relatively robust, while total energies depend strongly on whether the cloning descriptors come from all-electron or pseudopotential densities. These results make functional cloning a useful diagnostic before full self-consistent training of neural XC functionals.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/18/2605.15630v1-reweighting-free-energy-profiles-between-universal-machine-learning-interatomic-potentials-for-fast-consensus-building",
+      "section": "quick",
+      "title_en": "Reweighting free energy profiles between universal machine learning interatomic potentials for fast consensus building",
+      "authors": "Sauradeep Majumdar, Miguel Steiner, Johannes C. B. Dietschreit, Swagata Roy, Daniel Willimetz, Lukaš Grajciar, Rafael Gómez-Bombarelli",
+      "date": "2026-05-15",
+      "pdf": "https://arxiv.org/pdf/2605.15630v1",
+      "score": "6.0",
+      "evidence": "沿反应坐标的自由能曲线",
+      "tldr": "本研究针对计算自由能曲线（PMF）时密度泛函理论成本高昂及通用机器学习势（MLIP）存在不确定性的问题，提出了一种系统且可扩展的重加权框架。该方法通过在单一源MLIP上采样，并利用解析修正技术将其重加权至多个目标MLIP，有效解决了大体系中因相空间重叠度低导致的统计失效问题。在锂离子输运体系中的应用证明，该框架能以极低成本获得跨模型的一致性热力学结论，为材料化学属性的快速验证提供了重要工具。",
+      "tags": "query:qmmm",
+      "abstract_en": "Free energy profiles serve as a fundamental bridge between microscopic atomic fluctuations and macroscopic thermodynamic observables. Estimating the free energy profile along a reaction coordinate, referred to as the potential of mean force (PMF), with density functional theory (DFT) accuracy is computationally expensive. Universal machine learning interatomic potentials (MLIPs) drastically reduce this cost, but their accuracy is strongly determined by their training data and hence can be uncertain for a given system. In this work, we present a systematic and scalable framework for reweighting PMFs, initially sampled with a single 'source' MLIP, across a representative suite of target MLIPs. Because traditional direct exponential reweighting fails for large system sizes due to low phase-space overlap between potentials, we deploy robust analytical corrections. Applying this to a complex 601-atom system of Li$^+$ transport in a nanoconfined electrolyte, we demonstrate that a mean energy-gap approximation effectively bypasses statistical collapse, producing a highly stable PMF matching the target PMF. Using this approach, we recover high-fidelity target thermodynamics across multiple DFT reference levels (PBE+D3, PBE-sol, r$^2$SCAN,r$^2$SCAN-D4) at a fraction of the computational cost of full simulations. Furthermore, thermodynamic analysis reveals that the studied MLIPs partition into two distinct clusters driven by their training data. Our reweighting framework successfully recovers target thermodynamic properties--specifically, reaction and activation free energies--even when the phase-space overlap between potentials is critically low. Ultimately, this approach establishes a vital diagnostic protocol to achieve affordable cross-model consensus on materials chemistry properties without redundant, resource-intensive simulations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/18/2605.15927v1-data-driven-complete-basis-set-limit-estimates-from-a-minimal-auxiliary-basis",
+      "section": "quick",
+      "title_en": "Data-driven complete basis set limit estimates from a minimal auxiliary basis",
+      "authors": "Nicolas Grimblat, Gabriel Klassen, Guido Falk von Rudorff",
+      "date": "2026-05-15",
+      "pdf": "https://arxiv.org/pdf/2605.15927v1",
+      "score": "6.0",
+      "evidence": "量子化学计算与基组极限",
+      "tldr": "本研究针对量子化学中基组能量向完整基组（CBS）极限收敛缓慢的问题，提出了一种高效的数据驱动估算方法。该方法通过结合成对相互作用模型与极小互补辅助基组（CABS）基准，利用核岭回归（KRR）仅需单次极小基组计算即可预测CBS能量。此外，通过切比雪夫多项式近似局部核函数，显著提升了模型在大规模数据上的训练效率。该方案在保持高精度的同时，计算效率优于传统外推及现有的Δ-机器学习方法。",
+      "tags": "query:qmmm",
+      "abstract_en": "Quantum chemistry calculations are often performed using atom-centered basis sets which are chosen to balance accuracy and cost. While they are systematically improvable, the total energy converges slowly with basis set size towards the complete basis set (CBS) limit. Common extrapolation methods require several intermediate-quality calculations to afford an estimate of the CBS energy. We propose combining a pairwise interaction model with a minimal complementary auxiliary basis set (CABS) baseline to estimate the CBS energy from a single quantum chemistry calculation in a minimal basis set via Kernel-Ridge-Regression (KRR), which is more efficient than both direct and $Δ$-machine learning. We show that KRR on standard molecular representations can be improved by approximating atom-wise local kernels using Chebyshev polynomials which allows us to train KRR models efficiently on moderate compute resources, further enabling a data-driven approach towards CBS combining physical baselines capturing leading order effects with data-efficient machine learning models.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

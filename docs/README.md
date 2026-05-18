@@ -6,38 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-16
-- 运行时间：2026-05-16 20:29:15 UTC
+- 最新运行日期：2026-05-18
+- 运行时间：2026-05-18 21:15:18 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：4
 - 精读区：0
-- 速读区：5
+- 速读区：4
 
 ### 今日简报（AI）
-今日速读 5 篇前沿论文，聚焦量子超算资源优化、生物化学双稳态及机器学习驱动的分子动力学。
-重点关注通过关联平均场框架降低量子计算开销，以及利用 Hessian 匹配提升粗粒化模拟精度的创新方法。
-建议对计算物理与系统生物学交叉建模感兴趣的读者深入了解其背后的数学框架。
-- 详情：[/202605/16/README](/202605/16/README)
+今日聚焦 GPU 内存层级优化与机器学习原子势能模型的稳定性提升。
+重点关注 FusionRCG 对递归计算图的调度优化
+- 详情：[/202605/18/README](/202605/18/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Quantum resource reduction for quantum-centric supercomputing via correlated mean-field downfolding framework](/202605/16/2605.08675v1-quantum-resource-reduction-for-quantum-centric-supercomputing-via-correlated-mean-field-downfolding-framework)  
+1. [FusionRCG: Orchestrating Recursive Computation Graphs across GPU Memory Hierarchies](/202605/18/2605.10312v2-fusionrcg-orchestrating-recursive-computation-graphs-across-gpu-memory-hierarchies)  
    标签：评分：6.0/10、query:qmmm
-   evidence：化学的量子-经典混合方法
-2. [Bistability, Absolute Concentration Robustness, and Hysteresis in Dual-Site Futile Cycles with Bifunctional Enzymes](/202605/16/2605.11389v1-bistability-absolute-concentration-robustness-and-hysteresis-in-dual-site-futile-cycles-with-bifunctional-enzymes)  
+   evidence：优化量子化学中的电子排斥积分
+2. [Constraint-aware functional cloning for stable and transferable machine-learned density functional theory](/202605/18/2605.10331v1-constraint-aware-functional-cloning-for-stable-and-transferable-machine-learned-density-functional-theory)  
    标签：评分：6.0/10、query:qmmm
-   evidence：酶催化循环与动力学分析
-3. [Hessian Matching for Machine-Learned Coarse-Grained Molecular Dynamics](/202605/16/2605.12823v1-hessian-matching-for-machine-learned-coarse-grained-molecular-dynamics)  
+   evidence：机器学习密度泛函理论
+3. [Reweighting free energy profiles between universal machine learning interatomic potentials for fast consensus building](/202605/18/2605.15630v1-reweighting-free-energy-profiles-between-universal-machine-learning-interatomic-potentials-for-fast-consensus-building)  
    标签：评分：6.0/10、query:qmmm
-   evidence：生物分子的粗粒化分子动力学
-4. [Variance-Aware Estimation and Inference for Michaelis--Menten Models with Heteroscedastic Errors and Clustered Measurements](/202605/16/2605.13168v1-variance-aware-estimation-and-inference-for-michaelis--menten-models-with-heteroscedastic-errors-and-clustered-measurements)  
+   evidence：沿反应坐标的自由能曲线
+4. [Data-driven complete basis set limit estimates from a minimal auxiliary basis](/202605/18/2605.15927v1-data-driven-complete-basis-set-limit-estimates-from-a-minimal-auxiliary-basis)  
    标签：评分：6.0/10、query:qmmm
-   evidence：米氏酶动力学估计与推断
-5. [THEMol dataset: Torsion, Hessian, and Energy of Molecules](/202605/16/2605.14973v1-themol-dataset-torsion-hessian-and-energy-of-molecules)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：量子力学性质数据集
+   evidence：量子化学计算与基组极限
 
 
 <div class="dpr-home-promo-card">
