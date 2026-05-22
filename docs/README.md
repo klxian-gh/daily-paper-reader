@@ -6,34 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-18
-- 运行时间：2026-05-18 21:15:18 UTC
+- 最新运行日期：2026-05-22
+- 运行时间：2026-05-22 21:12:50 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：0
 - 精读区：0
-- 速读区：4
+- 速读区：0
 
 ### 今日简报（AI）
-今日聚焦 GPU 内存层级优化与机器学习原子势能模型的稳定性提升。
-重点关注 FusionRCG 对递归计算图的调度优化
-- 详情：[/202605/18/README](/202605/18/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202605/22/README](/202605/22/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [FusionRCG: Orchestrating Recursive Computation Graphs across GPU Memory Hierarchies](/202605/18/2605.10312v2-fusionrcg-orchestrating-recursive-computation-graphs-across-gpu-memory-hierarchies)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：优化量子化学中的电子排斥积分
-2. [Constraint-aware functional cloning for stable and transferable machine-learned density functional theory](/202605/18/2605.10331v1-constraint-aware-functional-cloning-for-stable-and-transferable-machine-learned-density-functional-theory)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：机器学习密度泛函理论
-3. [Reweighting free energy profiles between universal machine learning interatomic potentials for fast consensus building](/202605/18/2605.15630v1-reweighting-free-energy-profiles-between-universal-machine-learning-interatomic-potentials-for-fast-consensus-building)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：沿反应坐标的自由能曲线
-4. [Data-driven complete basis set limit estimates from a minimal auxiliary basis](/202605/18/2605.15927v1-data-driven-complete-basis-set-limit-estimates-from-a-minimal-auxiliary-basis)  
-   标签：评分：6.0/10、query:qmmm
-   evidence：量子化学计算与基组极限
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
